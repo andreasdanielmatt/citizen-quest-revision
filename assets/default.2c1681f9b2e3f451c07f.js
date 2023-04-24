@@ -4348,7 +4348,10 @@ __webpack_require__.r(__webpack_exports__);
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 /* globals PIXI */
+const TownView = __webpack_require__(/*! ../views/town-view */ "./src/js/lib/views/town-view.js");
 __webpack_require__(/*! ../helpers-web/fill-with-aspect */ "./src/js/lib/helpers-web/fill-with-aspect.js");
+const PCView = __webpack_require__(/*! ../views/pc-view */ "./src/js/lib/views/pc-view.js");
+const KeyboardInputMgr = __webpack_require__(/*! ../input/keyboard-input-mgr */ "./src/js/lib/input/keyboard-input-mgr.js");
 
 class PlayerApp {
   constructor(config) {
@@ -4367,6 +4370,31 @@ class PlayerApp {
       backgroundColor: 0xffffff,
     });
     this.$pixiWrapper.append(this.pixiApp.view);
+
+    this.townView = new TownView(this.config);
+    this.pixiApp.stage.addChild(this.townView.display);
+    this.pcView = new PCView(this.config);
+    this.townView.display.addChild(this.pcView.display);
+
+    this.keyboardInputMgr = new KeyboardInputMgr();
+    this.keyboardInputMgr.addListeners();
+
+    window.townView = this.townView.display;
+    window.townOffset = { x: 0, y: 0};
+
+    this.pixiApp.ticker.add((time) => {
+      const { x, y } = this.keyboardInputMgr.getDirection();
+      this.pcView.speed.x = x * 10;
+      this.pcView.speed.y = y * 10;
+      this.pcView.animate(time);
+
+      // Set the town view's pivot so the PC is always centered on the screen,
+      // but don't let the pivot go off the edge of the town
+      this.townView.display.pivot.set(
+        Math.max(0, Math.min(this.pcView.display.x - PlayerApp.APP_WIDTH / 2, this.townView.townSize.width - PlayerApp.APP_WIDTH)),
+        Math.max(0, Math.min(this.pcView.display.y - PlayerApp.APP_HEIGHT / 2, this.townView.townSize.height - PlayerApp.APP_HEIGHT)),
+      );
+    });
   }
 
   resize() {
@@ -4412,6 +4440,78 @@ module.exports = PlayerApp;
     return this;
   };
 }(jQuery));
+
+
+/***/ }),
+
+/***/ "./src/js/lib/input/keyboard-input-mgr.js":
+/*!************************************************!*\
+  !*** ./src/js/lib/input/keyboard-input-mgr.js ***!
+  \************************************************/
+/***/ ((module) => {
+
+class KeyboardInputMgr {
+  constructor() {
+    this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.handleKeyUp = this.handleKeyUp.bind(this);
+    this.pressed = {
+      up: false,
+      down: false,
+      left: false,
+      right: false,
+    };
+  }
+
+  addListeners() {
+    $(document).on('keydown', this.handleKeyDown);
+    $(document).on('keyup', this.handleKeyUp);
+  }
+
+  removeListeners() {
+    $(document).off('keydown', this.handleKeyDown);
+    $(document).off('keyup', this.handleKeyUp);
+  }
+
+  handleKeyDown(event) {
+    // Read the arrow keys and the spacebar
+    if (event.keyCode === 37) {
+      this.pressed.left = true;
+    } else if (event.keyCode === 38) {
+      this.pressed.up = true;
+    } else if (event.keyCode === 39) {
+      this.pressed.right = true;
+    } else if (event.keyCode === 40) {
+      this.pressed.down = true;
+    } else if (event.keyCode === 32) {
+      this.pressed.space = true;
+    }
+  }
+
+  handleKeyUp(event) {
+    // Read the arrow keys
+    if (event.keyCode === 37) {
+      this.pressed.left = false;
+    } else if (event.keyCode === 38) {
+      this.pressed.up = false;
+    } else if (event.keyCode === 39) {
+      this.pressed.right = false;
+    } else if (event.keyCode === 40) {
+      this.pressed.down = false;
+    } else if (event.keyCode === 32) {
+      this.pressed.space = false;
+    }
+  }
+
+  getDirection() {
+    return {
+      x: (this.pressed.right ? 1 : 0) - (this.pressed.left ? 1 : 0),
+      y: (this.pressed.down ? 1 : 0) - (this.pressed.up ? 1 : 0),
+      action: this.pressed.space,
+    };
+  }
+}
+
+module.exports = KeyboardInputMgr;
 
 
 /***/ }),
@@ -4498,6 +4598,88 @@ function showFatalError(text, error) {
 module.exports = showFatalError;
 
 
+/***/ }),
+
+/***/ "./src/js/lib/views/pc-view.js":
+/*!*************************************!*\
+  !*** ./src/js/lib/views/pc-view.js ***!
+  \*************************************/
+/***/ ((module) => {
+
+/* globals PIXI */
+
+class PCView {
+  constructor(config) {
+    this.config = config;
+    this.display = new PIXI.Graphics();
+    this.display.beginFill(new PIXI.Color('#27a6a8'));
+    this.display.drawRect(0, 0, 64, 128);
+    this.display.endFill();
+
+    this.speed = {
+      x: 0,
+      y: 0,
+    };
+  }
+
+  animate(time) {
+    const parent = this.display.parent;
+    const newX = this.display.x + this.speed.x * time;
+    const newY = this.display.y + this.speed.y * time;
+    // Clamp the position to the parent's bounds
+    this.display.x = Math.max(0, Math.min(newX, parent.width - this.display.width));
+    this.display.y = Math.max(0, Math.min(newY, parent.height - this.display.height));
+  }
+}
+
+module.exports = PCView;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/views/town-view.js":
+/*!***************************************!*\
+  !*** ./src/js/lib/views/town-view.js ***!
+  \***************************************/
+/***/ ((module) => {
+
+/* globals PIXI */
+class TownView {
+  constructor(config) {
+    this.config = config;
+    this.display = new PIXI.Container();
+
+    // Temporary initialization
+    this.townSize = {
+      width: 1024 * 4,
+      height: 768 * 3,
+    };
+    // Create a checkerboard pattern on the display
+    // First fill the full background with a color
+    const checkerboard = new PIXI.Graphics();
+    checkerboard.beginFill(new PIXI.Color('#dbf6c9'));
+    checkerboard.drawRect(0, 0, this.townSize.width, this.townSize.height);
+    checkerboard.endFill();
+    const squareSize = 256;
+    const squareColor = new PIXI.Color('#e34747');
+    // Draw the squares
+    for (let x = 0; x < this.townSize.width; x += squareSize) {
+      for (let y = 0; y < this.townSize.height; y += squareSize) {
+        // Only draw squares on the checkerboard pattern
+        if ((x / squareSize) % 2 === (y / squareSize) % 2) {
+          checkerboard.beginFill(squareColor);
+          checkerboard.drawRect(x, y, squareSize, squareSize);
+          checkerboard.endFill();
+        }
+      }
+    }
+    this.display.addChild(checkerboard);
+  }
+}
+
+module.exports = TownView;
+
+
 /***/ })
 
 /******/ 	});
@@ -4572,4 +4754,4 @@ cfgLoader.load([
 
 /******/ })()
 ;
-//# sourceMappingURL=default.4fc10445c52e67bbdb3c.js.map
+//# sourceMappingURL=default.2c1681f9b2e3f451c07f.js.map
