@@ -1,14 +1,38 @@
 /* globals PIXI */
 class TownView {
-  constructor(config) {
+  constructor(config, textures) {
     this.config = config;
+    this.textures = textures;
     this.display = new PIXI.Container();
 
     // Temporary initialization
     this.townSize = {
-      width: 1024 * 4,
-      height: 768 * 3,
+      width: 1024 * 8,
+      height: 768 * 6,
     };
+
+    this.background = PIXI.Sprite.from(this.textures['town-bg']);
+    this.background.width = this.townSize.width;
+    this.background.height = this.townSize.height;
+    this.display.addChild(this.background);
+
+    this.collisionRenderer = new PIXI.CanvasRenderer({
+      width: this.townSize.width, height: this.townSize.height,
+    });
+    this.collisionTree = new PIXI.Container();
+    this.baseCollisionMap = PIXI.Sprite.from(this.textures['town-collmap']);
+    this.baseCollisionMap.width = this.townSize.width;
+    this.baseCollisionMap.height = this.townSize.height;
+    this.collisionTree.addChild(this.baseCollisionMap);
+    this.collisionTree.renderCanvas(this.collisionRenderer);
+    this.collisionMap = this.collisionRenderer.view
+      .getContext('2d')
+      .getImageData(0, 0, this.townSize.width, this.townSize.height).data;
+
+    window.isWalkable = this.isWalkable.bind(this);
+    window.collMap = this.collisionMap;
+    // this.display.addChild(this.baseCollisionMap);
+
     // Create a checkerboard pattern on the display
     // First fill the full background with a color
     const checkerboard = new PIXI.Graphics();
@@ -28,7 +52,16 @@ class TownView {
         }
       }
     }
-    this.display.addChild(checkerboard);
+    // this.display.addChild(checkerboard);
+  }
+
+  async loadAssets() {
+    this.assets = await PIXI.Assets.load();
+  }
+
+  isWalkable(x, y) {
+    // todo: make a map that's 1byte per pixel instead of 4
+    return this.collisionMap[y * this.townSize.width * 4 + x * 4] == 0;
   }
 }
 

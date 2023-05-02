@@ -1,0 +1,8 @@
+textures:
+  bundles:
+    - name: 'town-view'
+      assets:
+        - name: 'town-bg'
+          srcs: 'draft-town-bg.jpg'
+        - name: 'town-collmap'
+          srcs: 'draft-town-collmap.png'

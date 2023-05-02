@@ -13,7 +13,9 @@ class PlayerApp {
     this.$pixiWrapper = $('<div></div>')
       .addClass('pixi-wrapper')
       .appendTo(this.$element);
+  }
 
+  async init() {
     this.pixiApp = new PIXI.Application({
       // todo: get these from config or constants
       width: PlayerApp.APP_WIDTH,
@@ -22,9 +24,11 @@ class PlayerApp {
     });
     this.$pixiWrapper.append(this.pixiApp.view);
 
-    this.townView = new TownView(this.config);
+    await this.loadTextures();
+
+    this.townView = new TownView(this.config, this.textures);
     this.pixiApp.stage.addChild(this.townView.display);
-    this.pcView = new PCView(this.config);
+    this.pcView = new PCView(this.config, this.townView);
     this.townView.display.addChild(this.pcView.display);
 
     this.keyboardInputMgr = new KeyboardInputMgr();
@@ -46,6 +50,17 @@ class PlayerApp {
         Math.max(0, Math.min(this.pcView.display.y - PlayerApp.APP_HEIGHT / 2, this.townView.townSize.height - PlayerApp.APP_HEIGHT)),
       );
     });
+
+    return this;
+  }
+
+  async loadTextures() {
+    PIXI.Assets.init({
+      basePath: './static/textures',
+      manifest: this.config.textures,
+    });
+
+    this.textures = await PIXI.Assets.loadBundle('town-view');
   }
 
   resize() {

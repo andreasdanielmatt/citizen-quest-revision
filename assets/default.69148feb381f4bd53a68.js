@@ -4362,7 +4362,9 @@ class PlayerApp {
     this.$pixiWrapper = $('<div></div>')
       .addClass('pixi-wrapper')
       .appendTo(this.$element);
+  }
 
+  async init() {
     this.pixiApp = new PIXI.Application({
       // todo: get these from config or constants
       width: PlayerApp.APP_WIDTH,
@@ -4371,9 +4373,11 @@ class PlayerApp {
     });
     this.$pixiWrapper.append(this.pixiApp.view);
 
-    this.townView = new TownView(this.config);
+    await this.loadTextures();
+
+    this.townView = new TownView(this.config, this.textures);
     this.pixiApp.stage.addChild(this.townView.display);
-    this.pcView = new PCView(this.config);
+    this.pcView = new PCView(this.config, this.townView);
     this.townView.display.addChild(this.pcView.display);
 
     this.keyboardInputMgr = new KeyboardInputMgr();
@@ -4395,6 +4399,17 @@ class PlayerApp {
         Math.max(0, Math.min(this.pcView.display.y - PlayerApp.APP_HEIGHT / 2, this.townView.townSize.height - PlayerApp.APP_HEIGHT)),
       );
     });
+
+    return this;
+  }
+
+  async loadTextures() {
+    PIXI.Assets.init({
+      basePath: './static/textures',
+      manifest: this.config.textures,
+    });
+
+    this.textures = await PIXI.Assets.loadBundle('town-view');
   }
 
   resize() {
@@ -4609,26 +4624,99 @@ module.exports = showFatalError;
 /* globals PIXI */
 
 class PCView {
-  constructor(config) {
+  constructor(config, townView) {
     this.config = config;
+    this.townView = townView;
     this.display = new PIXI.Graphics();
     this.display.beginFill(new PIXI.Color('#27a6a8'));
     this.display.drawRect(0, 0, 64, 128);
     this.display.endFill();
+    window.pc = this;
 
     this.speed = {
       x: 0,
       y: 0,
     };
+
+    // Temporary initialization
+      this.spawnPoint = { x: 3462, y: 4100 };
+    this.display.position = this.spawnPoint;
   }
 
   animate(time) {
-    const parent = this.display.parent;
-    const newX = this.display.x + this.speed.x * time;
-    const newY = this.display.y + this.speed.y * time;
+    const { parent } = this.display;
+    let newX;
+    let newY;
+    let furthestX = this.display.x + this.speed.x * time;
+    let furthestY = this.display.y + this.speed.y * time;
+
     // Clamp the position to the parent's bounds
-    this.display.x = Math.max(0, Math.min(newX, parent.width - this.display.width));
-    this.display.y = Math.max(0, Math.min(newY, parent.height - this.display.height));
+    furthestX = Math.max(0, Math.min(furthestX, parent.width - this.display.width));
+    furthestY = Math.max(0, Math.min(furthestY, parent.height - this.display.height));
+
+    // Collisions are checked on a per-pixel basis, so we only need to check
+    // if the player has moved to a new pixel
+    if (Math.floor(furthestX) !== Math.floor(this.display.x)
+      || Math.floor(furthestY) !== Math.floor(this.display.y)) {
+      // Check for collisions
+      const collisionPoints = this.collisionPoints();
+      newX = this.display.x;
+      newY = this.display.y;
+      const deltaX = furthestX - this.display.x;
+      const deltaY = furthestY - this.display.y;
+      const steps = Math.max(Math.abs(deltaX), Math.abs(deltaY));
+      const stepX = deltaX / steps;
+      const stepY = deltaY / steps;
+      let collidedX = false;
+      let collidedY = false;
+      for (let i = 0; !(collidedX && collidedY) && i < steps; i += 1) {
+        const candidateX = newX + stepX;
+        const candidateY = newY + stepY;
+        for (let j = 0; !(collidedX && collidedY) && j < collisionPoints.length; j += 1) {
+          if (!this.townView.isWalkable(
+            Math.floor(newX + collisionPoints[j].x),
+            Math.floor(candidateY + collisionPoints[j].y)
+          )) {
+            collidedY = true;
+          }
+          if (!this.townView.isWalkable(
+            Math.floor(candidateX + collisionPoints[j].x),
+            Math.floor(newY + collisionPoints[j].y)
+          )) {
+            collidedX = true;
+          }
+          if (!collidedX && !collidedY && !this.townView.isWalkable(
+            Math.floor(candidateX + collisionPoints[j].x),
+            Math.floor(candidateY + collisionPoints[j].y)
+          )) {
+            collidedX = true;
+            collidedY = true;
+          }
+        }
+        newX = collidedX ? newX : candidateX;
+        newY = collidedY ? newY : candidateY;
+      }
+    } else {
+      newX = furthestX;
+      newY = furthestY;
+    }
+
+    this.display.x = newX;
+    this.display.y = newY;
+  }
+
+  collisionPoints() {
+    // The collisions are only checked for two points at the baseline of the PC,
+    return [
+      {
+        x: 0,
+        y: this.display.height,
+      },
+      {
+        x: this.display.width,
+        y: this.display.height,
+      },
+    ];
   }
 }
 
@@ -4645,15 +4733,39 @@ module.exports = PCView;
 
 /* globals PIXI */
 class TownView {
-  constructor(config) {
+  constructor(config, textures) {
     this.config = config;
+    this.textures = textures;
     this.display = new PIXI.Container();
 
     // Temporary initialization
     this.townSize = {
-      width: 1024 * 4,
-      height: 768 * 3,
+      width: 1024 * 8,
+      height: 768 * 6,
     };
+
+    this.background = PIXI.Sprite.from(this.textures['town-bg']);
+    this.background.width = this.townSize.width;
+    this.background.height = this.townSize.height;
+    this.display.addChild(this.background);
+
+    this.collisionRenderer = new PIXI.CanvasRenderer({
+      width: this.townSize.width, height: this.townSize.height,
+    });
+    this.collisionTree = new PIXI.Container();
+    this.baseCollisionMap = PIXI.Sprite.from(this.textures['town-collmap']);
+    this.baseCollisionMap.width = this.townSize.width;
+    this.baseCollisionMap.height = this.townSize.height;
+    this.collisionTree.addChild(this.baseCollisionMap);
+    this.collisionTree.renderCanvas(this.collisionRenderer);
+    this.collisionMap = this.collisionRenderer.view
+      .getContext('2d')
+      .getImageData(0, 0, this.townSize.width, this.townSize.height).data;
+
+    window.isWalkable = this.isWalkable.bind(this);
+    window.collMap = this.collisionMap;
+    // this.display.addChild(this.baseCollisionMap);
+
     // Create a checkerboard pattern on the display
     // First fill the full background with a color
     const checkerboard = new PIXI.Graphics();
@@ -4673,7 +4785,16 @@ class TownView {
         }
       }
     }
-    this.display.addChild(checkerboard);
+    // this.display.addChild(checkerboard);
+  }
+
+  async loadAssets() {
+    this.assets = await PIXI.Assets.load();
+  }
+
+  isWalkable(x, y) {
+    // todo: make a map that's 1byte per pixel instead of 4
+    return this.collisionMap[y * this.townSize.width * 4 + x * 4] == 0;
   }
 }
 
@@ -4736,6 +4857,7 @@ __webpack_require__(/*! ../sass/default.scss */ "./src/sass/default.scss");
 
 const cfgLoader = new CfgLoader(CfgReaderFetch, yaml.load);
 cfgLoader.load([
+  'config/textures.yml',
   'config/town.yml',
 ]).catch((err) => {
   showFatalError('Error loading configuration', err);
@@ -4743,6 +4865,8 @@ cfgLoader.load([
   console.error(err);
 }).then((config) => {
   const playerApp = new PlayerApp(config);
+  return playerApp.init();
+}).then((playerApp) => {
   $('[data-component="PlayerApp"]').replaceWith(playerApp.$element);
   playerApp.resize();
   $(window).on('resize', () => {
@@ -4754,4 +4878,4 @@ cfgLoader.load([
 
 /******/ })()
 ;
-//# sourceMappingURL=default.2c1681f9b2e3f451c07f.js.map
+//# sourceMappingURL=default.69148feb381f4bd53a68.js.map
