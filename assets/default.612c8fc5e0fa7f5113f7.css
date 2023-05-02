@@ -83,4 +83,39 @@ html.with-fatal-error body {
   overflow: hidden;
 }
 
-/*# sourceMappingURL=default.70963e3e8f2852b0a761.css.map*/
+.connection-state-view {
+  display: none;
+  pointer-events: none;
+  position: absolute;
+  width: 300px;
+  padding-top: 135px;
+  top: 50%;
+  left: 50%;
+  margin-top: -150px;
+  margin-left: -150px;
+  color: black;
+  font-size: 20px;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+}
+.connection-state-view.visible {
+  display: block;
+}
+.connection-state-view .connection-state-view-icon {
+  display: block;
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  top: 25px;
+  left: 100px;
+}
+.connection-state-view .connection-state-view-error {
+  font-weight: bold;
+}
+.connection-state-view .connection-state-view-status {
+  font-size: 0.85em;
+  margin-bottom: 1.2em;
+}
+
+/*# sourceMappingURL=default.612c8fc5e0fa7f5113f7.css.map*/

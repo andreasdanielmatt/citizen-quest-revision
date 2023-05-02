@@ -22,7 +22,13 @@ The clients, in the root directory, are:
 
 ## Configuration
 
-The .env file has configuration keys that affect the environment.
+The configuration files are in the `config` directory. The server has to be reloaded after any changes.
+Clients get the configuration from the server through the http API and have to be reloaded after
+the server to take any changes.
+
+You can override any of the configuration keys through a `settings.yml` file in the root directory.
+
+The .env file has other configuration keys that affect the environment.
 
 ## Server APIs
 

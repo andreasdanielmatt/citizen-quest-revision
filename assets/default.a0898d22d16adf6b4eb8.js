@@ -4406,9 +4406,6 @@ class PlayerApp {
     this.keyboardInputMgr.addListeners();
     this.keyboardInputMgr.addToggle('KeyD', () => { this.toggleStats(); });
 
-    window.townView = this.townView.display;
-    window.townOffset = { x: 0, y: 0 };
-
     this.pixiApp.ticker.add((time) => {
       this.stats.begin();
       const { x, y } = this.keyboardInputMgr.getDirection();
@@ -4922,4 +4919,4 @@ cfgLoader.load([
 
 /******/ })()
 ;
-//# sourceMappingURL=default.58615169b2b477978368.js.map
+//# sourceMappingURL=default.a0898d22d16adf6b4eb8.js.map

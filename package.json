@@ -7,7 +7,7 @@
     "type": "git",
     "url": "git+ssh://git@github.com/IMAGINARY/future-democracy.git"
   },
-  "author": "IMAGINARY <info@imaginary.org>",
+  "author": "Eric Londaits <eric.londaits@imaginary.org>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/IMAGINARY/future-democracy/issues"

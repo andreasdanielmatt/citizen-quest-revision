@@ -1,0 +1,52 @@
+openapi: 3.0.0
+info:
+  description: HTTP API for Future of Democracy server
+  version: 1.0.0
+  title: Future of Democracy Server HTTP API
+  contact:
+    email: eric.londaits@imaginary.org
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:4850
+    description: Default local server
+
+paths:
+  /config:
+    get:
+      summary: Get exhibit configuration
+      responses:
+        "200":
+          description: Returns the configuration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Config"
+
+components:
+  schemas:
+    Success:
+      type: object
+      properties:
+        status:
+          type: string
+          title: Operation status.
+          example: ok
+      required: [ status ]
+    Error:
+      type: object
+      properties:
+        status:
+          type: string
+          title: Operation status.
+          example: error
+        error:
+          type: string
+          title: Error description
+          example: Error description message
+      required: [ status, error ]
+    Config:
+      type: object
+      properties: { }
