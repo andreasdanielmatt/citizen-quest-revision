@@ -28,6 +28,7 @@ h1, h2, h3, h4, h5, h6 {
   margin: auto;
 }
 .player-app .pixi-wrapper {
+  position: relative;
   width: 100%;
   height: 100%;
   font-size: 0;
@@ -82,4 +83,4 @@ html.with-fatal-error body {
   overflow: hidden;
 }
 
-/*# sourceMappingURL=default.bc12b6b9e384b336cc80.css.map*/
+/*# sourceMappingURL=default.70963e3e8f2852b0a761.css.map*/

@@ -35,6 +35,11 @@ You can use [Swagger Editor](https://editor.swagger.io/) and the
 [AsyncAPI Playground](https://playground.asyncapi.io/) to format the respective specifications in
 a friendly format.
 
+## Debugging tools
+
+Press the 'd' key in the player app to put a stat panel on screen. Each press of 'd' toggles to a
+different panel.
+
 ## License
 
 Copyright (c) 2023 IMAGINARY gGmbH

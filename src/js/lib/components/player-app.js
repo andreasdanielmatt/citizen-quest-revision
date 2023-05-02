@@ -1,4 +1,5 @@
 /* globals PIXI */
+const Stats = require('stats.js');
 const TownView = require('../views/town-view');
 require('../helpers-web/fill-with-aspect');
 const PCView = require('../views/pc-view');
@@ -31,13 +32,21 @@ class PlayerApp {
     this.pcView = new PCView(this.config, this.townView);
     this.townView.display.addChild(this.pcView.display);
 
+    this.stats = Stats();
+    this.statsVisible = null;
+    this.stats.showPanel(null);
+    this.statsCount = 3;
+    this.$element.append(this.stats.dom);
+
     this.keyboardInputMgr = new KeyboardInputMgr();
     this.keyboardInputMgr.addListeners();
+    this.keyboardInputMgr.addToggle('KeyD', () => { this.toggleStats(); });
 
     window.townView = this.townView.display;
-    window.townOffset = { x: 0, y: 0};
+    window.townOffset = { x: 0, y: 0 };
 
     this.pixiApp.ticker.add((time) => {
+      this.stats.begin();
       const { x, y } = this.keyboardInputMgr.getDirection();
       this.pcView.speed.x = x * 10;
       this.pcView.speed.y = y * 10;
@@ -49,6 +58,7 @@ class PlayerApp {
         Math.max(0, Math.min(this.pcView.display.x - PlayerApp.APP_WIDTH / 2, this.townView.townSize.width - PlayerApp.APP_WIDTH)),
         Math.max(0, Math.min(this.pcView.display.y - PlayerApp.APP_HEIGHT / 2, this.townView.townSize.height - PlayerApp.APP_HEIGHT)),
       );
+      this.stats.end();
     });
 
     return this;
@@ -65,6 +75,18 @@ class PlayerApp {
 
   resize() {
     this.$element.fillWithAspect(PlayerApp.APP_WIDTH / PlayerApp.APP_HEIGHT);
+  }
+
+  toggleStats() {
+    if (this.statsVisible === null) {
+      this.statsVisible = 0;
+    } else {
+      this.statsVisible += 1;
+      if (this.statsVisible >= this.statsCount) {
+        this.statsVisible = null;
+      }
+    }
+    this.stats.showPanel(this.statsVisible);
   }
 }
 

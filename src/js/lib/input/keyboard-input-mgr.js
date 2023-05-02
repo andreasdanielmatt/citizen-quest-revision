@@ -8,6 +8,7 @@ class KeyboardInputMgr {
       left: false,
       right: false,
     };
+    this.toggles = {};
   }
 
   addListeners() {
@@ -22,30 +23,32 @@ class KeyboardInputMgr {
 
   handleKeyDown(event) {
     // Read the arrow keys and the spacebar
-    if (event.keyCode === 37) {
+    if (event.code === 'ArrowLeft') {
       this.pressed.left = true;
-    } else if (event.keyCode === 38) {
+    } else if (event.code === 'ArrowUp') {
       this.pressed.up = true;
-    } else if (event.keyCode === 39) {
+    } else if (event.code === 'ArrowRight') {
       this.pressed.right = true;
-    } else if (event.keyCode === 40) {
+    } else if (event.code === 'ArrowDown') {
       this.pressed.down = true;
-    } else if (event.keyCode === 32) {
+    } else if (event.code === 'Space') {
       this.pressed.space = true;
+    } else if (this.toggles[event.code]) {
+      this.toggles[event.code]();
     }
   }
 
   handleKeyUp(event) {
     // Read the arrow keys
-    if (event.keyCode === 37) {
+    if (event.code === 'ArrowLeft') {
       this.pressed.left = false;
-    } else if (event.keyCode === 38) {
+    } else if (event.code === 'ArrowUp') {
       this.pressed.up = false;
-    } else if (event.keyCode === 39) {
+    } else if (event.code === 'ArrowRight') {
       this.pressed.right = false;
-    } else if (event.keyCode === 40) {
+    } else if (event.code === 'ArrowDown') {
       this.pressed.down = false;
-    } else if (event.keyCode === 32) {
+    } else if (event.code === 'Space') {
       this.pressed.space = false;
     }
   }
@@ -56,6 +59,10 @@ class KeyboardInputMgr {
       y: (this.pressed.down ? 1 : 0) - (this.pressed.up ? 1 : 0),
       action: this.pressed.space,
     };
+  }
+
+  addToggle(code, callback) {
+    this.toggles[code] = callback;
   }
 }
 

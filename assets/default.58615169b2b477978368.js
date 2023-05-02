@@ -4341,6 +4341,21 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/stats.js/build/stats.min.js":
+/*!**************************************************!*\
+  !*** ./node_modules/stats.js/build/stats.min.js ***!
+  \**************************************************/
+/***/ (function(module) {
+
+// stats.js - http://github.com/mrdoob/stats.js
+(function(f,e){ true?module.exports=e():0})(this,function(){var f=function(){function e(a){c.appendChild(a.dom);return a}function u(a){for(var d=0;d<c.children.length;d++)c.children[d].style.display=d===a?"block":"none";l=a}var l=0,c=document.createElement("div");c.style.cssText="position:fixed;top:0;left:0;cursor:pointer;opacity:0.9;z-index:10000";c.addEventListener("click",function(a){a.preventDefault();
+u(++l%c.children.length)},!1);var k=(performance||Date).now(),g=k,a=0,r=e(new f.Panel("FPS","#0ff","#002")),h=e(new f.Panel("MS","#0f0","#020"));if(self.performance&&self.performance.memory)var t=e(new f.Panel("MB","#f08","#201"));u(0);return{REVISION:16,dom:c,addPanel:e,showPanel:u,begin:function(){k=(performance||Date).now()},end:function(){a++;var c=(performance||Date).now();h.update(c-k,200);if(c>g+1E3&&(r.update(1E3*a/(c-g),100),g=c,a=0,t)){var d=performance.memory;t.update(d.usedJSHeapSize/
+1048576,d.jsHeapSizeLimit/1048576)}return c},update:function(){k=this.end()},domElement:c,setMode:u}};f.Panel=function(e,f,l){var c=Infinity,k=0,g=Math.round,a=g(window.devicePixelRatio||1),r=80*a,h=48*a,t=3*a,v=2*a,d=3*a,m=15*a,n=74*a,p=30*a,q=document.createElement("canvas");q.width=r;q.height=h;q.style.cssText="width:80px;height:48px";var b=q.getContext("2d");b.font="bold "+9*a+"px Helvetica,Arial,sans-serif";b.textBaseline="top";b.fillStyle=l;b.fillRect(0,0,r,h);b.fillStyle=f;b.fillText(e,t,v);
+b.fillRect(d,m,n,p);b.fillStyle=l;b.globalAlpha=.9;b.fillRect(d,m,n,p);return{dom:q,update:function(h,w){c=Math.min(c,h);k=Math.max(k,h);b.fillStyle=l;b.globalAlpha=1;b.fillRect(0,0,r,m);b.fillStyle=f;b.fillText(g(h)+" "+e+" ("+g(c)+"-"+g(k)+")",t,v);b.drawImage(q,d+a,m,n-a,p,d,m,n-a,p);b.fillRect(d+n-a,m,a,p);b.fillStyle=l;b.globalAlpha=.9;b.fillRect(d+n-a,m,a,g((1-h/w)*p))}}};return f});
+
+
+/***/ }),
+
 /***/ "./src/js/lib/components/player-app.js":
 /*!*********************************************!*\
   !*** ./src/js/lib/components/player-app.js ***!
@@ -4348,6 +4363,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 /* globals PIXI */
+const Stats = __webpack_require__(/*! stats.js */ "./node_modules/stats.js/build/stats.min.js");
 const TownView = __webpack_require__(/*! ../views/town-view */ "./src/js/lib/views/town-view.js");
 __webpack_require__(/*! ../helpers-web/fill-with-aspect */ "./src/js/lib/helpers-web/fill-with-aspect.js");
 const PCView = __webpack_require__(/*! ../views/pc-view */ "./src/js/lib/views/pc-view.js");
@@ -4380,13 +4396,21 @@ class PlayerApp {
     this.pcView = new PCView(this.config, this.townView);
     this.townView.display.addChild(this.pcView.display);
 
+    this.stats = Stats();
+    this.statsVisible = null;
+    this.stats.showPanel(null);
+    this.statsCount = 3;
+    this.$element.append(this.stats.dom);
+
     this.keyboardInputMgr = new KeyboardInputMgr();
     this.keyboardInputMgr.addListeners();
+    this.keyboardInputMgr.addToggle('KeyD', () => { this.toggleStats(); });
 
     window.townView = this.townView.display;
-    window.townOffset = { x: 0, y: 0};
+    window.townOffset = { x: 0, y: 0 };
 
     this.pixiApp.ticker.add((time) => {
+      this.stats.begin();
       const { x, y } = this.keyboardInputMgr.getDirection();
       this.pcView.speed.x = x * 10;
       this.pcView.speed.y = y * 10;
@@ -4398,6 +4422,7 @@ class PlayerApp {
         Math.max(0, Math.min(this.pcView.display.x - PlayerApp.APP_WIDTH / 2, this.townView.townSize.width - PlayerApp.APP_WIDTH)),
         Math.max(0, Math.min(this.pcView.display.y - PlayerApp.APP_HEIGHT / 2, this.townView.townSize.height - PlayerApp.APP_HEIGHT)),
       );
+      this.stats.end();
     });
 
     return this;
@@ -4414,6 +4439,18 @@ class PlayerApp {
 
   resize() {
     this.$element.fillWithAspect(PlayerApp.APP_WIDTH / PlayerApp.APP_HEIGHT);
+  }
+
+  toggleStats() {
+    if (this.statsVisible === null) {
+      this.statsVisible = 0;
+    } else {
+      this.statsVisible += 1;
+      if (this.statsVisible >= this.statsCount) {
+        this.statsVisible = null;
+      }
+    }
+    this.stats.showPanel(this.statsVisible);
   }
 }
 
@@ -4475,6 +4512,7 @@ class KeyboardInputMgr {
       left: false,
       right: false,
     };
+    this.toggles = {};
   }
 
   addListeners() {
@@ -4489,30 +4527,32 @@ class KeyboardInputMgr {
 
   handleKeyDown(event) {
     // Read the arrow keys and the spacebar
-    if (event.keyCode === 37) {
+    if (event.code === 'ArrowLeft') {
       this.pressed.left = true;
-    } else if (event.keyCode === 38) {
+    } else if (event.code === 'ArrowUp') {
       this.pressed.up = true;
-    } else if (event.keyCode === 39) {
+    } else if (event.code === 'ArrowRight') {
       this.pressed.right = true;
-    } else if (event.keyCode === 40) {
+    } else if (event.code === 'ArrowDown') {
       this.pressed.down = true;
-    } else if (event.keyCode === 32) {
+    } else if (event.code === 'Space') {
       this.pressed.space = true;
+    } else if (this.toggles[event.code]) {
+      this.toggles[event.code]();
     }
   }
 
   handleKeyUp(event) {
     // Read the arrow keys
-    if (event.keyCode === 37) {
+    if (event.code === 'ArrowLeft') {
       this.pressed.left = false;
-    } else if (event.keyCode === 38) {
+    } else if (event.code === 'ArrowUp') {
       this.pressed.up = false;
-    } else if (event.keyCode === 39) {
+    } else if (event.code === 'ArrowRight') {
       this.pressed.right = false;
-    } else if (event.keyCode === 40) {
+    } else if (event.code === 'ArrowDown') {
       this.pressed.down = false;
-    } else if (event.keyCode === 32) {
+    } else if (event.code === 'Space') {
       this.pressed.space = false;
     }
   }
@@ -4523,6 +4563,10 @@ class KeyboardInputMgr {
       y: (this.pressed.down ? 1 : 0) - (this.pressed.up ? 1 : 0),
       action: this.pressed.space,
     };
+  }
+
+  addToggle(code, callback) {
+    this.toggles[code] = callback;
   }
 }
 
@@ -4823,7 +4867,7 @@ module.exports = TownView;
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
 /******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
@@ -4878,4 +4922,4 @@ cfgLoader.load([
 
 /******/ })()
 ;
-//# sourceMappingURL=default.69148feb381f4bd53a68.js.map
+//# sourceMappingURL=default.58615169b2b477978368.js.map
