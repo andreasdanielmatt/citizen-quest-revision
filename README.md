@@ -18,7 +18,13 @@ Start the server by running `npm run start` in the `server` directory.
 
 The clients, in the root directory, are:
 
-- `index.html`: Default client.
+- `index.html`: Demo/test client .
+- `player.html`: Player station client.
+
+## Query strings
+
+The `player.html` client accepts the following query string parameters:
+- `p`: Player ID. Defaults to 1.
 
 ## Configuration
 

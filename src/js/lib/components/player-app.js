@@ -4,10 +4,12 @@ const TownView = require('../views/town-view');
 require('../helpers-web/fill-with-aspect');
 const PCView = require('../views/pc-view');
 const KeyboardInputMgr = require('../input/keyboard-input-mgr');
+const PlayerCharacter = require('../model/player-character');
 
 class PlayerApp {
-  constructor(config) {
+  constructor(config, playerId) {
     this.config = config;
+    this.playerId = playerId;
     this.$element = $('<div></div>')
       .addClass('player-app');
 
@@ -29,7 +31,8 @@ class PlayerApp {
 
     this.townView = new TownView(this.config, this.textures);
     this.pixiApp.stage.addChild(this.townView.display);
-    this.pcView = new PCView(this.config, this.townView);
+    this.pc = new PlayerCharacter(this.config, this.playerId);
+    this.pcView = new PCView(this.config, this.pc, this.townView);
     this.townView.display.addChild(this.pcView.display);
 
     this.stats = Stats();
@@ -45,8 +48,7 @@ class PlayerApp {
     this.pixiApp.ticker.add((time) => {
       this.stats.begin();
       const { x, y } = this.keyboardInputMgr.getDirection();
-      this.pcView.speed.x = x * 10;
-      this.pcView.speed.y = y * 10;
+      this.pc.setSpeed(x * 10, y * 10);
       this.pcView.animate(time);
 
       // Set the town view's pivot so the PC is always centered on the screen,

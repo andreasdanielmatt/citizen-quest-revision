@@ -7,6 +7,7 @@ require('../sass/default.scss');
 
 const cfgLoader = new CfgLoader(CfgReaderFetch, yaml.load);
 cfgLoader.load([
+  'config/players.yml',
   'config/textures.yml',
   'config/town.yml',
 ]).catch((err) => {
@@ -14,7 +15,7 @@ cfgLoader.load([
   console.error('Error loading configuration');
   console.error(err);
 }).then((config) => {
-  const playerApp = new PlayerApp(config);
+  const playerApp = new PlayerApp(config, '1');
   return playerApp.init();
 }).then((playerApp) => {
   $('[data-component="PlayerApp"]').replaceWith(playerApp.$element);

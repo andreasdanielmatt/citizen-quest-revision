@@ -4,6 +4,9 @@ const showFatalError = require('./lib/loader/show-fatal-error');
 require('../sass/default.scss');
 const PlayerApp = require('./lib/components/player-app');
 
+const urlParams = new URLSearchParams(window.location.search);
+const playerId = urlParams.get('p') || '1';
+
 fetch(`${process.env.SERVER_HTTP_URI}/config`, { cache: 'no-store' })
   .then((response) => {
     if (!response.ok) {
@@ -12,12 +15,13 @@ fetch(`${process.env.SERVER_HTTP_URI}/config`, { cache: 'no-store' })
     return response.json();
   })
   .catch((err) => {
-    showFatalError(`Error loading configuration from ${process.env.SERVER_HTTP_URI}`, err);
-    console.error(`Error loading configuration from ${process.env.SERVER_HTTP_URI}`);
+    console.log(err);
+    showFatalError(`Error fetching configuration from ${process.env.SERVER_HTTP_URI}`, err);
+    console.error(`Error fetching configuration from ${process.env.SERVER_HTTP_URI}`);
     throw err;
   })
   .then((config) => {
-    const playerApp = new PlayerApp(config);
+    const playerApp = new PlayerApp(config, playerId);
     return playerApp.init();
   })
   .then((playerApp) => {

@@ -1,31 +1,23 @@
 /* globals PIXI */
 
 class PCView {
-  constructor(config, townView) {
+  constructor(config, pc, townView) {
     this.config = config;
+    this.pc = pc;
     this.townView = townView;
     this.display = new PIXI.Graphics();
-    this.display.beginFill(new PIXI.Color('#27a6a8'));
+    this.display.beginFill(new PIXI.Color(this.pc.props.color || '#61dcbd'));
     this.display.drawRect(0, 0, 64, 128);
     this.display.endFill();
-    window.pc = this;
-
-    this.speed = {
-      x: 0,
-      y: 0,
-    };
-
-    // Temporary initialization
-      this.spawnPoint = { x: 3462, y: 4100 };
-    this.display.position = this.spawnPoint;
+    this.display.position = this.pc.position;
   }
 
   animate(time) {
     const { parent } = this.display;
     let newX;
     let newY;
-    let furthestX = this.display.x + this.speed.x * time;
-    let furthestY = this.display.y + this.speed.y * time;
+    let furthestX = this.pc.position.x + this.pc.speed.x * time;
+    let furthestY = this.pc.position.y + this.pc.speed.y * time;
 
     // Clamp the position to the parent's bounds
     furthestX = Math.max(0, Math.min(furthestX, parent.width - this.display.width));
@@ -33,14 +25,14 @@ class PCView {
 
     // Collisions are checked on a per-pixel basis, so we only need to check
     // if the player has moved to a new pixel
-    if (Math.floor(furthestX) !== Math.floor(this.display.x)
-      || Math.floor(furthestY) !== Math.floor(this.display.y)) {
+    if (Math.floor(furthestX) !== Math.floor(this.pc.position.x)
+      || Math.floor(furthestY) !== Math.floor(this.pc.position.y)) {
       // Check for collisions
       const collisionPoints = this.collisionPoints();
-      newX = this.display.x;
-      newY = this.display.y;
-      const deltaX = furthestX - this.display.x;
-      const deltaY = furthestY - this.display.y;
+      newX = this.pc.position.x;
+      newY = this.pc.position.y;
+      const deltaX = furthestX - this.pc.position.x;
+      const deltaY = furthestY - this.pc.position.y;
       const steps = Math.max(Math.abs(deltaX), Math.abs(deltaY));
       const stepX = deltaX / steps;
       const stepY = deltaY / steps;
@@ -78,8 +70,8 @@ class PCView {
       newY = furthestY;
     }
 
-    this.display.x = newX;
-    this.display.y = newY;
+    this.pc.setPosition(newX, newY);
+    this.display.position = this.pc.position;
   }
 
   collisionPoints() {

@@ -1,0 +1,10 @@
+players:
+  1:
+    color: '#27a6a8'
+    spawn: { x: 3462, y: 4100}
+  2:
+    color: '#d331a3'
+    spawn: { x: 3512, y: 4100}
+  3:
+    color: '#ea7a24'
+    spawn: { x: 3562, y: 4100 }

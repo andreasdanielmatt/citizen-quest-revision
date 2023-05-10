@@ -20,6 +20,7 @@ const { port, settingsFile } = yargs(hideBin(process.argv))
 
 const cfgLoader = new CfgLoader(CfgReaderFile, yaml.load);
 cfgLoader.load([
+  '../config/players.yml',
   '../config/textures.yml',
   '../config/town.yml',
   settingsFile,

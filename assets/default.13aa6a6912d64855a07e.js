@@ -4368,10 +4368,12 @@ const TownView = __webpack_require__(/*! ../views/town-view */ "./src/js/lib/vie
 __webpack_require__(/*! ../helpers-web/fill-with-aspect */ "./src/js/lib/helpers-web/fill-with-aspect.js");
 const PCView = __webpack_require__(/*! ../views/pc-view */ "./src/js/lib/views/pc-view.js");
 const KeyboardInputMgr = __webpack_require__(/*! ../input/keyboard-input-mgr */ "./src/js/lib/input/keyboard-input-mgr.js");
+const PlayerCharacter = __webpack_require__(/*! ../model/player-character */ "./src/js/lib/model/player-character.js");
 
 class PlayerApp {
-  constructor(config) {
+  constructor(config, playerId) {
     this.config = config;
+    this.playerId = playerId;
     this.$element = $('<div></div>')
       .addClass('player-app');
 
@@ -4393,7 +4395,8 @@ class PlayerApp {
 
     this.townView = new TownView(this.config, this.textures);
     this.pixiApp.stage.addChild(this.townView.display);
-    this.pcView = new PCView(this.config, this.townView);
+    this.pc = new PlayerCharacter(this.config, this.playerId);
+    this.pcView = new PCView(this.config, this.pc, this.townView);
     this.townView.display.addChild(this.pcView.display);
 
     this.stats = Stats();
@@ -4409,8 +4412,7 @@ class PlayerApp {
     this.pixiApp.ticker.add((time) => {
       this.stats.begin();
       const { x, y } = this.keyboardInputMgr.getDirection();
-      this.pcView.speed.x = x * 10;
-      this.pcView.speed.y = y * 10;
+      this.pc.setSpeed(x * 10, y * 10);
       this.pcView.animate(time);
 
       // Set the town view's pivot so the PC is always centered on the screen,
@@ -4489,6 +4491,21 @@ module.exports = PlayerApp;
     return this;
   };
 }(jQuery));
+
+
+/***/ }),
+
+/***/ "./src/js/lib/helpers/clone.js":
+/*!*************************************!*\
+  !*** ./src/js/lib/helpers/clone.js ***!
+  \*************************************/
+/***/ ((module) => {
+
+function clone(object) {
+  return JSON.parse(JSON.stringify(object));
+}
+
+module.exports = clone;
 
 
 /***/ }),
@@ -4656,6 +4673,44 @@ module.exports = showFatalError;
 
 /***/ }),
 
+/***/ "./src/js/lib/model/player-character.js":
+/*!**********************************************!*\
+  !*** ./src/js/lib/model/player-character.js ***!
+  \**********************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const clone = __webpack_require__(/*! ../helpers/clone */ "./src/js/lib/helpers/clone.js");
+
+class PlayerCharacter {
+  constructor(config, id) {
+    this.config = config;
+    this.id = id;
+    if (this.config.players[this.id] === undefined) {
+      throw new Error(`Attempted to initialize a player with id ${this.id}, which was not found in the config`);
+    }
+    this.props = clone(this.config.players[this.id]);
+
+    this.position = { x: 0, y: 0 };
+    this.speed = { x: 0, y: 0 };
+    this.setPosition(this.props.spawn.x, this.props.spawn.y);
+  }
+
+  setPosition(x, y) {
+    this.position.x = x;
+    this.position.y = y;
+  }
+
+  setSpeed(x, y) {
+    this.speed.x = x;
+    this.speed.y = y;
+  }
+}
+
+module.exports = PlayerCharacter;
+
+
+/***/ }),
+
 /***/ "./src/js/lib/views/pc-view.js":
 /*!*************************************!*\
   !*** ./src/js/lib/views/pc-view.js ***!
@@ -4665,31 +4720,23 @@ module.exports = showFatalError;
 /* globals PIXI */
 
 class PCView {
-  constructor(config, townView) {
+  constructor(config, pc, townView) {
     this.config = config;
+    this.pc = pc;
     this.townView = townView;
     this.display = new PIXI.Graphics();
-    this.display.beginFill(new PIXI.Color('#27a6a8'));
+    this.display.beginFill(new PIXI.Color(this.pc.props.color || '#61dcbd'));
     this.display.drawRect(0, 0, 64, 128);
     this.display.endFill();
-    window.pc = this;
-
-    this.speed = {
-      x: 0,
-      y: 0,
-    };
-
-    // Temporary initialization
-      this.spawnPoint = { x: 3462, y: 4100 };
-    this.display.position = this.spawnPoint;
+    this.display.position = this.pc.position;
   }
 
   animate(time) {
     const { parent } = this.display;
     let newX;
     let newY;
-    let furthestX = this.display.x + this.speed.x * time;
-    let furthestY = this.display.y + this.speed.y * time;
+    let furthestX = this.pc.position.x + this.pc.speed.x * time;
+    let furthestY = this.pc.position.y + this.pc.speed.y * time;
 
     // Clamp the position to the parent's bounds
     furthestX = Math.max(0, Math.min(furthestX, parent.width - this.display.width));
@@ -4697,14 +4744,14 @@ class PCView {
 
     // Collisions are checked on a per-pixel basis, so we only need to check
     // if the player has moved to a new pixel
-    if (Math.floor(furthestX) !== Math.floor(this.display.x)
-      || Math.floor(furthestY) !== Math.floor(this.display.y)) {
+    if (Math.floor(furthestX) !== Math.floor(this.pc.position.x)
+      || Math.floor(furthestY) !== Math.floor(this.pc.position.y)) {
       // Check for collisions
       const collisionPoints = this.collisionPoints();
-      newX = this.display.x;
-      newY = this.display.y;
-      const deltaX = furthestX - this.display.x;
-      const deltaY = furthestY - this.display.y;
+      newX = this.pc.position.x;
+      newY = this.pc.position.y;
+      const deltaX = furthestX - this.pc.position.x;
+      const deltaY = furthestY - this.pc.position.y;
       const steps = Math.max(Math.abs(deltaX), Math.abs(deltaY));
       const stepX = deltaX / steps;
       const stepY = deltaY / steps;
@@ -4742,8 +4789,8 @@ class PCView {
       newY = furthestY;
     }
 
-    this.display.x = newX;
-    this.display.y = newY;
+    this.pc.setPosition(newX, newY);
+    this.display.position = this.pc.position;
   }
 
   collisionPoints() {
@@ -4898,6 +4945,7 @@ __webpack_require__(/*! ../sass/default.scss */ "./src/sass/default.scss");
 
 const cfgLoader = new CfgLoader(CfgReaderFetch, yaml.load);
 cfgLoader.load([
+  'config/players.yml',
   'config/textures.yml',
   'config/town.yml',
 ]).catch((err) => {
@@ -4905,7 +4953,7 @@ cfgLoader.load([
   console.error('Error loading configuration');
   console.error(err);
 }).then((config) => {
-  const playerApp = new PlayerApp(config);
+  const playerApp = new PlayerApp(config, '1');
   return playerApp.init();
 }).then((playerApp) => {
   $('[data-component="PlayerApp"]').replaceWith(playerApp.$element);
@@ -4919,4 +4967,4 @@ cfgLoader.load([
 
 /******/ })()
 ;
-//# sourceMappingURL=default.a0898d22d16adf6b4eb8.js.map
+//# sourceMappingURL=default.13aa6a6912d64855a07e.js.map
