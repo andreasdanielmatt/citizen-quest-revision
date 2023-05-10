@@ -1,4 +1,8 @@
 players:
+  # <id>: // A unique id (integer) for the player
+  #   color: '#rrggbb' //  the color that identifies the player
+  #   spawn: { x: number, y: number } The spawn point of the player
+  #   enabled: true // Whether the player is enabled or not (defaults to true)
   1:
     color: '#27a6a8'
     spawn: { x: 3462, y: 4100}

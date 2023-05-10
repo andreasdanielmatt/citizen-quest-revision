@@ -31,8 +31,29 @@ fetch(`${process.env.SERVER_HTTP_URI}/config`, { cache: 'no-store' })
       playerApp.resize();
     });
 
+    let syncReceived = false;
     const connector = new ServerSocketConnector(process.env.SERVER_SOCKET_URI);
     connector.events.on('connect', () => {
+      syncReceived = true;
+    });
+    connector.events.on('sync', (message) => {
+      syncReceived = true;
+      Object.entries(message.players).forEach(([id, player]) => {
+        if (id !== playerId && playerApp.otherPcs[id]) {
+          if (player.position) {
+            playerApp.otherPcs[id].setPosition(player.position.x, player.position.y);
+          }
+          if (player.speed) {
+            playerApp.otherPcs[id].setSpeed(player.speed.x, player.speed.y);
+          }
+        }
+      });
+    });
+    playerApp.pixiApp.ticker.add(() => {
+      if (syncReceived) {
+        connector.sync(playerApp.pc);
+        syncReceived = false;
+      }
     });
     const connStateView = new ConnectionStateView(connector);
     $('body').append(connStateView.$element);

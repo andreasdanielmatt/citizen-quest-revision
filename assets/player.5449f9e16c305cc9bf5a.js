@@ -555,6 +555,11 @@ class PlayerApp {
   constructor(config, playerId) {
     this.config = config;
     this.playerId = playerId;
+    this.pc = new PlayerCharacter(this.config, playerId);
+    this.otherPcs = Object.fromEntries(Object.entries(this.config.players)
+      .filter(([id, player]) => (player.enabled === undefined || player.enabled) && id !== playerId)
+      .map(([id]) => [id, new PlayerCharacter(this.config, id)]));
+
     this.$element = $('<div></div>')
       .addClass('player-app');
 
@@ -576,9 +581,17 @@ class PlayerApp {
 
     this.townView = new TownView(this.config, this.textures);
     this.pixiApp.stage.addChild(this.townView.display);
-    this.pc = new PlayerCharacter(this.config, this.playerId);
     this.pcView = new PCView(this.config, this.pc, this.townView);
+    this.otherPcViews = Object.fromEntries(
+      Object.entries(this.otherPcs)
+        .map(([id, pc]) => [id, new PCView(this.config, pc, this.townView)])
+    );
+
     this.townView.display.addChild(this.pcView.display);
+    if (Object.values(this.otherPcViews).length > 0) {
+      this.townView.display.addChild(...Object.values(this.otherPcViews)
+        .map(pcView => pcView.display));
+    }
 
     this.stats = Stats();
     this.statsVisible = null;
@@ -595,6 +608,9 @@ class PlayerApp {
       const { x, y } = this.keyboardInputMgr.getDirection();
       this.pc.setSpeed(x * 10, y * 10);
       this.pcView.animate(time);
+      Object.entries(this.otherPcViews).forEach(([, pcView]) => {
+        pcView.display.position = pcView.pc.position;
+      });
 
       // Set the town view's pivot so the PC is always centered on the screen,
       // but don't let the pivot go off the edge of the town
@@ -1000,9 +1016,15 @@ class ServerSocketConnector {
 
   handleMessage(ev) {
     const message = JSON.parse(ev.data);
-    if (message.type === 'pong') {
+    if (message.type === 'sync') {
+      this.handleSync(message);
+    } else if (message.type === 'pong') {
       this.handlePong();
     }
+  }
+
+  handleSync(message) {
+    this.events.emit('sync', message);
   }
 
   handlePong() {
@@ -1054,6 +1076,21 @@ class ServerSocketConnector {
   ping() {
     this.send('ping');
     this.startPongTimeout();
+  }
+
+  sync(player = null) {
+    const message = {
+      type: 'sync',
+    };
+    if (player !== null) {
+      message.players = Object.fromEntries([[player.id,
+        {
+          position: player.position,
+          speed: player.speed,
+        },
+      ]]);
+    }
+    this.send(message);
   }
 }
 
@@ -1363,8 +1400,29 @@ fetch(`${"http://localhost:4850"}/config`, { cache: 'no-store' })
       playerApp.resize();
     });
 
+    let syncReceived = false;
     const connector = new ServerSocketConnector("ws://localhost:4850");
     connector.events.on('connect', () => {
+      syncReceived = true;
+    });
+    connector.events.on('sync', (message) => {
+      syncReceived = true;
+      Object.entries(message.players).forEach(([id, player]) => {
+        if (id !== playerId && playerApp.otherPcs[id]) {
+          if (player.position) {
+            playerApp.otherPcs[id].setPosition(player.position.x, player.position.y);
+          }
+          if (player.speed) {
+            playerApp.otherPcs[id].setSpeed(player.speed.x, player.speed.y);
+          }
+        }
+      });
+    });
+    playerApp.pixiApp.ticker.add(() => {
+      if (syncReceived) {
+        connector.sync(playerApp.pc);
+        syncReceived = false;
+      }
     });
     const connStateView = new ConnectionStateView(connector);
     $('body').append(connStateView.$element);
@@ -1377,4 +1435,4 @@ fetch(`${"http://localhost:4850"}/config`, { cache: 'no-store' })
 
 /******/ })()
 ;
-//# sourceMappingURL=player.dd9e63e03618e00e796d.js.map
+//# sourceMappingURL=player.5449f9e16c305cc9bf5a.js.map

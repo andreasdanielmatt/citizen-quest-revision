@@ -15,7 +15,14 @@ cfgLoader.load([
   console.error('Error loading configuration');
   console.error(err);
 }).then((config) => {
-  const playerApp = new PlayerApp(config, '1');
+  const playerId = '1';
+  // In this standalone app, disable all players except the first one.
+  Object.keys(config.players).forEach((id) => {
+    if (id !== playerId) {
+      config.players[id].enabled = false;
+    }
+  });
+  const playerApp = new PlayerApp(config, playerId);
   return playerApp.init();
 }).then((playerApp) => {
   $('[data-component="PlayerApp"]').replaceWith(playerApp.$element);

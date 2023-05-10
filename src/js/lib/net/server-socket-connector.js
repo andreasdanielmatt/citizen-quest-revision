@@ -81,9 +81,15 @@ class ServerSocketConnector {
 
   handleMessage(ev) {
     const message = JSON.parse(ev.data);
-    if (message.type === 'pong') {
+    if (message.type === 'sync') {
+      this.handleSync(message);
+    } else if (message.type === 'pong') {
       this.handlePong();
     }
+  }
+
+  handleSync(message) {
+    this.events.emit('sync', message);
   }
 
   handlePong() {
@@ -135,6 +141,21 @@ class ServerSocketConnector {
   ping() {
     this.send('ping');
     this.startPongTimeout();
+  }
+
+  sync(player = null) {
+    const message = {
+      type: 'sync',
+    };
+    if (player !== null) {
+      message.players = Object.fromEntries([[player.id,
+        {
+          position: player.position,
+          speed: player.speed,
+        },
+      ]]);
+    }
+    this.send(message);
   }
 }
 

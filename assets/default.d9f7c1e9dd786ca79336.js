@@ -4374,6 +4374,11 @@ class PlayerApp {
   constructor(config, playerId) {
     this.config = config;
     this.playerId = playerId;
+    this.pc = new PlayerCharacter(this.config, playerId);
+    this.otherPcs = Object.fromEntries(Object.entries(this.config.players)
+      .filter(([id, player]) => (player.enabled === undefined || player.enabled) && id !== playerId)
+      .map(([id]) => [id, new PlayerCharacter(this.config, id)]));
+
     this.$element = $('<div></div>')
       .addClass('player-app');
 
@@ -4395,9 +4400,17 @@ class PlayerApp {
 
     this.townView = new TownView(this.config, this.textures);
     this.pixiApp.stage.addChild(this.townView.display);
-    this.pc = new PlayerCharacter(this.config, this.playerId);
     this.pcView = new PCView(this.config, this.pc, this.townView);
+    this.otherPcViews = Object.fromEntries(
+      Object.entries(this.otherPcs)
+        .map(([id, pc]) => [id, new PCView(this.config, pc, this.townView)])
+    );
+
     this.townView.display.addChild(this.pcView.display);
+    if (Object.values(this.otherPcViews).length > 0) {
+      this.townView.display.addChild(...Object.values(this.otherPcViews)
+        .map(pcView => pcView.display));
+    }
 
     this.stats = Stats();
     this.statsVisible = null;
@@ -4414,6 +4427,9 @@ class PlayerApp {
       const { x, y } = this.keyboardInputMgr.getDirection();
       this.pc.setSpeed(x * 10, y * 10);
       this.pcView.animate(time);
+      Object.entries(this.otherPcViews).forEach(([, pcView]) => {
+        pcView.display.position = pcView.pc.position;
+      });
 
       // Set the town view's pivot so the PC is always centered on the screen,
       // but don't let the pivot go off the edge of the town
@@ -4953,7 +4969,14 @@ cfgLoader.load([
   console.error('Error loading configuration');
   console.error(err);
 }).then((config) => {
-  const playerApp = new PlayerApp(config, '1');
+  const playerId = '1';
+  // In this standalone app, disable all players except the first one.
+  Object.keys(config.players).forEach((id) => {
+    if (id !== playerId) {
+      config.players[id].enabled = false;
+    }
+  });
+  const playerApp = new PlayerApp(config, playerId);
   return playerApp.init();
 }).then((playerApp) => {
   $('[data-component="PlayerApp"]').replaceWith(playerApp.$element);
@@ -4967,4 +4990,4 @@ cfgLoader.load([
 
 /******/ })()
 ;
-//# sourceMappingURL=default.13aa6a6912d64855a07e.js.map
+//# sourceMappingURL=default.d9f7c1e9dd786ca79336.js.map
