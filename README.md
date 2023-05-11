@@ -25,6 +25,8 @@ The clients, in the root directory, are:
 
 The `player.html` client accepts the following query string parameters:
 - `p`: Player ID. Defaults to 1.
+- `s`: ID of the stats panel to show (0=fps, 1=memory, 2=render time, 3=ping). Defaults to none.
+  in platforms that can't report memory, 1 is render time and 2 is ping. Sorry.
 
 ## Configuration
 

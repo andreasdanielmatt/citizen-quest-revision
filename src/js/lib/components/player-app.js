@@ -92,6 +92,12 @@ class PlayerApp {
     this.$element.fillWithAspect(PlayerApp.APP_WIDTH / PlayerApp.APP_HEIGHT);
   }
 
+  addStats(panel) {
+    this.stats.addPanel(panel);
+    this.statsCount += 1;
+    this.stats.showPanel(null);
+  }
+
   toggleStats() {
     if (this.statsVisible === null) {
       this.statsVisible = 0;
@@ -102,6 +108,11 @@ class PlayerApp {
       }
     }
     this.stats.showPanel(this.statsVisible);
+  }
+
+  showStats(id) {
+    this.statsVisible = id;
+    this.stats.showPanel(id);
   }
 }
 

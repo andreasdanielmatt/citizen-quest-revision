@@ -637,6 +637,12 @@ class PlayerApp {
     this.$element.fillWithAspect(PlayerApp.APP_WIDTH / PlayerApp.APP_HEIGHT);
   }
 
+  addStats(panel) {
+    this.stats.addPanel(panel);
+    this.statsCount += 1;
+    this.stats.showPanel(null);
+  }
+
   toggleStats() {
     if (this.statsVisible === null) {
       this.statsVisible = 0;
@@ -647,6 +653,11 @@ class PlayerApp {
       }
     }
     this.stats.showPanel(this.statsVisible);
+  }
+
+  showStats(id) {
+    this.statsVisible = id;
+    this.stats.showPanel(id);
   }
 }
 
@@ -923,6 +934,41 @@ class ConnectionStateView {
 }
 
 module.exports = ConnectionStateView;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/net/ping-stats.js":
+/*!**************************************!*\
+  !*** ./src/js/lib/net/ping-stats.js ***!
+  \**************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const Stats = __webpack_require__(/*! stats.js */ "./node_modules/stats.js/build/stats.min.js");
+
+class PingStats {
+  constructor() {
+    this.panel = new Stats.Panel('ping', '#ff8', '#221');
+    this.lastTime = Date.now();
+    this.max = 0;
+    this.elapsed = 0;
+  }
+
+  update() {
+    const now = Date.now();
+    const ping = now - this.lastTime;
+    this.lastTime = now;
+    this.max = Math.max(this.max, ping);
+    this.elapsed += ping;
+    if (this.elapsed > 1000) {
+      this.panel.update(this.max, 300);
+      this.max = 0;
+      this.elapsed = 0;
+    }
+  }
+}
+
+module.exports = PingStats;
 
 
 /***/ }),
@@ -1417,9 +1463,11 @@ const showFatalError = __webpack_require__(/*! ./lib/loader/show-fatal-error */ 
 __webpack_require__(/*! ../sass/default.scss */ "./src/sass/default.scss");
 const PlayerApp = __webpack_require__(/*! ./lib/components/player-app */ "./src/js/lib/components/player-app.js");
 const { getApiServerUrl, getSocketServerUrl } = __webpack_require__(/*! ./lib/net/server-url */ "./src/js/lib/net/server-url.js");
+const PingStats = __webpack_require__(/*! ./lib/net/ping-stats */ "./src/js/lib/net/ping-stats.js");
 
 const urlParams = new URLSearchParams(window.location.search);
 const playerId = urlParams.get('p') || '1';
+const statsPanel = urlParams.get('s') || null;
 const configUrl = `${getApiServerUrl()}config`;
 
 fetch(configUrl, { cache: 'no-store' })
@@ -1446,6 +1494,8 @@ fetch(configUrl, { cache: 'no-store' })
       playerApp.resize();
     });
 
+    const pingStats = new PingStats();
+    playerApp.addStats(pingStats.panel);
     let syncReceived = false;
     const connector = new ServerSocketConnector(getSocketServerUrl());
     connector.events.on('connect', () => {
@@ -1453,6 +1503,7 @@ fetch(configUrl, { cache: 'no-store' })
     });
     connector.events.on('sync', (message) => {
       syncReceived = true;
+      pingStats.update();
       Object.entries(message.players).forEach(([id, player]) => {
         if (id !== playerId && playerApp.otherPcs[id]) {
           if (player.position) {
@@ -1472,6 +1523,10 @@ fetch(configUrl, { cache: 'no-store' })
     });
     const connStateView = new ConnectionStateView(connector);
     $('body').append(connStateView.$element);
+
+    if (statsPanel) {
+      playerApp.showStats(Number(statsPanel));
+    }
   })
   .catch((err) => {
     console.error(err);
@@ -1481,4 +1536,4 @@ fetch(configUrl, { cache: 'no-store' })
 
 /******/ })()
 ;
-//# sourceMappingURL=player.7e3c69d901baf5c49051.js.map
+//# sourceMappingURL=player.ede411d22d68467319e5.js.map
