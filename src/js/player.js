@@ -3,11 +3,13 @@ const ConnectionStateView = require('./lib/net/connection-state-view');
 const showFatalError = require('./lib/loader/show-fatal-error');
 require('../sass/default.scss');
 const PlayerApp = require('./lib/components/player-app');
+const { getApiServerUrl, getSocketServerUrl } = require('./lib/net/server-url');
 
 const urlParams = new URLSearchParams(window.location.search);
 const playerId = urlParams.get('p') || '1';
+const configUrl = `${getApiServerUrl()}config`;
 
-fetch(`${process.env.SERVER_HTTP_URI}/config`, { cache: 'no-store' })
+fetch(configUrl, { cache: 'no-store' })
   .then((response) => {
     if (!response.ok) {
       throw new Error(`HTTP error. Status: ${ response.status }`);
@@ -16,8 +18,8 @@ fetch(`${process.env.SERVER_HTTP_URI}/config`, { cache: 'no-store' })
   })
   .catch((err) => {
     console.log(err);
-    showFatalError(`Error fetching configuration from ${process.env.SERVER_HTTP_URI}`, err);
-    console.error(`Error fetching configuration from ${process.env.SERVER_HTTP_URI}`);
+    showFatalError(`Error fetching configuration from ${configUrl}`, err);
+    console.error(`Error fetching configuration from ${configUrl}`);
     throw err;
   })
   .then((config) => {
@@ -32,7 +34,7 @@ fetch(`${process.env.SERVER_HTTP_URI}/config`, { cache: 'no-store' })
     });
 
     let syncReceived = false;
-    const connector = new ServerSocketConnector(process.env.SERVER_SOCKET_URI);
+    const connector = new ServerSocketConnector(getSocketServerUrl());
     connector.events.on('connect', () => {
       syncReceived = true;
     });

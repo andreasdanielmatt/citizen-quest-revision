@@ -1099,6 +1099,50 @@ module.exports = ServerSocketConnector;
 
 /***/ }),
 
+/***/ "./src/js/lib/net/server-url.js":
+/*!**************************************!*\
+  !*** ./src/js/lib/net/server-url.js ***!
+  \**************************************/
+/***/ ((module) => {
+
+function withLeadingSlash(str) {
+  return str[0] === '/' ? str : `/${str}`;
+}
+
+function withTrailingSlash(str) {
+  return str[str.length - 1] === '/' ? str : `${str}/`;
+}
+
+function withTrailingColon(str) {
+  return str[str.length - 1] === ':' ? str : `${str}:`;
+}
+
+function getApiServerUrl() {
+  const protocol = withTrailingColon("MISSING_ENV_VAR".API_SERVER_PROTOCOL || window.location.protocol);
+  const host = "MISSING_ENV_VAR".API_SERVER_HOST || window.location.hostname;
+  const port = "4850" || 0;
+  const root = withTrailingSlash(withLeadingSlash("MISSING_ENV_VAR".API_SERVER_ROOT || '/'));
+
+  return `${protocol}//${host}:${port}${root}`;
+}
+
+function getSocketServerUrl() {
+  const protocol = withTrailingColon("MISSING_ENV_VAR".SOCKET_SERVER_PROTOCOL || 'ws');
+  const host = "MISSING_ENV_VAR".SOCKET_SERVER_HOST || window.location.hostname;
+  const port = "4850" || 0;
+  const root = withTrailingSlash(withLeadingSlash("MISSING_ENV_VAR".SOCKET_SERVER_ROOT || '/'));
+
+  return `${protocol}//${host}:${port}${root}`;
+}
+
+module.exports = {
+  getApiServerUrl,
+  getSocketServerUrl,
+};
+
+
+/***/ }),
+
 /***/ "./src/js/lib/views/pc-view.js":
 /*!*************************************!*\
   !*** ./src/js/lib/views/pc-view.js ***!
@@ -1372,11 +1416,13 @@ const ConnectionStateView = __webpack_require__(/*! ./lib/net/connection-state-v
 const showFatalError = __webpack_require__(/*! ./lib/loader/show-fatal-error */ "./src/js/lib/loader/show-fatal-error.js");
 __webpack_require__(/*! ../sass/default.scss */ "./src/sass/default.scss");
 const PlayerApp = __webpack_require__(/*! ./lib/components/player-app */ "./src/js/lib/components/player-app.js");
+const { getApiServerUrl, getSocketServerUrl } = __webpack_require__(/*! ./lib/net/server-url */ "./src/js/lib/net/server-url.js");
 
 const urlParams = new URLSearchParams(window.location.search);
 const playerId = urlParams.get('p') || '1';
+const configUrl = `${getApiServerUrl()}config`;
 
-fetch(`${"http://localhost:4850"}/config`, { cache: 'no-store' })
+fetch(configUrl, { cache: 'no-store' })
   .then((response) => {
     if (!response.ok) {
       throw new Error(`HTTP error. Status: ${ response.status }`);
@@ -1385,8 +1431,8 @@ fetch(`${"http://localhost:4850"}/config`, { cache: 'no-store' })
   })
   .catch((err) => {
     console.log(err);
-    showFatalError(`Error fetching configuration from ${"http://localhost:4850"}`, err);
-    console.error(`Error fetching configuration from ${"http://localhost:4850"}`);
+    showFatalError(`Error fetching configuration from ${configUrl}`, err);
+    console.error(`Error fetching configuration from ${configUrl}`);
     throw err;
   })
   .then((config) => {
@@ -1401,7 +1447,7 @@ fetch(`${"http://localhost:4850"}/config`, { cache: 'no-store' })
     });
 
     let syncReceived = false;
-    const connector = new ServerSocketConnector("ws://localhost:4850");
+    const connector = new ServerSocketConnector(getSocketServerUrl());
     connector.events.on('connect', () => {
       syncReceived = true;
     });
@@ -1435,4 +1481,4 @@ fetch(`${"http://localhost:4850"}/config`, { cache: 'no-store' })
 
 /******/ })()
 ;
-//# sourceMappingURL=player.5449f9e16c305cc9bf5a.js.map
+//# sourceMappingURL=player.7e3c69d901baf5c49051.js.map
