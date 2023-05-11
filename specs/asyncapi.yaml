@@ -23,12 +23,14 @@ channels:
       operationId: processReceivedMessage
       message:
         oneOf:
+          - $ref: '#/components/messages/sync'
           - $ref: '#/components/messages/ping'
     subscribe:
       description: Messages that you receive from the API
       operationId: sendMessage
       message:
         oneOf:
+          - $ref: '#/components/messages/sync'
           - $ref: '#/components/messages/pong'
 
 components:
@@ -44,6 +46,29 @@ components:
       payload:
         $ref: "#/components/schemas/pong"
   schemas:
+    sync:
+      type: object
+      properties:
+        type:
+          type: string
+          const: sync
+        players:
+          type: object
+          properties:
+            position:
+              type: object
+              properties:
+                x:
+                  type: number
+                y:
+                  type: number
+            speed:
+              type: object
+              properties:
+                x:
+                  type: number
+                y:
+                  type: number
     ping:
       type: object
       properties:
