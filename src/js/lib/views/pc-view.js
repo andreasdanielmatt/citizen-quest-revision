@@ -13,15 +13,15 @@ class PCView {
   }
 
   animate(time) {
-    const { parent } = this.display;
+    const townDisplay = this.townView.display;
     let newX;
     let newY;
     let furthestX = this.pc.position.x + this.pc.speed.x * time;
     let furthestY = this.pc.position.y + this.pc.speed.y * time;
 
-    // Clamp the position to the parent's bounds
-    furthestX = Math.max(0, Math.min(furthestX, parent.width - this.display.width));
-    furthestY = Math.max(0, Math.min(furthestY, parent.height - this.display.height));
+    // Clamp the position to the town's bounds
+    furthestX = Math.max(0, Math.min(furthestX, townDisplay.width - this.display.width));
+    furthestY = Math.max(0, Math.min(furthestY, townDisplay.height - this.display.height));
 
     // Collisions are checked on a per-pixel basis, so we only need to check
     // if the player has moved to a new pixel
@@ -72,6 +72,7 @@ class PCView {
 
     this.pc.setPosition(newX, newY);
     this.display.position = this.pc.position;
+    this.display.zIndex = this.pc.position.y;
   }
 
   collisionPoints() {

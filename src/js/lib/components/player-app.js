@@ -42,9 +42,9 @@ class PlayerApp {
         .map(([id, pc]) => [id, new PCView(this.config, pc, this.townView)])
     );
 
-    this.townView.display.addChild(this.pcView.display);
+    this.townView.mainLayer.addChild(this.pcView.display);
     if (Object.values(this.otherPcViews).length > 0) {
-      this.townView.display.addChild(...Object.values(this.otherPcViews)
+      this.townView.mainLayer.addChild(...Object.values(this.otherPcViews)
         .map(pcView => pcView.display));
     }
 
@@ -65,7 +65,9 @@ class PlayerApp {
       this.pcView.animate(time);
       Object.entries(this.otherPcViews).forEach(([, pcView]) => {
         pcView.display.position = pcView.pc.position;
+        pcView.display.zIndex = pcView.pc.position.y;
       });
+      this.townView.mainLayer.sortChildren();
 
       // Set the town view's pivot so the PC is always centered on the screen,
       // but don't let the pivot go off the edge of the town

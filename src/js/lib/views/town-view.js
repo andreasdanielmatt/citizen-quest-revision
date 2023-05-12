@@ -4,6 +4,10 @@ class TownView {
     this.config = config;
     this.textures = textures;
     this.display = new PIXI.Container();
+    this.bgLayer = new PIXI.Container();
+    this.mainLayer = new PIXI.Container();
+    this.display.addChild(this.bgLayer);
+    this.display.addChild(this.mainLayer);
 
     // Temporary initialization
     this.townSize = {
@@ -14,7 +18,7 @@ class TownView {
     this.background = PIXI.Sprite.from(this.textures['town-bg']);
     this.background.width = this.townSize.width;
     this.background.height = this.townSize.height;
-    this.display.addChild(this.background);
+    this.bgLayer.addChild(this.background);
 
     this.collisionRenderer = new PIXI.CanvasRenderer({
       width: this.townSize.width, height: this.townSize.height,
@@ -31,28 +35,6 @@ class TownView {
 
     window.isWalkable = this.isWalkable.bind(this);
     window.collMap = this.collisionMap;
-    // this.display.addChild(this.baseCollisionMap);
-
-    // Create a checkerboard pattern on the display
-    // First fill the full background with a color
-    const checkerboard = new PIXI.Graphics();
-    checkerboard.beginFill(new PIXI.Color('#dbf6c9'));
-    checkerboard.drawRect(0, 0, this.townSize.width, this.townSize.height);
-    checkerboard.endFill();
-    const squareSize = 256;
-    const squareColor = new PIXI.Color('#e34747');
-    // Draw the squares
-    for (let x = 0; x < this.townSize.width; x += squareSize) {
-      for (let y = 0; y < this.townSize.height; y += squareSize) {
-        // Only draw squares on the checkerboard pattern
-        if ((x / squareSize) % 2 === (y / squareSize) % 2) {
-          checkerboard.beginFill(squareColor);
-          checkerboard.drawRect(x, y, squareSize, squareSize);
-          checkerboard.endFill();
-        }
-      }
-    }
-    // this.display.addChild(checkerboard);
   }
 
   async loadAssets() {

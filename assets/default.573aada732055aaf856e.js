@@ -4406,9 +4406,9 @@ class PlayerApp {
         .map(([id, pc]) => [id, new PCView(this.config, pc, this.townView)])
     );
 
-    this.townView.display.addChild(this.pcView.display);
+    this.townView.mainLayer.addChild(this.pcView.display);
     if (Object.values(this.otherPcViews).length > 0) {
-      this.townView.display.addChild(...Object.values(this.otherPcViews)
+      this.townView.mainLayer.addChild(...Object.values(this.otherPcViews)
         .map(pcView => pcView.display));
     }
 
@@ -4429,7 +4429,9 @@ class PlayerApp {
       this.pcView.animate(time);
       Object.entries(this.otherPcViews).forEach(([, pcView]) => {
         pcView.display.position = pcView.pc.position;
+        pcView.display.zIndex = pcView.pc.position.y;
       });
+      this.townView.mainLayer.sortChildren();
 
       // Set the town view's pivot so the PC is always centered on the screen,
       // but don't let the pivot go off the edge of the town
@@ -4759,15 +4761,15 @@ class PCView {
   }
 
   animate(time) {
-    const { parent } = this.display;
+    const townDisplay = this.townView.display;
     let newX;
     let newY;
     let furthestX = this.pc.position.x + this.pc.speed.x * time;
     let furthestY = this.pc.position.y + this.pc.speed.y * time;
 
-    // Clamp the position to the parent's bounds
-    furthestX = Math.max(0, Math.min(furthestX, parent.width - this.display.width));
-    furthestY = Math.max(0, Math.min(furthestY, parent.height - this.display.height));
+    // Clamp the position to the town's bounds
+    furthestX = Math.max(0, Math.min(furthestX, townDisplay.width - this.display.width));
+    furthestY = Math.max(0, Math.min(furthestY, townDisplay.height - this.display.height));
 
     // Collisions are checked on a per-pixel basis, so we only need to check
     // if the player has moved to a new pixel
@@ -4818,6 +4820,7 @@ class PCView {
 
     this.pc.setPosition(newX, newY);
     this.display.position = this.pc.position;
+    this.display.zIndex = this.pc.position.y;
   }
 
   collisionPoints() {
@@ -4852,6 +4855,10 @@ class TownView {
     this.config = config;
     this.textures = textures;
     this.display = new PIXI.Container();
+    this.bgLayer = new PIXI.Container();
+    this.mainLayer = new PIXI.Container();
+    this.display.addChild(this.bgLayer);
+    this.display.addChild(this.mainLayer);
 
     // Temporary initialization
     this.townSize = {
@@ -4862,7 +4869,7 @@ class TownView {
     this.background = PIXI.Sprite.from(this.textures['town-bg']);
     this.background.width = this.townSize.width;
     this.background.height = this.townSize.height;
-    this.display.addChild(this.background);
+    this.bgLayer.addChild(this.background);
 
     this.collisionRenderer = new PIXI.CanvasRenderer({
       width: this.townSize.width, height: this.townSize.height,
@@ -4879,28 +4886,6 @@ class TownView {
 
     window.isWalkable = this.isWalkable.bind(this);
     window.collMap = this.collisionMap;
-    // this.display.addChild(this.baseCollisionMap);
-
-    // Create a checkerboard pattern on the display
-    // First fill the full background with a color
-    const checkerboard = new PIXI.Graphics();
-    checkerboard.beginFill(new PIXI.Color('#dbf6c9'));
-    checkerboard.drawRect(0, 0, this.townSize.width, this.townSize.height);
-    checkerboard.endFill();
-    const squareSize = 256;
-    const squareColor = new PIXI.Color('#e34747');
-    // Draw the squares
-    for (let x = 0; x < this.townSize.width; x += squareSize) {
-      for (let y = 0; y < this.townSize.height; y += squareSize) {
-        // Only draw squares on the checkerboard pattern
-        if ((x / squareSize) % 2 === (y / squareSize) % 2) {
-          checkerboard.beginFill(squareColor);
-          checkerboard.drawRect(x, y, squareSize, squareSize);
-          checkerboard.endFill();
-        }
-      }
-    }
-    // this.display.addChild(checkerboard);
   }
 
   async loadAssets() {
@@ -5001,4 +4986,4 @@ cfgLoader.load([
 
 /******/ })()
 ;
-//# sourceMappingURL=default.32d46c81692659d4a7ec.js.map
+//# sourceMappingURL=default.573aada732055aaf856e.js.map
