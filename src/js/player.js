@@ -4,7 +4,6 @@ const showFatalError = require('./lib/loader/show-fatal-error');
 require('../sass/default.scss');
 const PlayerApp = require('./lib/components/player-app');
 const { getApiServerUrl, getSocketServerUrl } = require('./lib/net/server-url');
-const PingStats = require('./lib/net/ping-stats');
 
 const urlParams = new URLSearchParams(window.location.search);
 const playerId = urlParams.get('p') || '1';
@@ -35,8 +34,6 @@ fetch(configUrl, { cache: 'no-store' })
       playerApp.resize();
     });
 
-    const pingStats = new PingStats();
-    playerApp.addStats(pingStats.panel);
     let syncReceived = false;
     const connector = new ServerSocketConnector(getSocketServerUrl());
     connector.events.on('connect', () => {
@@ -44,7 +41,7 @@ fetch(configUrl, { cache: 'no-store' })
     });
     connector.events.on('sync', (message) => {
       syncReceived = true;
-      pingStats.update();
+      playerApp.stats.ping();
       Object.entries(message.players).forEach(([id, player]) => {
         if (id !== playerId && playerApp.otherPcs[id]) {
           if (player.position) {
@@ -66,7 +63,7 @@ fetch(configUrl, { cache: 'no-store' })
     $('body').append(connStateView.$element);
 
     if (statsPanel) {
-      playerApp.showStats(Number(statsPanel));
+      playerApp.stats.showPanel(statsPanel);
     }
   })
   .catch((err) => {

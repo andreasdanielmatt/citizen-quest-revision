@@ -1,5 +1,5 @@
 /* globals PIXI */
-const Stats = require('stats.js');
+const Stats = require('../helpers-web/stats.js');
 const TownView = require('../views/town-view');
 require('../helpers-web/fill-with-aspect');
 const PCView = require('../views/pc-view');
@@ -48,18 +48,15 @@ class PlayerApp {
         .map(pcView => pcView.display));
     }
 
-    this.stats = Stats();
-    this.statsVisible = null;
-    this.stats.showPanel(null);
-    this.statsCount = 3;
+    this.stats = new Stats();
     this.$element.append(this.stats.dom);
 
     this.keyboardInputMgr = new KeyboardInputMgr();
     this.keyboardInputMgr.addListeners();
-    this.keyboardInputMgr.addToggle('KeyD', () => { this.toggleStats(); });
+    this.keyboardInputMgr.addToggle('KeyD', () => { this.stats.togglePanel(); });
 
     this.pixiApp.ticker.add((time) => {
-      this.stats.begin();
+      this.stats.frameBegin();
       const { x, y } = this.keyboardInputMgr.getDirection();
       this.pc.setSpeed(x * 10, y * 10);
       this.pcView.animate(time);
@@ -75,7 +72,7 @@ class PlayerApp {
         Math.max(0, Math.min(this.pcView.display.x - PlayerApp.APP_WIDTH / 2, this.townView.townSize.width - PlayerApp.APP_WIDTH)),
         Math.max(0, Math.min(this.pcView.display.y - PlayerApp.APP_HEIGHT / 2, this.townView.townSize.height - PlayerApp.APP_HEIGHT)),
       );
-      this.stats.end();
+      this.stats.frameEnd();
     });
 
     return this;
@@ -92,29 +89,6 @@ class PlayerApp {
 
   resize() {
     this.$element.fillWithAspect(PlayerApp.APP_WIDTH / PlayerApp.APP_HEIGHT);
-  }
-
-  addStats(panel) {
-    this.stats.addPanel(panel);
-    this.statsCount += 1;
-    this.stats.showPanel(null);
-  }
-
-  toggleStats() {
-    if (this.statsVisible === null) {
-      this.statsVisible = 0;
-    } else {
-      this.statsVisible += 1;
-      if (this.statsVisible >= this.statsCount) {
-        this.statsVisible = null;
-      }
-    }
-    this.stats.showPanel(this.statsVisible);
-  }
-
-  showStats(id) {
-    this.statsVisible = id;
-    this.stats.showPanel(id);
   }
 }
 

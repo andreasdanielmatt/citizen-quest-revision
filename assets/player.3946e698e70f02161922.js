@@ -522,21 +522,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./node_modules/stats.js/build/stats.min.js":
-/*!**************************************************!*\
-  !*** ./node_modules/stats.js/build/stats.min.js ***!
-  \**************************************************/
-/***/ (function(module) {
-
-// stats.js - http://github.com/mrdoob/stats.js
-(function(f,e){ true?module.exports=e():0})(this,function(){var f=function(){function e(a){c.appendChild(a.dom);return a}function u(a){for(var d=0;d<c.children.length;d++)c.children[d].style.display=d===a?"block":"none";l=a}var l=0,c=document.createElement("div");c.style.cssText="position:fixed;top:0;left:0;cursor:pointer;opacity:0.9;z-index:10000";c.addEventListener("click",function(a){a.preventDefault();
-u(++l%c.children.length)},!1);var k=(performance||Date).now(),g=k,a=0,r=e(new f.Panel("FPS","#0ff","#002")),h=e(new f.Panel("MS","#0f0","#020"));if(self.performance&&self.performance.memory)var t=e(new f.Panel("MB","#f08","#201"));u(0);return{REVISION:16,dom:c,addPanel:e,showPanel:u,begin:function(){k=(performance||Date).now()},end:function(){a++;var c=(performance||Date).now();h.update(c-k,200);if(c>g+1E3&&(r.update(1E3*a/(c-g),100),g=c,a=0,t)){var d=performance.memory;t.update(d.usedJSHeapSize/
-1048576,d.jsHeapSizeLimit/1048576)}return c},update:function(){k=this.end()},domElement:c,setMode:u}};f.Panel=function(e,f,l){var c=Infinity,k=0,g=Math.round,a=g(window.devicePixelRatio||1),r=80*a,h=48*a,t=3*a,v=2*a,d=3*a,m=15*a,n=74*a,p=30*a,q=document.createElement("canvas");q.width=r;q.height=h;q.style.cssText="width:80px;height:48px";var b=q.getContext("2d");b.font="bold "+9*a+"px Helvetica,Arial,sans-serif";b.textBaseline="top";b.fillStyle=l;b.fillRect(0,0,r,h);b.fillStyle=f;b.fillText(e,t,v);
-b.fillRect(d,m,n,p);b.fillStyle=l;b.globalAlpha=.9;b.fillRect(d,m,n,p);return{dom:q,update:function(h,w){c=Math.min(c,h);k=Math.max(k,h);b.fillStyle=l;b.globalAlpha=1;b.fillRect(0,0,r,m);b.fillStyle=f;b.fillText(g(h)+" "+e+" ("+g(c)+"-"+g(k)+")",t,v);b.drawImage(q,d+a,m,n-a,p,d,m,n-a,p);b.fillRect(d+n-a,m,a,p);b.fillStyle=l;b.globalAlpha=.9;b.fillRect(d+n-a,m,a,g((1-h/w)*p))}}};return f});
-
-
-/***/ }),
-
 /***/ "./src/js/lib/components/player-app.js":
 /*!*********************************************!*\
   !*** ./src/js/lib/components/player-app.js ***!
@@ -544,7 +529,7 @@ b.fillRect(d,m,n,p);b.fillStyle=l;b.globalAlpha=.9;b.fillRect(d,m,n,p);return{do
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 /* globals PIXI */
-const Stats = __webpack_require__(/*! stats.js */ "./node_modules/stats.js/build/stats.min.js");
+const Stats = __webpack_require__(/*! ../helpers-web/stats.js */ "./src/js/lib/helpers-web/stats.js");
 const TownView = __webpack_require__(/*! ../views/town-view */ "./src/js/lib/views/town-view.js");
 __webpack_require__(/*! ../helpers-web/fill-with-aspect */ "./src/js/lib/helpers-web/fill-with-aspect.js");
 const PCView = __webpack_require__(/*! ../views/pc-view */ "./src/js/lib/views/pc-view.js");
@@ -593,18 +578,15 @@ class PlayerApp {
         .map(pcView => pcView.display));
     }
 
-    this.stats = Stats();
-    this.statsVisible = null;
-    this.stats.showPanel(null);
-    this.statsCount = 3;
+    this.stats = new Stats();
     this.$element.append(this.stats.dom);
 
     this.keyboardInputMgr = new KeyboardInputMgr();
     this.keyboardInputMgr.addListeners();
-    this.keyboardInputMgr.addToggle('KeyD', () => { this.toggleStats(); });
+    this.keyboardInputMgr.addToggle('KeyD', () => { this.stats.togglePanel(); });
 
     this.pixiApp.ticker.add((time) => {
-      this.stats.begin();
+      this.stats.frameBegin();
       const { x, y } = this.keyboardInputMgr.getDirection();
       this.pc.setSpeed(x * 10, y * 10);
       this.pcView.animate(time);
@@ -620,7 +602,7 @@ class PlayerApp {
         Math.max(0, Math.min(this.pcView.display.x - PlayerApp.APP_WIDTH / 2, this.townView.townSize.width - PlayerApp.APP_WIDTH)),
         Math.max(0, Math.min(this.pcView.display.y - PlayerApp.APP_HEIGHT / 2, this.townView.townSize.height - PlayerApp.APP_HEIGHT)),
       );
-      this.stats.end();
+      this.stats.frameEnd();
     });
 
     return this;
@@ -637,29 +619,6 @@ class PlayerApp {
 
   resize() {
     this.$element.fillWithAspect(PlayerApp.APP_WIDTH / PlayerApp.APP_HEIGHT);
-  }
-
-  addStats(panel) {
-    this.stats.addPanel(panel);
-    this.statsCount += 1;
-    this.stats.showPanel(null);
-  }
-
-  toggleStats() {
-    if (this.statsVisible === null) {
-      this.statsVisible = 0;
-    } else {
-      this.statsVisible += 1;
-      if (this.statsVisible >= this.statsCount) {
-        this.statsVisible = null;
-      }
-    }
-    this.stats.showPanel(this.statsVisible);
-  }
-
-  showStats(id) {
-    this.statsVisible = id;
-    this.stats.showPanel(id);
   }
 }
 
@@ -701,6 +660,198 @@ module.exports = PlayerApp;
     return this;
   };
 }(jQuery));
+
+
+/***/ }),
+
+/***/ "./src/js/lib/helpers-web/stats.js":
+/*!*****************************************!*\
+  !*** ./src/js/lib/helpers-web/stats.js ***!
+  \*****************************************/
+/***/ ((module) => {
+
+/**
+ * Based on https://github.com/mrdoob/stats.js
+ * Copyright (c) 2009-2016 stats.js authors
+ * Licensed under the The MIT License
+ *
+ * adapted by Eric Londaits for IMAGINARY gGmbH (c) 2023
+ */
+
+const PR = Math.round(window.devicePixelRatio || 1);
+const WIDTH = 80 * PR;
+const HEIGHT = 48 * PR;
+const TEXT_X = 3 * PR;
+const TEXT_Y = 2 * PR;
+const GRAPH_X = 3 * PR;
+const GRAPH_Y = 15 * PR;
+const GRAPH_WIDTH = 74 * PR;
+const GRAPH_HEIGHT = 30 * PR;
+
+class Panel {
+  constructor(name, fg, bg) {
+    this.name = name;
+    this.fg = fg;
+    this.bg = bg;
+
+    this.min = Infinity;
+    this.max = 0;
+
+    this.canvas = document.createElement('canvas');
+    this.canvas.width = WIDTH;
+    this.canvas.height = HEIGHT;
+    this.canvas.style.cssText = 'width:80px;height:48px';
+
+    this.context = this.canvas.getContext('2d');
+    this.context.font = `bold ${9 * PR}px Helvetica,Arial,sans-serif`;
+    this.context.textBaseline = 'top';
+    this.context.fillStyle = this.bg;
+    this.context.fillRect(0, 0, WIDTH, HEIGHT);
+    this.context.fillStyle = this.fg;
+    this.context.fillText(this.name, TEXT_X, TEXT_Y);
+    this.context.fillRect(GRAPH_X, GRAPH_Y, GRAPH_WIDTH, GRAPH_HEIGHT);
+    this.context.fillStyle = this.bg;
+    this.context.globalAlpha = 0.9;
+    this.context.fillRect(GRAPH_X, GRAPH_Y, GRAPH_WIDTH, GRAPH_HEIGHT);
+
+    this.dom = this.canvas;
+  }
+
+  update(value, maxValue) {
+    this.min = Math.min(this.min, value);
+    this.max = Math.max(this.max, value);
+
+    this.context.fillStyle = this.bg;
+    this.context.globalAlpha = 1;
+    this.context.fillRect(0, 0, WIDTH, GRAPH_Y);
+    this.context.fillStyle = this.fg;
+    this.context.fillText(`${Math.round(value)} ${this.name} (${Math.round(this.min)}-${Math.round(this.max)})`,
+      TEXT_X,
+      TEXT_Y);
+
+    this.context.drawImage(this.canvas,
+      GRAPH_X + PR,
+      GRAPH_Y,
+      GRAPH_WIDTH - PR,
+      GRAPH_HEIGHT,
+      GRAPH_X,
+      GRAPH_Y,
+      GRAPH_WIDTH - PR,
+      GRAPH_HEIGHT);
+
+    this.context.fillRect(GRAPH_X + GRAPH_WIDTH - PR, GRAPH_Y, PR, GRAPH_HEIGHT);
+    this.context.fillStyle = this.bg;
+    this.context.globalAlpha = 0.9;
+    this.context.fillRect(GRAPH_X + GRAPH_WIDTH - PR,
+      GRAPH_Y,
+      PR,
+      Math.round((1 - (value / maxValue)) * GRAPH_HEIGHT));
+  }
+}
+
+class Stats {
+  constructor() {
+    this.currentPanel = null;
+    this.container = document.createElement('div');
+    this.container.style.cssText = 'position:fixed;top:0;left:0;cursor:pointer;opacity:0.9;z-index:10000';
+    this.container.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.togglePanel(false);
+    });
+    this.dom = this.container;
+
+    this.beginTime = (performance || Date).now();
+    this.prevTime = this.beginTime;
+    this.frames = 0;
+
+    this.lastPingTime = (performance || Date).now();
+    this.maxPing = 0;
+    this.pingElapsedTime = 0;
+
+    this.panels = new Map();
+
+    this.fpsPanel = this.addPanel('fps', new Panel('fps', '#0ff', '#002'));
+    this.msPanel = this.addPanel('render', new Panel('ms', '#0f0', '#020'));
+    this.pingPanel = this.addPanel('ping', new Panel('ping', '#fffb13', '#020'));
+
+    this.showPanel(0);
+  }
+
+  addPanel(id, panel) {
+    this.panels.set(id, panel);
+    this.container.appendChild(panel.dom);
+    return panel;
+  }
+
+  showPanel(id = null) {
+    this.currentPanel = null;
+    Array.from(this.panels.entries())
+      .forEach(([panelId, panel], index) => {
+        if (panelId === id) {
+          panel.dom.style.display = 'block';
+          this.currentPanel = index;
+        } else {
+          panel.dom.style.display = 'none';
+        }
+      });
+  }
+
+  showPanelNumber(index = null) {
+    const panelId = Array.from(this.panels.keys())
+      .find((id, i) => i === index);
+    this.showPanel(panelId === undefined ? null : panelId);
+  }
+
+  togglePanel(hideAfterLast = true) {
+    if (this.currentPanel === null) {
+      this.currentPanel = 0;
+    } else {
+      this.currentPanel += 1;
+      if (this.currentPanel === this.container.children.length) {
+        this.currentPanel = hideAfterLast ? null : 0;
+      }
+    }
+    this.showPanelNumber(this.currentPanel);
+  }
+
+  frameBegin() {
+    this.beginTime = (performance || Date).now();
+  }
+
+  frameEnd() {
+    this.frames += 1;
+    const time = (performance || Date).now();
+    this.msPanel.update(time - this.beginTime, 200);
+
+    if (time >= this.prevTime + 1000) {
+      this.fpsPanel.update((this.frames * 1000) / (time - this.prevTime), 100);
+      this.prevTime = time;
+      this.frames = 0;
+    }
+    return time;
+  }
+
+  ping() {
+    const time = (performance || Date).now();
+    const ping = time - this.lastPingTime;
+    this.lastPingTime = time;
+    this.maxPing = Math.max(this.maxPing, ping);
+    this.pingElapsedTime += ping;
+    if (this.pingElapsedTime >= 1000) {
+      this.pingPanel.update(this.maxPing, 1000);
+      this.pingElapsedTime = 0;
+      this.maxPing = 0;
+    }
+  }
+
+  update() {
+    this.beginTime = this.frameEnd();
+  }
+}
+
+Stats.Panel = Panel;
+
+module.exports = Stats;
 
 
 /***/ }),
@@ -936,41 +1087,6 @@ class ConnectionStateView {
 }
 
 module.exports = ConnectionStateView;
-
-
-/***/ }),
-
-/***/ "./src/js/lib/net/ping-stats.js":
-/*!**************************************!*\
-  !*** ./src/js/lib/net/ping-stats.js ***!
-  \**************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const Stats = __webpack_require__(/*! stats.js */ "./node_modules/stats.js/build/stats.min.js");
-
-class PingStats {
-  constructor() {
-    this.panel = new Stats.Panel('ping', '#ff8', '#221');
-    this.lastTime = Date.now();
-    this.max = 0;
-    this.elapsed = 0;
-  }
-
-  update() {
-    const now = Date.now();
-    const ping = now - this.lastTime;
-    this.lastTime = now;
-    this.max = Math.max(this.max, ping);
-    this.elapsed += ping;
-    if (this.elapsed > 1000) {
-      this.panel.update(this.max, 300);
-      this.max = 0;
-      this.elapsed = 0;
-    }
-  }
-}
-
-module.exports = PingStats;
 
 
 /***/ }),
@@ -1385,7 +1501,7 @@ module.exports = __webpack_require__.p + "ead51173b07512a4bf13.svg";
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
 /******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
@@ -1448,7 +1564,6 @@ const showFatalError = __webpack_require__(/*! ./lib/loader/show-fatal-error */ 
 __webpack_require__(/*! ../sass/default.scss */ "./src/sass/default.scss");
 const PlayerApp = __webpack_require__(/*! ./lib/components/player-app */ "./src/js/lib/components/player-app.js");
 const { getApiServerUrl, getSocketServerUrl } = __webpack_require__(/*! ./lib/net/server-url */ "./src/js/lib/net/server-url.js");
-const PingStats = __webpack_require__(/*! ./lib/net/ping-stats */ "./src/js/lib/net/ping-stats.js");
 
 const urlParams = new URLSearchParams(window.location.search);
 const playerId = urlParams.get('p') || '1';
@@ -1479,8 +1594,6 @@ fetch(configUrl, { cache: 'no-store' })
       playerApp.resize();
     });
 
-    const pingStats = new PingStats();
-    playerApp.addStats(pingStats.panel);
     let syncReceived = false;
     const connector = new ServerSocketConnector(getSocketServerUrl());
     connector.events.on('connect', () => {
@@ -1488,7 +1601,7 @@ fetch(configUrl, { cache: 'no-store' })
     });
     connector.events.on('sync', (message) => {
       syncReceived = true;
-      pingStats.update();
+      playerApp.stats.ping();
       Object.entries(message.players).forEach(([id, player]) => {
         if (id !== playerId && playerApp.otherPcs[id]) {
           if (player.position) {
@@ -1510,7 +1623,7 @@ fetch(configUrl, { cache: 'no-store' })
     $('body').append(connStateView.$element);
 
     if (statsPanel) {
-      playerApp.showStats(Number(statsPanel));
+      playerApp.stats.showPanel(statsPanel);
     }
   })
   .catch((err) => {
@@ -1521,4 +1634,4 @@ fetch(configUrl, { cache: 'no-store' })
 
 /******/ })()
 ;
-//# sourceMappingURL=player.a78e65dfc08340c716a0.js.map
+//# sourceMappingURL=player.3946e698e70f02161922.js.map
