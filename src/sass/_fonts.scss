@@ -1,3 +1,13 @@
+@mixin RobotoRegular {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+}
+
+@mixin RobotoBold {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
+}
+
 @mixin RobotoCondensedRegular {
   font-family: 'Roboto Condensed', sans-serif;
   font-weight: 400;

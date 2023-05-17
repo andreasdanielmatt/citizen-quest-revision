@@ -1,7 +1,7 @@
 @mixin regularText {
-  @include RobotoCondensedRegular;
+  @include RobotoRegular;
 }
 
 @mixin headingText {
-  @include RobotoCondensedBold;
+  @include RobotoBold;
 }
