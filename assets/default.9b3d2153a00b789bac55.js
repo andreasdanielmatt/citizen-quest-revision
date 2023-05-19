@@ -4418,8 +4418,8 @@ class PlayerApp {
       // Set the town view's pivot so the PC is always centered on the screen,
       // but don't let the pivot go off the edge of the town
       this.townView.display.pivot.set(
-        Math.max(0, Math.min(this.pcView.display.x - PlayerApp.APP_WIDTH / 2, this.townView.townSize.width - PlayerApp.APP_WIDTH)),
-        Math.max(0, Math.min(this.pcView.display.y - PlayerApp.APP_HEIGHT / 2, this.townView.townSize.height - PlayerApp.APP_HEIGHT)),
+        Math.max(0, Math.min(this.pcView.display.x + this.pcView.display.width / 2 - PlayerApp.APP_WIDTH / 2, this.townView.townSize.width - PlayerApp.APP_WIDTH)),
+        Math.max(0, Math.min(this.pcView.display.y + this.pcView.display.height / 2 - PlayerApp.APP_HEIGHT / 2, this.townView.townSize.height - PlayerApp.APP_HEIGHT)),
       );
       this.stats.frameEnd();
     });
@@ -5137,4 +5137,4 @@ cfgLoader.load([
 
 /******/ })()
 ;
-//# sourceMappingURL=default.12c0fbc4102cf95c8fc5.js.map
+//# sourceMappingURL=default.9b3d2153a00b789bac55.js.map
