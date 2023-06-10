@@ -1,0 +1,33 @@
+{
+  "id": "sequence",
+  "items": [
+    {
+      "type": "sequence",
+      "items": [
+        {
+          "text": "Hello"
+        },
+        {
+          "text": "World"
+        },
+        {
+          "text": "!",
+          "then": "end"
+        },
+        {
+          "text": "Skip"
+        }
+      ]
+    },
+    {
+      "text": "Skip 1"
+    },
+    {
+      "id": "end",
+      "text": "End"
+    },
+    {
+      "text": "Skip 2"
+    }
+  ]
+}

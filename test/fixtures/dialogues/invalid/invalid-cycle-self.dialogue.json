@@ -1,0 +1,10 @@
+{
+  "id": "invalid-cycle-self",
+  "items": [
+    {
+      "id": "self",
+      "text": "Ahhhh!",
+      "then": "self"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+$dialogue-margin: 1em;
+$response-pointer-size: 2em;
+
+.dialogue-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+
+  .balloon {
+    display: none;
+    position: absolute;
+    left: $dialogue-margin;
+    width: calc(100% - 2 * $dialogue-margin);
+    height: calc(33% - 2 * $dialogue-margin);
+    background-color: $c-white;
+    color: $c-black;
+    border-radius: 1em;
+    border: 0.5em solid $c-black;
+    margin: 0;
+    padding: 1em;
+    font-size: 1.5em;
+
+    &.top {
+      top: $dialogue-margin;
+    }
+
+    &.bottom {
+      bottom: $dialogue-margin;;
+    }
+
+    &.visible {
+      display: block;
+    }
+  }
+
+  .response-option {
+    padding-left: $response-pointer-size;
+    &.selected {
+      &:before {
+        content: ' ';
+        display: block;
+        position: absolute;
+        width: $response-pointer-size;
+        height: $response-pointer-size;
+        margin-left: -1 * $response-pointer-size;
+        margin-top: -0.1 * $response-pointer-size;
+        background-image: url('../../static/openmoji/backhand-index-pointing-right.svg');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+      }
+
+      .text {
+        background-color: #ffe34b;
+      }
+    }
+
+    .text {
+      padding: 0 0.1em;
+    }
+  }
+}

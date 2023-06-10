@@ -1,0 +1,60 @@
+{
+  "id": "condition",
+  "items": [
+    {
+      "cond": "odd",
+      "text": "One"
+    },
+    {
+      "cond": "even",
+      "text": "Two"
+    },
+    {
+      "type": "sequence",
+      "cond": "useSequence",
+      "items": [
+          {
+            "text": "A"
+          },
+          {
+            "text": "Skip",
+            "cond": "impossible"
+          },
+          {
+            "text": "B"
+          },
+          {
+            "text": "C",
+            "cond": "possible"
+          }
+      ]
+    },
+    {
+      "type": "random",
+      "cond": "useRandom",
+      "items": [
+        {
+          "text": "wrong1",
+          "cond": "impossible"
+        },
+        {
+          "text": "wrong2",
+          "cond": "possible"
+        },
+        {
+          "text": "wrong3"
+        },
+        {
+          "text": "right",
+          "cond": "possible"
+        },
+        {
+          "text": "wrong4"
+        }
+      ]
+    },
+    {
+      "text": "Neither"
+    }
+  ]
+}

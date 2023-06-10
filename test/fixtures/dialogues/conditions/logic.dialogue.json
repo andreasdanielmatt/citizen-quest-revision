@@ -1,0 +1,34 @@
+{
+  "id": "logic-dialogue",
+  "items": [
+    {
+      "type": "sequence",
+      "items": [
+        {
+          "cond": "flagA & flagB & flagC",
+          "text": "A"
+        },
+        {
+          "cond": "^flagA",
+          "text": "skip 1"
+        },
+        {
+          "cond": "^flagD",
+          "text": "B"
+        },
+        {
+          "cond": "flagA & flagB & flagC & flagD",
+          "text": "skip 2"
+        },
+        {
+          "cond": "(flagA | flagB | flagC) & flagD",
+          "text": "skip 3"
+        },
+        {
+          "cond": "flagA & (flagD | flagB) & (^flagD | ^flagC)",
+          "text": "C"
+        }
+      ]
+    }
+  ]
+}

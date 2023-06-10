@@ -1,0 +1,21 @@
+{
+  "id": "invalid-cycle-sequence",
+  "items": [
+    {
+      "type": "sequence",
+      "items": [
+        {
+          "id": "hello",
+          "text": "Hello?"
+        },
+        {
+          "text": "Hello!"
+        },
+        {
+          "text": "Can you hear me?",
+          "then": "hello"
+        }
+      ]
+    }
+  ]
+}

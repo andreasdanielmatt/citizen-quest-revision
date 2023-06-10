@@ -1,0 +1,27 @@
+{
+  "id": "nested-sequences",
+  "items": [
+    {
+      "type": "sequence",
+      "items": [
+        {
+          "text": "Hello"
+        },
+        {
+          "type": "sequence",
+          "items": [
+            {
+              "text": "World"
+            },
+            {
+              "text": "!"
+            }
+          ]
+        },
+        {
+          "text": "End"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "id": "jump-into-sequence",
+  "items": [
+    {
+      "text": "Hello",
+      "then": "rest"
+    },
+    {
+      "text": "Skip me"
+    },
+    {
+      "id": "rest",
+      "type": "sequence",
+      "items": [
+        {
+          "text": "World"
+        },
+        {
+          "text": "!"
+        }
+      ]
+    }
+  ]
+}

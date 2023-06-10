@@ -5,6 +5,7 @@ require('../helpers-web/fill-with-aspect');
 const PCView = require('../views/pc-view');
 const KeyboardInputMgr = require('../input/keyboard-input-mgr');
 const PlayerCharacter = require('../model/player-character');
+const DialogueOverlay = require('../dialogues/dialogue-overlay');
 
 class PlayerApp {
   constructor(config, playerId) {
@@ -14,6 +15,7 @@ class PlayerApp {
     this.otherPcs = Object.fromEntries(Object.entries(this.config.players)
       .filter(([id, player]) => (player.enabled === undefined || player.enabled) && id !== playerId)
       .map(([id]) => [id, new PlayerCharacter(this.config, id)]));
+    this.canControlPc = true;
 
     this.$element = $('<div></div>')
       .addClass('player-app');
@@ -21,6 +23,15 @@ class PlayerApp {
     this.$pixiWrapper = $('<div></div>')
       .addClass('pixi-wrapper')
       .appendTo(this.$element);
+
+    this.dialogueOverlay = new DialogueOverlay(this.config);
+    this.$element.append(this.dialogueOverlay.$element);
+    // this.dialogueOverlay.showSpeech('Hi Eric! This seems to be working pretty OK!');
+    // this.dialogueOverlay.showResponseOptions({
+    //   y: 'Yes! This is great!',
+    //   n: "I'm not sure it is.",
+    //   m: 'Maybe?',
+    // });
   }
 
   async init() {
@@ -57,8 +68,10 @@ class PlayerApp {
 
     this.pixiApp.ticker.add((time) => {
       this.stats.frameBegin();
-      const { x, y } = this.keyboardInputMgr.getDirection();
-      this.pc.setSpeed(x * 10, y * 10);
+      if (this.canControlPc) {
+        const { x, y } = this.keyboardInputMgr.getDirection();
+        this.pc.setSpeed(x * 10, y * 10);
+      }
       this.pcView.animate(time);
       Object.entries(this.otherPcViews).forEach(([, pcView]) => {
         pcView.display.position = pcView.pc.position;
@@ -89,10 +102,26 @@ class PlayerApp {
 
   resize() {
     this.$element.fillWithAspect(PlayerApp.APP_WIDTH / PlayerApp.APP_HEIGHT);
+    this.$element.css('font-size', `${(this.$element.width() * PlayerApp.FONT_RATIO).toFixed(3)}px`);
+  }
+
+  enablePcControl() {
+    this.canControlPc = true;
+  }
+
+  disablePcControl() {
+    this.canControlPc = false;
+    this.pc.setSpeed(0, 0);
+  }
+
+  startDialogue(dialogue) {
+    this.disablePcControl();
+
   }
 }
 
 PlayerApp.APP_WIDTH = 1024;
 PlayerApp.APP_HEIGHT = 768;
+PlayerApp.FONT_RATIO = 0.0175; // 1.75% of the width of the app
 
 module.exports = PlayerApp;

@@ -1,0 +1,26 @@
+{
+  "id": "hello-then-world",
+  "items": [
+    {
+      "text": "Hello",
+      "then": "world"
+    },
+    {
+      "id": "skip1",
+      "text": "Skip me!"
+    },
+    {
+      "id": "exclamation",
+      "text": "!"
+    },
+    {
+      "id": "world",
+      "text": "World",
+      "then": "exclamation"
+    },
+    {
+      "id": "skip2",
+      "text": "Skip me!"
+    }
+  ]
+}

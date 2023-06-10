@@ -1,0 +1,25 @@
+{
+  "id": "conditional-response",
+  "items": [
+    {
+      "text": "Hello?",
+      "responses": [
+        {
+          "cond": "flagB & ^flagA",
+          "text": "Hello!"
+        },
+        {
+          "cond": "flagA",
+          "text": "Hello world!"
+        },
+        {
+          "cond": "flagA & flagB",
+          "text": "Hello everyone!"
+        },
+        {
+          "text": "..."
+        }
+      ]
+    }
+  ]
+}

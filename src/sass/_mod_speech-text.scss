@@ -1,0 +1,8 @@
+.speech-text {
+  span {
+    opacity: 0;
+    &.revealed {
+      opacity: 1;
+    }
+  }
+}

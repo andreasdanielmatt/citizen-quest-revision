@@ -1,0 +1,13 @@
+{
+  "id": "invalid-then",
+  "items": [
+    {
+      "text": "Hello world!",
+      "then": "non-existant"
+    },
+    {
+      "id": "unreachable",
+      "text": "Unreachable!"
+    }
+  ]
+}

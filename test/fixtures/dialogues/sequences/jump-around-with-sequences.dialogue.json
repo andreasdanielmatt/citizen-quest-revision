@@ -1,0 +1,40 @@
+{
+  "id": "jump-around-with-sequences",
+  "items": [
+    {
+      "type": "sequence",
+      "items": [
+        {
+          "text": "One",
+          "then": "seq2"
+        },
+        {
+          "text": "Skip"
+        },
+        {
+          "id": "node4",
+          "text": "Four"
+        },
+        {
+          "text": "Five"
+        }
+      ]
+    },
+    {
+      "id": "seq2",
+      "type": "sequence",
+      "items": [
+        {
+          "text": "Two"
+        },
+        {
+          "text": "Three",
+          "then": "node4"
+        },
+        {
+          "text": "Skip"
+        }
+      ]
+    }
+  ]
+}

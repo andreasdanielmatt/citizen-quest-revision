@@ -1,0 +1,51 @@
+{
+  "id": "random",
+  "items": [
+    {
+      "id": "salutation",
+      "type": "random",
+      "items": [
+        {
+        "text": "Hello"
+        },
+        {
+        "text": "Hi"
+        },
+        {
+        "text": "Hey"
+        }
+      ],
+      "then": "noun"
+    },
+    {
+      "id": "noun",
+      "type": "random",
+      "items": [
+        {
+          "text": "Kids",
+          "then": "question"
+        },
+        {
+          "text": "World",
+          "then": "exclamation"
+        },
+        {
+          "text": "Everyone",
+          "then": "period"
+        }
+      ]
+    },
+    {
+      "id": "question",
+      "text": "?"
+    },
+    {
+      "id": "exclamation",
+      "text": "!"
+    },
+    {
+      "id": "period",
+      "text": "."
+    }
+  ]
+}

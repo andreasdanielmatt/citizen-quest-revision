@@ -1,0 +1,22 @@
+{
+  "id": "first",
+  "items": [
+    {
+      "type": "first",
+      "items": [
+        {
+          "cond": "never",
+          "text": "Skip A"
+        },
+        {
+          "cond": "flagA",
+          "text": "Hello world!"
+        },
+        {
+          "cond": "^flagA",
+          "text": "Skip B"
+        }
+      ]
+    }
+  ]
+}

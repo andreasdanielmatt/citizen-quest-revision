@@ -1,0 +1,38 @@
+{
+  "id": "first",
+  "items": [
+    {
+      "type": "sequence",
+      "items": [
+        {
+          "text": "Hello"
+        },
+        {
+          "type": "first",
+          "items": [
+            {
+              "cond": "never",
+              "text": "Skip A"
+            },
+            {
+              "cond": "flagA",
+              "type": "sequence",
+              "items": [
+                {
+                  "text": "world"
+                }
+              ]
+            },
+            {
+              "cond": "^flagA",
+              "text": "Skip B"
+            }
+          ]
+        },
+        {
+          "text": "!"
+        }
+      ]
+    }
+  ]
+}

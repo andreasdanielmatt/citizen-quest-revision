@@ -1,0 +1,13 @@
+{
+  "id": "invalid-reference",
+  "items": [
+    {
+      "text": "Hello",
+      "then": "wrong"
+    },
+    {
+      "id": "world",
+      "text": "World"
+    }
+  ]
+}

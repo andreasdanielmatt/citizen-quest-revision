@@ -1,0 +1,9 @@
+{
+  "id": "invalid-type",
+  "items": [
+    {
+      "type": "foobar",
+      "text": "An invalid type!"
+    }
+  ]
+}

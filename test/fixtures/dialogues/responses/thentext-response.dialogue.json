@@ -1,0 +1,22 @@
+{
+  "id": "thentext-response",
+  "items": [
+    {
+      "text": "Hello?",
+      "responses": [
+        {
+          "text": "Hi!",
+          "thenText": "Hey."
+        },
+        {
+          "text": "Hello!",
+          "thenText": "How are you?"
+        },
+        {
+          "text": "Hello world!",
+          "thenText": "Are you a programmer?"
+        }
+      ]
+    }
+  ]
+}

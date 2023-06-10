@@ -4354,6 +4354,7 @@ __webpack_require__(/*! ../helpers-web/fill-with-aspect */ "./src/js/lib/helpers
 const PCView = __webpack_require__(/*! ../views/pc-view */ "./src/js/lib/views/pc-view.js");
 const KeyboardInputMgr = __webpack_require__(/*! ../input/keyboard-input-mgr */ "./src/js/lib/input/keyboard-input-mgr.js");
 const PlayerCharacter = __webpack_require__(/*! ../model/player-character */ "./src/js/lib/model/player-character.js");
+const DialogueOverlay = __webpack_require__(/*! ../dialogues/dialogue-overlay */ "./src/js/lib/dialogues/dialogue-overlay.js");
 
 class PlayerApp {
   constructor(config, playerId) {
@@ -4363,6 +4364,7 @@ class PlayerApp {
     this.otherPcs = Object.fromEntries(Object.entries(this.config.players)
       .filter(([id, player]) => (player.enabled === undefined || player.enabled) && id !== playerId)
       .map(([id]) => [id, new PlayerCharacter(this.config, id)]));
+    this.canControlPc = true;
 
     this.$element = $('<div></div>')
       .addClass('player-app');
@@ -4370,6 +4372,15 @@ class PlayerApp {
     this.$pixiWrapper = $('<div></div>')
       .addClass('pixi-wrapper')
       .appendTo(this.$element);
+
+    this.dialogueOverlay = new DialogueOverlay(this.config);
+    this.$element.append(this.dialogueOverlay.$element);
+    // this.dialogueOverlay.showSpeech('Hi Eric! This seems to be working pretty OK!');
+    // this.dialogueOverlay.showResponseOptions({
+    //   y: 'Yes! This is great!',
+    //   n: "I'm not sure it is.",
+    //   m: 'Maybe?',
+    // });
   }
 
   async init() {
@@ -4406,8 +4417,10 @@ class PlayerApp {
 
     this.pixiApp.ticker.add((time) => {
       this.stats.frameBegin();
-      const { x, y } = this.keyboardInputMgr.getDirection();
-      this.pc.setSpeed(x * 10, y * 10);
+      if (this.canControlPc) {
+        const { x, y } = this.keyboardInputMgr.getDirection();
+        this.pc.setSpeed(x * 10, y * 10);
+      }
       this.pcView.animate(time);
       Object.entries(this.otherPcViews).forEach(([, pcView]) => {
         pcView.display.position = pcView.pc.position;
@@ -4438,13 +4451,259 @@ class PlayerApp {
 
   resize() {
     this.$element.fillWithAspect(PlayerApp.APP_WIDTH / PlayerApp.APP_HEIGHT);
+    this.$element.css('font-size', `${(this.$element.width() * PlayerApp.FONT_RATIO).toFixed(3)}px`);
+  }
+
+  enablePcControl() {
+    this.canControlPc = true;
+  }
+
+  disablePcControl() {
+    this.canControlPc = false;
+    this.pc.setSpeed(0, 0);
+  }
+
+  startDialogue(dialogue) {
+    this.disablePcControl();
+
   }
 }
 
 PlayerApp.APP_WIDTH = 1024;
 PlayerApp.APP_HEIGHT = 768;
+PlayerApp.FONT_RATIO = 0.0175; // 1.75% of the width of the app
 
 module.exports = PlayerApp;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/dialogues/dialogue-overlay.js":
+/*!**************************************************!*\
+  !*** ./src/js/lib/dialogues/dialogue-overlay.js ***!
+  \**************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const SpeechText = __webpack_require__(/*! ./speech-text */ "./src/js/lib/dialogues/speech-text.js");
+
+class DialogueOverlay {
+  constructor(config) {
+    this.config = config;
+    this.$element = $('<div></div>')
+      .addClass('dialogue-overlay');
+
+    this.$balloonTop = $('<div></div>')
+      .addClass(['balloon', 'top'])
+      .appendTo(this.$element);
+
+    this.$balloonBottom = $('<div></div>')
+      .addClass(['balloon', 'bottom'])
+      .appendTo(this.$element);
+
+    this.speechTop = new SpeechText();
+    this.$balloonTop.append(this.speechTop.$element);
+
+    this.responseOptions = [];
+    this.selectedOption = 0;
+  }
+
+  play(dialogue) {
+
+  }
+
+  showSpeech(text) {
+    this.$balloonTop.addClass('visible');
+    this.speechTop.showText([{ string: text }]);
+  }
+
+  showResponseOptions(options) {
+    this.$balloonBottom.empty().addClass('visible');
+    this.selectedOption = 0;
+    this.responseOptions = Object.entries(options).map(([value, text], i) => ({
+      value,
+      text,
+      element: $('<div></div>')
+        .addClass('response-option')
+        .toggleClass('selected', i === this.selectedOption)
+        .append($('<span></span>').addClass('text').html(text))
+        .appendTo(this.$balloonBottom),
+    }));
+  }
+
+  selectResponseOption(index) {
+    this.selectedOption = Math.max(Math.min(index, this.responseOptions.length - 1), 0);
+    this.responseOptions.forEach((option, i) => option.element
+      .toggleClass('selected', i === this.selectedOption));
+  }
+
+  selectNextResponseOption() {
+    this.selectResponseOption(this.selectedOption + 1);
+  }
+
+  selectPreviousResponseOption() {
+    this.selectResponseOption(this.selectedOption - 1);
+  }
+}
+
+module.exports = DialogueOverlay;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/dialogues/speech-text.js":
+/*!*********************************************!*\
+  !*** ./src/js/lib/dialogues/speech-text.js ***!
+  \*********************************************/
+/***/ ((module) => {
+
+/**
+ * Copyright (c) 2023 by Drew Conley (https://codepen.io/punkydrewster713/pen/zYKdywP)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+ * and associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+ * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * Modified by Eric Londaits for IMAGINARY gGmbH.
+ * Copyright (c) 2023 IMAGINARY gGmbH
+ */
+
+class SpeechText {
+  constructor() {
+    this.$element = $('<div></div>')
+      .addClass('speech-text');
+
+    this.isSpace = /\s/;
+    this.timedReveal = this.timedReveal.bind(this);
+    this.revealCharacterTimeout = null;
+  }
+
+  /**
+   * Private method to reveal a character
+   *
+   * @private
+   * @param {Object} character
+   * @param {HTMLElement} character.span
+   * @param {Array} character.classes
+   */
+  revealCharacter(character) {
+    character.span.classList.add('revealed');
+    character.classes.forEach((c) => {
+      character.span.classList.add(c);
+    });
+  }
+
+  /**
+   * Private method to reveal a list of characters with a delay between each
+   *
+   * @private
+   * @param {Array} Array of characters with the following properties:
+   * - span {HTMLElement} The span element to be revealed
+   * - isSpace {Boolean} Whether or not the character is a space
+   * - delayAfter {Number} Delay after the character is revealed
+   * - classes {Array} Array of classes to be added to the character
+   * - pause {Boolean} Whether or not to pause after the character
+   */
+  timedReveal(list) {
+    const next = list.splice(0, 1)[0];
+    this.revealCharacter(next);
+    const delay = next.isSpace && !next.pause ? 0 : next.delayAfter;
+
+    if (list.length > 0) {
+      this.revealCharacterTimeout = setTimeout(() => {
+        this.timedReveal(list);
+      }, delay);
+    }
+  }
+
+  /**
+   * Set the text to be displayed
+   *
+   * @param lines {Array} Array of objects with the following properties:
+   * - speed {Number} (optional) Speed of the text in milliseconds
+   * - string {String} Text to be displayed
+   * - classes {Array} (optional) Array of classes to be added to the text
+   * - pause {Boolean} (optional) Whether or not to pause after the line
+   */
+  showText(lines) {
+    this.clear();
+
+    this.characters = [];
+    lines.forEach((line, index) => {
+      if (index < lines.length - 1) {
+        line.string += ' '; // Add a space between lines
+      }
+      line.string.split('').forEach((character) => {
+        const span = document.createElement('span');
+        span.textContent = character;
+        this.$element.append(span);
+        this.characters.push({
+          span,
+          isSpace: this.isSpace.test(character) && !line.pause,
+          delayAfter: line.speed || SpeechText.Speeds.normal,
+          classes: line.classes || [],
+        });
+      });
+    });
+
+    this.resume();
+  }
+
+  /**
+   * Pause the reveal of the text
+   */
+  pause() {
+    clearTimeout(this.revealCharacterTimeout);
+  }
+
+  /**
+   * Resume the reveal of the text
+   */
+  resume() {
+    clearTimeout(this.revealCharacterTimeout);
+    this.revealCharacterTimeout = setTimeout(() => {
+      this.timedReveal(this.characters);
+    }, 600);
+  }
+
+  /**
+   * Clear the text
+   */
+  clear() {
+    this.pause();
+    this.$element.empty();
+  }
+
+  /**
+   * Reveal all characters immediately
+   */
+  revealAll() {
+    this.pause();
+    this.characters.forEach((c) => {
+      this.revealCharacter(c);
+    });
+  }
+}
+
+SpeechText.Speeds = {
+  pause: 500,
+  slow: 120,
+  normal: 90,
+  fast: 40,
+  superFast: 10,
+};
+
+module.exports = SpeechText;
 
 
 /***/ }),
@@ -5137,4 +5396,4 @@ cfgLoader.load([
 
 /******/ })()
 ;
-//# sourceMappingURL=default.9b3d2153a00b789bac55.js.map
+//# sourceMappingURL=default.31ae30139f95f6197938.js.map

@@ -1,0 +1,9 @@
+{
+  "id": "invalid-cond",
+  "items": [
+    {
+      "cond": "flagA &",
+      "text": "Invalid condition"
+    }
+  ]
+}

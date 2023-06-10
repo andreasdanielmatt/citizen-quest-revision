@@ -1,0 +1,16 @@
+{
+  "id": "first",
+  "items": [
+    {
+      "type": "first",
+      "items": [
+        {
+          "text": "Hello world!"
+        },
+        {
+          "text": "Skip"
+        }
+      ]
+    }
+  ]
+}

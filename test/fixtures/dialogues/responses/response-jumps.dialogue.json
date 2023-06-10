@@ -1,0 +1,29 @@
+{
+  "id": "response-jumps",
+  "items": [
+    {
+      "text": "Hello?",
+      "responses": [
+        {
+          "text": "Hi!",
+          "then": "is-polite"
+        },
+        {
+          "text": "Hello world!",
+          "then": "is-programmer"
+        },
+        {
+          "text": "Hey!"
+        }
+      ]
+    },
+    {
+      "id": "is-polite",
+      "text": "I see you're a polite person."
+    },
+    {
+      "id": "is-programmer",
+      "text": "I see you're a programmer."
+    }
+  ]
+}

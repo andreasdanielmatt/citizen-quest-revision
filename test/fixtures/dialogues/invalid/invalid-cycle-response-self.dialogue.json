@@ -1,0 +1,18 @@
+{
+  "id": "invalid-cycle-self",
+  "items": [
+    {
+      "id": "self",
+      "text": "Hello!",
+      "responses": [
+        {
+          "text": "Hello?",
+          "then": "self"
+        },
+        {
+          "text": "Goodbye!"
+        }
+      ]
+    }
+  ]
+}

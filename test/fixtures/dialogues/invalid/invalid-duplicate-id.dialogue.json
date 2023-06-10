@@ -1,0 +1,15 @@
+{
+  "id": "invalid-duplicate-id",
+  "items": [
+    {
+      "id": "invalid-duplicate-id",
+      "type": "sequence",
+      "items": [
+        {
+          "id": "invalid-duplicate-id",
+          "text": "Hello world!"
+        }
+      ]
+    }
+  ]
+}

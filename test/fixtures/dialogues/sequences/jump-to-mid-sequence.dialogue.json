@@ -1,0 +1,25 @@
+{
+  "id": "jump-to-mid-sequence",
+  "items": [
+    {
+      "text": "Hello",
+      "then": "world"
+    },
+    {
+      "type": "sequence",
+      "items": [
+        {
+          "id": "skip",
+          "text": "Skip"
+        },
+        {
+          "id": "world",
+          "text": "World"
+        },
+        {
+          "text": "!"
+        }
+      ]
+    }
+  ]
+}

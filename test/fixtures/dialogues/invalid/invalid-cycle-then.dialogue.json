@@ -1,0 +1,24 @@
+{
+  "id": "invalid-cycle-then",
+  "items": [
+    {
+      "text": "Hello?",
+      "then": "a"
+    },
+    {
+      "id": "a",
+      "text": "Hello!",
+      "then": "b"
+    },
+    {
+      "id": "b",
+      "text": "Can you hear me?",
+      "then": "c"
+    },
+    {
+      "id": "c",
+      "text": "Yes!",
+      "then": "a"
+    }
+  ]
+}

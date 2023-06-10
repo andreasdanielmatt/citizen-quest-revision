@@ -1,0 +1,22 @@
+{
+  "id": "response-sets-flags",
+  "items": [
+    {
+      "text": "Hello?",
+      "responses": [
+        {
+          "text": "Hi!",
+          "set": ["brief"]
+        },
+        {
+          "text": "Hello world!",
+          "set": ["programmer"]
+        },
+        {
+          "text": "Hello, how are you?",
+          "set": ["polite"]
+        }
+      ]
+    }
+  ]
+}

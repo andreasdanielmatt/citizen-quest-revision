@@ -1,0 +1,192 @@
+{
+  "$id": "https://github.com/IMAGINARY/future-democracy/specs/dialogue.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "$ref": "#/definitions/node_id"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/node"
+      }
+    }
+  },
+  "required": [
+    "id",
+    "items"
+  ],
+  "definitions": {
+    "node_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "pattern": "^[a-zA-Z_][a-zA-Z0-9_-]*$"
+    },
+    "node": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/sequence"
+        },
+        {
+          "$ref": "#/definitions/random"
+        },
+        {
+          "$ref": "#/definitions/first"
+        },
+        {
+          "$ref": "#/definitions/statement"
+        }
+      ]
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "flag_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "pattern": "^[a-zA-Z_][a-zA-Z0-9_-]*$"
+    },
+    "flags": {
+      "type": "array",
+      "items": {
+          "$ref": "#/definitions/flag_id"
+      },
+      "minItems": 0,
+      "maxItems": 100
+    },
+    "condition": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "sequence": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "sequence"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/node"
+          }
+        },
+        "cond": {
+          "$ref": "#/definitions/condition"
+        },
+        "set": {
+          "$ref": "#/definitions/flags"
+        }
+      },
+      "required": [
+        "type",
+        "items"
+      ]
+    },
+    "random": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "random"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/node"
+          }
+        },
+        "cond": {
+          "$ref": "#/definitions/condition"
+        },
+        "set": {
+          "$ref": "#/definitions/flags"
+        }
+      },
+      "required": [
+        "type",
+        "items"
+      ]
+    },
+    "first": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "first"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/node"
+          }
+        },
+        "cond": {
+          "$ref": "#/definitions/condition"
+        },
+        "set": {
+          "$ref": "#/definitions/flags"
+        }
+      },
+      "required": [
+        "type",
+        "items"
+      ]
+    },
+    "statement": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "statement"
+        },
+        "id": {
+          "$ref": "#/definitions/node_id"
+        },
+        "cond": {
+          "$ref": "#/definitions/condition"
+        },
+        "text": {
+          "$ref": "#/definitions/text"
+        },
+        "set": {
+          "$ref": "#/definitions/flags"
+        },
+        "responses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/response"
+          }
+        }
+      },
+      "required": [
+        "text"
+      ]
+    },
+    "response": {
+      "type": "object",
+      "properties": {
+        "cond": {
+          "$ref": "#/definitions/condition"
+        },
+        "text": {
+          "$ref": "#/definitions/text"
+        },
+        "set": {
+          "$ref": "#/definitions/flags"
+        },
+        "then": {
+          "$ref": "#/definitions/node_id"
+        },
+        "thenText": {
+          "$ref": "#/definitions/text"
+        }
+      },
+      "required": [
+        "text"
+      ]
+    }
+  }
+}

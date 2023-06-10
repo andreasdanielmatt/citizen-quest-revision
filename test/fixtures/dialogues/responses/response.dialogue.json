@@ -1,0 +1,35 @@
+{
+  "id": "response",
+  "items": [
+    {
+      "text": "Hello?",
+      "responses": [
+        {
+          "text": "Hi!"
+        },
+        {
+          "text": "Hello world!"
+        },
+        {
+          "text": "Howdy!"
+        }
+      ],
+      "then": "how-are-you"
+    },
+    {
+      "id": "how-are-you",
+      "text": "How are you?",
+      "responses": [
+        {
+          "text": "I'm fine, thanks!"
+        },
+        {
+          "text": "I'm doing well, thanks!"
+        },
+        {
+          "text": "I'm good, thanks!"
+        }
+      ]
+    }
+  ]
+}
