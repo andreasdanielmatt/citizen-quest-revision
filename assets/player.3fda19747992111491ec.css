@@ -74,6 +74,7 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
   height: 100%;
   pointer-events: none;
+  /* Animate the background color from white to yellow */
 }
 .dialogue-overlay .balloon {
   display: none;
@@ -128,6 +129,14 @@ h1, h2, h3, h4, h5, h6 {
   background-size: contain;
   animation: strikeDown 0.75s ease-in-out infinite;
 }
+@keyframes flash {
+  0% {
+    background-color: #fff;
+  }
+  100% {
+    background-color: #ffe34b;
+  }
+}
 .dialogue-overlay .response-option {
   padding-left: 2em;
 }
@@ -145,7 +154,8 @@ h1, h2, h3, h4, h5, h6 {
   background-position: center;
 }
 .dialogue-overlay .response-option.selected .text {
-  background-color: #ffe34b;
+  background-color: #fff;
+  animation: flash 0.5s ease-out forwards;
 }
 .dialogue-overlay .response-option .text {
   padding: 0 0.1em;
@@ -238,4 +248,4 @@ html.with-fatal-error body {
   margin-bottom: 1.2em;
 }
 
-/*# sourceMappingURL=default.d3683b90754ab959e579.css.map*/
+/*# sourceMappingURL=player.3fda19747992111491ec.css.map*/

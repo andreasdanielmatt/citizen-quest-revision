@@ -85,6 +85,17 @@ $response-pointer-size: 2em;
     }
   }
 
+  /* Animate the background color from white to yellow */
+  @keyframes flash {
+      0% {
+      background-color: $c-white;
+      }
+
+      100% {
+      background-color: #ffe34b;
+      }
+  }
+
   .response-option {
     padding-left: $response-pointer-size;
     &.selected {
@@ -103,7 +114,8 @@ $response-pointer-size: 2em;
       }
 
       .text {
-        background-color: #ffe34b;
+        background-color: $c-white;
+        animation: flash 0.5s ease-out forwards;
       }
     }
 
