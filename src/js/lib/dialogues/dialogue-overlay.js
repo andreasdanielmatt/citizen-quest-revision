@@ -10,7 +10,7 @@ class DialogueOverlay {
       .addClass('dialogue-overlay');
 
     this.$balloonTop = $('<div></div>')
-      .addClass(['balloon', 'top'])
+      .addClass(['balloon', 'balloon-speech', 'top'])
       .appendTo(this.$element);
 
     this.$balloonBottom = $('<div></div>')
@@ -56,6 +56,7 @@ class DialogueOverlay {
 
   hideSpeech() {
     this.$balloonTop.removeClass('visible');
+    this.$balloonTop.removeClass('press-to-continue');
   }
 
   hideResponseOptions() {
@@ -79,6 +80,10 @@ class DialogueOverlay {
 
   selectPreviousResponseOption() {
     this.selectResponseOption(this.selectedOption - 1);
+  }
+
+  showPressToContinue() {
+    this.$balloonTop.addClass('press-to-continue');
   }
 }
 

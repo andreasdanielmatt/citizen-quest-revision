@@ -2646,7 +2646,7 @@ class DialogueOverlay {
       .addClass('dialogue-overlay');
 
     this.$balloonTop = $('<div></div>')
-      .addClass(['balloon', 'top'])
+      .addClass(['balloon', 'balloon-speech', 'top'])
       .appendTo(this.$element);
 
     this.$balloonBottom = $('<div></div>')
@@ -2692,6 +2692,7 @@ class DialogueOverlay {
 
   hideSpeech() {
     this.$balloonTop.removeClass('visible');
+    this.$balloonTop.removeClass('press-to-continue');
   }
 
   hideResponseOptions() {
@@ -2715,6 +2716,10 @@ class DialogueOverlay {
 
   selectPreviousResponseOption() {
     this.selectResponseOption(this.selectedOption - 1);
+  }
+
+  showPressToContinue() {
+    this.$balloonTop.addClass('press-to-continue');
   }
 }
 
@@ -2750,7 +2755,7 @@ class DialogueSequencerState {
   }
 
   onAction() {
-    
+
   }
 }
 
@@ -2766,6 +2771,7 @@ class DialogueSequencerThenTextState extends DialogueSequencerState {
     this.dialogueOverlay.showSpeech(response.thenText);
     this.dialogueOverlay.events.once('speechComplete', () => {
       this.speechDone = true;
+      this.dialogueOverlay.showPressToContinue();
     });
   }
 
@@ -2818,6 +2824,8 @@ class DialogueSequencerTextState extends DialogueSequencerState {
         this.dialogueSequencer.setUiState(
           new DialogueSequencerResponseState(this.dialogueSequencer)
         );
+      } else {
+        this.dialogueOverlay.showPressToContinue();
       }
     });
   }
@@ -4205,4 +4213,4 @@ fetch(configUrl, { cache: 'no-store' })
 
 /******/ })()
 ;
-//# sourceMappingURL=player.9703b9de1a3522626cf5.js.map
+//# sourceMappingURL=player.20cf8484e526c48cf904.js.map

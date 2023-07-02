@@ -57,6 +57,16 @@ h1, h2, h3, h4, h5, h6 {
   height: 100%;
 }
 
+@keyframes popIn {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
 .dialogue-overlay {
   position: absolute;
   top: 0;
@@ -87,6 +97,36 @@ h1, h2, h3, h4, h5, h6 {
 }
 .dialogue-overlay .balloon.visible {
   display: block;
+  animation: popIn 0.25s ease-in-out;
+}
+@keyframes strikeDown {
+  0% {
+    transform: translateY(0.25em);
+  }
+  45% {
+    transform: translateY(-0.15em);
+  }
+  90% {
+    transform: translateY(0.25em);
+  }
+  100% {
+    transform: translateY(0.25em);
+  }
+}
+.dialogue-overlay .balloon-speech.press-to-continue:after {
+  content: " ";
+  display: block;
+  position: absolute;
+  bottom: -1.15em;
+  left: 50%;
+  width: 2em;
+  height: 2em;
+  margin-left: -1em;
+  background-image: url(d174ada33ce1b4398744.svg);
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: contain;
+  animation: strikeDown 0.75s ease-in-out infinite;
 }
 .dialogue-overlay .response-option {
   padding-left: 2em;
@@ -198,4 +238,4 @@ html.with-fatal-error body {
   margin-bottom: 1.2em;
 }
 
-/*# sourceMappingURL=default.d186fb8d8f7d6dd612c2.css.map*/
+/*# sourceMappingURL=default.d3683b90754ab959e579.css.map*/

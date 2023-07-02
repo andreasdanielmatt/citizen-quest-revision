@@ -11,7 +11,7 @@ export class DialogueSequencerState {
   }
 
   onAction() {
-    
+
   }
 }
 
@@ -27,6 +27,7 @@ export class DialogueSequencerThenTextState extends DialogueSequencerState {
     this.dialogueOverlay.showSpeech(response.thenText);
     this.dialogueOverlay.events.once('speechComplete', () => {
       this.speechDone = true;
+      this.dialogueOverlay.showPressToContinue();
     });
   }
 
@@ -79,6 +80,8 @@ export class DialogueSequencerTextState extends DialogueSequencerState {
         this.dialogueSequencer.setUiState(
           new DialogueSequencerResponseState(this.dialogueSequencer)
         );
+      } else {
+        this.dialogueOverlay.showPressToContinue();
       }
     });
   }
