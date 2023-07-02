@@ -3,7 +3,11 @@ const CfgReaderFetch = require('./lib/loader/cfg-reader-fetch');
 const CfgLoader = require('./lib/loader/cfg-loader');
 const showFatalError = require('./lib/loader/show-fatal-error');
 const PlayerApp = require('./lib/components/player-app');
+require('./lib/live-test/live-test-manager');
+require('./lib/live-test/dialogue-live-tester');
 require('../sass/default.scss');
+
+const urlParams = new URLSearchParams(window.location.search);
 
 const cfgLoader = new CfgLoader(CfgReaderFetch, yaml.load);
 cfgLoader.load([
@@ -30,4 +34,8 @@ cfgLoader.load([
   $(window).on('resize', () => {
     playerApp.resize();
   });
+
+  if (urlParams.get('test')) {
+    window.IMAGINARY.liveTestManager.run(playerApp, urlParams.get('test'));
+  }
 });

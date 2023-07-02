@@ -1,5 +1,8 @@
+const EventEmitter = require('events');
+
 class KeyboardInputMgr {
   constructor() {
+    this.events = new EventEmitter();
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
     this.pressed = {
@@ -22,17 +25,26 @@ class KeyboardInputMgr {
   }
 
   handleKeyDown(event) {
+    // Ignore repeated keydown events
+    if (event.originalEvent.repeat) {
+      return;
+    }
     // Read the arrow keys and the spacebar
     if (event.code === 'ArrowLeft') {
       this.pressed.left = true;
+      this.events.emit('left');
     } else if (event.code === 'ArrowUp') {
       this.pressed.up = true;
+      this.events.emit('up');
     } else if (event.code === 'ArrowRight') {
       this.pressed.right = true;
+      this.events.emit('right');
     } else if (event.code === 'ArrowDown') {
       this.pressed.down = true;
+      this.events.emit('down');
     } else if (event.code === 'Space') {
       this.pressed.space = true;
+      this.events.emit('action');
     } else if (this.toggles[event.code]) {
       this.toggles[event.code]();
     }

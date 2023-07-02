@@ -1,0 +1,19 @@
+{
+  "id": "multi",
+  "items": [
+    {
+      "type": "sequence",
+      "items": [
+        {
+          "text": "Hello!"
+        },
+        {
+          "text": "My name is Andy."
+        },
+        {
+          "text": "Nice to meet you!"
+        }
+      ]
+    }
+  ]
+}

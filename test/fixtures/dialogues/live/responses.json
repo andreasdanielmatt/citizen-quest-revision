@@ -1,0 +1,38 @@
+{
+  "id": "responses",
+  "items": [
+    {
+      "text": "Hello, how are you?",
+      "responses": [
+        {
+          "text": "Great!",
+          "thenText": "I'm glad to hear that.",
+          "then": "next"
+        },
+        {
+          "text": "Fine",
+          "thenText": "Same.",
+          "then": "next"
+        },
+        {
+          "text": "Not too good",
+          "thenText": "Sorry to hear that. I won't bother you further."
+        }
+      ]
+    },
+    {
+      "id": "next",
+      "text": "Are you a robot?",
+      "responses": [
+        {
+          "text": "Yes",
+          "thenText": "Wow! I'm a robot too!"
+        },
+        {
+          "text": "No",
+          "thenText": "Of course not. But us humans must be careful."
+        }
+      ]
+    }
+  ]
+}

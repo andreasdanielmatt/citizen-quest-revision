@@ -19,6 +19,7 @@
  * Modified by Eric Londaits for IMAGINARY gGmbH.
  * Copyright (c) 2023 IMAGINARY gGmbH
  */
+const EventEmitter = require('events');
 
 class SpeechText {
   constructor() {
@@ -28,6 +29,8 @@ class SpeechText {
     this.isSpace = /\s/;
     this.timedReveal = this.timedReveal.bind(this);
     this.revealCharacterTimeout = null;
+    this.events = new EventEmitter();
+    this.speedFactor = 1;
   }
 
   /**
@@ -54,7 +57,7 @@ class SpeechText {
    * - isSpace {Boolean} Whether or not the character is a space
    * - delayAfter {Number} Delay after the character is revealed
    * - classes {Array} Array of classes to be added to the character
-   * - pause {Boolean} Whether or not to pause after the character
+   * - stop {Boolean} Whether or not to stop after the character
    */
   timedReveal(list) {
     const next = list.splice(0, 1)[0];
@@ -64,7 +67,9 @@ class SpeechText {
     if (list.length > 0) {
       this.revealCharacterTimeout = setTimeout(() => {
         this.timedReveal(list);
-      }, delay);
+      }, delay * this.speedFactor);
+    } else {
+      this.events.emit('complete');
     }
   }
 
@@ -75,7 +80,7 @@ class SpeechText {
    * - speed {Number} (optional) Speed of the text in milliseconds
    * - string {String} Text to be displayed
    * - classes {Array} (optional) Array of classes to be added to the text
-   * - pause {Boolean} (optional) Whether or not to pause after the line
+   * - stop {Boolean} (optional) Whether or not to stop after the line
    */
   showText(lines) {
     this.clear();
@@ -102,10 +107,11 @@ class SpeechText {
   }
 
   /**
-   * Pause the reveal of the text
+   * Stop the reveal of the text
    */
-  pause() {
+  stop() {
     clearTimeout(this.revealCharacterTimeout);
+    this.speedFactor = 1;
   }
 
   /**
@@ -122,7 +128,7 @@ class SpeechText {
    * Clear the text
    */
   clear() {
-    this.pause();
+    this.stop();
     this.$element.empty();
   }
 
@@ -130,17 +136,22 @@ class SpeechText {
    * Reveal all characters immediately
    */
   revealAll() {
-    this.pause();
+    this.stop();
     this.characters.forEach((c) => {
       this.revealCharacter(c);
     });
+    this.events.emit('complete');
+  }
+
+  speedUp() {
+    this.speedFactor = 0.2;
   }
 }
 
 SpeechText.Speeds = {
   pause: 500,
   slow: 120,
-  normal: 90,
+  normal: 60,
   fast: 40,
   superFast: 10,
 };

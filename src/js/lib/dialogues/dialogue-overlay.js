@@ -1,8 +1,11 @@
+const EventEmitter = require('events');
 const SpeechText = require('./speech-text');
 
 class DialogueOverlay {
   constructor(config) {
     this.config = config;
+    this.events = new EventEmitter();
+
     this.$element = $('<div></div>')
       .addClass('dialogue-overlay');
 
@@ -16,6 +19,9 @@ class DialogueOverlay {
 
     this.speechTop = new SpeechText();
     this.$balloonTop.append(this.speechTop.$element);
+    this.speechTop.events.on('complete', () => {
+      this.events.emit('speechComplete');
+    });
 
     this.responseOptions = [];
     this.selectedOption = 0;
@@ -30,6 +36,10 @@ class DialogueOverlay {
     this.speechTop.showText([{ string: text }]);
   }
 
+  speedUpSpeech() {
+    this.speechTop.speedUp();
+  }
+
   showResponseOptions(options) {
     this.$balloonBottom.empty().addClass('visible');
     this.selectedOption = 0;
@@ -42,6 +52,19 @@ class DialogueOverlay {
         .append($('<span></span>').addClass('text').html(text))
         .appendTo(this.$balloonBottom),
     }));
+  }
+
+  hideSpeech() {
+    this.$balloonTop.removeClass('visible');
+  }
+
+  hideResponseOptions() {
+    this.$balloonBottom.removeClass('visible');
+  }
+
+  hide() {
+    this.hideSpeech();
+    this.hideResponseOptions();
   }
 
   selectResponseOption(index) {

@@ -6,6 +6,7 @@ const PCView = require('../views/pc-view');
 const KeyboardInputMgr = require('../input/keyboard-input-mgr');
 const PlayerCharacter = require('../model/player-character');
 const DialogueOverlay = require('../dialogues/dialogue-overlay');
+const DialogueSequencer = require('../dialogues/dialogue-sequencer');
 
 class PlayerApp {
   constructor(config, playerId) {
@@ -25,13 +26,8 @@ class PlayerApp {
       .appendTo(this.$element);
 
     this.dialogueOverlay = new DialogueOverlay(this.config);
+    this.dialogueSequencer = new DialogueSequencer(this.dialogueOverlay);
     this.$element.append(this.dialogueOverlay.$element);
-    // this.dialogueOverlay.showSpeech('Hi Eric! This seems to be working pretty OK!');
-    // this.dialogueOverlay.showResponseOptions({
-    //   y: 'Yes! This is great!',
-    //   n: "I'm not sure it is.",
-    //   m: 'Maybe?',
-    // });
   }
 
   async init() {
@@ -88,6 +84,26 @@ class PlayerApp {
       this.stats.frameEnd();
     });
 
+    // Temporary test
+    this.keyboardInputMgr.events.on('down', () => {
+      this.dialogueOverlay.selectNextResponseOption();
+    });
+
+    this.keyboardInputMgr.events.on('up', () => {
+      this.dialogueOverlay.selectPreviousResponseOption();
+    });
+
+    this.keyboardInputMgr.events.on('action', () => {
+      this.dialogueSequencer.action();
+    });
+
+    // this.dialogueOverlay.showSpeech('Hi Eric! This seems to be working pretty OK!');
+    // this.dialogueOverlay.showResponseOptions({
+    //   y: 'Yes! This is great!',
+    //   n: "I'm not sure it is.",
+    //   m: 'Maybe?',
+    // });
+
     return this;
   }
 
@@ -114,9 +130,9 @@ class PlayerApp {
     this.pc.setSpeed(0, 0);
   }
 
-  startDialogue(dialogue) {
+  playDialogue(dialogue) {
     this.disablePcControl();
-
+    this.dialogueSequencer.play(dialogue);
   }
 }
 
