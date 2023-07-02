@@ -14146,6 +14146,65 @@ module.exports = PlayerApp;
 
 /***/ }),
 
+/***/ "./src/js/lib/dialogues/dialogue-balloon.js":
+/*!**************************************************!*\
+  !*** ./src/js/lib/dialogues/dialogue-balloon.js ***!
+  \**************************************************/
+/***/ ((module) => {
+
+class DialogueBalloon {
+  constructor(classes) {
+    this.$element = $('<div></div>')
+      .addClass('balloon')
+      .addClass(classes);
+  }
+
+  show() {
+    this.cancelHide();
+    this.$element.addClass('visible');
+  }
+
+  hide() {
+    this.$element.addClass('fading');
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+    }
+    this.timeout = setTimeout(() => {
+      this.$element.removeClass('fading');
+      this.$element.removeClass('visible');
+      this.$element.removeClass('press-to-continue');
+    }, 250);
+  }
+
+  cancelHide() {
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+    }
+    this.$element.removeClass('fading');
+  }
+
+  showPressToContinue() {
+    this.$element.addClass('press-to-continue');
+  }
+
+  hidePressToContinue() {
+    this.$element.removeClass('press-to-continue');
+  }
+
+  empty() {
+    this.$element.empty();
+  }
+
+  append(element) {
+    this.$element.append(element);
+  }
+}
+
+module.exports = DialogueBalloon;
+
+
+/***/ }),
+
 /***/ "./src/js/lib/dialogues/dialogue-iterator.js":
 /*!***************************************************!*\
   !*** ./src/js/lib/dialogues/dialogue-iterator.js ***!
@@ -14468,6 +14527,7 @@ module.exports = DialogueIterator;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
+const DialogueBalloon = __webpack_require__(/*! ./dialogue-balloon */ "./src/js/lib/dialogues/dialogue-balloon.js");
 const SpeechText = __webpack_require__(/*! ./speech-text */ "./src/js/lib/dialogues/speech-text.js");
 
 class DialogueOverlay {
@@ -14478,16 +14538,14 @@ class DialogueOverlay {
     this.$element = $('<div></div>')
       .addClass('dialogue-overlay');
 
-    this.$balloonTop = $('<div></div>')
-      .addClass(['balloon', 'balloon-speech', 'top'])
-      .appendTo(this.$element);
+    this.balloonTop = new DialogueBalloon(['balloon-speech', 'top']);
+    this.$element.append(this.balloonTop.$element);
 
-    this.$balloonBottom = $('<div></div>')
-      .addClass(['balloon', 'bottom'])
-      .appendTo(this.$element);
+    this.balloonBottom = new DialogueBalloon(['bottom']);
+    this.$element.append(this.balloonBottom.$element);
 
     this.speechTop = new SpeechText();
-    this.$balloonTop.append(this.speechTop.$element);
+    this.balloonTop.append(this.speechTop.$element);
     this.speechTop.events.on('complete', () => {
       this.events.emit('speechComplete');
     });
@@ -14501,7 +14559,8 @@ class DialogueOverlay {
   }
 
   showSpeech(text) {
-    this.$balloonTop.addClass('visible');
+    this.balloonTop.show();
+    this.hidePressToContinue();
     this.speechTop.showText([{ string: text }]);
   }
 
@@ -14510,7 +14569,9 @@ class DialogueOverlay {
   }
 
   showResponseOptions(options) {
-    this.$balloonBottom.empty().addClass('visible');
+    this.balloonBottom.empty();
+    this.balloonBottom.show();
+
     this.selectedOption = 0;
     this.responseOptions = Object.entries(options).map(([id, text], i) => ({
       id,
@@ -14519,17 +14580,16 @@ class DialogueOverlay {
         .addClass('response-option')
         .toggleClass('selected', i === this.selectedOption)
         .append($('<span></span>').addClass('text').html(text))
-        .appendTo(this.$balloonBottom),
+        .appendTo(this.balloonBottom.$element),
     }));
   }
 
   hideSpeech() {
-    this.$balloonTop.removeClass('visible');
-    this.$balloonTop.removeClass('press-to-continue');
+    this.balloonTop.hide();
   }
 
   hideResponseOptions() {
-    this.$balloonBottom.removeClass('visible');
+    this.balloonBottom.hide();
   }
 
   hide() {
@@ -14556,7 +14616,11 @@ class DialogueOverlay {
   }
 
   showPressToContinue() {
-    this.$balloonTop.addClass('press-to-continue');
+    this.balloonTop.showPressToContinue();
+  }
+
+  hidePressToContinue() {
+    this.balloonTop.hidePressToContinue();
   }
 }
 
@@ -15959,4 +16023,4 @@ cfgLoader.load([
 
 /******/ })()
 ;
-//# sourceMappingURL=default.e514e3e7aff298a505ba.js.map
+//# sourceMappingURL=default.dba446b9612cbc89d3b3.js.map

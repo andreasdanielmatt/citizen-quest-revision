@@ -67,6 +67,14 @@ h1, h2, h3, h4, h5, h6 {
     opacity: 1;
   }
 }
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
 .dialogue-overlay {
   position: absolute;
   top: 0;
@@ -99,6 +107,9 @@ h1, h2, h3, h4, h5, h6 {
 .dialogue-overlay .balloon.visible {
   display: block;
   animation: popIn 0.25s ease-in-out;
+}
+.dialogue-overlay .balloon.fading {
+  animation: fadeOut 0.25s ease-in-out forwards;
 }
 @keyframes strikeDown {
   0% {
@@ -248,4 +259,4 @@ html.with-fatal-error body {
   margin-bottom: 1.2em;
 }
 
-/*# sourceMappingURL=default.3fda19747992111491ec.css.map*/
+/*# sourceMappingURL=default.d58f3d8385db1ddb12e6.css.map*/

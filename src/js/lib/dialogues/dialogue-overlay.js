@@ -1,4 +1,5 @@
 const EventEmitter = require('events');
+const DialogueBalloon = require('./dialogue-balloon');
 const SpeechText = require('./speech-text');
 
 class DialogueOverlay {
@@ -9,16 +10,14 @@ class DialogueOverlay {
     this.$element = $('<div></div>')
       .addClass('dialogue-overlay');
 
-    this.$balloonTop = $('<div></div>')
-      .addClass(['balloon', 'balloon-speech', 'top'])
-      .appendTo(this.$element);
+    this.balloonTop = new DialogueBalloon(['balloon-speech', 'top']);
+    this.$element.append(this.balloonTop.$element);
 
-    this.$balloonBottom = $('<div></div>')
-      .addClass(['balloon', 'bottom'])
-      .appendTo(this.$element);
+    this.balloonBottom = new DialogueBalloon(['bottom']);
+    this.$element.append(this.balloonBottom.$element);
 
     this.speechTop = new SpeechText();
-    this.$balloonTop.append(this.speechTop.$element);
+    this.balloonTop.append(this.speechTop.$element);
     this.speechTop.events.on('complete', () => {
       this.events.emit('speechComplete');
     });
@@ -32,7 +31,8 @@ class DialogueOverlay {
   }
 
   showSpeech(text) {
-    this.$balloonTop.addClass('visible');
+    this.balloonTop.show();
+    this.hidePressToContinue();
     this.speechTop.showText([{ string: text }]);
   }
 
@@ -41,7 +41,9 @@ class DialogueOverlay {
   }
 
   showResponseOptions(options) {
-    this.$balloonBottom.empty().addClass('visible');
+    this.balloonBottom.empty();
+    this.balloonBottom.show();
+
     this.selectedOption = 0;
     this.responseOptions = Object.entries(options).map(([id, text], i) => ({
       id,
@@ -50,17 +52,16 @@ class DialogueOverlay {
         .addClass('response-option')
         .toggleClass('selected', i === this.selectedOption)
         .append($('<span></span>').addClass('text').html(text))
-        .appendTo(this.$balloonBottom),
+        .appendTo(this.balloonBottom.$element),
     }));
   }
 
   hideSpeech() {
-    this.$balloonTop.removeClass('visible');
-    this.$balloonTop.removeClass('press-to-continue');
+    this.balloonTop.hide();
   }
 
   hideResponseOptions() {
-    this.$balloonBottom.removeClass('visible');
+    this.balloonBottom.hide();
   }
 
   hide() {
@@ -87,7 +88,11 @@ class DialogueOverlay {
   }
 
   showPressToContinue() {
-    this.$balloonTop.addClass('press-to-continue');
+    this.balloonTop.showPressToContinue();
+  }
+
+  hidePressToContinue() {
+    this.balloonTop.hidePressToContinue();
   }
 }
 

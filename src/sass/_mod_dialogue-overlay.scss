@@ -13,6 +13,16 @@ $response-pointer-size: 2em;
   }
 }
 
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
 .dialogue-overlay {
   position: absolute;
   top: 0;
@@ -46,6 +56,10 @@ $response-pointer-size: 2em;
     &.visible {
       display: block;
       animation: popIn 0.25s ease-in-out;
+    }
+
+    &.fading {
+      animation: fadeOut 0.25s ease-in-out forwards;
     }
   }
 
