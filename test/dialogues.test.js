@@ -38,16 +38,16 @@ function getTrace(iterator, input = []) {
       trace.push(text);
     }
     if (activeNode.responses && activeNode.responses.length > 0) {
-      const responseId = input.shift();
-      if (activeNode.responses[responseId] === undefined) {
-        throw new Error(`Invalid input ${responseId} (${activeNode.id}:${iterator.dialogue.root.id})`);
+      const responseIndex = input.shift();
+      if (activeNode.responses[responseIndex] === undefined) {
+        throw new Error(`Invalid input ${responseIndex} (${activeNode.id}:${iterator.dialogue.root.id})`);
       }
-      const response = activeNode.responses[responseId];
+      const response = activeNode.responses[responseIndex];
       trace.push(`>> ${response.text}`);
       if (response.thenText) {
         trace.push(response.thenText);
       }
-      iterator.nextWithResponse(responseId);
+      iterator.nextWithResponse(activeNode.responses[responseIndex].id);
     } else {
       iterator.next();
     }

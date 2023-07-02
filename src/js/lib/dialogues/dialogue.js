@@ -37,6 +37,18 @@ class Dialogue {
           if (!item.id) {
             item.id = `${node.id}-${index}`;
           }
+          if (item.responses) {
+            item.responses.forEach((response, responseIndex) => {
+              response.parent = item;
+              if (!response.id) {
+                response.id = `${item.id}-${responseIndex}`;
+              }
+            });
+
+            item.responsesById = Object.fromEntries(
+              item.responses.map((response) => [response.id, response])
+            );
+          }
         });
         stack.push(...node.items);
       }

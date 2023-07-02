@@ -14251,6 +14251,24 @@ class DialogueIterator {
   }
 
   /**
+   * Returns the response with the given ID in the active node.
+   *
+   * @param {string} responseId
+   * @returns {Object|null}
+   */
+  getResponse(responseId) {
+    if (this.activeNode === null) {
+      return null;
+    }
+
+    if (!this.activeNode.responses) {
+      return null;
+    }
+
+    return this.activeNode.responsesById[responseId];
+  }
+
+  /**
    * Advances the iterator to the next node.
    *
    * @throws Error if the active node type is unknown.
@@ -14301,7 +14319,7 @@ class DialogueIterator {
       throw new Error(`Can't use nextWithResponse on a node without responses (${this.activeNode.type}:${this.dialogue.root.id})`);
     }
 
-    const response = this.activeNode.responses[responseId];
+    const response = this.activeNode.responsesById[responseId];
     if (!response) {
       throw new Error(`Unknown response id: ${responseId} (${this.activeNode.id}:${this.dialogue.root.id})`);
     }
@@ -14494,8 +14512,8 @@ class DialogueOverlay {
   showResponseOptions(options) {
     this.$balloonBottom.empty().addClass('visible');
     this.selectedOption = 0;
-    this.responseOptions = Object.entries(options).map(([value, text], i) => ({
-      value,
+    this.responseOptions = Object.entries(options).map(([id, text], i) => ({
+      id,
       text,
       element: $('<div></div>')
         .addClass('response-option')
@@ -14531,6 +14549,10 @@ class DialogueOverlay {
 
   selectPreviousResponseOption() {
     this.selectResponseOption(this.selectedOption - 1);
+  }
+
+  getSelectedResponseId() {
+    return this.responseOptions[this.selectedOption].id;
   }
 
   showPressToContinue() {
@@ -14609,7 +14631,7 @@ class DialogueSequencerThenTextState extends DialogueSequencerState {
 
   onBegin() {
     this.speechDone = false;
-    const response = this.dialogueIterator.getEnabledResponses()[this.responseId];
+    const response = this.dialogueIterator.getResponse(this.responseId);
     this.dialogueOverlay.showSpeech(response.thenText);
     this.dialogueOverlay.events.once('speechComplete', () => {
       this.speechDone = true;
@@ -14635,15 +14657,15 @@ class DialogueSequencerResponseState extends DialogueSequencerState {
 
   onBegin() {
     this.dialogueOverlay.showResponseOptions(
-      Object.fromEntries(this.responses.map((response, i) => [i, response.text]))
+      Object.fromEntries(this.responses.map((response) => [response.id, response.text]))
     );
   }
 
   onAction() {
     this.dialogueOverlay.hideResponseOptions();
     this.dialogueOverlay.hideSpeech();
-    const responseId = this.dialogueOverlay.selectedOption;
-    const selectedResponse = this.responses[responseId];
+    const responseId = this.dialogueOverlay.getSelectedResponseId();
+    const selectedResponse = this.dialogueIterator.getResponse(responseId);
     if (selectedResponse.thenText) {
       this.dialogueSequencer.setUiState(
         new DialogueSequencerThenTextState(this.dialogueSequencer, responseId)
@@ -14811,6 +14833,18 @@ class Dialogue {
           }
           if (!item.id) {
             item.id = `${node.id}-${index}`;
+          }
+          if (item.responses) {
+            item.responses.forEach((response, responseIndex) => {
+              response.parent = item;
+              if (!response.id) {
+                response.id = `${item.id}-${responseIndex}`;
+              }
+            });
+
+            item.responsesById = Object.fromEntries(
+              item.responses.map((response) => [response.id, response])
+            );
           }
         });
         stack.push(...node.items);
@@ -15925,4 +15959,4 @@ cfgLoader.load([
 
 /******/ })()
 ;
-//# sourceMappingURL=default.bf64f30418e1cbc591f9.js.map
+//# sourceMappingURL=default.e514e3e7aff298a505ba.js.map

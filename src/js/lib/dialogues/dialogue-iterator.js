@@ -97,6 +97,24 @@ class DialogueIterator {
   }
 
   /**
+   * Returns the response with the given ID in the active node.
+   *
+   * @param {string} responseId
+   * @returns {Object|null}
+   */
+  getResponse(responseId) {
+    if (this.activeNode === null) {
+      return null;
+    }
+
+    if (!this.activeNode.responses) {
+      return null;
+    }
+
+    return this.activeNode.responsesById[responseId];
+  }
+
+  /**
    * Advances the iterator to the next node.
    *
    * @throws Error if the active node type is unknown.
@@ -147,7 +165,7 @@ class DialogueIterator {
       throw new Error(`Can't use nextWithResponse on a node without responses (${this.activeNode.type}:${this.dialogue.root.id})`);
     }
 
-    const response = this.activeNode.responses[responseId];
+    const response = this.activeNode.responsesById[responseId];
     if (!response) {
       throw new Error(`Unknown response id: ${responseId} (${this.activeNode.id}:${this.dialogue.root.id})`);
     }

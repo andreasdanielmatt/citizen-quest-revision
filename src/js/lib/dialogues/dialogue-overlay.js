@@ -43,8 +43,8 @@ class DialogueOverlay {
   showResponseOptions(options) {
     this.$balloonBottom.empty().addClass('visible');
     this.selectedOption = 0;
-    this.responseOptions = Object.entries(options).map(([value, text], i) => ({
-      value,
+    this.responseOptions = Object.entries(options).map(([id, text], i) => ({
+      id,
       text,
       element: $('<div></div>')
         .addClass('response-option')
@@ -80,6 +80,10 @@ class DialogueOverlay {
 
   selectPreviousResponseOption() {
     this.selectResponseOption(this.selectedOption - 1);
+  }
+
+  getSelectedResponseId() {
+    return this.responseOptions[this.selectedOption].id;
   }
 
   showPressToContinue() {
