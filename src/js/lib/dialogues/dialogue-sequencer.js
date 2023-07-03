@@ -56,6 +56,7 @@ class DialogueSequencer {
 
   onDialogueEnd() {
     this.dialogueOverlay.hide();
+    this.events.emit('end');
   }
 
   action() {

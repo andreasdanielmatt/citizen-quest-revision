@@ -4,6 +4,7 @@ const TownView = require('../views/town-view');
 require('../helpers-web/fill-with-aspect');
 const PCView = require('../views/pc-view');
 const KeyboardInputMgr = require('../input/keyboard-input-mgr');
+const PlayerAppInputRouter = require('../input/player-app-input-router');
 const PlayerCharacter = require('../model/player-character');
 const DialogueOverlay = require('../dialogues/dialogue-overlay');
 const DialogueSequencer = require('../dialogues/dialogue-sequencer');
@@ -16,7 +17,7 @@ class PlayerApp {
     this.otherPcs = Object.fromEntries(Object.entries(this.config.players)
       .filter(([id, player]) => (player.enabled === undefined || player.enabled) && id !== playerId)
       .map(([id]) => [id, new PlayerCharacter(this.config, id)]));
-    this.canControlPc = true;
+    this.canControlPc = false;
 
     this.$element = $('<div></div>')
       .addClass('player-app');
@@ -62,6 +63,9 @@ class PlayerApp {
     this.keyboardInputMgr.addListeners();
     this.keyboardInputMgr.addToggle('KeyD', () => { this.stats.togglePanel(); });
 
+    this.inputRouter = new PlayerAppInputRouter(this.keyboardInputMgr);
+    this.inputRouter.routeToPcMovement(this);
+
     this.pixiApp.ticker.add((time) => {
       this.stats.frameBegin();
       if (this.canControlPc) {
@@ -83,26 +87,6 @@ class PlayerApp {
       );
       this.stats.frameEnd();
     });
-
-    // Temporary test
-    this.keyboardInputMgr.events.on('down', () => {
-      this.dialogueOverlay.selectNextResponseOption();
-    });
-
-    this.keyboardInputMgr.events.on('up', () => {
-      this.dialogueOverlay.selectPreviousResponseOption();
-    });
-
-    this.keyboardInputMgr.events.on('action', () => {
-      this.dialogueSequencer.action();
-    });
-
-    // this.dialogueOverlay.showSpeech('Hi Eric! This seems to be working pretty OK!');
-    // this.dialogueOverlay.showResponseOptions({
-    //   y: 'Yes! This is great!',
-    //   n: "I'm not sure it is.",
-    //   m: 'Maybe?',
-    // });
 
     return this;
   }
@@ -131,8 +115,11 @@ class PlayerApp {
   }
 
   playDialogue(dialogue) {
-    this.disablePcControl();
+    this.inputRouter.routeToDialogueOverlay(this.dialogueOverlay, this.dialogueSequencer);
     this.dialogueSequencer.play(dialogue);
+    this.dialogueSequencer.events.once('end', () => {
+      this.inputRouter.routeToPcMovement(this);
+    });
   }
 }
 

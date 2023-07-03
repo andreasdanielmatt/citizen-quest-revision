@@ -2190,6 +2190,7 @@ const TownView = __webpack_require__(/*! ../views/town-view */ "./src/js/lib/vie
 __webpack_require__(/*! ../helpers-web/fill-with-aspect */ "./src/js/lib/helpers-web/fill-with-aspect.js");
 const PCView = __webpack_require__(/*! ../views/pc-view */ "./src/js/lib/views/pc-view.js");
 const KeyboardInputMgr = __webpack_require__(/*! ../input/keyboard-input-mgr */ "./src/js/lib/input/keyboard-input-mgr.js");
+const PlayerAppInputRouter = __webpack_require__(/*! ../input/player-app-input-router */ "./src/js/lib/input/player-app-input-router.js");
 const PlayerCharacter = __webpack_require__(/*! ../model/player-character */ "./src/js/lib/model/player-character.js");
 const DialogueOverlay = __webpack_require__(/*! ../dialogues/dialogue-overlay */ "./src/js/lib/dialogues/dialogue-overlay.js");
 const DialogueSequencer = __webpack_require__(/*! ../dialogues/dialogue-sequencer */ "./src/js/lib/dialogues/dialogue-sequencer.js");
@@ -2202,7 +2203,7 @@ class PlayerApp {
     this.otherPcs = Object.fromEntries(Object.entries(this.config.players)
       .filter(([id, player]) => (player.enabled === undefined || player.enabled) && id !== playerId)
       .map(([id]) => [id, new PlayerCharacter(this.config, id)]));
-    this.canControlPc = true;
+    this.canControlPc = false;
 
     this.$element = $('<div></div>')
       .addClass('player-app');
@@ -2248,6 +2249,9 @@ class PlayerApp {
     this.keyboardInputMgr.addListeners();
     this.keyboardInputMgr.addToggle('KeyD', () => { this.stats.togglePanel(); });
 
+    this.inputRouter = new PlayerAppInputRouter(this.keyboardInputMgr);
+    this.inputRouter.routeToPcMovement(this);
+
     this.pixiApp.ticker.add((time) => {
       this.stats.frameBegin();
       if (this.canControlPc) {
@@ -2269,26 +2273,6 @@ class PlayerApp {
       );
       this.stats.frameEnd();
     });
-
-    // Temporary test
-    this.keyboardInputMgr.events.on('down', () => {
-      this.dialogueOverlay.selectNextResponseOption();
-    });
-
-    this.keyboardInputMgr.events.on('up', () => {
-      this.dialogueOverlay.selectPreviousResponseOption();
-    });
-
-    this.keyboardInputMgr.events.on('action', () => {
-      this.dialogueSequencer.action();
-    });
-
-    // this.dialogueOverlay.showSpeech('Hi Eric! This seems to be working pretty OK!');
-    // this.dialogueOverlay.showResponseOptions({
-    //   y: 'Yes! This is great!',
-    //   n: "I'm not sure it is.",
-    //   m: 'Maybe?',
-    // });
 
     return this;
   }
@@ -2317,8 +2301,11 @@ class PlayerApp {
   }
 
   playDialogue(dialogue) {
-    this.disablePcControl();
+    this.inputRouter.routeToDialogueOverlay(this.dialogueOverlay, this.dialogueSequencer);
     this.dialogueSequencer.play(dialogue);
+    this.dialogueSequencer.events.once('end', () => {
+      this.inputRouter.routeToPcMovement(this);
+    });
   }
 }
 
@@ -2993,6 +2980,7 @@ class DialogueSequencer {
 
   onDialogueEnd() {
     this.dialogueOverlay.hide();
+    this.events.emit('end');
   }
 
   action() {
@@ -3583,6 +3571,107 @@ class KeyboardInputMgr {
 }
 
 module.exports = KeyboardInputMgr;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/input/player-app-input-connections.js":
+/*!**********************************************************!*\
+  !*** ./src/js/lib/input/player-app-input-connections.js ***!
+  \**********************************************************/
+/***/ ((module) => {
+
+class DialogueOverlayConnection {
+  constructor(inputManager, dialogueOverlay, dialogueSequencer) {
+    this.inputManager = inputManager;
+    this.dialogueOverlay = dialogueOverlay;
+    this.dialogueSequencer = dialogueSequencer;
+
+    this.handleUp = this.handleUp.bind(this);
+    this.handleDown = this.handleDown.bind(this);
+    this.handleAction = this.handleAction.bind(this);
+  }
+
+  route() {
+    this.inputManager.events.on('down', this.handleDown);
+    this.inputManager.events.on('up', this.handleUp);
+    this.inputManager.events.on('action', this.handleAction);
+  }
+
+  unroute() {
+    this.inputManager.events.off('down', this.handleDown);
+    this.inputManager.events.off('up', this.handleUp);
+    this.inputManager.events.off('action', this.handleAction);
+  }
+
+  handleDown() {
+    this.dialogueOverlay.selectNextResponseOption();
+  }
+
+  handleUp() {
+    this.dialogueOverlay.selectPreviousResponseOption();
+  }
+
+  handleAction() {
+    this.dialogueSequencer.action();
+  }
+}
+
+class PcMovementConnection {
+  constructor(inputManager, playerApp) {
+    this.inputManager = inputManager;
+    this.playerApp = playerApp;
+  }
+
+  route() {
+    this.playerApp.enablePcControl();
+  }
+
+  unroute() {
+    this.playerApp.disablePcControl();
+  }
+}
+
+module.exports = {
+  DialogueOverlayConnection,
+  PcMovementConnection,
+};
+
+
+/***/ }),
+
+/***/ "./src/js/lib/input/player-app-input-router.js":
+/*!*****************************************************!*\
+  !*** ./src/js/lib/input/player-app-input-router.js ***!
+  \*****************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const { DialogueOverlayConnection, PcMovementConnection } = __webpack_require__(/*! ./player-app-input-connections */ "./src/js/lib/input/player-app-input-connections.js");
+
+class PlayerAppInputRouter {
+  constructor(inputManager) {
+    this.inputManager = inputManager;
+    this.currentConnection = null;
+  }
+
+  setConnection(connection) {
+    if (this.currentConnection) {
+      this.currentConnection.unroute();
+    }
+    this.currentConnection = connection;
+    this.currentConnection.route();
+  }
+
+  routeToPcMovement(playerApp) {
+    this.setConnection(new PcMovementConnection(this.inputManager, playerApp));
+  }
+
+  routeToDialogueOverlay(dialogueOverlay, dialogueSequencer) {
+    this.setConnection(new DialogueOverlayConnection(this.inputManager, dialogueOverlay, dialogueSequencer));
+  }
+}
+
+module.exports = PlayerAppInputRouter;
 
 
 /***/ }),
@@ -4299,4 +4388,4 @@ fetch(configUrl, { cache: 'no-store' })
 
 /******/ })()
 ;
-//# sourceMappingURL=player.8d89df4ceb0e97eaed6c.js.map
+//# sourceMappingURL=player.1ace758ac6ae6d0bb6d9.js.map
