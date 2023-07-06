@@ -1,15 +1,56 @@
 /* globals PIXI */
 
 class PCView {
-  constructor(config, pc, townView) {
+  constructor(config, textures, pc, townView) {
     this.config = config;
+    this.textures = textures;
     this.pc = pc;
     this.townView = townView;
-    this.display = new PIXI.Graphics();
-    this.display.beginFill(new PIXI.Color(this.pc.props.color || '#61dcbd'));
-    this.display.drawRect(0, 0, 64, 128);
-    this.display.endFill();
-    this.display.position = this.pc.position;
+    this.display = this.createSprite();
+    this.direction = 'e';
+    this.isWalking = false;
+  }
+
+  createSprite() {
+    const sprite = new PIXI.AnimatedSprite(this.textures['character-basic'].animations['basic-es']);
+    sprite.anchor.set(0, 0);
+    sprite.width = PCView.SPRITE_WIDTH;
+    sprite.height = PCView.SPRITE_HEIGHT;
+    sprite.animationSpeed = PCView.SPRITE_ANIMATION_SPEED;
+    sprite.play();
+    sprite.position = this.pc.position;
+
+    return sprite;
+  }
+
+  updateSprite(oldX, oldY, newX, newY) {
+    let updated = false;
+    let newDirection = this.direction;
+    let newIsWalking = this.isWalking;
+
+    if (newX > oldX) {
+      newDirection = 'e';
+    } else if (newX < oldX) {
+      newDirection = 'w';
+    } else if (newY > oldY) {
+      newDirection = 's';
+    } else if (newY < oldY) {
+      newDirection = 'n';
+    }
+
+    if (oldX !== newX || oldY !== newY) {
+      newIsWalking = true;
+    } else {
+      newIsWalking = false;
+    }
+
+    if (newDirection !== this.direction || newIsWalking !== this.isWalking) {
+      const action = newIsWalking ? 'w' : 's';
+      this.display.textures = this.textures['character-basic'].animations[`basic-${newDirection}${action}`];
+      this.display.play();
+      this.direction = newDirection;
+      this.isWalking = newIsWalking;
+    }
   }
 
   animate(time) {
@@ -70,6 +111,7 @@ class PCView {
       newY = furthestY;
     }
 
+    this.updateSprite(this.pc.position.x, this.pc.position.y, newX, newY);
     this.pc.setPosition(newX, newY);
     this.display.position = this.pc.position;
     this.display.zIndex = this.pc.position.y;
@@ -89,5 +131,9 @@ class PCView {
     ];
   }
 }
+
+PCView.SPRITE_HEIGHT = 156;
+PCView.SPRITE_WIDTH = 72;
+PCView.SPRITE_ANIMATION_SPEED = 0.3;
 
 module.exports = PCView;

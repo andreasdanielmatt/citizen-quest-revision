@@ -6,3 +6,5 @@ textures:
           srcs: 'draft-town-bg.jpg'
         - name: 'town-collmap'
           srcs: 'draft-town-collmap.png'
+        - name: 'character-basic'
+          srcs: 'character-basic.json'

@@ -44,10 +44,10 @@ class PlayerApp {
 
     this.townView = new TownView(this.config, this.textures);
     this.pixiApp.stage.addChild(this.townView.display);
-    this.pcView = new PCView(this.config, this.pc, this.townView);
+    this.pcView = new PCView(this.config, this.textures, this.pc, this.townView);
     this.otherPcViews = Object.fromEntries(
       Object.entries(this.otherPcs)
-        .map(([id, pc]) => [id, new PCView(this.config, pc, this.townView)])
+        .map(([id, pc]) => [id, new PCView(this.config, this.textures, pc, this.townView)])
     );
 
     this.townView.mainLayer.addChild(this.pcView.display);

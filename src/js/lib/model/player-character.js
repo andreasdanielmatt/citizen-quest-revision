@@ -11,6 +11,7 @@ class PlayerCharacter {
 
     this.position = { x: 0, y: 0 };
     this.speed = { x: 0, y: 0 };
+    this.direction = 'e';
     this.setPosition(this.props.spawn.x, this.props.spawn.y);
   }
 
@@ -22,6 +23,10 @@ class PlayerCharacter {
   setSpeed(x, y) {
     this.speed.x = x;
     this.speed.y = y;
+  }
+
+  setDirection(direction) {
+    this.direction = direction;
   }
 }
 
