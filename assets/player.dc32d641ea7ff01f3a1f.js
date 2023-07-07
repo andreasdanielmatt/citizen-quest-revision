@@ -13600,23 +13600,34 @@ class TownView {
       height: 768 * 6,
     };
 
+    const collisionScale = 0.5;
+    this.collisionSize = {
+      width: Math.round(this.townSize.width * collisionScale),
+      height: Math.round(this.townSize.height * collisionScale),
+    };
+
     this.background = PIXI.Sprite.from(this.textures['town-bg']);
     this.background.width = this.townSize.width;
     this.background.height = this.townSize.height;
     this.bgLayer.addChild(this.background);
 
     this.collisionRenderer = new PIXI.CanvasRenderer({
-      width: this.townSize.width, height: this.townSize.height,
+      ...this.collisionSize,
     });
     this.collisionTree = new PIXI.Container();
     this.baseCollisionMap = PIXI.Sprite.from(this.textures['town-collmap']);
-    this.baseCollisionMap.width = this.townSize.width;
-    this.baseCollisionMap.height = this.townSize.height;
+    this.baseCollisionMap.width = this.collisionRenderer.width;
+    this.baseCollisionMap.height = this.collisionRenderer.height;
     this.collisionTree.addChild(this.baseCollisionMap);
-    this.collisionTree.renderCanvas(this.collisionRenderer);
+    this.collisionRenderer.render(this.collisionTree);
     this.collisionMap = this.collisionRenderer.view
       .getContext('2d')
-      .getImageData(0, 0, this.townSize.width, this.townSize.height).data;
+      .getImageData(
+        0,
+        0,
+        this.collisionRenderer.width,
+        this.collisionRenderer.height
+      ).data;
 
     window.isWalkable = this.isWalkable.bind(this);
     window.collMap = this.collisionMap;
@@ -13627,8 +13638,19 @@ class TownView {
   }
 
   isWalkable(x, y) {
+    const transformedX = Math.floor(
+      (x / this.townSize.width) * this.collisionSize.width
+    );
+    const transformedY = Math.floor(
+      (y / this.townSize.height) * this.collisionSize.height
+    );
+
     // todo: make a map that's 1byte per pixel instead of 4
-    return this.collisionMap[y * this.townSize.width * 4 + x * 4] == 0;
+    return (
+      this.collisionMap[
+        transformedY * this.collisionSize.width * 4 + transformedX * 4
+      ] < 128
+    );
   }
 }
 
@@ -13851,4 +13873,4 @@ fetch(configUrl, { cache: 'no-store' })
 
 /******/ })()
 ;
-//# sourceMappingURL=player.59d3fb6f4621b9d139c6.js.map
+//# sourceMappingURL=player.dc32d641ea7ff01f3a1f.js.map
