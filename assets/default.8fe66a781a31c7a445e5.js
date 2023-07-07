@@ -17641,23 +17641,34 @@ class TownView {
     this.background.height = this.townSize.height;
     this.bgLayer.addChild(this.background);
 
-    this.collisionRenderer = new PIXI.CanvasRenderer({
+    const collisionRenderer = new PIXI.CanvasRenderer({
       ...this.collisionSize,
     });
-    this.collisionTree = new PIXI.Container();
-    this.baseCollisionMap = PIXI.Sprite.from(this.textures['town-collmap']);
-    this.baseCollisionMap.width = this.collisionRenderer.width;
-    this.baseCollisionMap.height = this.collisionRenderer.height;
-    this.collisionTree.addChild(this.baseCollisionMap);
-    this.collisionRenderer.render(this.collisionTree);
-    this.collisionMap = this.collisionRenderer.view
+    const collisionTree = new PIXI.Container();
+    const baseCollisionMap = PIXI.Sprite.from(this.textures['town-collmap']);
+    baseCollisionMap.width = collisionRenderer.width;
+    baseCollisionMap.height = collisionRenderer.height;
+    collisionTree.addChild(baseCollisionMap);
+    collisionRenderer.render(collisionTree);
+
+    const collisionMapRGBA = collisionRenderer.view
       .getContext('2d')
       .getImageData(
         0,
         0,
-        this.collisionRenderer.width,
-        this.collisionRenderer.height
+        collisionRenderer.width,
+        collisionRenderer.height
       ).data;
+
+    // We only need a single channel, so we'll average the RGB values
+    this.collisionMap = new Uint8Array(Math.floor(collisionMapRGBA.length / 4));
+    for (let i = 0; i < this.collisionMap.length; i += 1) {
+      this.collisionMap[i] =
+        (collisionMapRGBA[i * 4] +
+          collisionMapRGBA[i * 4 + 1] +
+          collisionMapRGBA[i * 4 + 2]) /
+        3;
+    }
 
     window.isWalkable = this.isWalkable.bind(this);
     window.collMap = this.collisionMap;
@@ -17675,12 +17686,8 @@ class TownView {
       (y / this.townSize.height) * this.collisionSize.height
     );
 
-    // todo: make a map that's 1byte per pixel instead of 4
-    return (
-      this.collisionMap[
-        transformedY * this.collisionSize.width * 4 + transformedX * 4
-      ] < 128
-    );
+    const index = transformedY * this.collisionSize.width + transformedX;
+    return this.collisionMap[index] < 128;
   }
 }
 
@@ -17848,4 +17855,4 @@ cfgLoader.load([
 
 /******/ })()
 ;
-//# sourceMappingURL=default.42f6575ec69d02274f74.js.map
+//# sourceMappingURL=default.8fe66a781a31c7a445e5.js.map
