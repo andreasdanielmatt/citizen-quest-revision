@@ -2435,7 +2435,7 @@ class PlayerApp {
       // but don't let the pivot go off the edge of the town
       this.townView.display.pivot.set(
         Math.max(0, Math.min(this.pcView.display.x + this.pcView.display.width / 2 - PlayerApp.APP_WIDTH / 2, this.townView.townSize.width - PlayerApp.APP_WIDTH)),
-        Math.max(0, Math.min(this.pcView.display.y + this.pcView.display.height / 2 - PlayerApp.APP_HEIGHT / 2, this.townView.townSize.height - PlayerApp.APP_HEIGHT)),
+        Math.max(0, Math.min(this.pcView.display.y + this.pcView.display.height / 2 - PlayerApp.APP_HEIGHT / 2 * 1.175, this.townView.townSize.height - PlayerApp.APP_HEIGHT)),
       );
       this.stats.frameEnd();
     });
@@ -5039,4 +5039,4 @@ fetch(configUrl, { cache: 'no-store' })
 
 /******/ })()
 ;
-//# sourceMappingURL=player.7273b350bf59174e5eb5.js.map
+//# sourceMappingURL=player.e264574267890286195f.js.map

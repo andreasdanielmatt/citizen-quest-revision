@@ -3,8 +3,10 @@ textures:
     - name: 'town-view'
       assets:
         - name: 'town-bg'
-          srcs: 'draft-town-bg.jpg'
+          srcs: 'demo-town-bg.png'
         - name: 'town-collmap'
-          srcs: 'draft-town-collmap.png'
+          srcs: 'demo-town-collmap.png'
         - name: 'character-basic'
           srcs: 'character-basic.json'
+        - name: 'npcs-demo'
+          srcs: 'npcs-demo.json'
