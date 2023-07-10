@@ -7,11 +7,15 @@ class PlayerAppInputRouter {
   }
 
   setConnection(connection) {
+    this.unroute();
+    this.currentConnection = connection;
+    this.currentConnection.route();
+  }
+
+  unroute() {
     if (this.currentConnection) {
       this.currentConnection.unroute();
     }
-    this.currentConnection = connection;
-    this.currentConnection.route();
   }
 
   routeToPcMovement(playerApp) {

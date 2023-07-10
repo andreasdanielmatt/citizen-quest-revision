@@ -53,7 +53,7 @@ class SpeechText {
    *
    * @private
    * @param {Array} Array of characters with the following properties:
-   * - span {HTMLElement} The span element to be revealed
+   * - span {HTMLElement} The span $element to be revealed
    * - isSpace {Boolean} Whether or not the character is a space
    * - delayAfter {Number} Delay after the character is revealed
    * - classes {Array} Array of classes to be added to the character
@@ -93,13 +93,17 @@ class SpeechText {
       line.string.split('').forEach((character) => {
         const span = document.createElement('span');
         span.textContent = character;
-        this.$element.append(span);
-        this.characters.push({
-          span,
-          isSpace: this.isSpace.test(character) && !line.pause,
-          delayAfter: line.speed || SpeechText.Speeds.normal,
-          classes: line.classes || [],
-        });
+        if (character === '\n') {
+          this.$element.append($('<div>').addClass('break'));
+        } else {
+          this.$element.append(span);
+          this.characters.push({
+            span,
+            isSpace: this.isSpace.test(character) && !line.pause,
+            delayAfter: line.speed || SpeechText.Speeds.normal,
+            classes: line.classes || [],
+          });
+        }
       });
     });
 

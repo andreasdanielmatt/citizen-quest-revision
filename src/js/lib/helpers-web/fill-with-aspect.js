@@ -1,8 +1,8 @@
 /**
- * A jQuery plugin that resizes the given element to fit its parent element while
+ * A jQuery plugin that resizes the given $element to fit its parent $element while
  * maintaining the specified aspect ratio.
  *
- * @param element {HTMLElement} The element to resize.
+ * @param $element {HTMLElement} The $element to resize.
  * @param aspectRatio {number} The aspect ratio to keep.
  */
 (function ($) {

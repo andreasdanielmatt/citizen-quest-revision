@@ -13,6 +13,7 @@ const DialogueOverlay = require('../dialogues/dialogue-overlay');
 const DialogueSequencer = require('../dialogues/dialogue-sequencer');
 const Dialogue = require('../dialogues/dialogue');
 const Countdown = require('../helpers-web/countdown');
+const DecisionScreen = require('../ui/decisionScreen');
 
 class PlayerApp {
   constructor(config, playerId) {
@@ -239,7 +240,75 @@ class PlayerApp {
   }
 
   handleStorylineEnd() {
-    console.log("The story ended");
+    const citizenAssembly = !!this.hasFlag('citizen-assembly');
+    const environmentalImpact = !!this.hasFlag('biologist-solved');
+    const reinvestment = !!this.hasFlag('solved-finance');
+
+    let information = 0;
+    let empowerment = 0;
+    let empathy = 0;
+    let inclusion = 0;
+
+    empowerment += (citizenAssembly ? 2 : 0);
+    empowerment += (environmentalImpact ? 1 : 0);
+    empowerment += (reinvestment ? 1 : 0);
+    information += (!!this.hasFlag('citizen-cool-solved') ? 1 : 0);
+    information += (!!this.hasFlag('citizen-lila-solved') ? 1 : 0);
+    empathy += (!!this.hasFlag('citizen-puan-solved') ? 1 : 0);
+    empathy += (!!this.hasFlag('citizen-punk-solved') ? 1 : 0);
+    empathy += (!!this.hasFlag('construction-worker-solved') ? 1 : 0);
+    empathy += (!!this.hasFlag('citizen-queen-solved') ? 1 : 0);
+    inclusion += (!!this.hasFlag('citizen-neighbor-solved') ? 1 : 0);
+    inclusion += (!!this.hasFlag('citizen-old-hip-solved') ? 1 : 0);
+
+    let score = empowerment + information + empathy + inclusion;
+    let icon;
+    let lines = [];
+
+    // A decision has been reached…
+
+    if (score <= 1) {
+      lines.push("Der Bau des Riesenrads wurde wegen andauernden Vandalismus durch zornige Bürger*innen unterbrochen.");
+      icon = 'angry';
+    } else {
+      if (citizenAssembly) {
+        lines.push("Es wurde eine Bürgerversammlung einberufen, um das Riesenradprojekt zu diskutieren. Wir müssen uns die Bedenken anhören, Fragen prüfen und Entscheidungen auf der Grundlage von Informationen treffen.");
+        icon = 'empowerment';
+      } else {
+        lines.push("Die Bürgermeisterin und das Unternehmen Drehmoment™ vereinbarten den Bau eines neuen Riesenrads.");
+      }
+
+      if (environmentalImpact) {
+        lines.push("\nDie örtliche Universität nahm Änderungen am Projekt vor, um die Auswirkungen auf Vögel und Fledermäuse zu minimieren.");
+      }
+      if (reinvestment) {
+        lines.push("\nEin Teil des Gewinns wird für die Aufwertung des nördlichen Teils der Stadt verwendet.");
+        if (!citizenAssembly) {
+          icon = 'happy';
+        }
+      }
+
+      if (!citizenAssembly && !reinvestment) {
+        if (score >= 6) {
+          icon='neutral';
+          lines.push("\nEinige Bürger*innen sagen, es mache viel Spaß. Die meisten sagen, es sei eine große Geldverschwendung.");
+        } else if (score >= 5) {
+          icon='neutral';
+          lines.push("\nEs wurde von Anwohnern zur \"hässlichsten Attraktion Deutschlands\" gewählt.");
+        } else if (score >= 4) {
+          icon='sad';
+          lines.push("\nEs zieht einige Tourist*innen an, aber die Einheimischen meiden die Gegend lieber.");
+        } else {
+          icon='sad';
+          lines.push("\nDie Bürger*innen protestierten wochenlang. Ein*e Richter*in entschied, dass das Riesenrad nur an Wochenenden und bei ausgeschalteter Beleuchtung betrieben werden darf.");
+        }
+      }
+    }
+
+    this.inputRouter.unroute();
+    const screen = new DecisionScreen();
+    this.$element.append(screen.$element);
+    screen.showDecision(lines, icon);
   }
 }
 

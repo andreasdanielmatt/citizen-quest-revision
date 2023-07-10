@@ -27,6 +27,14 @@
   font-weight: 400;
   src: url(bb7a4e73944870e385e1.woff2) format("woff2"), url(0d0e892d77350387cadd.ttf) format("truetype"); /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
 }
+/* roboto-condensed-italic - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: "Roboto Condensed";
+  font-style: italic;
+  font-weight: 400;
+  src: url(12ce041d695984c11669.woff2) format("woff2"), url(2f87d10800eab48fa37c.ttf) format("truetype"); /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
+}
 /* roboto-condensed-700 - latin */
 @font-face {
   font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
@@ -34,6 +42,14 @@
   font-style: normal;
   font-weight: 700;
   src: url(6c26e7ba325616ba4252.woff2) format("woff2"), url(21d5ac766742db5e6375.ttf) format("truetype"); /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
+}
+/* roboto-condensed-700italic - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: "Roboto Condensed";
+  font-style: italic;
+  font-weight: 700;
+  src: url(b28cd0e32b58dbcea1d0.woff2) format("woff2"), url(b2557b582899f234ac39.ttf) format("truetype"); /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
 }
 html, body {
   width: 100%;
@@ -82,6 +98,7 @@ h1, h2, h3, h4, h5, h6 {
   border-bottom: 0.75em solid black;
   font-family: "Roboto Condensed", sans-serif;
   font-weight: 700;
+  font-style: normal;
 }
 .player-app .storyline-bar .decision-label {
   display: inline-block;
@@ -102,10 +119,6 @@ h1, h2, h3, h4, h5, h6 {
   height: 100%;
   line-height: 1.85em;
 }
-.player-app .dialogue-overlay .balloon.top {
-  margin-top: 7%;
-}
-
 @keyframes popIn {
   0% {
     transform: scale(0.5);
@@ -233,6 +246,90 @@ h1, h2, h3, h4, h5, h6 {
 .speech-text span.revealed {
   opacity: 1;
 }
+.speech-text .break {
+  display: block;
+  margin-bottom: 0.5em;
+}
+
+@keyframes fallIn {
+  0% {
+    transform: translate(100%, -100%) rotate(58deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.decision-screen-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.decision-screen-wrapper .decision-screen {
+  transform: translate(100%, -100%) rotate(58deg);
+}
+.decision-screen-wrapper .decision-screen-icon {
+  opacity: 0;
+}
+.decision-screen-wrapper.visible .decision-screen {
+  animation: fallIn 0.5s ease-out forwards;
+}
+.decision-screen-wrapper.visible .decision-screen-icon {
+  animation: fadeIn 0.5s 1.5s ease-out forwards;
+}
+
+.decision-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #ffe34a;
+  color: black;
+  text-align: center;
+  padding: 2.5em 5em;
+}
+.decision-screen .decision-screen-title {
+  font-size: 2em;
+  color: black;
+}
+.decision-screen .decision-screen-text {
+  font-size: 1.6em;
+}
+.decision-screen .decision-screen-icon {
+  width: 100%;
+  height: 12em;
+  margin: auto;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+.decision-screen .decision-screen-icon.empowerment {
+  background-image: url(32c1e7da20d473fad22e.svg);
+  margin-top: 0.5em;
+}
+.decision-screen .decision-screen-icon.happy {
+  background-image: url(d79c03b62c63dca4b5e2.svg);
+}
+.decision-screen .decision-screen-icon.neutral {
+  background-image: url(8b808f3edfdf875e86d2.svg);
+}
+.decision-screen .decision-screen-icon.sad {
+  background-image: url(1cb78a1510cb4cef0fed.svg);
+}
+.decision-screen .decision-screen-icon.angry {
+  background-image: url(a6d7bdb36bd21ada45b9.svg);
+}
 
 .fatal-error {
   position: absolute;
@@ -314,4 +411,4 @@ html.with-fatal-error body {
   margin-bottom: 1.2em;
 }
 
-/*# sourceMappingURL=default.61a813dfa3100bcd8593.css.map*/
+/*# sourceMappingURL=default.ded5dccffe023cf1c7cb.css.map*/

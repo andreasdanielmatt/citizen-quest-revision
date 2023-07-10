@@ -4,4 +4,4 @@ See LICENSE.txt for more information.
 
 The following emojis were modified by IMAGINARY gGmbH from the original:
 
-None.
+- decisions/empowerment.svg was modified by adding rays around the raised fist.
