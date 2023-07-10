@@ -110,9 +110,11 @@ storylines:
               text: 'Seine Lichter können Vögel und Fledermäuse verwirren.'
               thenText: 'Kein Problem! Wir können laute Musik spielen, um sie zu verscheuchen.'
               set: ['salesman-idea-birds']
-            - text: 'Einige sind von der Idee nicht begeistert.'
+            - cond: 'issue-1 | issue-2 | issue-3 | issue-finance'
+              text: 'Einige sind von der Idee nicht begeistert.'
               thenText: 'Um etwas zu erreichen, ist es am besten, nicht auf negative Menschen zu hören.'
-            - text: 'Die Anwohner machen sich Sorgen über den Verkehr, den Lärm und die Lichter.'
+            - cond: 'issue-neighbors'
+              text: 'Die Anwohner machen sich Sorgen über den Verkehr, den Lärm und die Lichter.'
               thenText: 'Wir bieten ihnen 10% Rabatt an.'
       'biologist':
         - type: 'first'
@@ -198,7 +200,7 @@ storylines:
             - cond: 'citizen-neighbor-solved'
               text: 'Ich habe in der Bürgerversammlung SEHR VIEL zu sagen.'
             - text: 'Niemand hat uns gefragt, und sie stellen es direkt neben unsere Häuser.'
-              set: ['issue-1']
+              set: ['issue-1', 'issue-neighbors']
               responses:
                 - cond: 'citizen-assembly'
                   text: 'Die Bürgermeisterin wird eine Bürgerversammlung einberufen.'
@@ -210,7 +212,7 @@ storylines:
             - cond: 'citizen-old-hip-solved'
               text: 'Wenn die Stadt die Gewinne wieder investiert, um die lokalen Unternehmen zu unterstützen, könnte der Tourismus gute Möglichkeiten für uns bringen.'
             - text: 'Das wird zu viel Verkehr, Lärm und Kriminalität in diesem ohnehin schon sehr vernachlässigten Viertel führen.'
-              set: ['issue-finance', 'issue-2']
+              set: ['issue-finance', 'issue-2', 'issue-neighbors']
               responses:
                 - cond: 'solved-finance'
                   text: 'Die Stadt hat versprochen, die Gewinne wieder in dieses Viertel zu investieren.'

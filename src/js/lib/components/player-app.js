@@ -32,6 +32,15 @@ class PlayerApp {
       .addClass('pixi-wrapper')
       .appendTo(this.$element);
 
+    this.$storylineBar = $('<div></div>')
+      .addClass('storyline-bar')
+      .appendTo(this.$element);
+
+    this.$decisionLabel = $('<div></div>')
+      .addClass('decision-label')
+      .html(config.storylines.touristen.decision)
+      .appendTo(this.$storylineBar);
+
     this.flags = {};
     this.dialogueOverlay = new DialogueOverlay(this.config);
     this.dialogueSequencer = new DialogueSequencer(this.dialogueOverlay);

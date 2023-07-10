@@ -13,4 +13,29 @@
       height: 100%;
     }
   }
+
+  .storyline-bar {
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 10%;
+    top: 0;
+    background-color: #ffe34a;
+    border-bottom: 0.75em solid black;
+    @include RobotoCondensedBold;
+  }
+
+  .decision-label {
+    display: inline-block;
+    padding: 0.3em 0.75em;
+    font-size: 1.7em;
+    font-weight: bold;
+    color: black;
+  }
+
+  .dialogue-overlay {
+    .balloon.top {
+      margin-top: 7%;
+    }
+  }
 }
