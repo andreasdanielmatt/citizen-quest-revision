@@ -9830,6 +9830,7 @@ const PlayerCharacter = __webpack_require__(/*! ../model/player-character */ "./
 const DialogueOverlay = __webpack_require__(/*! ../dialogues/dialogue-overlay */ "./src/js/lib/dialogues/dialogue-overlay.js");
 const DialogueSequencer = __webpack_require__(/*! ../dialogues/dialogue-sequencer */ "./src/js/lib/dialogues/dialogue-sequencer.js");
 const Dialogue = __webpack_require__(/*! ../dialogues/dialogue */ "./src/js/lib/dialogues/dialogue.js");
+const Countdown = __webpack_require__(/*! ../helpers-web/countdown */ "./src/js/lib/helpers-web/countdown.js");
 
 class PlayerApp {
   constructor(config, playerId) {
@@ -9858,6 +9859,12 @@ class PlayerApp {
       .addClass('decision-label')
       .html(config.storylines.touristen.decision)
       .appendTo(this.$storylineBar);
+
+    this.countdown = new Countdown(config.game.duration);
+    this.countdown.$element.appendTo(this.$storylineBar);
+    this.countdown.events.on('end', () => {
+      this.handleStorylineEnd();
+    });
 
     this.flags = {};
     this.dialogueOverlay = new DialogueOverlay(this.config);
@@ -9948,6 +9955,8 @@ class PlayerApp {
       );
       this.stats.frameEnd();
     });
+
+    this.countdown.start();
 
     return this;
   }
@@ -10045,6 +10054,10 @@ class PlayerApp {
 
   toggleHitboxDisplay() {
     this.showHitbox = !this.showHitbox;
+  }
+
+  handleStorylineEnd() {
+    console.log("The story ended");
   }
 }
 
@@ -11089,6 +11102,47 @@ SpeechText.Speeds = {
 };
 
 module.exports = SpeechText;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/helpers-web/countdown.js":
+/*!*********************************************!*\
+  !*** ./src/js/lib/helpers-web/countdown.js ***!
+  \*********************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
+
+class Countdown {
+  constructor(seconds) {
+    this.seconds = seconds;
+    this.events = new EventEmitter();
+    this.$element = $('<div></div>')
+      .addClass('countdown');
+    this.update();
+  }
+
+  start() {
+    this.interval = setInterval(() => {
+      this.seconds -= 1;
+      this.update();
+      if (this.seconds === 0) {
+        this.events.emit('end');
+        clearInterval(this.interval);
+      }
+    }, 1000);
+  }
+
+  update() {
+    const minutes = Math.floor(this.seconds / 60);
+    const secondsLeft = this.seconds % 60;
+    const timeLeft = `${minutes}:${secondsLeft < 10 ? '0' : ''}${secondsLeft}`;
+    this.$element.html(timeLeft);
+  }
+}
+
+module.exports = Countdown;
 
 
 /***/ }),
@@ -12866,4 +12920,4 @@ fetch(configUrl, { cache: 'no-store' })
 
 /******/ })()
 ;
-//# sourceMappingURL=player.8aa897eac074cb20a18d.js.map
+//# sourceMappingURL=player.9c4cf8ae89fb95b2efae.js.map

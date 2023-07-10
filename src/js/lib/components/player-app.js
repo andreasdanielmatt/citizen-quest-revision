@@ -12,6 +12,7 @@ const PlayerCharacter = require('../model/player-character');
 const DialogueOverlay = require('../dialogues/dialogue-overlay');
 const DialogueSequencer = require('../dialogues/dialogue-sequencer');
 const Dialogue = require('../dialogues/dialogue');
+const Countdown = require('../helpers-web/countdown');
 
 class PlayerApp {
   constructor(config, playerId) {
@@ -40,6 +41,12 @@ class PlayerApp {
       .addClass('decision-label')
       .html(config.storylines.touristen.decision)
       .appendTo(this.$storylineBar);
+
+    this.countdown = new Countdown(config.game.duration);
+    this.countdown.$element.appendTo(this.$storylineBar);
+    this.countdown.events.on('end', () => {
+      this.handleStorylineEnd();
+    });
 
     this.flags = {};
     this.dialogueOverlay = new DialogueOverlay(this.config);
@@ -130,6 +137,8 @@ class PlayerApp {
       );
       this.stats.frameEnd();
     });
+
+    this.countdown.start();
 
     return this;
   }
@@ -227,6 +236,10 @@ class PlayerApp {
 
   toggleHitboxDisplay() {
     this.showHitbox = !this.showHitbox;
+  }
+
+  handleStorylineEnd() {
+    console.log("The story ended");
   }
 }
 
