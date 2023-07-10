@@ -14004,6 +14004,7 @@ const Stats = __webpack_require__(/*! ../helpers-web/stats.js */ "./src/js/lib/h
 const TownView = __webpack_require__(/*! ../views/town-view */ "./src/js/lib/views/town-view.js");
 __webpack_require__(/*! ../helpers-web/fill-with-aspect */ "./src/js/lib/helpers-web/fill-with-aspect.js");
 const PCView = __webpack_require__(/*! ../views/pc-view */ "./src/js/lib/views/pc-view.js");
+const NPCView = __webpack_require__(/*! ../views/npc-view */ "./src/js/lib/views/npc-view.js");
 const KeyboardInputMgr = __webpack_require__(/*! ../input/keyboard-input-mgr */ "./src/js/lib/input/keyboard-input-mgr.js");
 const GamepadInputMgr = __webpack_require__(/*! ../input/gamepad-input-mgr */ "./src/js/lib/input/gamepad-input-mgr.js");
 const MultiplexInputMgr = __webpack_require__(/*! ../input/multiplex-input-mgr */ "./src/js/lib/input/multiplex-input-mgr.js");
@@ -14011,6 +14012,7 @@ const PlayerAppInputRouter = __webpack_require__(/*! ../input/player-app-input-r
 const PlayerCharacter = __webpack_require__(/*! ../model/player-character */ "./src/js/lib/model/player-character.js");
 const DialogueOverlay = __webpack_require__(/*! ../dialogues/dialogue-overlay */ "./src/js/lib/dialogues/dialogue-overlay.js");
 const DialogueSequencer = __webpack_require__(/*! ../dialogues/dialogue-sequencer */ "./src/js/lib/dialogues/dialogue-sequencer.js");
+const Dialogue = __webpack_require__(/*! ../dialogues/dialogue */ "./src/js/lib/dialogues/dialogue.js");
 
 class PlayerApp {
   constructor(config, playerId) {
@@ -14021,6 +14023,8 @@ class PlayerApp {
       .filter(([id, player]) => (player.enabled === undefined || player.enabled) && id !== playerId)
       .map(([id]) => [id, new PlayerCharacter(this.config, id)]));
     this.canControlPc = false;
+    this.npcs = config.storylines.touristen.npcs;
+    Object.entries(this.npcs).forEach(([id, npc]) => npc.id = id);
 
     this.$element = $('<div></div>')
       .addClass('player-app');
@@ -14029,9 +14033,12 @@ class PlayerApp {
       .addClass('pixi-wrapper')
       .appendTo(this.$element);
 
+    this.flags = {};
     this.dialogueOverlay = new DialogueOverlay(this.config);
     this.dialogueSequencer = new DialogueSequencer(this.dialogueOverlay);
     this.$element.append(this.dialogueOverlay.$element);
+
+    this.showHitbox = false;
   }
 
   async init() {
@@ -14052,8 +14059,11 @@ class PlayerApp {
       Object.entries(this.otherPcs)
         .map(([id, pc]) => [id, new PCView(this.config, this.textures, pc, this.townView)])
     );
+    this.npcViews = Object.values(this.npcs).map(npc => new NPCView(this.config, this.textures, npc, this.townView));
 
     this.townView.mainLayer.addChild(this.pcView.display);
+    this.townView.bgLayer.addChild(this.pcView.hitboxDisplay);
+    this.townView.mainLayer.addChild(...this.npcViews.map(npcView => npcView.display));
     if (Object.values(this.otherPcViews).length > 0) {
       this.townView.mainLayer.addChild(...Object.values(this.otherPcViews)
         .map(pcView => pcView.display));
@@ -14065,6 +14075,8 @@ class PlayerApp {
     this.keyboardInputMgr = new KeyboardInputMgr();
     this.keyboardInputMgr.attachListeners();
     this.keyboardInputMgr.addToggle('KeyD', () => { this.stats.togglePanel(); });
+    this.keyboardInputMgr.addToggle('KeyH', () => { this.toggleHitboxDisplay(); });
+    this.keyboardInputMgr.addToggle('KeyX', () => { console.log(`x: ${this.pc.position.x}, y: ${this.pc.position.y}`); });
 
     const gamepadMapperConfig =
       this.config?.players?.[this.playerId]?.['gamepadMapping'] ?? {};
@@ -14137,12 +14149,76 @@ class PlayerApp {
     this.pc.setSpeed(0, 0);
   }
 
-  playDialogue(dialogue) {
+  getDialogue(dialogueId) {
+    const items = this.config.storylines.touristen.dialogues[dialogueId];
+    if (!items) throw new Error(`No dialogue found with id ${dialogueId}`);
+    try {
+      return Dialogue.fromJson({
+        id: dialogueId,
+        items,
+      });
+    } catch (e) {
+      if(e.errors) {
+        console.error(`Error parsing dialogue with id ${dialogueId}:`);
+        e.errors.forEach((error) => {
+          console.error(error);
+        });
+      }
+      throw e;
+    }
+  }
+
+  hasFlag(flagId) {
+    return this.flags[flagId] !== undefined;
+  }
+
+  setFlag(flagId) {
+    this.flags[flagId] = true;
+    return true;
+  }
+
+  playDialogue(dialogue, npc = null) {
     this.inputRouter.routeToDialogueOverlay(this.dialogueOverlay, this.dialogueSequencer);
-    this.dialogueSequencer.play(dialogue);
+    this.dialogueSequencer.play(dialogue, {
+      hasFlag: this.hasFlag.bind(this),
+      setFlag: this.setFlag.bind(this),
+      random: max => Math.floor(Math.random() * max),
+    }, { top: npc.name });
     this.dialogueSequencer.events.once('end', () => {
       this.inputRouter.routeToPcMovement(this);
     });
+  }
+
+  getNpcsInRect(rect) {
+    return this.npcViews.filter(npcView => npcView.inRect(rect))
+      .map(npcView => npcView.npc);
+  }
+
+  pcAction() {
+    const hitbox = this.pcView.getActionHitbox();
+    const npcs = this.getNpcsInRect(hitbox);
+    let closestNpc = null;
+    let closestDistance = null;
+    npcs.forEach((npc) => {
+      const distance = Math.max(
+        Math.abs(this.pc.position.x - npc.spawn.x),
+        Math.abs(this.pc.position.y - npc.spawn.y)
+      );
+      if (closestDistance === null || distance < closestDistance) {
+        closestNpc = npc;
+        closestDistance = distance;
+      }
+    });
+    if (closestNpc) {
+      this.playDialogue(this.getDialogue(closestNpc.dialogue || closestNpc.id), closestNpc);
+    }
+    if (this.showHitbox) {
+      this.pcView.showActionHitbox(hitbox);
+    }
+  }
+
+  toggleHitboxDisplay() {
+    this.showHitbox = !this.showHitbox;
   }
 }
 
@@ -14163,14 +14239,26 @@ module.exports = PlayerApp;
 
 class DialogueBalloon {
   constructor(classes) {
+    this.$title = $('<div></div>')
+      .addClass('title')
+      .html('The name of the speaker');
     this.$element = $('<div></div>')
       .addClass('balloon')
-      .addClass(classes);
+      .addClass(classes)
+      .append(this.$title);
   }
 
   show() {
     this.cancelHide();
     this.$element.addClass('visible');
+  }
+
+  setTitle(title = null) {
+    if (title === null) {
+      this.$title.hide();
+    } else {
+      this.$title.html(title);
+    }
   }
 
   hide() {
@@ -14346,7 +14434,8 @@ class DialogueIterator {
       return;
     }
 
-    if (this.activeNode.responses && this.activeNode.responses.length > 0) {
+    const enabledResponses = this.getEnabledResponses();
+    if (enabledResponses && enabledResponses.length > 0) {
       throw new Error(`Can't use next() on a node of type 'statement' with responses (${this.activeNode.id}:${this.dialogue.root.id})`);
     }
 
@@ -14563,8 +14652,8 @@ class DialogueOverlay {
     this.selectedOption = 0;
   }
 
-  play(dialogue) {
-
+  setTopTitle(title) {
+    this.balloonTop.setTitle(title);
   }
 
   showSpeech(text) {
@@ -14815,14 +14904,10 @@ class DialogueSequencer {
     this.runUntilInteractivity();
   }
 
-  play(dialogue) {
-    const flags = {};
+  play(dialogue, context, options) {
     this.dialogue = dialogue;
-    this.dialogueIterator = new DialogueIterator(dialogue, {
-      random: max => Math.floor(Math.random() * max),
-      hasFlag: flag => flags[flag] !== undefined,
-      setFlag: (flag) => { flags[flag] = true; return true; },
-    });
+    this.dialogueOverlay.setTopTitle(options.top || null);
+    this.dialogueIterator = new DialogueIterator(dialogue, context);
     this.runUntilInteractivity();
   }
 
@@ -15994,14 +16079,21 @@ class PcMovementConnection {
   constructor(inputManager, playerApp) {
     this.inputManager = inputManager;
     this.playerApp = playerApp;
+    this.handleAction = this.handleAction.bind(this);
   }
 
   route() {
     this.playerApp.enablePcControl();
+    this.inputManager.events.on('action', this.handleAction);
   }
 
   unroute() {
     this.playerApp.disablePcControl();
+    this.inputManager.events.off('action', this.handleAction);
+  }
+
+  handleAction() {
+    this.playerApp.pcAction();
   }
 }
 
@@ -16258,6 +16350,48 @@ module.exports = PlayerCharacter;
 
 /***/ }),
 
+/***/ "./src/js/lib/views/npc-view.js":
+/*!**************************************!*\
+  !*** ./src/js/lib/views/npc-view.js ***!
+  \**************************************/
+/***/ ((module) => {
+
+/* globals PIXI */
+class NPCView {
+  constructor(config, textures, npc, townView) {
+    this.config = config;
+    this.textures = textures;
+    this.npc = npc;
+    this.townView = townView;
+    this.display = this.createSprite();
+  }
+
+  createSprite() {
+    const sprite = new PIXI.Sprite(this.textures['npcs-demo'].textures[this.npc.id]);
+    sprite.anchor.set(0, 0);
+    // sprite.width = 72;
+    // sprite.height = 156;
+    // sprite.animationSpeed = PCView.SPRITE_ANIMATION_SPEED;
+    // sprite.play();
+    sprite.position = this.npc.spawn;
+    sprite.zIndex = this.npc.spawn.y;
+
+    return sprite;
+  }
+
+  inRect(rect) {
+    return this.npc.spawn.x >= rect.left
+      && this.npc.spawn.x <= rect.right
+      && this.npc.spawn.y >= rect.top
+      && this.npc.spawn.y <= rect.bottom;
+  }
+}
+
+module.exports = NPCView;
+
+
+/***/ }),
+
 /***/ "./src/js/lib/views/pc-view.js":
 /*!*************************************!*\
   !*** ./src/js/lib/views/pc-view.js ***!
@@ -16275,18 +16409,33 @@ class PCView {
     this.display = this.createSprite();
     this.direction = 'e';
     this.isWalking = false;
+    this.showHitbox = false;
+    this.hitboxDisplay = this.createHitboxDisplay();
   }
 
   createSprite() {
     const sprite = new PIXI.AnimatedSprite(this.textures['character-basic'].animations['basic-es']);
     sprite.anchor.set(0, 0);
-    sprite.width = PCView.SPRITE_WIDTH;
-    sprite.height = PCView.SPRITE_HEIGHT;
+    sprite.width = PCView.SPRITE_W;
+    sprite.height = PCView.SPRITE_H;
     sprite.animationSpeed = PCView.SPRITE_ANIMATION_SPEED;
     sprite.play();
     sprite.position = this.pc.position;
 
     return sprite;
+  }
+
+  createHitboxDisplay() {
+    const display = new PIXI.Graphics();
+    // Do a simple rectangle
+    display.beginFill(0xff0000);
+    display.drawRect(0, 0, PCView.ACTION_HITBOX_H, PCView.ACTION_HITBOX_W);
+    display.endFill();
+    display.position = this.pc.position;
+    display.alpha = 0.5;
+    display.visible = false;
+
+    return display;
   }
 
   updateSprite(oldX, oldY, newX, newY) {
@@ -16396,11 +16545,68 @@ class PCView {
       },
     ];
   }
+
+  getActionHitbox() {
+    let top;
+    let bottom;
+    let left;
+    let right;
+
+    const { x, y } = this.pc.position;
+    switch (this.direction) {
+      case 'e':
+        top = y - PCView.ACTION_HITBOX_H / 2;
+        bottom = y + PCView.ACTION_HITBOX_H / 2;
+        left = x;
+        right = x + PCView.ACTION_HITBOX_W;
+        break;
+      case 'w':
+        top = y - PCView.ACTION_HITBOX_H / 2;
+        bottom = y + PCView.ACTION_HITBOX_H / 2;
+        left = x + PCView.SPRITE_W - PCView.ACTION_HITBOX_W;
+        right = x + PCView.SPRITE_W;
+        break;
+      case 'n':
+        top = y - (PCView.ACTION_HITBOX_W / 4) * 3;
+        bottom = y + PCView.ACTION_HITBOX_W / 4;
+        left = x + (PCView.SPRITE_W / 2) - (PCView.ACTION_HITBOX_W / 2);
+        right = x + (PCView.SPRITE_W / 2) + (PCView.ACTION_HITBOX_W / 2);
+        break;
+      case 's':
+        top = y;
+        bottom = y + PCView.ACTION_HITBOX_W;
+        left = x + (PCView.SPRITE_W / 2) - (PCView.ACTION_HITBOX_W / 2);
+        right = x + (PCView.SPRITE_W / 2) + (PCView.ACTION_HITBOX_W / 2);
+        break;
+      default:
+        throw new Error(`Invalid direction ${this.direction}`);
+    }
+
+    return {
+      top, right, bottom, left,
+    };
+  }
+
+  showActionHitbox(hitbox) {
+    this.hitboxDisplay.width = Math.abs(hitbox.right - hitbox.left);
+    this.hitboxDisplay.height = Math.abs(hitbox.bottom - hitbox.top);
+    this.hitboxDisplay.position.x = hitbox.left;
+    this.hitboxDisplay.position.y = hitbox.top;
+    this.hitboxDisplay.visible = true;
+
+    // Show for one second
+    clearTimeout(this.hitboxTimeout);
+    this.hitboxTimeout = setTimeout(() => {
+      this.hitboxDisplay.visible = false;
+    }, 1000);
+  }
 }
 
-PCView.SPRITE_HEIGHT = 156;
-PCView.SPRITE_WIDTH = 72;
+PCView.SPRITE_H = 156;
+PCView.SPRITE_W = 72;
 PCView.SPRITE_ANIMATION_SPEED = 0.3;
+PCView.ACTION_HITBOX_H = 150;
+PCView.ACTION_HITBOX_W = 200;
 
 module.exports = PCView;
 
@@ -16590,6 +16796,7 @@ cfgLoader.load([
   'config/textures.yml',
   'config/town.yml',
   'config/gamepads.yml',
+  'config/storylines/touristen.yml',
 ]).catch((err) => {
   showFatalError('Error loading configuration', err);
   console.error('Error loading configuration');
@@ -16620,4 +16827,4 @@ cfgLoader.load([
 
 /******/ })()
 ;
-//# sourceMappingURL=default.b415176e156beb734969.js.map
+//# sourceMappingURL=default.b06f089f12e7fb8e030e.js.map

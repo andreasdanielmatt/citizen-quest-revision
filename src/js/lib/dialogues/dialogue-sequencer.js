@@ -27,14 +27,10 @@ class DialogueSequencer {
     this.runUntilInteractivity();
   }
 
-  play(dialogue) {
-    const flags = {};
+  play(dialogue, context, options) {
     this.dialogue = dialogue;
-    this.dialogueIterator = new DialogueIterator(dialogue, {
-      random: max => Math.floor(Math.random() * max),
-      hasFlag: flag => flags[flag] !== undefined,
-      setFlag: (flag) => { flags[flag] = true; return true; },
-    });
+    this.dialogueOverlay.setTopTitle(options.top || null);
+    this.dialogueIterator = new DialogueIterator(dialogue, context);
     this.runUntilInteractivity();
   }
 

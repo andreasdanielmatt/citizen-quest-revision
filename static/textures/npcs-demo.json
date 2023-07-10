@@ -1,0 +1,130 @@
+{
+  "frames": {
+    "citizen-cool": {
+      "frame": {"x": 0, "y": 0, "w": 72, "h": 156},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
+      "sourceSize": {"w": 72, "h": 156},
+      "anchor": { "x": 36, "y": 156 }
+    },
+    "ferris-salesman": {
+      "frame": {"x": 72, "y": 0, "w": 72, "h": 156},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
+      "sourceSize": {"w": 72, "h": 156},
+      "anchor": { "x": 36, "y": 156 }
+    },
+    "biologist": {
+      "frame": {"x": 144, "y": 0, "w": 72, "h": 156},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
+      "sourceSize": {"w": 72, "h": 156},
+      "anchor": { "x": 36, "y": 156 }
+    },
+    "tourist": {
+      "frame": {"x": 216, "y": 0, "w": 72, "h": 156},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
+      "sourceSize": {"w": 72, "h": 156},
+      "anchor": { "x": 36, "y": 156 }
+    },
+    "robot": {
+      "frame": {"x": 288, "y": 0, "w": 72, "h": 156},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
+      "sourceSize": {"w": 72, "h": 156},
+      "anchor": { "x": 36, "y": 156 }
+    },
+    "parks-director": {
+      "frame": {"x": 360, "y": 0, "w": 72, "h": 156},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
+      "sourceSize": {"w": 72, "h": 156},
+      "anchor": { "x": 36, "y": 156 }
+    },
+    "mayor": {
+      "frame": {"x": 432, "y": 0, "w": 72, "h": 156},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
+      "sourceSize": {"w": 72, "h": 156},
+      "anchor": { "x": 36, "y": 156 }
+    },
+    "finance-director": {
+      "frame": {"x": 504, "y": 0, "w": 72, "h": 156},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
+      "sourceSize": {"w": 72, "h": 156},
+      "anchor": { "x": 36, "y": 156 }
+    },
+    "journalist": {
+      "frame": {"x": 576, "y": 0, "w": 72, "h": 156},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
+      "sourceSize": {"w": 72, "h": 156},
+      "anchor": { "x": 36, "y": 156 }
+    },
+    "museum-director": {
+      "frame": {"x": 0, "y": 156, "w": 72, "h": 156},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
+      "sourceSize": {"w": 72, "h": 156},
+      "anchor": { "x": 36, "y": 0 }
+    },
+    "citizen-braid": {
+      "frame": {"x": 72, "y": 156, "w": 72, "h": 156},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
+      "sourceSize": {"w": 72, "h": 156},
+      "anchor": { "x": 36, "y": 0 }
+    },
+    "citizen-cat": {
+      "frame": {"x": 144, "y": 156, "w": 72, "h": 156},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
+      "sourceSize": {"w": 72, "h": 156},
+      "anchor": {"x": 36, "y": 0}
+    },
+    "citizen-old-hip": {
+      "frame": {"x": 216, "y": 156, "w": 72, "h": 156},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
+      "sourceSize": {"w": 72, "h": 156},
+      "anchor": {"x": 36, "y": 0}
+    },
+    "citizen-puan": {
+      "frame": {"x": 288, "y": 156, "w": 72, "h": 156},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
+      "sourceSize": {"w": 72, "h": 156},
+      "anchor": {"x": 36, "y": 0}
+    },
+    "citizen-cage": {
+      "frame": {"x": 360, "y": 156, "w": 72, "h": 156},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
+      "sourceSize": {"w": 72, "h": 156},
+      "anchor": {"x": 36, "y": 0}
+    },
+    "citizen-punk": {
+      "frame": {"x": 432, "y": 156, "w": 72, "h": 156},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
+      "sourceSize": {"w": 72, "h": 156},
+      "anchor": {"x": 36, "y": 0}
+    },
+    "citizen-lila": {
+      "frame": {"x": 504, "y": 156, "w": 72, "h": 156},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
+      "sourceSize": {"w": 72, "h": 156},
+      "anchor": {"x": 36, "y": 0}
+    },
+    "citizen-blue": {
+      "frame": {"x": 576, "y": 156, "w": 72, "h": 156},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
+      "sourceSize": {"w": 72, "h": 156},
+      "anchor": {"x": 36, "y": 0}
+    },
+    "construction-worker": {
+      "frame": {"x": 0, "y": 312, "w": 72, "h": 156},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
+      "sourceSize": {"w": 72, "h": 156},
+      "anchor": {"x": 36, "y": 0}
+    },
+    "citizen-queen": {
+      "frame": {"x": 72, "y": 312, "w": 72, "h": 156},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
+      "sourceSize": {"w": 72, "h": 156},
+      "anchor": {"x": 36, "y": 0}
+    }
+  },
+  "meta": {
+    "image": "npcs-demo.png",
+    "format": "RGBA8888",
+    "size": {"w": 649, "h": 780},
+    "scale": "1"
+  }
+}

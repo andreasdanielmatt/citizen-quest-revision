@@ -1,0 +1,289 @@
+storylines:
+  touristen:
+    decision: "Sollten wir ein Riesenrad bauen, um den Tourismus zu fördern?"
+    npcs:
+      'mayor':
+        name: "Bürgermeisterin"
+        spawn: { x: 4062, y: 3170 }
+      'finance-director':
+        name: "Leiter der Finanzverwaltung"
+        spawn: { x: 4227, y: 3148 }
+      'parks-director':
+        name: "Leiterin des Umweltamts"
+        spawn: { x: 4392, y: 3148 }
+      'journalist':
+        name: "Journalist"
+        spawn: { x: 5161, y: 3419 }
+      'ferris-salesman':
+        name: "Drehmoment™ Verkaufsagent"
+        spawn: {x: 4201, y: 3455}
+      'biologist':
+        name: "Biologin"
+        spawn: {x: 7628, y: 1469}
+      'tourist':
+        name: "Tourist"
+        spawn: {x: 4213, y: 2088}
+      'robot':
+        name: "Roboter"
+        spawn: {x: 4672, y: 3548}
+      'museum-director':
+        name: "Museumsdirektorin"
+        spawn: {x: 6278, y: 2449}
+      'citizen-cool':
+        name: "Zweifelnder Bürger"
+        spawn: {x: 2966, y: 3439}
+      'citizen-braid':
+        name: "Optimistische Bürgerin"
+        spawn: {x: 911, y: 2594}
+      'citizen-cat':
+        name: "Neugierige Bürgerin"
+        spawn: {x: 2268, y: 3433}
+      'citizen-old-hip':
+        name: "Zweifelnder Bürger"
+        spawn: {x: 3498, y: 1454}
+      'citizen-puan':
+        name: "Zweifelnde Bürgerin"
+        spawn: {x: 6438, y: 3448}
+      'citizen-cage':
+        name: "Optimistischer Bürger"
+        spawn: {x: 855, y: 3474}
+      'citizen-punk':
+        name: "Bürgerin"
+        spawn: {x: 7581, y: 3543}
+      'citizen-lila':
+        name: "Bürgerin"
+        spawn: {x: 6993, y: 2588}
+      'citizen-blue':
+        name: "Zweifelnde Bürgerin"
+        spawn: {x: 3290, y: 1421}
+      'construction-worker':
+        name: "Zweifelnder Bürger"
+        spawn: {x: 2446, y: 1789}
+      'citizen-queen':
+        name: "Zweifelnde Bürgerin"
+        spawn: {x: 5183, y: 1419}
+    dialogues:
+      'mayor':
+        - type: first
+          items:
+            - cond: 'citizen-assembly'
+              text: 'Wir werden eine Bürgerversammlung organisieren und das Riesenradprojekt gemeinsam bewerten.'
+            - text: 'Alle sind mit meiner Idee eines Riesenrads einverstanden, oder?'
+              responses:
+                - cond: '(issue-1 & ^issue-2 & ^issue-3) | (^issue-1 & issue-2 & ^issue-3) | (^issue-1 & ^issue-2 & issue-3)'
+                  text: 'Einzelne Bürger*innen haben Bedenken.'
+                  thenText: 'Irgendjemand beschwert sich immer. Wenn es nur eine*r ist, ist es besser, ihn/sie zu ignorieren.'
+                - cond: '(issue-1 & issue-2 & ^issue-3) | (issue-1 & ^issue-2 & issue-3) | (^issue-1 & issue-2 & issue-3)'
+                  text: 'Einige Bürger*innen haben Bedenken.'
+                  thenText: 'Nur ein paar? Vielleicht finden sich noch mehr.'
+                - cond: 'issue-1 & issue-2 & issue-3'
+                  text: 'Viele Bürger*innen haben Bedenken.'
+                  thenText: 'Vielleicht sollten wir eine Bürgerversammlung einberufen und das Projekt gemeinsam bewerten.'
+                  set: ['citizen-assembly']
+      'finance-director':
+        - type: first
+          set: ['talked-finance']
+          items:
+            - cond: 'solved-finance'
+              text: 'Wir werden die Gewinne aus dem Riesenrad in nahe gelegene Stadtteile investieren.'
+            - text: 'Die Stadt wird die Gewinne aus dem Riesenrad erhalten. Wir entscheiden noch darüber, wie wir das zusätzliche Geld ausgeben.'
+              responses:
+                - cond: 'issue-finance'
+                  text: 'Die Leute, die in diesem Viertel leben, sagen, es sei vernachlässigt.'
+                  thenText: 'Ich denke, es wäre fair, das Geld dort zu investieren.'
+                  set: ['solved-finance']
+      'parks-director':
+        - type: first
+          items:
+            - cond: 'government-idea-birds'
+              text: 'Wir werden eine Studie der Universität finanzieren, um die Auswirkungen der Lichter des Riesenrads auf Vögel und Fledermäuse zu untersuchen.'
+            - text: 'Wir haben beantragt, dass das Riesenrad mit erneuerbarer Energie betrieben wird, damit die Umweltauswirkungen minimal sind.'
+              responses:
+                - cond: 'issue-birds'
+                  text: 'Wissenschaftler*innen sind besorgt wegen der Lichter und der Tiere'
+                  thenText: 'Würden sie einen Bericht für uns erstellen?'
+                  set: ['government-idea-birds']
+      'ferris-salesman':
+        - text: 'Ich vertrete Drehmoment™. Wir sind begeistert von der Möglichkeit, ein fantastisches Riesenrad für diese Stadt zu bauen.'
+          responses:
+            - cond: 'issue-birds'
+              text: 'Seine Lichter können Vögel und Fledermäuse verwirren.'
+              thenText: 'Kein Problem! Wir können laute Musik spielen, um sie zu verscheuchen.'
+              set: ['salesman-idea-birds']
+            - text: 'Einige sind von der Idee nicht begeistert.'
+              thenText: 'Um etwas zu erreichen, ist es am besten, nicht auf negative Menschen zu hören.'
+            - text: 'Die Anwohner machen sich Sorgen über den Verkehr, den Lärm und die Lichter.'
+              thenText: 'Wir bieten ihnen 10% Rabatt an.'
+      'biologist':
+        - type: 'first'
+          items:
+            - cond: 'biologist-solved'
+              text: 'Wir werden die Auswirkungen der Riesenrad-Lichter auf Vögel und Fledermäuse untersuchen und hoffentlich einen Weg finden, um das Problem zu begrenzen.'
+            - text: 'Die Lichter eines Riesenrads können Vögel und Fledermäuse verwirren.'
+              set: ['issue-birds', 'issue-2']
+              responses:
+                - cond: 'salesman-idea-birds'
+                  text: 'Man kann laute Musik spielen, um sie zu verscheuchen.'
+                  thenText: 'Hmpf! Reden Sie nicht mit mir!'
+                - cond: 'government-idea-birds'
+                  text: 'Die Stadtverwaltung will eine Studie finanzieren.'
+                  thenText: 'Hoffentlich finden wir einen Weg, um die Auswirkungen auf die Umwelt zu begrenzen.'
+                  set: ['biologist-solved']
+      'citizen-puan':
+        - type: 'first'
+          items:
+            - cond: 'citizen-puan-solved'
+              text: 'Ich liebe unser Museum und ich hoffe, dass es nicht vernachlässigt wird.'
+            - text: 'Warum sollte man Tourist*inen mit einem solchen Ungetüm anlocken und nicht mit unserem Museum?'
+              responses:
+                - cond: 'museum-solved'
+                  text: 'Das Museum geht davon aus, dass die Tourist*innen beides besuchen werden.'
+                  thenText: 'Hmmm. Vielleicht.'
+                  set: ['citizen-puan-solved']
+      'museum-director':
+        - text: 'Wir hoffen, dass das Riesenrad Tourist*innen anlockt, die danach auch unser Museum besuchen werden.'
+          set: ['museum-solved']
+      'tourist':
+        - type: 'random'
+          items:
+          - text: 'Ich finde die Idee gut. Es gibt nicht so viel zu tun in dieser Stadt.'
+          - text: 'Ich liebe das Riesenrad in Wien! Eine Ikone!'
+      'citizen-cat':
+        - text: 'Was denkst DU?'
+          responses:
+            - text: 'Ich bin für den Bau des Riesenrads.'
+            - text: 'Ich bin gegen den Bau des Riesenrads.'
+            - text: 'Ich weiß es noch nicht.'
+      'citizen-cool':
+        - type: first
+          items:
+            - cond: 'citizen-cool-solved'
+              text: 'Ich mache mir Sorgen um die Sicherheit des Riesenrads.'
+            - text: 'In Nebenhausen hatten sie ein Riesenrad. Es stürzte ab und es verunglückten 50 Menschen.'
+              set: ['rumor']
+              responses:
+                - cond: 'rumor-solved'
+                  text: 'Das ist ein falsches Gerücht. Das Rad ist in Fernheim noch in Betrieb.'
+                  thenText: 'Ich mache mir Sorgen um die Sicherheit des Riesenrads.'
+                  set: ['citizen-cool-solved']
+      'journalist':
+        - text: 'Wir recherchieren für einen Artikel über die Geschichte der Riesenräder in der Region. Es kursieren viele falsche Gerüchte.'
+          responses:
+            - cond: 'rumor'
+              text: 'Was wissen Sie über den Unfall in Nebenhausen?'
+              thenText: 'Es gab keinen Unfall. Sie haben ihr Riesenrad an Fernheim verkauft, und dort ist es immer noch in Betrieb.'
+              set: ['rumor-solved']
+      'robot':
+        - type: first
+          items:
+            - cond: 'issue-birds'
+              text: 'Ich hoffe, dass das Riesenrad alle Vögel und Fledermäuse vertreibt, das sind doch nur fliegende Ratten.'
+              responses:
+                - text: 'Vögel und Fledermäuse sind wichtig für das Ökosystem.'
+                  thenText: '"Ökosystem" ist ein Begriff aus der Zeit bevor es Supermärkte gab.'
+            - cond: 'rumor'
+              text: 'Wer gegen dieses Projekt ist, ist gegen den technischen Fortschritt.'
+              responses:
+                - text: 'Das erste Riesenrad wurde 1893 gebaut.'
+                  thenText: 'Wenn du dich dem Fortschritt in den Weg stellst, wirst du von meinem fliegenden Auto überfahren.'
+            - text: 'Mit einem Riesenrad können wir es als Reiseziel mit London, Singapur oder Disneyland aufnehmen!'
+              responses:
+                - text: 'London und Singapur sind sehr große Städte.'
+                  thenText: '... und ohne ein Riesenrad werden wir für immer klein bleiben.'
+                - text: 'Disneyland hat kein Riesenrad.'
+                  thenText: 'Es gibt zwölf Disney-Parks auf der Welt. Hast du die alle persönlich besucht?'
+      'citizen-blue':
+        - type: first
+          items:
+            - cond: 'citizen-neighbor-solved'
+              text: 'Ich habe in der Bürgerversammlung SEHR VIEL zu sagen.'
+            - text: 'Niemand hat uns gefragt, und sie stellen es direkt neben unsere Häuser.'
+              set: ['issue-1']
+              responses:
+                - cond: 'citizen-assembly'
+                  text: 'Die Bürgermeisterin wird eine Bürgerversammlung einberufen.'
+                  thenText: 'OK, ich hoffe, sie werden sich meine Bedenken anhören.'
+                  set: ['citizen-neighbor-solved']
+      'citizen-old-hip':
+        - type: first
+          items:
+            - cond: 'citizen-old-hip-solved'
+              text: 'Wenn die Stadt die Gewinne wieder investiert, um die lokalen Unternehmen zu unterstützen, könnte der Tourismus gute Möglichkeiten für uns bringen.'
+            - text: 'Das wird zu viel Verkehr, Lärm und Kriminalität in diesem ohnehin schon sehr vernachlässigten Viertel führen.'
+              set: ['issue-finance', 'issue-2']
+              responses:
+                - cond: 'solved-finance'
+                  text: 'Die Stadt hat versprochen, die Gewinne wieder in dieses Viertel zu investieren.'
+                  thenText: 'Wenn sie die örtlichen Unternehmen unterstützen, können wir auf Touristen vorbereitet sein.'
+                  set: ['citizen-old-hip-solved']
+      'citizen-braid':
+        - type: 'random'
+          set: ['positive-1']
+          items:
+            - text: 'Der Tourismus wird kleinen lokalen Unternehmen helfen.'
+            - text: 'Er kann uns einzigartiger machen und die Besucherzahlen erhöhen.'
+      'citizen-cage':
+        - type: 'random'
+          set: ['positive-2']
+          items:
+            - text: 'Es gibt immer weniger Arbeitsplätze. Es ist eine gute Idee, auf den Tourismus zu setzen. '
+            - text: 'Der Tourismus wird kleinen lokalen Unternehmen helfen.'
+      'citizen-punk':
+        - type: first
+          items:
+            - cond: 'citizen-punk-solved'
+              text: 'Ich war gegen das Projekt, aber jetzt bin ich mir nicht mehr sicher.'
+            - cond: '^citizen-punk-solved & citizen-punk-partly-solved'
+              text: 'Die meisten meiner Freunde sind dagegen, aber es gibt auch immer mehr positive Stimmen.'
+              responses:
+                - cond: 'positive-1 & positive-2'
+                  text: 'Ich habe einige positive Meinungen gesammelt. Schau mal.'
+                  thenText: '... Okay. Das sind interessante Punkte.'
+                  set: [ 'citizen-punk-solved' ]
+            - cond: '^citizen-punk-solved & ^citizen-punk-partly-solved'
+              text: 'Ich habe mit vielen Leuten gesprochen und niemand ist für dieses Projekt.'
+              responses:
+                - cond: 'positive-1 & positive-2'
+                  text: 'Ich habe einige positive Meinungen gesammelt. Schau mal.'
+                  thenText: '... Okay. Das sind interessante Punkte.'
+                  set: ['citizen-punk-solved']
+                - cond: '(positive-1 & ^positive-2) | (^positive-1 & positive-2)'
+                  text: 'Ich habe einige positive Meinungen gesammelt. Schau mal.'
+                  thenText: 'Ich war gegen das Projekt, aber jetzt bin ich mir nicht mehr sicher.'
+                  set: ['citizen-punk-partly-solved']
+      'citizen-lila':
+        - type: first
+          items:
+            - cond: 'citizen-lila-solved'
+              text: 'Ich war gegen das Projekt, aber jetzt bin ich mir nicht mehr sicher.'
+            - text: 'Es werden Eintrittskarten verkauft, aber ein privates Unternehmen bekommt das ganze Geld.'
+              responses:
+                - cond: 'talked-finance'
+                  text: 'Ein Teil des Gewinns wird an die Stadt gehen.'
+                  thenText: 'Das wusste ich nicht.'
+                  set: ['citizen-lila-solved']
+      'construction-worker':
+        - type: first
+          items:
+            - cond: 'construction-worker-solved'
+              text: 'Ich freue mich auf die Bürgerversammlung.'
+            - text: 'Der Tourismus macht alles teurer! Und es gibt schon jetzt so wenig freie Wohnungen.'
+              set: ['issue-3']
+              responses:
+                - cond: 'citizen-assembly'
+                  text: 'Die Bürgermeisterin wird eine Bürgerversammlung einberufen.'
+                  thenText: 'Oh, das ist ja toll!'
+                  set: ['construction-worker-solved']
+      'citizen-queen':
+        - type: first
+          items:
+            - cond: 'citizen-queen-solved'
+              text: 'Ich bin nicht allzu optimistisch, dass die Bürgerversammlung etwas bewirken wird, aber ich werde ihr eine Chance geben.'
+            - text: 'Touristen = Kriminalität!'
+              set: ['issue-3']
+              responses:
+                - cond: 'citizen-assembly'
+                  text: 'Die Bürgermeisterin wird eine Bürgerversammlung einberufen.'
+                  thenText: 'Mmmm... OK.'
+                  set: ['citizen-queen-solved']
+

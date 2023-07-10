@@ -26,8 +26,8 @@ class DialogueOverlay {
     this.selectedOption = 0;
   }
 
-  play(dialogue) {
-
+  setTopTitle(title) {
+    this.balloonTop.setTitle(title);
   }
 
   showSpeech(text) {

@@ -124,7 +124,8 @@ class DialogueIterator {
       return;
     }
 
-    if (this.activeNode.responses && this.activeNode.responses.length > 0) {
+    const enabledResponses = this.getEnabledResponses();
+    if (enabledResponses && enabledResponses.length > 0) {
       throw new Error(`Can't use next() on a node of type 'statement' with responses (${this.activeNode.id}:${this.dialogue.root.id})`);
     }
 

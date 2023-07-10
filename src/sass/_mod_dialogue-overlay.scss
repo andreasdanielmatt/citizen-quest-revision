@@ -1,4 +1,4 @@
-$dialogue-margin: 1em;
+$dialogue-margin: 0.6em;
 $response-pointer-size: 2em;
 
 @keyframes popIn {
@@ -42,8 +42,15 @@ $response-pointer-size: 2em;
     border-radius: 1em;
     border: 0.5em solid $c-black;
     margin: 0;
-    padding: 1em;
+    padding: 0.6em 1em;
     font-size: 1.5em;
+
+    .title {
+      font-size: 0.85em;
+      font-weight: bold;
+      margin-top: -0.5em;
+      margin-bottom: -0.1em;
+    }
 
     &.top {
       top: $dialogue-margin;

@@ -3,6 +3,7 @@ const Stats = require('../helpers-web/stats.js');
 const TownView = require('../views/town-view');
 require('../helpers-web/fill-with-aspect');
 const PCView = require('../views/pc-view');
+const NPCView = require('../views/npc-view');
 const KeyboardInputMgr = require('../input/keyboard-input-mgr');
 const GamepadInputMgr = require('../input/gamepad-input-mgr');
 const MultiplexInputMgr = require('../input/multiplex-input-mgr');
@@ -10,6 +11,7 @@ const PlayerAppInputRouter = require('../input/player-app-input-router');
 const PlayerCharacter = require('../model/player-character');
 const DialogueOverlay = require('../dialogues/dialogue-overlay');
 const DialogueSequencer = require('../dialogues/dialogue-sequencer');
+const Dialogue = require('../dialogues/dialogue');
 
 class PlayerApp {
   constructor(config, playerId) {
@@ -20,6 +22,8 @@ class PlayerApp {
       .filter(([id, player]) => (player.enabled === undefined || player.enabled) && id !== playerId)
       .map(([id]) => [id, new PlayerCharacter(this.config, id)]));
     this.canControlPc = false;
+    this.npcs = config.storylines.touristen.npcs;
+    Object.entries(this.npcs).forEach(([id, npc]) => npc.id = id);
 
     this.$element = $('<div></div>')
       .addClass('player-app');
@@ -28,9 +32,12 @@ class PlayerApp {
       .addClass('pixi-wrapper')
       .appendTo(this.$element);
 
+    this.flags = {};
     this.dialogueOverlay = new DialogueOverlay(this.config);
     this.dialogueSequencer = new DialogueSequencer(this.dialogueOverlay);
     this.$element.append(this.dialogueOverlay.$element);
+
+    this.showHitbox = false;
   }
 
   async init() {
@@ -51,8 +58,11 @@ class PlayerApp {
       Object.entries(this.otherPcs)
         .map(([id, pc]) => [id, new PCView(this.config, this.textures, pc, this.townView)])
     );
+    this.npcViews = Object.values(this.npcs).map(npc => new NPCView(this.config, this.textures, npc, this.townView));
 
     this.townView.mainLayer.addChild(this.pcView.display);
+    this.townView.bgLayer.addChild(this.pcView.hitboxDisplay);
+    this.townView.mainLayer.addChild(...this.npcViews.map(npcView => npcView.display));
     if (Object.values(this.otherPcViews).length > 0) {
       this.townView.mainLayer.addChild(...Object.values(this.otherPcViews)
         .map(pcView => pcView.display));
@@ -64,6 +74,8 @@ class PlayerApp {
     this.keyboardInputMgr = new KeyboardInputMgr();
     this.keyboardInputMgr.attachListeners();
     this.keyboardInputMgr.addToggle('KeyD', () => { this.stats.togglePanel(); });
+    this.keyboardInputMgr.addToggle('KeyH', () => { this.toggleHitboxDisplay(); });
+    this.keyboardInputMgr.addToggle('KeyX', () => { console.log(`x: ${this.pc.position.x}, y: ${this.pc.position.y}`); });
 
     const gamepadMapperConfig =
       this.config?.players?.[this.playerId]?.['gamepadMapping'] ?? {};
@@ -136,12 +148,76 @@ class PlayerApp {
     this.pc.setSpeed(0, 0);
   }
 
-  playDialogue(dialogue) {
+  getDialogue(dialogueId) {
+    const items = this.config.storylines.touristen.dialogues[dialogueId];
+    if (!items) throw new Error(`No dialogue found with id ${dialogueId}`);
+    try {
+      return Dialogue.fromJson({
+        id: dialogueId,
+        items,
+      });
+    } catch (e) {
+      if(e.errors) {
+        console.error(`Error parsing dialogue with id ${dialogueId}:`);
+        e.errors.forEach((error) => {
+          console.error(error);
+        });
+      }
+      throw e;
+    }
+  }
+
+  hasFlag(flagId) {
+    return this.flags[flagId] !== undefined;
+  }
+
+  setFlag(flagId) {
+    this.flags[flagId] = true;
+    return true;
+  }
+
+  playDialogue(dialogue, npc = null) {
     this.inputRouter.routeToDialogueOverlay(this.dialogueOverlay, this.dialogueSequencer);
-    this.dialogueSequencer.play(dialogue);
+    this.dialogueSequencer.play(dialogue, {
+      hasFlag: this.hasFlag.bind(this),
+      setFlag: this.setFlag.bind(this),
+      random: max => Math.floor(Math.random() * max),
+    }, { top: npc.name });
     this.dialogueSequencer.events.once('end', () => {
       this.inputRouter.routeToPcMovement(this);
     });
+  }
+
+  getNpcsInRect(rect) {
+    return this.npcViews.filter(npcView => npcView.inRect(rect))
+      .map(npcView => npcView.npc);
+  }
+
+  pcAction() {
+    const hitbox = this.pcView.getActionHitbox();
+    const npcs = this.getNpcsInRect(hitbox);
+    let closestNpc = null;
+    let closestDistance = null;
+    npcs.forEach((npc) => {
+      const distance = Math.max(
+        Math.abs(this.pc.position.x - npc.spawn.x),
+        Math.abs(this.pc.position.y - npc.spawn.y)
+      );
+      if (closestDistance === null || distance < closestDistance) {
+        closestNpc = npc;
+        closestDistance = distance;
+      }
+    });
+    if (closestNpc) {
+      this.playDialogue(this.getDialogue(closestNpc.dialogue || closestNpc.id), closestNpc);
+    }
+    if (this.showHitbox) {
+      this.pcView.showActionHitbox(hitbox);
+    }
+  }
+
+  toggleHitboxDisplay() {
+    this.showHitbox = !this.showHitbox;
   }
 }
 

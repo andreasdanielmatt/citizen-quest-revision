@@ -9,18 +9,33 @@ class PCView {
     this.display = this.createSprite();
     this.direction = 'e';
     this.isWalking = false;
+    this.showHitbox = false;
+    this.hitboxDisplay = this.createHitboxDisplay();
   }
 
   createSprite() {
     const sprite = new PIXI.AnimatedSprite(this.textures['character-basic'].animations['basic-es']);
     sprite.anchor.set(0, 0);
-    sprite.width = PCView.SPRITE_WIDTH;
-    sprite.height = PCView.SPRITE_HEIGHT;
+    sprite.width = PCView.SPRITE_W;
+    sprite.height = PCView.SPRITE_H;
     sprite.animationSpeed = PCView.SPRITE_ANIMATION_SPEED;
     sprite.play();
     sprite.position = this.pc.position;
 
     return sprite;
+  }
+
+  createHitboxDisplay() {
+    const display = new PIXI.Graphics();
+    // Do a simple rectangle
+    display.beginFill(0xff0000);
+    display.drawRect(0, 0, PCView.ACTION_HITBOX_H, PCView.ACTION_HITBOX_W);
+    display.endFill();
+    display.position = this.pc.position;
+    display.alpha = 0.5;
+    display.visible = false;
+
+    return display;
   }
 
   updateSprite(oldX, oldY, newX, newY) {
@@ -130,10 +145,67 @@ class PCView {
       },
     ];
   }
+
+  getActionHitbox() {
+    let top;
+    let bottom;
+    let left;
+    let right;
+
+    const { x, y } = this.pc.position;
+    switch (this.direction) {
+      case 'e':
+        top = y - PCView.ACTION_HITBOX_H / 2;
+        bottom = y + PCView.ACTION_HITBOX_H / 2;
+        left = x;
+        right = x + PCView.ACTION_HITBOX_W;
+        break;
+      case 'w':
+        top = y - PCView.ACTION_HITBOX_H / 2;
+        bottom = y + PCView.ACTION_HITBOX_H / 2;
+        left = x + PCView.SPRITE_W - PCView.ACTION_HITBOX_W;
+        right = x + PCView.SPRITE_W;
+        break;
+      case 'n':
+        top = y - (PCView.ACTION_HITBOX_W / 4) * 3;
+        bottom = y + PCView.ACTION_HITBOX_W / 4;
+        left = x + (PCView.SPRITE_W / 2) - (PCView.ACTION_HITBOX_W / 2);
+        right = x + (PCView.SPRITE_W / 2) + (PCView.ACTION_HITBOX_W / 2);
+        break;
+      case 's':
+        top = y;
+        bottom = y + PCView.ACTION_HITBOX_W;
+        left = x + (PCView.SPRITE_W / 2) - (PCView.ACTION_HITBOX_W / 2);
+        right = x + (PCView.SPRITE_W / 2) + (PCView.ACTION_HITBOX_W / 2);
+        break;
+      default:
+        throw new Error(`Invalid direction ${this.direction}`);
+    }
+
+    return {
+      top, right, bottom, left,
+    };
+  }
+
+  showActionHitbox(hitbox) {
+    this.hitboxDisplay.width = Math.abs(hitbox.right - hitbox.left);
+    this.hitboxDisplay.height = Math.abs(hitbox.bottom - hitbox.top);
+    this.hitboxDisplay.position.x = hitbox.left;
+    this.hitboxDisplay.position.y = hitbox.top;
+    this.hitboxDisplay.visible = true;
+
+    // Show for one second
+    clearTimeout(this.hitboxTimeout);
+    this.hitboxTimeout = setTimeout(() => {
+      this.hitboxDisplay.visible = false;
+    }, 1000);
+  }
 }
 
-PCView.SPRITE_HEIGHT = 156;
-PCView.SPRITE_WIDTH = 72;
+PCView.SPRITE_H = 156;
+PCView.SPRITE_W = 72;
 PCView.SPRITE_ANIMATION_SPEED = 0.3;
+PCView.ACTION_HITBOX_H = 150;
+PCView.ACTION_HITBOX_W = 200;
 
 module.exports = PCView;

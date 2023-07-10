@@ -87,22 +87,28 @@ h1, h2, h3, h4, h5, h6 {
 .dialogue-overlay .balloon {
   display: none;
   position: absolute;
-  left: 1em;
-  width: calc(100% - 2em);
-  height: calc(33% - 2em);
+  left: 0.6em;
+  width: calc(100% - 1.2em);
+  height: calc(33% - 1.2em);
   background-color: #fff;
   color: #000;
   border-radius: 1em;
   border: 0.5em solid #000;
   margin: 0;
-  padding: 1em;
+  padding: 0.6em 1em;
   font-size: 1.5em;
 }
+.dialogue-overlay .balloon .title {
+  font-size: 0.85em;
+  font-weight: bold;
+  margin-top: -0.5em;
+  margin-bottom: -0.1em;
+}
 .dialogue-overlay .balloon.top {
-  top: 1em;
+  top: 0.6em;
 }
 .dialogue-overlay .balloon.bottom {
-  bottom: 1em;
+  bottom: 0.6em;
 }
 .dialogue-overlay .balloon.visible {
   display: block;
@@ -259,4 +265,4 @@ html.with-fatal-error body {
   margin-bottom: 1.2em;
 }
 
-/*# sourceMappingURL=player.d58f3d8385db1ddb12e6.css.map*/
+/*# sourceMappingURL=player.207ea15761aa15799304.css.map*/

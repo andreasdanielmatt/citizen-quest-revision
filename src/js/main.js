@@ -15,6 +15,7 @@ cfgLoader.load([
   'config/textures.yml',
   'config/town.yml',
   'config/gamepads.yml',
+  'config/storylines/touristen.yml',
 ]).catch((err) => {
   showFatalError('Error loading configuration', err);
   console.error('Error loading configuration');

@@ -24,6 +24,7 @@ cfgLoader.load([
   '../config/textures.yml',
   '../config/town.yml',
   '../config/gamepads.yml',
+  '../config/storylines/touristen.yml',
   settingsFile,
 ])
   .catch((err) => {
