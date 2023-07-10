@@ -10,14 +10,16 @@ class Countdown {
   }
 
   start() {
-    this.interval = setInterval(() => {
-      this.seconds -= 1;
-      this.update();
-      if (this.seconds === 0) {
-        this.events.emit('end');
-        clearInterval(this.interval);
-      }
-    }, 1000);
+    if (this.seconds > 0) {
+      this.interval = setInterval(() => {
+        this.seconds -= 1;
+        this.update();
+        if (this.seconds === 0) {
+          this.events.emit('end');
+          clearInterval(this.interval);
+        }
+      }, 1000);
+    }
   }
 
   update() {
