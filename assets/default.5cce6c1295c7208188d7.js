@@ -14000,6 +14000,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 /* globals PIXI */
+const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
 const Stats = __webpack_require__(/*! ../helpers-web/stats.js */ "./src/js/lib/helpers-web/stats.js");
 const TownView = __webpack_require__(/*! ../views/town-view */ "./src/js/lib/views/town-view.js");
 __webpack_require__(/*! ../helpers-web/fill-with-aspect */ "./src/js/lib/helpers-web/fill-with-aspect.js");
@@ -14015,6 +14016,7 @@ const DialogueSequencer = __webpack_require__(/*! ../dialogues/dialogue-sequence
 const Dialogue = __webpack_require__(/*! ../dialogues/dialogue */ "./src/js/lib/dialogues/dialogue.js");
 const Countdown = __webpack_require__(/*! ../helpers-web/countdown */ "./src/js/lib/helpers-web/countdown.js");
 const DecisionScreen = __webpack_require__(/*! ../ui/decisionScreen */ "./src/js/lib/ui/decisionScreen.js");
+const ScoringOverlay = __webpack_require__(/*! ../ui/scoringOverlay */ "./src/js/lib/ui/scoringOverlay.js");
 
 class PlayerApp {
   constructor(config, playerId) {
@@ -14051,9 +14053,25 @@ class PlayerApp {
     });
 
     this.flags = {};
+    this.flagEvents = new EventEmitter();
     this.dialogueOverlay = new DialogueOverlay(this.config);
     this.dialogueSequencer = new DialogueSequencer(this.dialogueOverlay);
     this.$element.append(this.dialogueOverlay.$element);
+
+    this.scoringOverlay = new ScoringOverlay(this.config);
+    this.$element.append(this.scoringOverlay.$element);
+
+    // Temporary scoring manager
+    const seenFlags = {};
+    this.flagEvents.on('flag', (flagId) => {
+      if (seenFlags[flagId]) {
+        return;
+      }
+      seenFlags[flagId] = true;
+      if (this.config.storylines.touristen.scoring[flagId]) {
+        this.scoringOverlay.show(this.config.storylines.touristen.scoring[flagId]);
+      }
+    });
 
     this.showHitbox = false;
   }
@@ -14193,6 +14211,7 @@ class PlayerApp {
 
   setFlag(flagId) {
     this.flags[flagId] = true;
+    this.flagEvents.emit('flag', flagId);
     return true;
   }
 
@@ -16540,6 +16559,32 @@ module.exports = DecisionScreen;
 
 /***/ }),
 
+/***/ "./src/js/lib/ui/scoringOverlay.js":
+/*!*****************************************!*\
+  !*** ./src/js/lib/ui/scoringOverlay.js ***!
+  \*****************************************/
+/***/ ((module) => {
+
+class ScoringOverlay {
+  constructor(config) {
+    this.config = config;
+    this.$element = $('<div></div>')
+      .addClass('scoring-overlay');
+  }
+
+  show(achievement) {
+    $('<div></div>')
+      .addClass('achievement')
+      .addClass(`achievement-${achievement}`)
+      .appendTo(this.$element);
+  }
+}
+
+module.exports = ScoringOverlay;
+
+
+/***/ }),
+
 /***/ "./src/js/lib/views/npc-view.js":
 /*!**************************************!*\
   !*** ./src/js/lib/views/npc-view.js ***!
@@ -17022,4 +17067,4 @@ cfgLoader.load([
 
 /******/ })()
 ;
-//# sourceMappingURL=default.9e9ca8eff8dbeaa39153.js.map
+//# sourceMappingURL=default.5cce6c1295c7208188d7.js.map

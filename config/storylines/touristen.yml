@@ -288,17 +288,15 @@ storylines:
                   text: 'Die Bürgermeisterin wird eine Bürgerversammlung einberufen.'
                   thenText: 'Mmmm... OK.'
                   set: ['citizen-queen-solved']
-    outcomes:
-      # built
-#      - text: 'The major and the Spin City™ company agreed to build a new Ferris wheel.'
-#      - text: 'A citizen assembly was formed to discuss the Ferris wheel project. We need to hear concerns, study issues, and make choices based on information.'
-#      - text: 'The local university made changes to the project to minimize the impact on local birds and bats.'
-#      - text: 'A part of the profits is being used to improve the northern part of the city.'
-      # built / mid
-      - text: 'It attracts some tourists, but locals prefer to avoid the area.'
-      - text: 'Some citizens say it’s a lot of fun. Most say it’s a big waste of money.'
-      # built / bad
-      - text: 'It was voted “The ugliest attraction in Germany” by residents.'
-      - text: 'Citizens protested for weeks. A judge decided that the Ferris wheel must only operate on weekends and with its lights off.'
-      # not built / very bad
-#      - text: 'The construction of the Ferris wheel was paused because of constant vandalism by angry citizens.'
+    scoring:
+      citizen-assembly: empowerment
+      biologist-solved: empowerment
+      solved-finance: empowerment
+      citizen-cool-solved: information
+      citizen-lila-solved: information
+      citizen-puan-solved: empathy
+      citizen-punk-solved: empathy
+      construction-worker-solved: empathy
+      citizen-queen-solved: empathy
+      citizen-neighbor-solved: equity
+      citizen-old-hip-solved: equity

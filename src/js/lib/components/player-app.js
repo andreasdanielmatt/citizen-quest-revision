@@ -1,4 +1,5 @@
 /* globals PIXI */
+const EventEmitter = require('events');
 const Stats = require('../helpers-web/stats.js');
 const TownView = require('../views/town-view');
 require('../helpers-web/fill-with-aspect');
@@ -14,6 +15,7 @@ const DialogueSequencer = require('../dialogues/dialogue-sequencer');
 const Dialogue = require('../dialogues/dialogue');
 const Countdown = require('../helpers-web/countdown');
 const DecisionScreen = require('../ui/decisionScreen');
+const ScoringOverlay = require('../ui/scoringOverlay');
 
 class PlayerApp {
   constructor(config, playerId) {
@@ -50,9 +52,25 @@ class PlayerApp {
     });
 
     this.flags = {};
+    this.flagEvents = new EventEmitter();
     this.dialogueOverlay = new DialogueOverlay(this.config);
     this.dialogueSequencer = new DialogueSequencer(this.dialogueOverlay);
     this.$element.append(this.dialogueOverlay.$element);
+
+    this.scoringOverlay = new ScoringOverlay(this.config);
+    this.$element.append(this.scoringOverlay.$element);
+
+    // Temporary scoring manager
+    const seenFlags = {};
+    this.flagEvents.on('flag', (flagId) => {
+      if (seenFlags[flagId]) {
+        return;
+      }
+      seenFlags[flagId] = true;
+      if (this.config.storylines.touristen.scoring[flagId]) {
+        this.scoringOverlay.show(this.config.storylines.touristen.scoring[flagId]);
+      }
+    });
 
     this.showHitbox = false;
   }
@@ -192,6 +210,7 @@ class PlayerApp {
 
   setFlag(flagId) {
     this.flags[flagId] = true;
+    this.flagEvents.emit('flag', flagId);
     return true;
   }
 
