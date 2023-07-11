@@ -4,52 +4,52 @@ storylines:
     npcs:
       'mayor':
         name: "Bürgermeisterin"
-        spawn: { x: 4062, y: 3170 }
+        spawn: { x: 3855, y: 3119 }
       'finance-director':
         name: "Leiter der Finanzverwaltung"
-        spawn: { x: 4227, y: 3148 }
+        spawn: { x: 4002, y: 3080 }
       'parks-director':
         name: "Leiterin des Umweltamts"
-        spawn: { x: 4392, y: 3148 }
+        spawn: { x: 4137, y: 3080 }
       'journalist':
         name: "Journalist"
-        spawn: { x: 5161, y: 3419 }
+        spawn: { x: 4928, y: 3384 }
       'ferris-salesman':
         name: "Drehmoment™ Verkaufsagent"
-        spawn: {x: 4201, y: 3455}
+        spawn: {x: 4006, y: 3415}
       'biologist':
         name: "Biologin"
-        spawn: {x: 7628, y: 1469}
+        spawn: {x: 6993, y: 1679}
       'tourist':
         name: "Tourist"
         spawn: {x: 4213, y: 2088}
       'robot':
         name: "Roboter"
-        spawn: {x: 4672, y: 3548}
+        spawn: {x: 5291, y: 3394}
       'museum-director':
         name: "Museumsdirektorin"
-        spawn: {x: 6278, y: 2449}
+        spawn: {x: 6041, y: 2409}
       'citizen-cool':
         name: "Zweifelnder Bürger"
-        spawn: {x: 2966, y: 3439}
+        spawn: {x: 4603, y: 3149}
       'citizen-braid':
         name: "Optimistische Bürgerin"
-        spawn: {x: 911, y: 2594}
+        spawn: {x: 1356, y: 2409}
       'citizen-cat':
         name: "Neugierige Bürgerin"
-        spawn: {x: 2268, y: 3433}
+        spawn: {x: 6141, y: 1434}
       'citizen-old-hip':
         name: "Zweifelnder Bürger"
         spawn: {x: 3498, y: 1454}
       'citizen-puan':
         name: "Zweifelnde Bürgerin"
-        spawn: {x: 6438, y: 3448}
+        spawn: {x: 5856, y: 3374}
       'citizen-cage':
         name: "Optimistischer Bürger"
-        spawn: {x: 855, y: 3474}
+        spawn: {x: 2274, y: 3434}
       'citizen-punk':
         name: "Bürgerin"
-        spawn: {x: 7581, y: 3543}
+        spawn: {x: 3093, y: 3384}
       'citizen-lila':
         name: "Bürgerin"
         spawn: {x: 6993, y: 2588}
@@ -58,7 +58,7 @@ storylines:
         spawn: {x: 3290, y: 1421}
       'construction-worker':
         name: "Zweifelnder Bürger"
-        spawn: {x: 2446, y: 1789}
+        spawn: {x: 2686, y: 1403}
       'citizen-queen':
         name: "Zweifelnde Bürgerin"
         spawn: {x: 5183, y: 1419}
