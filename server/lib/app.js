@@ -3,14 +3,14 @@ const express = require('express');
 const ws = require('ws');
 const cors = require('cors');
 const OpenApiValidator = require('express-openapi-validator');
-const PlayerCharacter = require('../../src/js/lib/model/player-character');
+const Character = require('../../src/js/lib/model/character');
 
 function initApp(config) {
   console.log('Initializing server.');
 
   const players = Object.fromEntries(Object.entries(config.players)
     .filter(([, player]) => player.enabled === undefined || player.enabled)
-    .map(([id]) => [id, new PlayerCharacter(config, id)]));
+    .map(([id]) => [id, new Character(id, config.players[id])]));
 
   const app = express();
   app.use(cors());

@@ -4,12 +4,12 @@ const Stats = require('../helpers-web/stats.js');
 const TownView = require('../views/town-view');
 require('../helpers-web/fill-with-aspect');
 const PCView = require('../views/pc-view');
-const NPCView = require('../views/npc-view');
+const CharacterView = require('../views/character-view');
 const KeyboardInputMgr = require('../input/keyboard-input-mgr');
 const GamepadInputMgr = require('../input/gamepad-input-mgr');
 const MultiplexInputMgr = require('../input/multiplex-input-mgr');
 const PlayerAppInputRouter = require('../input/player-app-input-router');
-const PlayerCharacter = require('../model/player-character');
+const Character = require('../model/character');
 const DialogueOverlay = require('../dialogues/dialogue-overlay');
 const DialogueSequencer = require('../dialogues/dialogue-sequencer');
 const Dialogue = require('../dialogues/dialogue');
@@ -17,17 +17,17 @@ const Countdown = require('../helpers-web/countdown');
 const DecisionScreen = require('../ui/decisionScreen');
 const ScoringOverlay = require('../ui/scoringOverlay');
 
+
 class PlayerApp {
   constructor(config, playerId) {
     this.config = config;
     this.playerId = playerId;
-    this.pc = new PlayerCharacter(this.config, playerId);
+    this.pc = new Character(playerId, this.config.players[playerId]);
     this.otherPcs = Object.fromEntries(Object.entries(this.config.players)
       .filter(([id, player]) => (player.enabled === undefined || player.enabled) && id !== playerId)
-      .map(([id]) => [id, new PlayerCharacter(this.config, id)]));
+      .map(([id]) => [id, new Character(id, this.config.players[id])]));
     this.canControlPc = false;
-    this.npcs = config.storylines.touristen.npcs;
-    Object.entries(this.npcs).forEach(([id, npc]) => npc.id = id);
+    this.npcs = Object.entries(config.storylines.touristen.npcs).map(([id, props]) => new Character(id, props));
 
     this.$element = $('<div></div>')
       .addClass('player-app');
@@ -93,7 +93,7 @@ class PlayerApp {
       Object.entries(this.otherPcs)
         .map(([id, pc]) => [id, new PCView(this.config, this.textures, pc, this.townView)])
     );
-    this.npcViews = Object.values(this.npcs).map(npc => new NPCView(this.config, this.textures, npc, this.townView));
+    this.npcViews = Object.values(this.npcs).map(npc => new CharacterView(this.config, this.textures, npc, this.townView));
 
     this.townView.mainLayer.addChild(this.pcView.display);
     this.townView.bgLayer.addChild(this.pcView.hitboxDisplay);
@@ -228,7 +228,7 @@ class PlayerApp {
 
   getNpcsInRect(rect) {
     return this.npcViews.filter(npcView => npcView.inRect(rect))
-      .map(npcView => npcView.npc);
+      .map(npcView => npcView.character);
   }
 
   pcAction() {
@@ -238,8 +238,8 @@ class PlayerApp {
     let closestDistance = null;
     npcs.forEach((npc) => {
       const distance = Math.max(
-        Math.abs(this.pc.position.x - npc.spawn.x),
-        Math.abs(this.pc.position.y - npc.spawn.y)
+        Math.abs(this.pc.position.x - npc.position.x),
+        Math.abs(this.pc.position.y - npc.position.y)
       );
       if (closestDistance === null || distance < closestDistance) {
         closestNpc = npc;

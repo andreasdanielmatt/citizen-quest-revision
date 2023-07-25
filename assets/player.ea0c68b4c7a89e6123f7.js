@@ -9822,12 +9822,12 @@ const Stats = __webpack_require__(/*! ../helpers-web/stats.js */ "./src/js/lib/h
 const TownView = __webpack_require__(/*! ../views/town-view */ "./src/js/lib/views/town-view.js");
 __webpack_require__(/*! ../helpers-web/fill-with-aspect */ "./src/js/lib/helpers-web/fill-with-aspect.js");
 const PCView = __webpack_require__(/*! ../views/pc-view */ "./src/js/lib/views/pc-view.js");
-const NPCView = __webpack_require__(/*! ../views/npc-view */ "./src/js/lib/views/npc-view.js");
+const CharacterView = __webpack_require__(/*! ../views/character-view */ "./src/js/lib/views/character-view.js");
 const KeyboardInputMgr = __webpack_require__(/*! ../input/keyboard-input-mgr */ "./src/js/lib/input/keyboard-input-mgr.js");
 const GamepadInputMgr = __webpack_require__(/*! ../input/gamepad-input-mgr */ "./src/js/lib/input/gamepad-input-mgr.js");
 const MultiplexInputMgr = __webpack_require__(/*! ../input/multiplex-input-mgr */ "./src/js/lib/input/multiplex-input-mgr.js");
 const PlayerAppInputRouter = __webpack_require__(/*! ../input/player-app-input-router */ "./src/js/lib/input/player-app-input-router.js");
-const PlayerCharacter = __webpack_require__(/*! ../model/player-character */ "./src/js/lib/model/player-character.js");
+const Character = __webpack_require__(/*! ../model/character */ "./src/js/lib/model/character.js");
 const DialogueOverlay = __webpack_require__(/*! ../dialogues/dialogue-overlay */ "./src/js/lib/dialogues/dialogue-overlay.js");
 const DialogueSequencer = __webpack_require__(/*! ../dialogues/dialogue-sequencer */ "./src/js/lib/dialogues/dialogue-sequencer.js");
 const Dialogue = __webpack_require__(/*! ../dialogues/dialogue */ "./src/js/lib/dialogues/dialogue.js");
@@ -9835,17 +9835,17 @@ const Countdown = __webpack_require__(/*! ../helpers-web/countdown */ "./src/js/
 const DecisionScreen = __webpack_require__(/*! ../ui/decisionScreen */ "./src/js/lib/ui/decisionScreen.js");
 const ScoringOverlay = __webpack_require__(/*! ../ui/scoringOverlay */ "./src/js/lib/ui/scoringOverlay.js");
 
+
 class PlayerApp {
   constructor(config, playerId) {
     this.config = config;
     this.playerId = playerId;
-    this.pc = new PlayerCharacter(this.config, playerId);
+    this.pc = new Character(playerId, this.config.players[playerId]);
     this.otherPcs = Object.fromEntries(Object.entries(this.config.players)
       .filter(([id, player]) => (player.enabled === undefined || player.enabled) && id !== playerId)
-      .map(([id]) => [id, new PlayerCharacter(this.config, id)]));
+      .map(([id]) => [id, new Character(id, this.config.players[id])]));
     this.canControlPc = false;
-    this.npcs = config.storylines.touristen.npcs;
-    Object.entries(this.npcs).forEach(([id, npc]) => npc.id = id);
+    this.npcs = Object.entries(config.storylines.touristen.npcs).map(([id, props]) => new Character(id, props));
 
     this.$element = $('<div></div>')
       .addClass('player-app');
@@ -9911,7 +9911,7 @@ class PlayerApp {
       Object.entries(this.otherPcs)
         .map(([id, pc]) => [id, new PCView(this.config, this.textures, pc, this.townView)])
     );
-    this.npcViews = Object.values(this.npcs).map(npc => new NPCView(this.config, this.textures, npc, this.townView));
+    this.npcViews = Object.values(this.npcs).map(npc => new CharacterView(this.config, this.textures, npc, this.townView));
 
     this.townView.mainLayer.addChild(this.pcView.display);
     this.townView.bgLayer.addChild(this.pcView.hitboxDisplay);
@@ -10046,7 +10046,7 @@ class PlayerApp {
 
   getNpcsInRect(rect) {
     return this.npcViews.filter(npcView => npcView.inRect(rect))
-      .map(npcView => npcView.npc);
+      .map(npcView => npcView.character);
   }
 
   pcAction() {
@@ -10056,8 +10056,8 @@ class PlayerApp {
     let closestDistance = null;
     npcs.forEach((npc) => {
       const distance = Math.max(
-        Math.abs(this.pc.position.x - npc.spawn.x),
-        Math.abs(this.pc.position.y - npc.spawn.y)
+        Math.abs(this.pc.position.x - npc.position.x),
+        Math.abs(this.pc.position.y - npc.position.y)
       );
       if (closestDistance === null || distance < closestDistance) {
         closestNpc = npc;
@@ -11467,21 +11467,6 @@ module.exports = Stats;
 
 /***/ }),
 
-/***/ "./src/js/lib/helpers/clone.js":
-/*!*************************************!*\
-  !*** ./src/js/lib/helpers/clone.js ***!
-  \*************************************/
-/***/ ((module) => {
-
-function clone(object) {
-  return JSON.parse(JSON.stringify(object));
-}
-
-module.exports = clone;
-
-
-/***/ }),
-
 /***/ "./src/js/lib/input/gamepad-input-mgr.js":
 /*!***********************************************!*\
   !*** ./src/js/lib/input/gamepad-input-mgr.js ***!
@@ -12144,27 +12129,26 @@ module.exports = showFatalError;
 
 /***/ }),
 
-/***/ "./src/js/lib/model/player-character.js":
-/*!**********************************************!*\
-  !*** ./src/js/lib/model/player-character.js ***!
-  \**********************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+/***/ "./src/js/lib/model/character.js":
+/*!***************************************!*\
+  !*** ./src/js/lib/model/character.js ***!
+  \***************************************/
+/***/ ((module) => {
 
-const clone = __webpack_require__(/*! ../helpers/clone */ "./src/js/lib/helpers/clone.js");
-
-class PlayerCharacter {
-  constructor(config, id) {
-    this.config = config;
+class Character {
+  constructor(id, props = {}) {
     this.id = id;
-    if (this.config.players[this.id] === undefined) {
-      throw new Error(`Attempted to initialize a player with id ${this.id}, which was not found in the config`);
-    }
-    this.props = clone(this.config.players[this.id]);
-
+    this.name = props.name || null;
     this.position = { x: 0, y: 0 };
     this.speed = { x: 0, y: 0 };
     this.direction = 'e';
-    this.setPosition(this.props.spawn.x, this.props.spawn.y);
+
+    if (props.spawn) {
+      this.setPosition(props.spawn.x, props.spawn.y);
+    }
+    if (props.direction) {
+      this.setDirection(props.direction);
+    }
   }
 
   setPosition(x, y) {
@@ -12182,7 +12166,7 @@ class PlayerCharacter {
   }
 }
 
-module.exports = PlayerCharacter;
+module.exports = Character;
 
 
 /***/ }),
@@ -12555,44 +12539,44 @@ module.exports = ScoringOverlay;
 
 /***/ }),
 
-/***/ "./src/js/lib/views/npc-view.js":
-/*!**************************************!*\
-  !*** ./src/js/lib/views/npc-view.js ***!
-  \**************************************/
+/***/ "./src/js/lib/views/character-view.js":
+/*!********************************************!*\
+  !*** ./src/js/lib/views/character-view.js ***!
+  \********************************************/
 /***/ ((module) => {
 
 /* globals PIXI */
-class NPCView {
-  constructor(config, textures, npc, townView) {
+
+class CharacterView {
+  constructor(config, textures, character, townView) {
     this.config = config;
     this.textures = textures;
-    this.npc = npc;
+    this.character = character;
     this.townView = townView;
     this.display = this.createSprite();
   }
 
   createSprite() {
-    const sprite = new PIXI.Sprite(this.textures['npcs-demo'].textures[this.npc.id]);
+    const sprite = new PIXI.Sprite(this.textures['npcs-demo'].textures[this.character.id]);
     sprite.anchor.set(0, 0);
-    // sprite.width = 72;
-    // sprite.height = 156;
-    // sprite.animationSpeed = PCView.SPRITE_ANIMATION_SPEED;
-    // sprite.play();
-    sprite.position = this.npc.spawn;
-    sprite.zIndex = this.npc.spawn.y;
+
+    sprite.position = this.character.position;
+    sprite.zIndex = sprite.position.y;
 
     return sprite;
   }
 
   inRect(rect) {
-    return this.npc.spawn.x >= rect.left
-      && this.npc.spawn.x <= rect.right
-      && this.npc.spawn.y >= rect.top
-      && this.npc.spawn.y <= rect.bottom;
+    const { x, y } = this.character.position;
+    return x >= rect.left && x <= rect.right
+      && y >= rect.top && y <= rect.bottom;
   }
 }
 
-module.exports = NPCView;
+CharacterView.SPRITE_ANIMATION_SPEED = 0.3;
+
+
+module.exports = CharacterView;
 
 
 /***/ }),
@@ -12601,31 +12585,28 @@ module.exports = NPCView;
 /*!*************************************!*\
   !*** ./src/js/lib/views/pc-view.js ***!
   \*************************************/
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 /* globals PIXI */
 
-class PCView {
-  constructor(config, textures, pc, townView) {
-    this.config = config;
-    this.textures = textures;
-    this.pc = pc;
-    this.townView = townView;
-    this.display = this.createSprite();
+const CharacterView = __webpack_require__(/*! ./character-view */ "./src/js/lib/views/character-view.js");
+
+class PCView extends CharacterView {
+  constructor(config, textures, character, townView) {
+    super(config, textures, character, townView);
+
     this.direction = 'e';
     this.isWalking = false;
-    this.showHitbox = false;
     this.hitboxDisplay = this.createHitboxDisplay();
   }
 
   createSprite() {
     const sprite = new PIXI.AnimatedSprite(this.textures['character-basic'].animations['basic-es']);
     sprite.anchor.set(0, 0);
-    sprite.width = PCView.SPRITE_W;
-    sprite.height = PCView.SPRITE_H;
+
     sprite.animationSpeed = PCView.SPRITE_ANIMATION_SPEED;
     sprite.play();
-    sprite.position = this.pc.position;
+    sprite.position = this.character.position;
 
     return sprite;
   }
@@ -12636,7 +12617,7 @@ class PCView {
     display.beginFill(0xff0000);
     display.drawRect(0, 0, PCView.ACTION_HITBOX_H, PCView.ACTION_HITBOX_W);
     display.endFill();
-    display.position = this.pc.position;
+    display.position = this.character.position;
     display.alpha = 0.5;
     display.visible = false;
 
@@ -12644,9 +12625,8 @@ class PCView {
   }
 
   updateSprite(oldX, oldY, newX, newY) {
-    let updated = false;
     let newDirection = this.direction;
-    let newIsWalking = this.isWalking;
+    let newIsWalking;
 
     if (newX > oldX) {
       newDirection = 'e';
@@ -12675,10 +12655,11 @@ class PCView {
 
   animate(time) {
     const townDisplay = this.townView.display;
+    const { position, speed } = this.character;
+    let furthestX = position.x + speed.x * time;
+    let furthestY = position.y + speed.y * time;
     let newX;
     let newY;
-    let furthestX = this.pc.position.x + this.pc.speed.x * time;
-    let furthestY = this.pc.position.y + this.pc.speed.y * time;
 
     // Clamp the position to the town's bounds
     furthestX = Math.max(0, Math.min(furthestX, townDisplay.width - this.display.width));
@@ -12686,14 +12667,14 @@ class PCView {
 
     // Collisions are checked on a per-pixel basis, so we only need to check
     // if the player has moved to a new pixel
-    if (Math.floor(furthestX) !== Math.floor(this.pc.position.x)
-      || Math.floor(furthestY) !== Math.floor(this.pc.position.y)) {
+    if (Math.floor(furthestX) !== Math.floor(position.x)
+      || Math.floor(furthestY) !== Math.floor(position.y)) {
       // Check for collisions
       const collisionPoints = this.collisionPoints();
-      newX = this.pc.position.x;
-      newY = this.pc.position.y;
-      const deltaX = furthestX - this.pc.position.x;
-      const deltaY = furthestY - this.pc.position.y;
+      newX = position.x;
+      newY = position.y;
+      const deltaX = furthestX - position.x;
+      const deltaY = furthestY - position.y;
       const steps = Math.max(Math.abs(deltaX), Math.abs(deltaY));
       const stepX = deltaX / steps;
       const stepY = deltaY / steps;
@@ -12731,10 +12712,10 @@ class PCView {
       newY = furthestY;
     }
 
-    this.updateSprite(this.pc.position.x, this.pc.position.y, newX, newY);
-    this.pc.setPosition(newX, newY);
-    this.display.position = this.pc.position;
-    this.display.zIndex = this.pc.position.y;
+    this.updateSprite(position.x, position.y, newX, newY);
+    this.character.setPosition(newX, newY);
+    this.display.position = position;
+    this.display.zIndex = position.y;
   }
 
   collisionPoints() {
@@ -12757,7 +12738,7 @@ class PCView {
     let left;
     let right;
 
-    const { x, y } = this.pc.position;
+    const { x, y } = this.character.position;
     switch (this.direction) {
       case 'e':
         top = y - PCView.ACTION_HITBOX_H / 2;
@@ -13092,4 +13073,4 @@ fetch(configUrl, { cache: 'no-store' })
 
 /******/ })()
 ;
-//# sourceMappingURL=player.b373229cf2cb0b2c4eae.js.map
+//# sourceMappingURL=player.ea0c68b4c7a89e6123f7.js.map

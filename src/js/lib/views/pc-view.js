@@ -1,26 +1,23 @@
 /* globals PIXI */
 
-class PCView {
-  constructor(config, textures, pc, townView) {
-    this.config = config;
-    this.textures = textures;
-    this.pc = pc;
-    this.townView = townView;
-    this.display = this.createSprite();
+const CharacterView = require('./character-view');
+
+class PCView extends CharacterView {
+  constructor(config, textures, character, townView) {
+    super(config, textures, character, townView);
+
     this.direction = 'e';
     this.isWalking = false;
-    this.showHitbox = false;
     this.hitboxDisplay = this.createHitboxDisplay();
   }
 
   createSprite() {
     const sprite = new PIXI.AnimatedSprite(this.textures['character-basic'].animations['basic-es']);
     sprite.anchor.set(0, 0);
-    sprite.width = PCView.SPRITE_W;
-    sprite.height = PCView.SPRITE_H;
+
     sprite.animationSpeed = PCView.SPRITE_ANIMATION_SPEED;
     sprite.play();
-    sprite.position = this.pc.position;
+    sprite.position = this.character.position;
 
     return sprite;
   }
@@ -31,7 +28,7 @@ class PCView {
     display.beginFill(0xff0000);
     display.drawRect(0, 0, PCView.ACTION_HITBOX_H, PCView.ACTION_HITBOX_W);
     display.endFill();
-    display.position = this.pc.position;
+    display.position = this.character.position;
     display.alpha = 0.5;
     display.visible = false;
 
@@ -39,9 +36,8 @@ class PCView {
   }
 
   updateSprite(oldX, oldY, newX, newY) {
-    let updated = false;
     let newDirection = this.direction;
-    let newIsWalking = this.isWalking;
+    let newIsWalking;
 
     if (newX > oldX) {
       newDirection = 'e';
@@ -70,10 +66,11 @@ class PCView {
 
   animate(time) {
     const townDisplay = this.townView.display;
+    const { position, speed } = this.character;
+    let furthestX = position.x + speed.x * time;
+    let furthestY = position.y + speed.y * time;
     let newX;
     let newY;
-    let furthestX = this.pc.position.x + this.pc.speed.x * time;
-    let furthestY = this.pc.position.y + this.pc.speed.y * time;
 
     // Clamp the position to the town's bounds
     furthestX = Math.max(0, Math.min(furthestX, townDisplay.width - this.display.width));
@@ -81,14 +78,14 @@ class PCView {
 
     // Collisions are checked on a per-pixel basis, so we only need to check
     // if the player has moved to a new pixel
-    if (Math.floor(furthestX) !== Math.floor(this.pc.position.x)
-      || Math.floor(furthestY) !== Math.floor(this.pc.position.y)) {
+    if (Math.floor(furthestX) !== Math.floor(position.x)
+      || Math.floor(furthestY) !== Math.floor(position.y)) {
       // Check for collisions
       const collisionPoints = this.collisionPoints();
-      newX = this.pc.position.x;
-      newY = this.pc.position.y;
-      const deltaX = furthestX - this.pc.position.x;
-      const deltaY = furthestY - this.pc.position.y;
+      newX = position.x;
+      newY = position.y;
+      const deltaX = furthestX - position.x;
+      const deltaY = furthestY - position.y;
       const steps = Math.max(Math.abs(deltaX), Math.abs(deltaY));
       const stepX = deltaX / steps;
       const stepY = deltaY / steps;
@@ -126,10 +123,10 @@ class PCView {
       newY = furthestY;
     }
 
-    this.updateSprite(this.pc.position.x, this.pc.position.y, newX, newY);
-    this.pc.setPosition(newX, newY);
-    this.display.position = this.pc.position;
-    this.display.zIndex = this.pc.position.y;
+    this.updateSprite(position.x, position.y, newX, newY);
+    this.character.setPosition(newX, newY);
+    this.display.position = position;
+    this.display.zIndex = position.y;
   }
 
   collisionPoints() {
@@ -152,7 +149,7 @@ class PCView {
     let left;
     let right;
 
-    const { x, y } = this.pc.position;
+    const { x, y } = this.character.position;
     switch (this.direction) {
       case 'e':
         top = y - PCView.ACTION_HITBOX_H / 2;
