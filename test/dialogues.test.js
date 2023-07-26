@@ -1,6 +1,7 @@
 const { expect } = require('chai');
 const Dialogue = require('../src/js/lib/dialogues/dialogue');
 const DialogueIterator = require('../src/js/lib/dialogues/dialogue-iterator');
+const { getText } = require('../src/js/lib/helpers/i18n');
 const helloWorldDialogue = require('./fixtures/dialogues/core/hello-world.dialogue.json');
 const helloThenWorldDialogue = require('./fixtures/dialogues/core/then.dialogue.json');
 const sequenceDialogue = require('./fixtures/dialogues/sequences/sequence.dialogue.json');
@@ -21,12 +22,14 @@ const conditionalResponseDialogue = require('./fixtures/dialogues/responses/cond
 const responseSetsFlagsDialogue = require('./fixtures/dialogues/responses/response-sets-flags.dialogue.json');
 const responseJumpsDialogue = require('./fixtures/dialogues/responses/response-jumps.dialogue.json');
 const thentextResponseDialogue = require('./fixtures/dialogues/responses/thentext-response.dialogue.json');
+const helloWorldI18nDialogue = require('./fixtures/dialogues/i18n/hello-world-i18n.dialogue.json');
+const thenTextResponseI18nDialogue = require('./fixtures/dialogues/i18n/thentext-response-i18n.dialogue.json');
 const invalidTypeDialogue = require('./fixtures/dialogues/invalid/invalid-type.dialogue.json');
 const invalidThenDialogue = require('./fixtures/dialogues/invalid/invalid-then.dialogue.json');
 const invalidCondDialogue = require('./fixtures/dialogues/invalid/invalid-cond.dialogue.json');
 
 const MAX_TRANSITIONS = 10;
-function getTrace(iterator, input = []) {
+function getTrace(iterator, input = [], lang = null) {
   const trace = [];
   let transitions = 0;
   const log = [];
@@ -35,7 +38,7 @@ function getTrace(iterator, input = []) {
     log.push(activeNode.id);
     const { text } = activeNode;
     if (text !== undefined) {
-      trace.push(text);
+      trace.push(getText(text, lang));
     }
     if (activeNode.responses && activeNode.responses.length > 0) {
       const responseIndex = input.shift();
@@ -43,9 +46,9 @@ function getTrace(iterator, input = []) {
         throw new Error(`Invalid input ${responseIndex} (${activeNode.id}:${iterator.dialogue.root.id})`);
       }
       const response = activeNode.responses[responseIndex];
-      trace.push(`>> ${response.text}`);
+      trace.push(`>> ${getText(response.text, lang)}`);
       if (response.thenText) {
-        trace.push(response.thenText);
+        trace.push(getText(response.thenText, lang));
       }
       iterator.nextWithResponse(activeNode.responses[responseIndex].id);
     } else {
@@ -243,7 +246,7 @@ describe('DialogueIterator', () => {
     });
   });
 
-  describe('resposes', () => {
+  describe('responses', () => {
     it('should support responses', () => {
       const dialogue = Dialogue.fromJson(responseDialogue);
       const context = new TestContext();
@@ -318,6 +321,30 @@ describe('DialogueIterator', () => {
       const iterator = new DialogueIterator(dialogue, context);
       iterator.next();
       expect(() => iterator.nextWithResponse(3)).to.throw('Unknown response id: 3');
+    });
+  });
+
+  describe('i18n', () => {
+    it('should support texts in multiple languages', () => {
+      const dialogue = Dialogue.fromJson(helloWorldI18nDialogue);
+      const context = new TestContext();
+      const iterator = new DialogueIterator(dialogue, context);
+      expect(getTrace(iterator, [], 'en')).to.deep.equal(['Hello world!']);
+      iterator.reset();
+      expect(getTrace(iterator, [], 'de')).to.deep.equal(['Hallo Welt!']);
+    });
+
+    it('should support responses in multiple languages', () => {
+      const dialogue = Dialogue.fromJson(thenTextResponseI18nDialogue);
+      const context = new TestContext();
+      const iterator = new DialogueIterator(dialogue, context);
+      expect(getTrace(iterator, [2], 'en')).to.deep.equal(
+        ['Hello?', '>> Hello world!', 'Are you a programmer?']
+      );
+      iterator.reset();
+      expect(getTrace(iterator, [2], 'de')).to.deep.equal(
+        ['Hallo?', '>> Hallo Welt!', 'Bist du ein Programmierer?']
+      );
     });
   });
 

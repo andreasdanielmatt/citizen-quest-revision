@@ -1,17 +1,22 @@
 const EventEmitter = require('events');
 const DialogueBalloon = require('./dialogue-balloon');
 const SpeechText = require('./speech-text');
+const { I18nTextAdapter } = require('../helpers/i18n');
 
 class DialogueOverlay {
-  constructor(config) {
+  constructor(config, lang) {
     this.config = config;
     this.events = new EventEmitter();
+    this.lang = lang;
 
     this.$element = $('<div></div>')
       .addClass('dialogue-overlay');
 
     this.balloonTop = new DialogueBalloon(['balloon-speech', 'top']);
     this.$element.append(this.balloonTop.$element);
+    this.topTitleI18n = new I18nTextAdapter((text) => {
+      this.balloonTop.setTitle(text);
+    }, this.lang);
 
     this.balloonBottom = new DialogueBalloon(['bottom']);
     this.$element.append(this.balloonBottom.$element);
@@ -21,19 +26,27 @@ class DialogueOverlay {
     this.speechTop.events.on('complete', () => {
       this.events.emit('speechComplete');
     });
+    this.speechTopI18n = new I18nTextAdapter((text) => {
+      const { revealComplete } = this.speechTop;
+      this.speechTop.showText([{ string: text }]);
+      if (revealComplete) {
+        this.speechTop.revealAll();
+      }
+    }, this.lang);
 
     this.responseOptions = [];
     this.selectedOption = 0;
   }
 
   setTopTitle(title) {
-    this.balloonTop.setTitle(title);
+    this.topTitleI18n.setText(title);
   }
 
   showSpeech(text) {
     this.balloonTop.show();
     this.hidePressToContinue();
-    this.speechTop.showText([{ string: text }]);
+    this.speechTop.clear();
+    this.speechTopI18n.setText(text);
   }
 
   speedUpSpeech() {
@@ -43,17 +56,32 @@ class DialogueOverlay {
   showResponseOptions(options) {
     this.balloonBottom.empty();
     this.balloonBottom.show();
-
     this.selectedOption = 0;
-    this.responseOptions = Object.entries(options).map(([id, text], i) => ({
-      id,
-      text,
-      element: $('<div></div>')
+    this.responseOptions = Object.entries(options).map(([id, text], i) => {
+      const label = $('<span></span>').addClass('text');
+      const element = $('<div></div>')
         .addClass('response-option')
         .toggleClass('selected', i === this.selectedOption)
-        .append($('<span></span>').addClass('text').html(text))
-        .appendTo(this.balloonBottom.$element),
-    }));
+        .append(label)
+        .appendTo(this.balloonBottom.$element);
+
+      const i18n = new I18nTextAdapter((newText) => {
+        label.text(newText);
+      }, this.lang, text);
+
+      return {
+        id,
+        element,
+        i18n,
+      };
+    });
+  }
+
+  setLang(lang) {
+    this.lang = lang;
+    this.topTitleI18n.setLang(lang);
+    this.speechTopI18n.setLang(lang);
+    this.responseOptions.forEach(option => option.i18n.setLang(lang));
   }
 
   hideSpeech() {

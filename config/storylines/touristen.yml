@@ -1,292 +1,514 @@
 storylines:
   touristen:
-    decision: "Sollten wir ein Riesenrad bauen, um den Tourismus zu fördern?"
+    decision:
+      en: "Should we build a Ferris wheel to promote tourism?"
+      de: "Sollten wir ein Riesenrad bauen, um den Tourismus zu fördern?"
     npcs:
       'mayor':
-        name: "Bürgermeisterin"
+        name:
+          en: "City Mayor"
+          de: "Bürgermeisterin"
         spawn: { x: 3855, y: 3119 }
       'finance-director':
-        name: "Leiter der Finanzverwaltung"
+        name:
+          en: "Director of finances"
+          de: "Leiter der Finanzverwaltung"
         spawn: { x: 4002, y: 3080 }
       'parks-director':
-        name: "Leiterin des Umweltamts"
+        name:
+          en: "Director of the environmental agency"
+          de: "Leiterin des Umweltamts"
         spawn: { x: 4137, y: 3080 }
       'journalist':
-        name: "Journalist"
+        name:
+          en: "Journalist"
+          de: "Journalist"
         spawn: { x: 4928, y: 3384 }
       'ferris-salesman':
-        name: "Drehmoment™ Verkaufsagent"
+        name:
+          en: "Spin City™ Salesman"
+          de: "Drehmoment™ Verkaufsagent"
         spawn: {x: 4006, y: 3415}
       'biologist':
-        name: "Biologin"
+        name:
+          en: "Biologist"
+          de: "Biologin"
         spawn: {x: 6993, y: 1679}
       'tourist':
-        name: "Tourist"
+        name:
+          en: "Tourist"
+          de: "Tourist"
         spawn: {x: 4213, y: 2088}
       'robot':
-        name: "Roboter"
+        name:
+          en: "Robot"
+          de: "Roboter"
         spawn: {x: 5291, y: 3394}
       'museum-director':
-        name: "Museumsdirektorin"
+        name:
+          en: "Museum Director"
+          de: "Museumsdirektorin"
         spawn: {x: 6041, y: 2409}
       'citizen-cool':
-        name: "Zweifelnder Bürger"
+        name:
+          en: "Concerned Citizen"
+          de: "Zweifelnder Bürger"
         spawn: {x: 4603, y: 3149}
       'citizen-braid':
-        name: "Optimistische Bürgerin"
+        name:
+          en: "Optimistic Citizen"
+          de: "Optimistische Bürgerin"
         spawn: {x: 1356, y: 2409}
       'citizen-cat':
-        name: "Neugierige Bürgerin"
+        name:
+          en: "Curious Citizen"
+          de: "Neugierige Bürgerin"
         spawn: {x: 6141, y: 1434}
       'citizen-old-hip':
-        name: "Zweifelnder Bürger"
+        name:
+          en: "Concerned Citizen"
+          de: "Zweifelnder Bürger"
         spawn: {x: 3498, y: 1454}
       'citizen-puan':
-        name: "Zweifelnde Bürgerin"
+        name:
+          en: "Concerned Citizen"
+          de: "Zweifelnde Bürgerin"
         spawn: {x: 5856, y: 3374}
       'citizen-cage':
-        name: "Optimistischer Bürger"
+        name:
+          en: "Optimistic Citizen"
+          de: "Optimistischer Bürger"
         spawn: {x: 2274, y: 3434}
       'citizen-punk':
-        name: "Bürgerin"
+        name:
+          en: "Citizen"
+          de: "Bürgerin"
         spawn: {x: 3093, y: 3384}
       'citizen-lila':
-        name: "Bürgerin"
+        name:
+          en: "Citizen"
+          de: "Bürgerin"
         spawn: {x: 6993, y: 2588}
       'citizen-blue':
-        name: "Zweifelnde Bürgerin"
+        name:
+          en: "Concerned Citizen"
+          de: "Zweifelnde Bürgerin"
         spawn: {x: 3290, y: 1421}
       'construction-worker':
-        name: "Zweifelnder Bürger"
+        name:
+          en: "Concerned Citizen"
+          de: "Zweifelnde Bürgerin"
         spawn: {x: 2686, y: 1403}
       'citizen-queen':
-        name: "Zweifelnde Bürgerin"
+        name:
+          en: "Concerned Citizen"
+          de: "Zweifelnde Bürgerin"
         spawn: {x: 5183, y: 1419}
     dialogues:
       'mayor':
         - type: first
           items:
             - cond: 'citizen-assembly'
-              text: 'Wir werden eine Bürgerversammlung organisieren und das Riesenradprojekt gemeinsam bewerten.'
-            - text: 'Alle sind mit meiner Idee eines Riesenrads einverstanden, oder?'
+              text:
+                en: 'We’ll form a citizen assembly and evaluate the Ferris wheel project together.'
+                de: 'Wir werden eine Bürgerversammlung organisieren und das Riesenradprojekt gemeinsam bewerten.'
+            - text:
+                en: 'Everybody is happy with my idea of a Ferris wheel, right?'
+                de: 'Alle sind mit meiner Idee eines Riesenrads einverstanden, oder?'
               responses:
                 - cond: '(issue-1 & ^issue-2 & ^issue-3) | (^issue-1 & issue-2 & ^issue-3) | (^issue-1 & ^issue-2 & issue-3)'
-                  text: 'Einzelne Bürger*innen haben Bedenken.'
-                  thenText: 'Irgendjemand beschwert sich immer. Wenn es nur eine*r ist, ist es besser, ihn/sie zu ignorieren.'
+                  text:
+                    en: 'Some citizens have concerns.'
+                    de: 'Einzelne Bürger*innen haben Bedenken.'
+                  thenText:
+                    de: 'Irgendjemand beschwert sich immer. Wenn es nur eine*r ist, ist es besser, ihn/sie zu ignorieren.'
+                    en: "There's always someone who complains. Only one? Just ignore them."
                 - cond: '(issue-1 & issue-2 & ^issue-3) | (issue-1 & ^issue-2 & issue-3) | (^issue-1 & issue-2 & issue-3)'
-                  text: 'Einige Bürger*innen haben Bedenken.'
-                  thenText: 'Nur ein paar? Vielleicht finden sich noch mehr.'
+                  text:
+                    en: 'Some citizens have concerns.'
+                    de: 'Einige Bürger*innen haben Bedenken.'
+                  thenText:
+                    en: 'Just a few? See if you can find more.'
+                    de: 'Nur ein paar? Vielleicht finden sich noch mehr.'
                 - cond: 'issue-1 & issue-2 & issue-3'
-                  text: 'Viele Bürger*innen haben Bedenken.'
-                  thenText: 'Vielleicht sollten wir eine Bürgerversammlung einberufen und das Projekt gemeinsam bewerten.'
+                  text:
+                    en: 'Many citizens have concerns.'
+                    de: 'Viele Bürger*innen haben Bedenken.'
+                  thenText:
+                    en: 'Maybe we should have a citizen assembly and evaluate the project together.'
+                    de: 'Vielleicht sollten wir eine Bürgerversammlung einberufen und das Projekt gemeinsam bewerten.'
                   set: ['citizen-assembly']
       'finance-director':
         - type: first
           set: ['talked-finance']
           items:
             - cond: 'solved-finance'
-              text: 'Wir werden die Gewinne aus dem Riesenrad in nahe gelegene Stadtteile investieren.'
-            - text: 'Die Stadt wird die Gewinne aus dem Riesenrad erhalten. Wir entscheiden noch darüber, wie wir das zusätzliche Geld ausgeben.'
+              text:
+                en: 'We will invest the profits from the Ferris wheel in nearby areas.'
+                de: 'Wir werden die Gewinne aus dem Riesenrad in nahe gelegene Stadtteile investieren.'
+            - text:
+                en: 'The city will receive profits from the Ferris wheel. We’re still deciding how to spend the extra money.'
+                de: 'Die Stadt wird die Gewinne aus dem Riesenrad erhalten. Wir entscheiden noch darüber, wie wir das zusätzliche Geld ausgeben.'
               responses:
                 - cond: 'issue-finance'
-                  text: 'Die Leute, die in diesem Viertel leben, sagen, es sei vernachlässigt.'
-                  thenText: 'Ich denke, es wäre fair, das Geld dort zu investieren.'
+                  text:
+                    en: 'People who live in that area say it’s neglected.'
+                    de: 'Die Leute, die in diesem Viertel leben, sagen, es sei vernachlässigt.'
+                  thenText:
+                    en: 'I think it would be fair to invest the money there.'
+                    de: 'Ich denke, es wäre fair, das Geld dort zu investieren.'
                   set: ['solved-finance']
       'parks-director':
         - type: first
           items:
             - cond: 'government-idea-birds'
-              text: 'Wir werden eine Studie der Universität finanzieren, um die Auswirkungen der Lichter des Riesenrads auf Vögel und Fledermäuse zu untersuchen.'
-            - text: 'Wir haben beantragt, dass das Riesenrad mit erneuerbarer Energie betrieben wird, damit die Umweltauswirkungen minimal sind.'
+              text:
+                en: 'We will fund a study by the university to study the impact of the wheel’s lights on birds and bats.'
+                de: 'Wir werden eine Studie der Universität finanzieren, um die Auswirkungen der Lichter des Riesenrads auf Vögel und Fledermäuse zu untersuchen.'
+            - text:
+                en: 'We requested that the Ferris wheel be powered with renewable energy, so the environmental impact will be minimal.'
+                de: 'Wir haben beantragt, dass das Riesenrad mit erneuerbarer Energie betrieben wird, damit die Umweltauswirkungen minimal sind.'
               responses:
                 - cond: 'issue-birds'
-                  text: 'Wissenschaftler*innen sind besorgt wegen der Lichter und der Tiere'
-                  thenText: 'Würden sie einen Bericht für uns erstellen?'
+                  text:
+                    en: 'Scientists are concerned about the lights and animals.'
+                    de: 'Wissenschaftler*innen sind besorgt wegen der Lichter und der Tiere'
+                  thenText:
+                    en: 'Would they make a report for us?'
+                    de: 'Würden sie einen Bericht für uns erstellen?'
                   set: ['government-idea-birds']
       'ferris-salesman':
-        - text: 'Ich vertrete Drehmoment™. Wir sind begeistert von der Möglichkeit, ein fantastisches Riesenrad für diese Stadt zu bauen.'
+        - text:
+            en: 'I represent Spin City™. We are excited by the opportunity of building a fantastic Ferris wheel for this city.'
+            de: 'Ich vertrete Drehmoment™. Wir sind begeistert von der Möglichkeit, ein fantastisches Riesenrad für diese Stadt zu bauen.'
           responses:
             - cond: 'issue-birds'
-              text: 'Seine Lichter können Vögel und Fledermäuse verwirren.'
-              thenText: 'Kein Problem! Wir können laute Musik spielen, um sie zu verscheuchen.'
+              text:
+                en: 'Its lights can confuse birds and bats.'
+                de: 'Seine Lichter können Vögel und Fledermäuse verwirren.'
+              thenText:
+                en: 'No problem! We can play loud music to scare them away.'
+                de: 'Kein Problem! Wir können laute Musik spielen, um sie zu verscheuchen.'
               set: ['salesman-idea-birds']
             - cond: 'issue-1 | issue-2 | issue-3 | issue-finance'
-              text: 'Einige sind von der Idee nicht begeistert.'
-              thenText: 'Um etwas zu erreichen, ist es am besten, nicht auf negative Menschen zu hören.'
+              text:
+                en: 'Some are not happy with the idea.'
+                de: 'Einige sind von der Idee nicht begeistert.'
+              thenText:
+                en: 'To get things done, it’s best not to listen to negative people.'
+                de: 'Um etwas zu erreichen, ist es am besten, nicht auf negative Menschen zu hören.'
             - cond: 'issue-neighbors'
-              text: 'Die Anwohner machen sich Sorgen über den Verkehr, den Lärm und die Lichter.'
-              thenText: 'Wir bieten ihnen 10% Rabatt an.'
+              text:
+                en: 'People who live nearby worry about the traffic, noise, and lights.'
+                de: 'Die Anwohner machen sich Sorgen über den Verkehr, den Lärm und die Lichter.'
+              thenText:
+                en: 'We’ll offer them a 10% discount.'
+                de: 'Wir bieten ihnen 10% Rabatt an.'
       'biologist':
         - type: 'first'
           items:
             - cond: 'biologist-solved'
-              text: 'Wir werden die Auswirkungen der Riesenrad-Lichter auf Vögel und Fledermäuse untersuchen und hoffentlich einen Weg finden, um das Problem zu begrenzen.'
-            - text: 'Die Lichter eines Riesenrads können Vögel und Fledermäuse verwirren.'
+              text:
+                en: 'We will study the impact of the wheel’s lights on birds and bats and hopefully find a way to limit the issue.'
+                de: 'Wir werden die Auswirkungen der Riesenrad-Lichter auf Vögel und Fledermäuse untersuchen und hoffentlich einen Weg finden, um das Problem zu begrenzen.'
+            - text:
+                en: 'The lights of a Ferris wheel can confuse birds and bats.'
+                de: 'Die Lichter eines Riesenrads können Vögel und Fledermäuse verwirren.'
               set: ['issue-birds', 'issue-2']
               responses:
                 - cond: 'salesman-idea-birds'
-                  text: 'Man kann laute Musik spielen, um sie zu verscheuchen.'
-                  thenText: 'Hmpf! Reden Sie nicht mit mir!'
+                  text:
+                    de: 'Man kann laute Musik spielen, um sie zu verscheuchen.'
+                    en: 'They can play loud music to scare them away.'
+                  thenText:
+                    en: 'Hmmph! Don’t talk to me!'
+                    de: 'Hmpf! Reden Sie nicht mit mir!'
                 - cond: 'government-idea-birds'
-                  text: 'Die Stadtverwaltung will eine Studie finanzieren.'
-                  thenText: 'Hoffentlich finden wir einen Weg, um die Auswirkungen auf die Umwelt zu begrenzen.'
+                  text:
+                    en: 'The city government wants to fund a study.'
+                    de: 'Die Stadtverwaltung will eine Studie finanzieren.'
+                  thenText:
+                    en: 'Hopefully, we’ll find a way to limit the environmental impact.'
+                    de: 'Hoffentlich finden wir einen Weg, um die Auswirkungen auf die Umwelt zu begrenzen.'
                   set: ['biologist-solved']
       'citizen-puan':
         - type: 'first'
           items:
             - cond: 'citizen-puan-solved'
-              text: 'Ich liebe unser Museum und ich hoffe, dass es nicht vernachlässigt wird.'
-            - text: 'Warum sollte man Tourist*inen mit einem solchen Ungetüm anlocken und nicht mit unserem Museum?'
+              text:
+                en: 'I love our museum and hope it’s not neglected.'
+                de: 'Ich liebe unser Museum und ich hoffe, dass es nicht vernachlässigt wird.'
+            - text:
+                en: 'Why attract tourists with such an eyesore and not our museums?'
+                de: 'Warum sollte man Tourist*inen mit einem solchen Ungetüm anlocken und nicht mit unserem Museum?'
               responses:
                 - cond: 'museum-solved'
-                  text: 'Das Museum geht davon aus, dass die Tourist*innen beides besuchen werden.'
-                  thenText: 'Hmmm. Vielleicht.'
+                  text:
+                    en: 'The museum expects tourists to visit both.'
+                    de: 'Das Museum geht davon aus, dass die Tourist*innen beides besuchen werden.'
+                  thenText:
+                    en: 'Mmm. Maybe.'
+                    de: 'Hmmm. Vielleicht.'
                   set: ['citizen-puan-solved']
       'museum-director':
-        - text: 'Wir hoffen, dass das Riesenrad Tourist*innen anlockt, die danach auch unser Museum besuchen werden.'
+        - text:
+            en: 'We hope the Ferris wheel attracts tourists who will also visit our museum after.'
+            de: 'Wir hoffen, dass das Riesenrad Tourist*innen anlockt, die danach auch unser Museum besuchen werden.'
           set: ['museum-solved']
       'tourist':
         - type: 'random'
           items:
-          - text: 'Ich finde die Idee gut. Es gibt nicht so viel zu tun in dieser Stadt.'
-          - text: 'Ich liebe das Riesenrad in Wien! Eine Ikone!'
+          - text:
+              en: 'I like the idea. There’s not much to do in this city.'
+              de: 'Ich finde die Idee gut. Es gibt nicht so viel zu tun in dieser Stadt.'
+          - text:
+              en: 'I love the Ferris wheel in Viena. Iconic!'
+              de: 'Ich liebe das Riesenrad in Wien! Eine Ikone!'
       'citizen-cat':
-        - text: 'Was denkst DU?'
+        - text:
+            en: 'What do YOU think?'
+            de: 'Was denkst DU?'
           responses:
-            - text: 'Ich bin für den Bau des Riesenrads.'
-            - text: 'Ich bin gegen den Bau des Riesenrads.'
-            - text: 'Ich weiß es noch nicht.'
+            - text:
+                en: 'I’m in favor of building a Ferris wheel.'
+                de: 'Ich bin für den Bau des Riesenrads.'
+            - text:
+                en: 'I’m against building a Ferris wheel.'
+                de: 'Ich bin gegen den Bau des Riesenrads.'
+            - text:
+                en: 'I don’t know yet.'
+                de: 'Ich weiß es noch nicht.'
       'citizen-cool':
         - type: first
           items:
             - cond: 'citizen-cool-solved'
-              text: 'Ich mache mir Sorgen um die Sicherheit des Riesenrads.'
-            - text: 'In Nebenhausen hatten sie ein Riesenrad. Es stürzte ab und es verunglückten 50 Menschen.'
+              text:
+                en: 'I’m concerned with the Ferris wheel’s safety.'
+                de: 'Ich mache mir Sorgen um die Sicherheit des Riesenrads.'
+            - text:
+                en: 'They had a Ferris wheel in Nearbyville. It fell and crushed 50 people to death.'
+                de: 'In Nebenhausen hatten sie ein Riesenrad. Es stürzte ab und es verunglückten 50 Menschen.'
               set: ['rumor']
               responses:
                 - cond: 'rumor-solved'
-                  text: 'Das ist ein falsches Gerücht. Das Rad ist in Fernheim noch in Betrieb.'
-                  thenText: 'Ich mache mir Sorgen um die Sicherheit des Riesenrads.'
+                  text:
+                    en: 'This is a fake rumor. That wheel still operates in Furtherburg.'
+                    de: 'Das ist ein falsches Gerücht. Das Rad ist in Fernheim noch in Betrieb.'
+                  thenText:
+                    de: 'Ich mache mir Sorgen um die Sicherheit des Riesenrads.'
+                    en: 'I’m concerned with the Ferris wheel’s safety.'
                   set: ['citizen-cool-solved']
       'journalist':
-        - text: 'Wir recherchieren für einen Artikel über die Geschichte der Riesenräder in der Region. Es kursieren viele falsche Gerüchte.'
+        - text:
+            en: 'We’re researching the history of Ferris wheels in the region for an article. There are many fake rumors circulating.'
+            de: 'Wir recherchieren für einen Artikel über die Geschichte der Riesenräder in der Region. Es kursieren viele falsche Gerüchte.'
           responses:
             - cond: 'rumor'
-              text: 'Was wissen Sie über den Unfall in Nebenhausen?'
-              thenText: 'Es gab keinen Unfall. Sie haben ihr Riesenrad an Fernheim verkauft, und dort ist es immer noch in Betrieb.'
+              text:
+                en: 'What do you know about the accident in Nearbyville?'
+                de: 'Was wissen Sie über den Unfall in Nebenhausen?'
+              thenText:
+                en: 'There was no accident. They sold their Ferris wheel to Furtherburg, and it’s still operating there.'
+                de: 'Es gab keinen Unfall. Sie haben ihr Riesenrad an Fernheim verkauft, und dort ist es immer noch in Betrieb.'
               set: ['rumor-solved']
       'robot':
         - type: first
           items:
             - cond: 'issue-birds'
-              text: 'Ich hoffe, dass das Riesenrad alle Vögel und Fledermäuse vertreibt, das sind doch nur fliegende Ratten.'
+              text:
+                en: 'I hope the wheel gets rid of all the birds and bats, they’re just flying rats.'
+                de: 'Ich hoffe, dass das Riesenrad alle Vögel und Fledermäuse vertreibt, das sind doch nur fliegende Ratten.'
               responses:
-                - text: 'Vögel und Fledermäuse sind wichtig für das Ökosystem.'
-                  thenText: '"Ökosystem" ist ein Begriff aus der Zeit bevor es Supermärkte gab.'
+                - text:
+                    en: 'Birds and bats are important for the ecosystem.'
+                    de: 'Vögel und Fledermäuse sind wichtig für das Ökosystem.'
+                  thenText:
+                    en: '“Ecosystem” is a concept from the time before supermarkets.'
+                    de: '"Ökosystem" ist ein Begriff aus der Zeit bevor es Supermärkte gab.'
             - cond: 'rumor'
-              text: 'Wer gegen dieses Projekt ist, ist gegen den technischen Fortschritt.'
+              text:
+                en: 'Anyone opposed to this project is opposed to technological progress.'
+                de: 'Wer gegen dieses Projekt ist, ist gegen den technischen Fortschritt.'
               responses:
-                - text: 'Das erste Riesenrad wurde 1893 gebaut.'
-                  thenText: 'Wenn du dich dem Fortschritt in den Weg stellst, wirst du von meinem fliegenden Auto überfahren.'
-            - text: 'Mit einem Riesenrad können wir es als Reiseziel mit London, Singapur oder Disneyland aufnehmen!'
+                - text:
+                    en: 'The first Ferris wheel was built in 1893.'
+                    de: 'Das erste Riesenrad wurde 1893 gebaut.'
+                  thenText:
+                    en: 'If you stand in the way of progress, you’ll be hit by my flying car.'
+                    de: 'Wenn du dich dem Fortschritt in den Weg stellst, wirst du von meinem fliegenden Auto überfahren.'
+            - text:
+                en: 'A Ferris wheel will put us up with London, Singapore, and Disneyland as a tourist destination.'
+                de: 'Mit einem Riesenrad können wir es als Reiseziel mit London, Singapur oder Disneyland aufnehmen!'
               responses:
-                - text: 'London und Singapur sind sehr große Städte.'
-                  thenText: '... und ohne ein Riesenrad werden wir für immer klein bleiben.'
-                - text: 'Disneyland hat kein Riesenrad.'
-                  thenText: 'Es gibt zwölf Disney-Parks auf der Welt. Hast du die alle persönlich besucht?'
+                - text:
+                    en: 'London and Singapore are very large cities.'
+                    de: 'London und Singapur sind sehr große Städte.'
+                  thenText:
+                    en: '... and without a Ferris wheel, we’ll be small forever.'
+                    de: '... und ohne ein Riesenrad werden wir für immer klein bleiben.'
+                - text:
+                    en: 'Disneyland doesn’t have a Ferris wheel.'
+                    de: 'Disneyland hat kein Riesenrad.'
+                  thenText:
+                    en: 'There are twelve Disney parks in the world. Did you personally visit all of them?'
+                    de: 'Es gibt zwölf Disney-Parks auf der Welt. Hast du die alle persönlich besucht?'
       'citizen-blue':
         - type: first
           items:
             - cond: 'citizen-neighbor-solved'
-              text: 'Ich habe in der Bürgerversammlung SEHR VIEL zu sagen.'
-            - text: 'Niemand hat uns gefragt, und sie stellen es direkt neben unsere Häuser.'
+              text:
+                en: 'I have A LOT to say in the citizen assembly.'
+                de: 'Ich habe in der Bürgerversammlung SEHR VIEL zu sagen.'
+            - text:
+                en: 'Nobody asked us, and they’re placing it right next to our homes.'
+                de: 'Niemand hat uns gefragt, und sie stellen es direkt neben unsere Häuser.'
               set: ['issue-1', 'issue-neighbors']
               responses:
                 - cond: 'citizen-assembly'
-                  text: 'Die Bürgermeisterin wird eine Bürgerversammlung einberufen.'
-                  thenText: 'OK, ich hoffe, sie werden sich meine Bedenken anhören.'
+                  text:
+                    en: 'The mayor will call a citizen assembly.'
+                    de: 'Die Bürgermeisterin wird eine Bürgerversammlung einberufen.'
+                  thenText:
+                    de: 'OK, ich hoffe, sie werden sich meine Bedenken anhören.'
+                    en: 'OK, I hope they will listen to my concerns.'
                   set: ['citizen-neighbor-solved']
       'citizen-old-hip':
         - type: first
           items:
             - cond: 'citizen-old-hip-solved'
-              text: 'Wenn die Stadt die Gewinne wieder investiert, um die lokalen Unternehmen zu unterstützen, könnte der Tourismus gute Möglichkeiten für uns bringen.'
-            - text: 'Das wird zu viel Verkehr, Lärm und Kriminalität in diesem ohnehin schon sehr vernachlässigten Viertel führen.'
+              text:
+                de: 'Wenn die Stadt die Gewinne wieder investiert, um die lokalen Unternehmen zu unterstützen, könnte der Tourismus gute Möglichkeiten für uns bringen.'
+                en: 'If the city invests the profits back to help local businesses, tourism might bring good opportunities for us.'
+            - text:
+                de: 'Das wird zu viel Verkehr, Lärm und Kriminalität in diesem ohnehin schon sehr vernachlässigten Viertel führen.'
+                en: 'This will add a lot of traffic, noise, and crime to the area, which is already very neglected.'
               set: ['issue-finance', 'issue-2', 'issue-neighbors']
               responses:
                 - cond: 'solved-finance'
-                  text: 'Die Stadt hat versprochen, die Gewinne wieder in dieses Viertel zu investieren.'
-                  thenText: 'Wenn sie die örtlichen Unternehmen unterstützen, können wir auf Touristen vorbereitet sein.'
+                  text:
+                    en: 'The city promised to invest the profits back in this area.'
+                    de: 'Die Stadt hat versprochen, die Gewinne wieder in dieses Viertel zu investieren.'
+                  thenText:
+                    en: 'If they help local businesses, we can be ready for tourists.'
+                    de: 'Wenn sie die örtlichen Unternehmen unterstützen, können wir auf Touristen vorbereitet sein.'
                   set: ['citizen-old-hip-solved']
       'citizen-braid':
         - type: 'random'
           set: ['positive-1']
           items:
-            - text: 'Der Tourismus wird kleinen lokalen Unternehmen helfen.'
-            - text: 'Er kann uns einzigartiger machen und die Besucherzahlen erhöhen.'
+            - text:
+                en: 'Tourism will help small local businesses.'
+                de: 'Der Tourismus wird kleinen lokalen Unternehmen helfen.'
+            - text:
+                en: 'It can make us more unique and increase visitors.'
+                de: 'Er kann uns einzigartiger machen und die Besucherzahlen erhöhen.'
       'citizen-cage':
         - type: 'random'
           set: ['positive-2']
           items:
-            - text: 'Es gibt immer weniger Arbeitsplätze. Es ist eine gute Idee, auf den Tourismus zu setzen. '
-            - text: 'Der Tourismus wird kleinen lokalen Unternehmen helfen.'
+            - text:
+                en: 'There are fewer jobs each day. It’s a good idea to focus on tourism. '
+                de: 'Es gibt immer weniger Arbeitsplätze. Es ist eine gute Idee, auf den Tourismus zu setzen. '
+            - text:
+                en: 'Tourism will help small local businesses.'
+                de: 'Der Tourismus wird kleinen lokalen Unternehmen helfen.'
       'citizen-punk':
         - type: first
           items:
             - cond: 'citizen-punk-solved'
-              text: 'Ich war gegen das Projekt, aber jetzt bin ich mir nicht mehr sicher.'
+              text:
+                en: 'I was against the project, but now I’m not sure.'
+                de: 'Ich war gegen das Projekt, aber jetzt bin ich mir nicht mehr sicher.'
             - cond: '^citizen-punk-solved & citizen-punk-partly-solved'
-              text: 'Die meisten meiner Freunde sind dagegen, aber es gibt auch immer mehr positive Stimmen.'
+              text:
+                en: 'Most of my friends are against, but I’m beginning to see more positive opinions.'
+                de: 'Die meisten meiner Freunde sind dagegen, aber es gibt auch immer mehr positive Stimmen.'
               responses:
                 - cond: 'positive-1 & positive-2'
-                  text: 'Ich habe einige positive Meinungen gesammelt. Schau mal.'
-                  thenText: '... Okay. Das sind interessante Punkte.'
+                  text:
+                    en: 'I collected some positive opinions. Look.'
+                    de: 'Ich habe einige positive Meinungen gesammelt. Schau mal.'
+                  thenText:
+                    en: '… OK. Those are interesting points.'
+                    de: '… Okay. Das sind interessante Punkte.'
                   set: [ 'citizen-punk-solved' ]
             - cond: '^citizen-punk-solved & ^citizen-punk-partly-solved'
-              text: 'Ich habe mit vielen Leuten gesprochen und niemand ist für dieses Projekt.'
+              text:
+                en: 'I’ve spoken to many people and no one is in favor of this project.'
+                de: 'Ich habe mit vielen Leuten gesprochen und niemand ist für dieses Projekt.'
               responses:
                 - cond: 'positive-1 & positive-2'
-                  text: 'Ich habe einige positive Meinungen gesammelt. Schau mal.'
-                  thenText: '... Okay. Das sind interessante Punkte.'
+                  text:
+                    en: 'I collected some positive opinions. Look.'
+                    de: 'Ich habe einige positive Meinungen gesammelt. Schau mal.'
+                  thenText:
+                    en: '… OK. Those are interesting points.'
+                    de: '… Okay. Das sind interessante Punkte.'
                   set: ['citizen-punk-solved']
                 - cond: '(positive-1 & ^positive-2) | (^positive-1 & positive-2)'
-                  text: 'Ich habe einige positive Meinungen gesammelt. Schau mal.'
-                  thenText: 'Ich war gegen das Projekt, aber jetzt bin ich mir nicht mehr sicher.'
+                  text:
+                    en: 'I collected some positive opinions. Look.'
+                    de: 'Ich habe einige positive Meinungen gesammelt. Schau mal.'
+                  thenText:
+                    en: 'I was against the project, but now I’m not sure.'
+                    de: 'Ich war gegen das Projekt, aber jetzt bin ich mir nicht mehr sicher.'
                   set: ['citizen-punk-partly-solved']
       'citizen-lila':
         - type: first
           items:
             - cond: 'citizen-lila-solved'
-              text: 'Ich war gegen das Projekt, aber jetzt bin ich mir nicht mehr sicher.'
-            - text: 'Es werden Eintrittskarten verkauft, aber ein privates Unternehmen bekommt das ganze Geld.'
+              text:
+                en: 'I was against the project, but now I’m not sure.'
+                de: 'Ich war gegen das Projekt, aber jetzt bin ich mir nicht mehr sicher.'
+            - text:
+                en: 'It will sell tickets, but a private company gets all the money.'
+                de: 'Es werden Eintrittskarten verkauft, aber ein privates Unternehmen bekommt das ganze Geld.'
               responses:
                 - cond: 'talked-finance'
-                  text: 'Ein Teil des Gewinns wird an die Stadt gehen.'
-                  thenText: 'Das wusste ich nicht.'
+                  text:
+                    en: 'Part of the profits will go to the city.'
+                    de: 'Ein Teil des Gewinns wird an die Stadt gehen.'
+                  thenText:
+                    en: 'I didn’t know that.'
+                    de: 'Das wusste ich nicht.'
                   set: ['citizen-lila-solved']
       'construction-worker':
         - type: first
           items:
             - cond: 'construction-worker-solved'
-              text: 'Ich freue mich auf die Bürgerversammlung.'
-            - text: 'Der Tourismus macht alles teurer! Und es gibt schon jetzt so wenig freie Wohnungen.'
+              text:
+                en: 'I’m looking forward to the citizen assembly.'
+                de: 'Ich freue mich auf die Bürgerversammlung.'
+            - text:
+                en: 'Tourism makes everything more expensive! And there are so few available apartments already.'
+                de: 'Der Tourismus macht alles teurer! Und es gibt schon jetzt so wenig freie Wohnungen.'
               set: ['issue-3']
               responses:
                 - cond: 'citizen-assembly'
-                  text: 'Die Bürgermeisterin wird eine Bürgerversammlung einberufen.'
-                  thenText: 'Oh, das ist ja toll!'
+                  text:
+                    en: 'The mayor will call a citizen assembly.'
+                    de: 'Die Bürgermeisterin wird eine Bürgerversammlung einberufen.'
+                  thenText:
+                    en: 'Oh, that’s great!'
+                    de: 'Oh, das ist ja toll!'
                   set: ['construction-worker-solved']
       'citizen-queen':
         - type: first
           items:
             - cond: 'citizen-queen-solved'
-              text: 'Ich bin nicht allzu optimistisch, dass die Bürgerversammlung etwas bewirken wird, aber ich werde ihr eine Chance geben.'
+              text:
+                en: 'I’m not too optimistic that the citizen assembly will make a difference, but I’ll give them a chance.'
+                de: 'Ich bin nicht allzu optimistisch, dass die Bürgerversammlung etwas bewirken wird, aber ich werde ihr eine Chance geben.'
             - text: 'Touristen = Kriminalität!'
               set: ['issue-3']
               responses:
                 - cond: 'citizen-assembly'
-                  text: 'Die Bürgermeisterin wird eine Bürgerversammlung einberufen.'
-                  thenText: 'Mmmm... OK.'
+                  text:
+                    en: 'The mayor will call a citizen assembly.'
+                    de: 'Die Bürgermeisterin wird eine Bürgerversammlung einberufen.'
+                  thenText:
+                    en: 'Mmmm... OK.'
+                    de: 'Mmmm... OK.'
                   set: ['citizen-queen-solved']
     scoring:
       citizen-assembly: empowerment

@@ -9834,11 +9834,13 @@ const Dialogue = __webpack_require__(/*! ../dialogues/dialogue */ "./src/js/lib/
 const Countdown = __webpack_require__(/*! ../helpers-web/countdown */ "./src/js/lib/helpers-web/countdown.js");
 const DecisionScreen = __webpack_require__(/*! ../ui/decisionScreen */ "./src/js/lib/ui/decisionScreen.js");
 const ScoringOverlay = __webpack_require__(/*! ../ui/scoringOverlay */ "./src/js/lib/ui/scoringOverlay.js");
+const { I18nTextAdapter } = __webpack_require__(/*! ../helpers/i18n */ "./src/js/lib/helpers/i18n.js");
 
 
 class PlayerApp {
   constructor(config, playerId) {
     this.config = config;
+    this.lang = config.game.defaultLanguage;
     this.playerId = playerId;
     this.pc = new Character(playerId, this.config.players[playerId]);
     this.otherPcs = Object.fromEntries(Object.entries(this.config.players)
@@ -9860,8 +9862,13 @@ class PlayerApp {
 
     this.$decisionLabel = $('<div></div>')
       .addClass('decision-label')
-      .html(config.storylines.touristen.decision)
       .appendTo(this.$storylineBar);
+
+    this.decisionLabelI18n = new I18nTextAdapter((text) => {
+      this.$decisionLabel.html(text);
+    }, this.lang, this.config.storylines.touristen.decision);
+
+    window.decisionLabelI18n = this.decisionLabelI18n;
 
     this.countdown = new Countdown(config.game.duration);
     this.countdown.$element.appendTo(this.$storylineBar);
@@ -9871,7 +9878,7 @@ class PlayerApp {
 
     this.flags = {};
     this.flagEvents = new EventEmitter();
-    this.dialogueOverlay = new DialogueOverlay(this.config);
+    this.dialogueOverlay = new DialogueOverlay(this.config, this.lang);
     this.dialogueSequencer = new DialogueSequencer(this.dialogueOverlay);
     this.$element.append(this.dialogueOverlay.$element);
 
@@ -9948,6 +9955,7 @@ class PlayerApp {
     ];
 
     const inputMgr = this.multiplexInputMgr;
+    inputMgr.events.on('lang', () => { this.toggleLanguage(); });
 
     this.inputRouter = new PlayerAppInputRouter(inputMgr);
     this.inputRouter.routeToPcMovement(this);
@@ -9987,6 +9995,21 @@ class PlayerApp {
     });
 
     this.textures = await PIXI.Assets.loadBundle('town-view');
+  }
+
+  setLanguage(lang) {
+    this.lang = lang;
+    this.dialogueOverlay.setLang(this.lang);
+    this.decisionLabelI18n.setLang(this.lang);
+  }
+
+  toggleLanguage() {
+    const langIndex = this.config.game.languages.indexOf(this.lang);
+    if (langIndex === this.config.game.languages.length - 1) {
+      this.setLanguage(this.config.game.languages[0]);
+    } else {
+      this.setLanguage(this.config.game.languages[langIndex + 1]);
+    }
   }
 
   resize() {
@@ -10554,17 +10577,22 @@ module.exports = DialogueIterator;
 const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
 const DialogueBalloon = __webpack_require__(/*! ./dialogue-balloon */ "./src/js/lib/dialogues/dialogue-balloon.js");
 const SpeechText = __webpack_require__(/*! ./speech-text */ "./src/js/lib/dialogues/speech-text.js");
+const { I18nTextAdapter } = __webpack_require__(/*! ../helpers/i18n */ "./src/js/lib/helpers/i18n.js");
 
 class DialogueOverlay {
-  constructor(config) {
+  constructor(config, lang) {
     this.config = config;
     this.events = new EventEmitter();
+    this.lang = lang;
 
     this.$element = $('<div></div>')
       .addClass('dialogue-overlay');
 
     this.balloonTop = new DialogueBalloon(['balloon-speech', 'top']);
     this.$element.append(this.balloonTop.$element);
+    this.topTitleI18n = new I18nTextAdapter((text) => {
+      this.balloonTop.setTitle(text);
+    }, this.lang);
 
     this.balloonBottom = new DialogueBalloon(['bottom']);
     this.$element.append(this.balloonBottom.$element);
@@ -10574,19 +10602,27 @@ class DialogueOverlay {
     this.speechTop.events.on('complete', () => {
       this.events.emit('speechComplete');
     });
+    this.speechTopI18n = new I18nTextAdapter((text) => {
+      const { revealComplete } = this.speechTop;
+      this.speechTop.showText([{ string: text }]);
+      if (revealComplete) {
+        this.speechTop.revealAll();
+      }
+    }, this.lang);
 
     this.responseOptions = [];
     this.selectedOption = 0;
   }
 
   setTopTitle(title) {
-    this.balloonTop.setTitle(title);
+    this.topTitleI18n.setText(title);
   }
 
   showSpeech(text) {
     this.balloonTop.show();
     this.hidePressToContinue();
-    this.speechTop.showText([{ string: text }]);
+    this.speechTop.clear();
+    this.speechTopI18n.setText(text);
   }
 
   speedUpSpeech() {
@@ -10596,17 +10632,32 @@ class DialogueOverlay {
   showResponseOptions(options) {
     this.balloonBottom.empty();
     this.balloonBottom.show();
-
     this.selectedOption = 0;
-    this.responseOptions = Object.entries(options).map(([id, text], i) => ({
-      id,
-      text,
-      element: $('<div></div>')
+    this.responseOptions = Object.entries(options).map(([id, text], i) => {
+      const label = $('<span></span>').addClass('text');
+      const element = $('<div></div>')
         .addClass('response-option')
         .toggleClass('selected', i === this.selectedOption)
-        .append($('<span></span>').addClass('text').html(text))
-        .appendTo(this.balloonBottom.$element),
-    }));
+        .append(label)
+        .appendTo(this.balloonBottom.$element);
+
+      const i18n = new I18nTextAdapter((newText) => {
+        label.text(newText);
+      }, this.lang, text);
+
+      return {
+        id,
+        element,
+        i18n,
+      };
+    });
+  }
+
+  setLang(lang) {
+    this.lang = lang;
+    this.topTitleI18n.setLang(lang);
+    this.speechTopI18n.setLang(lang);
+    this.responseOptions.forEach(option => option.i18n.setLang(lang));
   }
 
   hideSpeech() {
@@ -11064,6 +11115,7 @@ class SpeechText {
     this.revealCharacterTimeout = null;
     this.events = new EventEmitter();
     this.speedFactor = 1;
+    this.revealComplete = false;
   }
 
   /**
@@ -11102,7 +11154,7 @@ class SpeechText {
         this.timedReveal(list);
       }, delay * this.speedFactor);
     } else {
-      this.events.emit('complete');
+      this.onComplete();
     }
   }
 
@@ -11167,6 +11219,7 @@ class SpeechText {
   clear() {
     this.stop();
     this.$element.empty();
+    this.revealComplete = false;
   }
 
   /**
@@ -11177,11 +11230,16 @@ class SpeechText {
     this.characters.forEach((c) => {
       this.revealCharacter(c);
     });
-    this.events.emit('complete');
+    this.onComplete();
   }
 
   speedUp() {
     this.speedFactor = 0.2;
+  }
+
+  onComplete() {
+    this.revealComplete = true;
+    this.events.emit('complete');
   }
 }
 
@@ -11463,6 +11521,57 @@ class Stats {
 Stats.Panel = Panel;
 
 module.exports = Stats;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/helpers/i18n.js":
+/*!************************************!*\
+  !*** ./src/js/lib/helpers/i18n.js ***!
+  \************************************/
+/***/ ((module) => {
+
+function getText(text, lang = null) {
+  if (lang !== null && typeof text === 'object') {
+    return text[lang];
+  }
+  return text;
+}
+
+class I18nTextAdapter {
+  constructor(setTextCallback, lang, text = null) {
+    this.setTextCallback = setTextCallback;
+    this.currentLang = lang;
+    this.currentText = text;
+
+    this.update();
+  }
+
+  update() {
+    if (this.currentText !== null) {
+      this.setTextCallback(getText(this.currentText, this.currentLang));
+    }
+  }
+
+  setText(text) {
+    if (JSON.stringify(text) !== JSON.stringify(this.currentText)) {
+      this.currentText = text;
+      this.update();
+    }
+  }
+
+  setLang(lang) {
+    if (lang !== this.currentLang) {
+      this.currentLang = lang;
+      this.update();
+    }
+  }
+}
+
+module.exports = {
+  getText,
+  I18nTextAdapter,
+};
 
 
 /***/ }),
@@ -12899,7 +13008,7 @@ module.exports = JSON.parse('{"$schema":"http://json-schema.org/draft-07/schema#
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"$id":"https://github.com/IMAGINARY/future-democracy/specs/dialogue.schema.json","$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"id":{"$ref":"#/definitions/node_id"},"items":{"type":"array","items":{"$ref":"#/definitions/node"}}},"required":["id","items"],"definitions":{"node_id":{"type":"string","minLength":1,"maxLength":100,"pattern":"^[a-zA-Z_][a-zA-Z0-9_-]*$"},"node":{"oneOf":[{"$ref":"#/definitions/sequence"},{"$ref":"#/definitions/random"},{"$ref":"#/definitions/first"},{"$ref":"#/definitions/statement"}]},"text":{"type":"string","minLength":1,"maxLength":1000},"flag_id":{"type":"string","minLength":1,"maxLength":100,"pattern":"^[a-zA-Z_][a-zA-Z0-9_-]*$"},"flags":{"type":"array","items":{"$ref":"#/definitions/flag_id"},"minItems":0,"maxItems":100},"condition":{"type":"string","minLength":1,"maxLength":1000},"sequence":{"type":"object","properties":{"type":{"const":"sequence"},"items":{"type":"array","items":{"$ref":"#/definitions/node"}},"cond":{"$ref":"#/definitions/condition"},"set":{"$ref":"#/definitions/flags"}},"required":["type","items"]},"random":{"type":"object","properties":{"type":{"const":"random"},"items":{"type":"array","items":{"$ref":"#/definitions/node"}},"cond":{"$ref":"#/definitions/condition"},"set":{"$ref":"#/definitions/flags"}},"required":["type","items"]},"first":{"type":"object","properties":{"type":{"const":"first"},"items":{"type":"array","items":{"$ref":"#/definitions/node"}},"cond":{"$ref":"#/definitions/condition"},"set":{"$ref":"#/definitions/flags"}},"required":["type","items"]},"statement":{"type":"object","properties":{"type":{"const":"statement"},"id":{"$ref":"#/definitions/node_id"},"cond":{"$ref":"#/definitions/condition"},"text":{"$ref":"#/definitions/text"},"set":{"$ref":"#/definitions/flags"},"responses":{"type":"array","items":{"$ref":"#/definitions/response"}}},"required":["text"]},"response":{"type":"object","properties":{"cond":{"$ref":"#/definitions/condition"},"text":{"$ref":"#/definitions/text"},"set":{"$ref":"#/definitions/flags"},"then":{"$ref":"#/definitions/node_id"},"thenText":{"$ref":"#/definitions/text"}},"required":["text"]}}}');
+module.exports = JSON.parse('{"$id":"https://github.com/IMAGINARY/future-democracy/specs/dialogue.schema.json","$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"id":{"$ref":"#/definitions/node_id"},"items":{"type":"array","items":{"$ref":"#/definitions/node"}}},"required":["id","items"],"definitions":{"node_id":{"type":"string","minLength":1,"maxLength":100,"pattern":"^[a-zA-Z_][a-zA-Z0-9_-]*$"},"node":{"oneOf":[{"$ref":"#/definitions/sequence"},{"$ref":"#/definitions/random"},{"$ref":"#/definitions/first"},{"$ref":"#/definitions/statement"}]},"text":{"oneOf":[{"type":"string","minLength":1,"maxLength":1000},{"type":"object","additionalProperties":{"type":"string"}}]},"flag_id":{"type":"string","minLength":1,"maxLength":100,"pattern":"^[a-zA-Z_][a-zA-Z0-9_-]*$"},"flags":{"type":"array","items":{"$ref":"#/definitions/flag_id"},"minItems":0,"maxItems":100},"condition":{"type":"string","minLength":1,"maxLength":1000},"sequence":{"type":"object","properties":{"type":{"const":"sequence"},"items":{"type":"array","items":{"$ref":"#/definitions/node"}},"cond":{"$ref":"#/definitions/condition"},"set":{"$ref":"#/definitions/flags"}},"required":["type","items"]},"random":{"type":"object","properties":{"type":{"const":"random"},"items":{"type":"array","items":{"$ref":"#/definitions/node"}},"cond":{"$ref":"#/definitions/condition"},"set":{"$ref":"#/definitions/flags"}},"required":["type","items"]},"first":{"type":"object","properties":{"type":{"const":"first"},"items":{"type":"array","items":{"$ref":"#/definitions/node"}},"cond":{"$ref":"#/definitions/condition"},"set":{"$ref":"#/definitions/flags"}},"required":["type","items"]},"statement":{"type":"object","properties":{"type":{"const":"statement"},"id":{"$ref":"#/definitions/node_id"},"cond":{"$ref":"#/definitions/condition"},"text":{"$ref":"#/definitions/text"},"set":{"$ref":"#/definitions/flags"},"responses":{"type":"array","items":{"$ref":"#/definitions/response"}}},"required":["text"]},"response":{"type":"object","properties":{"cond":{"$ref":"#/definitions/condition"},"text":{"$ref":"#/definitions/text"},"set":{"$ref":"#/definitions/flags"},"then":{"$ref":"#/definitions/node_id"},"thenText":{"$ref":"#/definitions/text"}},"required":["text"]}}}');
 
 /***/ })
 
@@ -13073,4 +13182,4 @@ fetch(configUrl, { cache: 'no-store' })
 
 /******/ })()
 ;
-//# sourceMappingURL=player.ea0c68b4c7a89e6123f7.js.map
+//# sourceMappingURL=player.7811ccc16983a78eb22e.js.map

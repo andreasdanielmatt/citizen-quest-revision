@@ -1,0 +1,43 @@
+{
+  "id": "thentext-response",
+  "items": [
+    {
+      "text": {
+        "en": "Hello?",
+        "de": "Hallo?"
+      },
+      "responses": [
+        {
+          "text": {
+            "en": "Hello!",
+            "de": "Hallo!"
+          },
+          "thenText": {
+            "en": "Hey.",
+            "de": "Hey."
+          }
+        },
+        {
+          "text": {
+            "en": "It's me!",
+            "de": "Ich bins!"
+          },
+          "thenText": {
+            "en": "How are you?",
+            "de": "Wie geht es dir?"
+          }
+        },
+        {
+          "text": {
+            "en": "Hello world!",
+            "de": "Hallo Welt!"
+          },
+          "thenText": {
+            "en": "Are you a programmer?",
+            "de": "Bist du ein Programmierer?"
+          }
+        }
+      ]
+    }
+  ]
+}

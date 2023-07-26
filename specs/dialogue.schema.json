@@ -41,9 +41,17 @@
       ]
     },
     "text": {
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 1000
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
+      ]
     },
     "flag_id": {
       "type": "string",

@@ -66,7 +66,7 @@ Example:
 Statement nodes have these properties:
 
 - `cond` (string, optional): A logical expression (see below).
-- `text` (string, required): The text to display.
+- `text` (string | object, required): The text to display.
 - `set` (string | array, optional): One or more flags that are set when the node becomes active.
 - `responses` (array, optional): An array of response objects.
 - `then` (string, optional): The ID of the next node to transition to.
@@ -89,9 +89,9 @@ If there's no transition, the dialogue ends.
 A response object has these properties:
 
 - `cond` (string, optional): A logical expression (see below).
-- `text` (string, required): The text to display.
+- `text` (string | object, required): The text to display.
 - `set` (string | array, optional): One or more flags that are set when the response is selected.
-- `thenText` (string, optional): A text that will be displayed after the response is selected.
+- `thenText` (string | object, optional): A text that will be displayed after the response is selected.
 - `then` (string, optional): The ID of the next node to transition to.
 
 The player is offered all responses that have a `cond` that is true, up to the maximum number.
@@ -165,6 +165,26 @@ First nodes have these properties:
 
 When a first node becomes active, it continues to the first of its child `items` that is valid 
 (its `cond` property is true).
+
+## i18n
+
+Any time a text is specified (`text` or `thenText` properties), there are two options:
+
+- Using a string
+- Using multiple strings, one per language
+
+Multilingual strings are specified as objects, where the keys are language codes and the values are
+the strings in that language.
+
+```
+{
+  "text": {
+    "en": "Hello!",
+    "es": "¡Hola!"
+    "de": "Hallo!"
+  }
+}
+```
 
 ## Logical expressions
 

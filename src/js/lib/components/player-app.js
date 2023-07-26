@@ -16,11 +16,13 @@ const Dialogue = require('../dialogues/dialogue');
 const Countdown = require('../helpers-web/countdown');
 const DecisionScreen = require('../ui/decisionScreen');
 const ScoringOverlay = require('../ui/scoringOverlay');
+const { I18nTextAdapter } = require('../helpers/i18n');
 
 
 class PlayerApp {
   constructor(config, playerId) {
     this.config = config;
+    this.lang = config.game.defaultLanguage;
     this.playerId = playerId;
     this.pc = new Character(playerId, this.config.players[playerId]);
     this.otherPcs = Object.fromEntries(Object.entries(this.config.players)
@@ -42,8 +44,13 @@ class PlayerApp {
 
     this.$decisionLabel = $('<div></div>')
       .addClass('decision-label')
-      .html(config.storylines.touristen.decision)
       .appendTo(this.$storylineBar);
+
+    this.decisionLabelI18n = new I18nTextAdapter((text) => {
+      this.$decisionLabel.html(text);
+    }, this.lang, this.config.storylines.touristen.decision);
+
+    window.decisionLabelI18n = this.decisionLabelI18n;
 
     this.countdown = new Countdown(config.game.duration);
     this.countdown.$element.appendTo(this.$storylineBar);
@@ -53,7 +60,7 @@ class PlayerApp {
 
     this.flags = {};
     this.flagEvents = new EventEmitter();
-    this.dialogueOverlay = new DialogueOverlay(this.config);
+    this.dialogueOverlay = new DialogueOverlay(this.config, this.lang);
     this.dialogueSequencer = new DialogueSequencer(this.dialogueOverlay);
     this.$element.append(this.dialogueOverlay.$element);
 
@@ -130,6 +137,7 @@ class PlayerApp {
     ];
 
     const inputMgr = this.multiplexInputMgr;
+    inputMgr.events.on('lang', () => { this.toggleLanguage(); });
 
     this.inputRouter = new PlayerAppInputRouter(inputMgr);
     this.inputRouter.routeToPcMovement(this);
@@ -169,6 +177,21 @@ class PlayerApp {
     });
 
     this.textures = await PIXI.Assets.loadBundle('town-view');
+  }
+
+  setLanguage(lang) {
+    this.lang = lang;
+    this.dialogueOverlay.setLang(this.lang);
+    this.decisionLabelI18n.setLang(this.lang);
+  }
+
+  toggleLanguage() {
+    const langIndex = this.config.game.languages.indexOf(this.lang);
+    if (langIndex === this.config.game.languages.length - 1) {
+      this.setLanguage(this.config.game.languages[0]);
+    } else {
+      this.setLanguage(this.config.game.languages[langIndex + 1]);
+    }
   }
 
   resize() {

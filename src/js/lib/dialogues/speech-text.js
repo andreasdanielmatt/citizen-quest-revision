@@ -31,6 +31,7 @@ class SpeechText {
     this.revealCharacterTimeout = null;
     this.events = new EventEmitter();
     this.speedFactor = 1;
+    this.revealComplete = false;
   }
 
   /**
@@ -69,7 +70,7 @@ class SpeechText {
         this.timedReveal(list);
       }, delay * this.speedFactor);
     } else {
-      this.events.emit('complete');
+      this.onComplete();
     }
   }
 
@@ -134,6 +135,7 @@ class SpeechText {
   clear() {
     this.stop();
     this.$element.empty();
+    this.revealComplete = false;
   }
 
   /**
@@ -144,11 +146,16 @@ class SpeechText {
     this.characters.forEach((c) => {
       this.revealCharacter(c);
     });
-    this.events.emit('complete');
+    this.onComplete();
   }
 
   speedUp() {
     this.speedFactor = 0.2;
+  }
+
+  onComplete() {
+    this.revealComplete = true;
+    this.events.emit('complete');
   }
 }
 

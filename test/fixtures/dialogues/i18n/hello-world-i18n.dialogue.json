@@ -1,0 +1,11 @@
+{
+  "id": "hello-world",
+  "items": [
+    {
+      "text": {
+        "en": "Hello world!",
+        "de": "Hallo Welt!"
+      }
+    }
+  ]
+}
