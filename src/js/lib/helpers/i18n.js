@@ -20,8 +20,8 @@ class I18nTextAdapter {
     }
   }
 
-  setText(text) {
-    if (JSON.stringify(text) !== JSON.stringify(this.currentText)) {
+  setText(text, forceUpdate = false) {
+    if (forceUpdate || JSON.stringify(text) !== JSON.stringify(this.currentText)) {
       this.currentText = text;
       this.update();
     }

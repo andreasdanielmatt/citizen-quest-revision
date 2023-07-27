@@ -46,7 +46,7 @@ class DialogueOverlay {
     this.balloonTop.show();
     this.hidePressToContinue();
     this.speechTop.clear();
-    this.speechTopI18n.setText(text);
+    this.speechTopI18n.setText(text, true);
   }
 
   speedUpSpeech() {
