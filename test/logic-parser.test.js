@@ -1,34 +1,19 @@
 const { expect } = require('chai');
 const LogicParser = require('../src/js/lib/dialogues/logic-parser');
-
-class TestContext {
-  constructor() {
-    this.flags = {};
-  }
-
-  hasFlag(flag) {
-    return this.flags[flag];
-  }
-
-  setFlag(flag) {
-    this.flags[flag] = true;
-  }
-
-  clearFlags() {
-    this.flags = {};
-  }
-}
+const FlagStore = require('../src/js/lib/dialogues/flag-store');
 
 describe('LogicParser', () => {
   let parser = null;
   let context = null;
   before(() => {
-    context = new TestContext();
+    context = {
+      flags: new FlagStore(),
+    };
     parser = new LogicParser(context);
   });
 
   beforeEach(() => {
-    context.clearFlags();
+    context.flags.clear();
   });
 
   describe('terms', () => {
@@ -39,54 +24,112 @@ describe('LogicParser', () => {
     });
 
     it('should evaluate flags', () => {
-      parser.context.setFlag('a');
-      expect(parser.evaluate('a')).to.be.true;
-      expect(parser.evaluate('b')).to.be.false;
+      parser.context.flags.touch('a');
+      expect(parser.evaluate('a')).to.equal(1);
+      expect(parser.evaluate('b')).to.equal(0);
     });
   });
 
   describe('logic operators', () => {
     it('should evaluate & and |', () => {
-      parser.context.setFlag('a');
-      parser.context.setFlag('b');
-      expect(parser.evaluate('a & b')).to.be.true;
-      expect(parser.evaluate('a & c')).to.be.false;
-      expect(parser.evaluate('a | b')).to.be.true;
-      expect(parser.evaluate('a | c')).to.be.true;
-      expect(parser.evaluate('c | d')).to.be.false;
+      parser.context.flags.touch('a');
+      parser.context.flags.touch('b');
+      expect(parser.evaluate('a & b')).to.equal(1);
+      expect(parser.evaluate('a & c')).to.equal(0);
+      expect(parser.evaluate('a | b')).to.equal(1);
+      expect(parser.evaluate('a | c')).to.equal(1);
+      expect(parser.evaluate('c | d')).to.equal(0);
     });
 
     it('should handle chains of & and |', () => {
-      parser.context.setFlag('a');
-      parser.context.setFlag('b');
-      parser.context.setFlag('c');
-      expect(parser.evaluate('a & b & c')).to.be.true;
-      expect(parser.evaluate('a & b & d')).to.be.false;
-      expect(parser.evaluate('a | b | c')).to.be.true;
-      expect(parser.evaluate('a | d | e')).to.be.true;
-      expect(parser.evaluate('d | e | f')).to.be.false;
+      parser.context.flags.touch('a');
+      parser.context.flags.touch('b');
+      parser.context.flags.touch('c');
+      expect(parser.evaluate('a & b & c')).to.equal(1);
+      expect(parser.evaluate('a & b & d')).to.equal(0);
+      expect(parser.evaluate('a | b | c')).to.equal(1);
+      expect(parser.evaluate('a | d | e')).to.equal(1);
+      expect(parser.evaluate('d | e | f')).to.equal(0);
     });
 
     it('should handle ^', () => {
-      parser.context.setFlag('a');
-      expect(parser.evaluate('^a')).to.be.false;
-      expect(parser.evaluate('^b')).to.be.true;
-      expect(parser.evaluate('^(^a)')).to.be.true;
-      expect(parser.evaluate('a | ^a')).to.be.true;
-      expect(parser.evaluate('a | ^b')).to.be.true;
-      expect(parser.evaluate('a & ^a')).to.be.false;
-      expect(parser.evaluate('a & ^b')).to.be.true;
+      parser.context.flags.touch('a');
+      expect(parser.evaluate('^a')).to.equal(0);
+      expect(parser.evaluate('^b')).to.equal(1);
+      expect(parser.evaluate('^(^a)')).to.equal(1);
+      expect(parser.evaluate('a | ^a')).to.equal(1);
+      expect(parser.evaluate('a | ^b')).to.equal(1);
+      expect(parser.evaluate('a & ^a')).to.equal(0);
+      expect(parser.evaluate('a & ^b')).to.equal(1);
     });
 
     it('should handle parentheses', () => {
-      parser.context.setFlag('a');
-      parser.context.setFlag('e');
-      expect(parser.evaluate('(a | b | c) & (d | e)')).to.be.true;
-      expect(parser.evaluate('^(a | b | c) & (d | e)')).to.be.false;
-      expect(parser.evaluate('(a | b | c) & (d | f)')).to.be.false;
-      expect(parser.evaluate('^(b | c) & (d | e)')).to.be.true;
-      expect(parser.evaluate('(^a | e) & (^b | f)')).to.be.true;
-      expect(parser.evaluate('^((a | b | c) & (d | f))')).to.be.true;
+      parser.context.flags.touch('a');
+      parser.context.flags.touch('e');
+      expect(parser.evaluate('(a | b | c) & (d | e)')).to.equal(1);
+      expect(parser.evaluate('^(a | b | c) & (d | e)')).to.equal(0);
+      expect(parser.evaluate('(a | b | c) & (d | f)')).to.equal(0);
+      expect(parser.evaluate('^(b | c) & (d | e)')).to.equal(1);
+      expect(parser.evaluate('(^a | e) & (^b | f)')).to.equal(1);
+      expect(parser.evaluate('^((a | b | c) & (d | f))')).to.equal(1);
+    });
+  });
+
+  describe('comparison operators', () => {
+    it('should compare flags with literals', () => {
+      parser.context.flags.touch('a');
+      expect(parser.evaluate('a = 1')).to.equal(1);
+      expect(parser.evaluate('1 = a')).to.equal(1);
+      expect(parser.evaluate('a = 0')).to.equal(0);
+      expect(parser.evaluate('0 = a')).to.equal(0);
+      expect(parser.evaluate('a != 1')).to.equal(0);
+      expect(parser.evaluate('a != 0')).to.equal(1);
+      expect(parser.evaluate('a > 0')).to.equal(1);
+      expect(parser.evaluate('a > 1')).to.equal(0);
+      expect(parser.evaluate('a < 0')).to.equal(0);
+      expect(parser.evaluate('a < 1')).to.equal(0);
+      expect(parser.evaluate('a >= 0')).to.equal(1);
+      expect(parser.evaluate('a >= 1')).to.equal(1);
+      expect(parser.evaluate('a <= 0')).to.equal(0);
+      expect(parser.evaluate('a <= 1')).to.equal(1);
+      expect(parser.evaluate('a < 2')).to.equal(1);
+      expect(parser.evaluate('a = 1 & a > 0')).to.equal(1);
+      expect(parser.evaluate('a = 1 & a < 0')).to.equal(0);
+    });
+
+    it('should compare flags with flags', () => {
+      parser.context.flags.touch('a');
+      parser.context.flags.touch('b');
+      parser.context.flags.set('c', 2);
+      expect(parser.evaluate('a = a')).to.equal(1);
+      expect(parser.evaluate('a = b')).to.equal(1);
+      expect(parser.evaluate('b = a')).to.equal(1);
+      expect(parser.evaluate('a = c')).to.equal(0);
+      expect(parser.evaluate('a = d')).to.equal(0);
+      expect(parser.evaluate('a < b')).to.equal(0);
+      expect(parser.evaluate('a <= b')).to.equal(1);
+      expect(parser.evaluate('a >= b')).to.equal(1);
+      expect(parser.evaluate('a > b')).to.equal(0);
+      expect(parser.evaluate('b > a')).to.equal(0);
+      expect(parser.evaluate('b < a')).to.equal(0);
+      expect(parser.evaluate('c > a')).to.equal(1);
+      expect(parser.evaluate('c >= a')).to.equal(1);
+      expect(parser.evaluate('a < c')).to.equal(1);
+      expect(parser.evaluate('a <= c')).to.equal(1);
+    });
+
+    it('should allow mixing comparison and logic operators', () => {
+      parser.context.flags.touch('a');
+      parser.context.flags.touch('b');
+      parser.context.flags.set('c', 2);
+
+      expect(parser.evaluate('a = 1 & a = b')).to.equal(1);
+      expect(parser.evaluate('a = 1 & a = c')).to.equal(0);
+      expect(parser.evaluate('a = 1 | a = c')).to.equal(1);
+      expect(parser.evaluate('^(a = c)')).to.equal(1);
+      expect(parser.evaluate('a = 1 & ^(a = c)')).to.equal(1);
+      expect(parser.evaluate('a = 1 & b = 1 & c = 2')).to.equal(1);
+      expect(parser.evaluate('a = b & b != c & ^(a = c)')).to.equal(1);
     });
   });
 

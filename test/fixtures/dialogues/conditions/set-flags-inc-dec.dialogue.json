@@ -1,0 +1,31 @@
+{
+  "id": "set-flags",
+  "items": [
+    {
+      "id": "top-seq",
+      "type": "sequence",
+      "items": [
+        {
+          "id": "sets-some",
+          "text": "A",
+          "set": ["aFlag", "bFlag=2", "cFlag"]
+        },
+        {
+          "id": "increments",
+          "text": "B",
+          "set": ["aFlag+=1", "bFlag+=2", "cFlag+=2"]
+        },
+        {
+          "id": "decrements",
+          "text": "C",
+          "set": ["aFlag-=1", "bFlag-=2"]
+        },
+        {
+          "id": "skipped",
+          "text": "Skip",
+          "cond": "dFlag"
+        }
+      ]
+    }
+  ]
+}

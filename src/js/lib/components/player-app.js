@@ -10,6 +10,7 @@ const GamepadInputMgr = require('../input/gamepad-input-mgr');
 const MultiplexInputMgr = require('../input/multiplex-input-mgr');
 const PlayerAppInputRouter = require('../input/player-app-input-router');
 const Character = require('../model/character');
+const FlagStore = require('../dialogues/flag-store');
 const DialogueOverlay = require('../dialogues/dialogue-overlay');
 const DialogueSequencer = require('../dialogues/dialogue-sequencer');
 const Dialogue = require('../dialogues/dialogue');
@@ -58,8 +59,7 @@ class PlayerApp {
       this.handleStorylineEnd();
     });
 
-    this.flags = {};
-    this.flagEvents = new EventEmitter();
+    this.flags = new FlagStore();
     this.dialogueOverlay = new DialogueOverlay(this.config, this.lang);
     this.dialogueSequencer = new DialogueSequencer(this.dialogueOverlay);
     this.$element.append(this.dialogueOverlay.$element);
@@ -69,7 +69,7 @@ class PlayerApp {
 
     // Temporary scoring manager
     const seenFlags = {};
-    this.flagEvents.on('flag', (flagId) => {
+    this.flags.events.on('flag', (flagId) => {
       if (seenFlags[flagId]) {
         return;
       }
@@ -227,21 +227,10 @@ class PlayerApp {
     }
   }
 
-  hasFlag(flagId) {
-    return this.flags[flagId] !== undefined;
-  }
-
-  setFlag(flagId) {
-    this.flags[flagId] = true;
-    this.flagEvents.emit('flag', flagId);
-    return true;
-  }
-
   playDialogue(dialogue, npc = null) {
     this.inputRouter.routeToDialogueOverlay(this.dialogueOverlay, this.dialogueSequencer);
     this.dialogueSequencer.play(dialogue, {
-      hasFlag: this.hasFlag.bind(this),
-      setFlag: this.setFlag.bind(this),
+      flags: this.flags,
       random: max => Math.floor(Math.random() * max),
     }, { top: npc.name });
     this.dialogueSequencer.events.once('end', () => {
@@ -282,9 +271,9 @@ class PlayerApp {
   }
 
   handleStorylineEnd() {
-    const citizenAssembly = !!this.hasFlag('citizen-assembly');
-    const environmentalImpact = !!this.hasFlag('biologist-solved');
-    const reinvestment = !!this.hasFlag('solved-finance');
+    const citizenAssembly = !!this.flags.value('citizen-assembly');
+    const environmentalImpact = !!this.flags.value('biologist-solved');
+    const reinvestment = !!this.flags.value('solved-finance');
 
     let information = 0;
     let empowerment = 0;
@@ -294,14 +283,14 @@ class PlayerApp {
     empowerment += (citizenAssembly ? 2 : 0);
     empowerment += (environmentalImpact ? 1 : 0);
     empowerment += (reinvestment ? 1 : 0);
-    information += (!!this.hasFlag('citizen-cool-solved') ? 1 : 0);
-    information += (!!this.hasFlag('citizen-lila-solved') ? 1 : 0);
-    empathy += (!!this.hasFlag('citizen-puan-solved') ? 1 : 0);
-    empathy += (!!this.hasFlag('citizen-punk-solved') ? 1 : 0);
-    empathy += (!!this.hasFlag('construction-worker-solved') ? 1 : 0);
-    empathy += (!!this.hasFlag('citizen-queen-solved') ? 1 : 0);
-    inclusion += (!!this.hasFlag('citizen-neighbor-solved') ? 1 : 0);
-    inclusion += (!!this.hasFlag('citizen-old-hip-solved') ? 1 : 0);
+    information += (!!this.flags.value('citizen-cool-solved') ? 1 : 0);
+    information += (!!this.flags.value('citizen-lila-solved') ? 1 : 0);
+    empathy += (!!this.flags.value('citizen-puan-solved') ? 1 : 0);
+    empathy += (!!this.flags.value('citizen-punk-solved') ? 1 : 0);
+    empathy += (!!this.flags.value('construction-worker-solved') ? 1 : 0);
+    empathy += (!!this.flags.value('citizen-queen-solved') ? 1 : 0);
+    inclusion += (!!this.flags.value('citizen-neighbor-solved') ? 1 : 0);
+    inclusion += (!!this.flags.value('citizen-old-hip-solved') ? 1 : 0);
 
     let score = empowerment + information + empathy + inclusion;
     let icon;

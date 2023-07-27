@@ -7,24 +7,24 @@ class LogicParser {
 
     this.language = {
       INFIX_OPS: {
-        // '<': (a, b) => (a() < b()),
-        // '>': (a, b) => (a() > b()),
-        // '=': (a, b) => (a() === b()),
-        // '!=': (a, b) => (a() !== b()),
-        // '>=': (a, b) => (a() >= b()),
-        // '<=': (a, b) => (a() <= b()),
-        '&': (a, b) => (a() && b()),
-        '|': (a, b) => (a() || b()),
+        '<': (a, b) => (a() < b() ? 1 : 0),
+        '>': (a, b) => (a() > b() ? 1 : 0),
+        '>=': (a, b) => (a() >= b() ? 1 : 0),
+        '<=': (a, b) => (a() <= b() ? 1 : 0),
+        '=': (a, b) => (a() === b() ? 1 : 0),
+        '!=': (a, b) => (a() !== b() ? 1 : 0),
+        '&': (a, b) => ((!!a() && !!b()) ? 1 : 0),
+        '|': (a, b) => ((!!a() || !!b()) ? 1 : 0),
       },
       PREFIX_OPS: {
-        '^': a => !a(),
+        '^': a => (!a() ? 1 : 0),
       },
       AMBIGUOUS: {},
-      PRECEDENCE: [['^'], /* ['<', '>', '>=', '<='], ['=', '!='], */ ['&', '|']],
+      PRECEDENCE: [['^'], ['<', '>', '>=', '<='], ['=', '!='], ['&', '|']],
       GROUP_OPEN: '(',
       GROUP_CLOSE: ')',
       SEPARATOR: ' ',
-      SYMBOLS: [/* '<', '>', '=', '!=', '>=', '<=', */'&', '|', '^', '(', ')'],
+      SYMBOLS: ['<', '>', '!', '=', '&', '|', '^', '(', ')'],
       termDelegate: this.evaluateTerm.bind(this),
       isCaseInsensitive: false,
     };
@@ -56,7 +56,7 @@ class LogicParser {
       return parseInt(term, 10);
     }
     if (LogicParser.isValidFlag(term)) {
-      return this.context.hasFlag(term) || false;
+      return this.context.flags.value(term);
     }
     throw new Error(`Invalid term: ${term}`);
   }

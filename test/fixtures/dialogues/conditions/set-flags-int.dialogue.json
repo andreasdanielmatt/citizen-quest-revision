@@ -1,0 +1,23 @@
+{
+  "id": "set-flags",
+  "items": [
+    {
+      "type": "sequence",
+      "items": [
+        {
+          "text": "A",
+          "set": ["aFlag=1", "bFlag=2"]
+        },
+        {
+          "text": "B",
+          "cond": "aFlag & bFlag > 1",
+          "set": ["bFlag=2", "cFlag=3"]
+        },
+        {
+          "text": "Skip",
+          "cond": "dFlag"
+        }
+      ]
+    }
+  ]
+}

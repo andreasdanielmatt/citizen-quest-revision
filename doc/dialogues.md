@@ -186,15 +186,21 @@ the strings in that language.
 }
 ```
 
-## Logical expressions
+## Expressions
 
-Logical expressions are used in `cond` properties. They can be used to check for one or more flags.
+Expressions are used in `cond` properties. They can be used to check for one or more flags.
 
 The following operators are supported:
 
 - `&`: Logical AND
 - `|`: Logical OR
 - `^`: Logical NOT
+- `=`: Equals
+- `!=`: Not equals
+- `<`: Less than
+- `<=`: Less than or equal to
+- `>`: Greater than
+- `>=`: Greater than or equal to
 
 Parentheses can be used to group expressions.
 
@@ -203,6 +209,26 @@ Example:
 ```
 flag1 | (^flag2 & flag3)
 ```
+
+It's also possible to check flags used as counters
+
+```
+counter1 >= 3 | counter2 >= 2
+```
+
+## Flags
+
+Flags are used to keep track of the player's progress. They can be used in `cond` and `set` properties.
+
+In `cond` properties, flags can only be read. In `set` properties, flags's values can be changed 
+in different ways:
+
+- `flag`: If the flag is not set, it's set to 1. Otherwise, its value is not changed.
+- `flag = 3`: Sets the flag to 3.
+- `flag += n`: Adds n to the flag's value (where n is an integer literal).
+- `flag -= n`: Subtracts n from the flag's value (where n is an integer literal).
+
+The value of a flag can never be lower than 0 or higher than 999.
 
 ## Restrictions
 

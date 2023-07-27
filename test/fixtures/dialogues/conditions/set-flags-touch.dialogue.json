@@ -1,0 +1,18 @@
+{
+  "id": "set-flags-touch",
+  "items": [
+    {
+      "type": "sequence",
+      "items": [
+        {
+          "text": "A",
+          "set": ["aFlag", "bFlag=2"]
+        },
+        {
+          "text": "B",
+          "set": ["aFlag", "bFlag"]
+        }
+      ]
+    }
+  ]
+}

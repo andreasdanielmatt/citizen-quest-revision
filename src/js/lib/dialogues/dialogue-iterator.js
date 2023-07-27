@@ -1,4 +1,5 @@
 const LogicParser = require('./logic-parser');
+const DialogueSchema = require('../../../../specs/dialogue.schema.json');
 
 /**
  * An interface for the context object passed to the dialogue iterator.
@@ -16,26 +17,8 @@ class DialogueIteratorContextInterface {
   }
 
   /**
-   * Returns true if the specified flag is set.
-   *
-   * @param {string} flag
-   * @returns {boolean}
+   * @property {FlagStore} flags
    */
-  // eslint-disable-next-line no-unused-vars,class-methods-use-this
-  hasFlag(flag) {
-    throw new Error('Not implemented');
-  }
-
-  /**
-   * Sets the specified flag.
-   *
-   * @param {string} flag
-   * @returns {boolean}
-   */
-  // eslint-disable-next-line no-unused-vars,class-methods-use-this
-  setFlag(flag) {
-    throw new Error('Not implemented');
-  }
 }
 
 /**
@@ -93,7 +76,7 @@ class DialogueIterator {
     }
 
     return this.activeNode.responses
-      .filter(response => !response.cond || this.conditionParser.evaluate(response.cond));
+      .filter(response => !response.cond || !!this.conditionParser.evaluate(response.cond));
   }
 
   /**
@@ -210,11 +193,33 @@ class DialogueIterator {
     });
   }
 
-  setFlags(flags) {
-    if (!flags) return;
-    flags.forEach((flag) => {
-      this.context.setFlag(flag);
+  setFlags(assignments) {
+    if (!assignments) return;
+    assignments.forEach((assignment) => {
+      this.processAssignment(assignment);
     });
+  }
+
+  processAssignment(assignment) {
+    // Parse through a regex
+    // flag ((operator) intLiteral)?
+    const match = assignment.match(/([a-zA-Z_][.a-zA-Z0-9_]*)(\s*([+-]?=)\s*([0-9]{1,3}))?/);
+    if (!match) {
+      throw new Error(`Invalid assignment: ${assignment} (${this.activeNode.id}:${this.dialogue.root.id})`);
+    }
+    const [, flag, , operator, intLiteral] = match;
+    if (operator === undefined) {
+      this.context.flags.touch(flag);
+    }
+    if (operator === '=') {
+      this.context.flags.set(flag, parseInt(intLiteral, 10));
+    }
+    if (operator === '+=') {
+      this.context.flags.inc(flag, parseInt(intLiteral, 10));
+    }
+    if (operator === '-=') {
+      this.context.flags.dec(flag, parseInt(intLiteral, 10));
+    }
   }
 
   /**

@@ -1,6 +1,7 @@
 const { expect } = require('chai');
 const Dialogue = require('../src/js/lib/dialogues/dialogue');
 const DialogueIterator = require('../src/js/lib/dialogues/dialogue-iterator');
+const FlagStore = require('../src/js/lib/dialogues/flag-store');
 const { getText } = require('../src/js/lib/helpers/i18n');
 const helloWorldDialogue = require('./fixtures/dialogues/core/hello-world.dialogue.json');
 const helloThenWorldDialogue = require('./fixtures/dialogues/core/then.dialogue.json');
@@ -13,7 +14,11 @@ const jumpAroundWithSequencesDialogue = require('./fixtures/dialogues/sequences/
 const randomDialogue = require('./fixtures/dialogues/random/random.dialogue.json');
 const conditionDialogue = require('./fixtures/dialogues/conditions/condition.dialogue.json');
 const setFlagsDialogue = require('./fixtures/dialogues/conditions/set-flags.dialogue.json');
+const setFlagsIntDialogue = require('./fixtures/dialogues/conditions/set-flags-int.dialogue.json');
+const setFlagsTouchDialogue = require('./fixtures/dialogues/conditions/set-flags-touch.dialogue.json');
+const setFlagsIncDecDialogue = require('./fixtures/dialogues/conditions/set-flags-inc-dec.dialogue.json');
 const logicDialogue = require('./fixtures/dialogues/conditions/logic.dialogue.json');
+const comparisonDialogue = require('./fixtures/dialogues/conditions/comparison.dialogue.json');
 const firstDialogue = require('./fixtures/dialogues/first/first-dialogue.json');
 const firstWithCondsDialogue = require('./fixtures/dialogues/first/first-with-conds.json');
 const firstBetweenSequencesDialogue = require('./fixtures/dialogues/first/first-between-sequences.json');
@@ -65,7 +70,7 @@ function getTrace(iterator, input = [], lang = null) {
 class TestContext {
   constructor() {
     this.randomValues = [];
-    this.flags = {};
+    this.flags = new FlagStore();
   }
 
   setRandom(random) {
@@ -77,18 +82,6 @@ class TestContext {
       throw new Error('Not enough random values set');
     }
     return this.randomValues.shift();
-  }
-
-  hasFlag(flag) {
-    return this.flags[flag] !== undefined;
-  }
-
-  setFlag(flag) {
-    this.flags[flag] = true;
-  }
-
-  clearFlags() {
-    this.flags = {};
   }
 }
 
@@ -176,7 +169,7 @@ describe('DialogueIterator', () => {
     it('should enter nodes when flags are set', () => {
       const dialogue = Dialogue.fromJson(conditionDialogue);
       const context = new TestContext();
-      context.setFlag('even');
+      context.flags.touch('even');
       const iterator = new DialogueIterator(dialogue, context);
       expect(getTrace(iterator)).to.deep.equal(['Two']);
     });
@@ -184,8 +177,8 @@ describe('DialogueIterator', () => {
     it('should use conditions to filter items from sequences', () => {
       const dialogue = Dialogue.fromJson(conditionDialogue);
       const context = new TestContext();
-      context.setFlag('useSequence');
-      context.setFlag('possible');
+      context.flags.touch('useSequence');
+      context.flags.touch('possible');
       const iterator = new DialogueIterator(dialogue, context);
       expect(getTrace(iterator)).to.deep.equal(['A', 'B', 'C']);
     });
@@ -194,8 +187,8 @@ describe('DialogueIterator', () => {
       const dialogue = Dialogue.fromJson(conditionDialogue);
       const context = new TestContext();
       context.setRandom([2]);
-      context.setFlag('useRandom');
-      context.setFlag('possible');
+      context.flags.touch('useRandom');
+      context.flags.touch('possible');
       const iterator = new DialogueIterator(dialogue, context);
       expect(getTrace(iterator)).to.deep.equal(['right']);
     });
@@ -205,17 +198,56 @@ describe('DialogueIterator', () => {
       const context = new TestContext();
       const iterator = new DialogueIterator(dialogue, context);
       expect(getTrace(iterator)).to.deep.equal(['A', 'B']);
-      expect(context.hasFlag('aFlag')).to.be.true;
-      expect(context.hasFlag('bFlag')).to.be.true;
-      expect(context.hasFlag('cFlag')).to.be.false;
+      expect(context.flags.exists('aFlag')).to.be.true;
+      expect(context.flags.exists('bFlag')).to.be.true;
+      expect(context.flags.exists('cFlag')).to.be.false;
+    });
+
+    it('should allow a dialogue to set flags to integer literals', () => {
+      const dialogue = Dialogue.fromJson(setFlagsIntDialogue);
+      const context = new TestContext();
+      const iterator = new DialogueIterator(dialogue, context);
+      expect(getTrace(iterator)).to.deep.equal(['A', 'B']);
+      expect(context.flags.value('aFlag')).to.equal(1);
+      expect(context.flags.value('bFlag')).to.equal(2);
+      expect(context.flags.value('cFlag')).to.equal(3);
+    });
+
+    it('should allow a dialogue to increment or decrement flags', () => {
+      const dialogue = Dialogue.fromJson(setFlagsIncDecDialogue);
+      const context = new TestContext();
+      const iterator = new DialogueIterator(dialogue, context);
+      expect(getTrace(iterator)).to.deep.equal(['A', 'B', 'C']);
+      expect(context.flags.value('aFlag')).to.equal(1);
+      expect(context.flags.value('bFlag')).to.equal(2);
+      expect(context.flags.value('cFlag')).to.equal(3);
+    });
+
+    it('should not modify a flag if its already set', () => {
+      const dialogue = Dialogue.fromJson(setFlagsTouchDialogue);
+      const context = new TestContext();
+      const iterator = new DialogueIterator(dialogue, context);
+      expect(getTrace(iterator)).to.deep.equal(['A', 'B']);
+      expect(context.flags.value('aFlag')).to.equal(1);
+      expect(context.flags.value('bFlag')).to.equal(2);
     });
 
     it('should support conditions with logic expressions', () => {
       const dialogue = Dialogue.fromJson(logicDialogue);
       const context = new TestContext();
-      context.setFlag('flagA');
-      context.setFlag('flagB');
-      context.setFlag('flagC');
+      context.flags.touch('flagA');
+      context.flags.touch('flagB');
+      context.flags.touch('flagC');
+      const iterator = new DialogueIterator(dialogue, context);
+      expect(getTrace(iterator)).to.deep.equal(['A', 'B', 'C']);
+    });
+
+    it('should support conditions with comparisons', () => {
+      const dialogue = Dialogue.fromJson(comparisonDialogue);
+      const context = new TestContext();
+      context.flags.set('flagA', 2);
+      context.flags.set('flagB', 3);
+      context.flags.set('flagC', 4);
       const iterator = new DialogueIterator(dialogue, context);
       expect(getTrace(iterator)).to.deep.equal(['A', 'B', 'C']);
     });
@@ -232,7 +264,7 @@ describe('DialogueIterator', () => {
     it('should support first type nodes with conditions', () => {
       const dialogue = Dialogue.fromJson(firstWithCondsDialogue);
       const context = new TestContext();
-      context.setFlag('flagA');
+      context.flags.touch('flagA');
       const iterator = new DialogueIterator(dialogue, context);
       expect(getTrace(iterator)).to.deep.equal(['Hello world!']);
     });
@@ -240,7 +272,7 @@ describe('DialogueIterator', () => {
     it('should support first type nodes between sequences', () => {
       const dialogue = Dialogue.fromJson(firstBetweenSequencesDialogue);
       const context = new TestContext();
-      context.setFlag('flagA');
+      context.flags.touch('flagA');
       const iterator = new DialogueIterator(dialogue, context);
       expect(getTrace(iterator)).to.deep.equal(['Hello', 'world', '!']);
     });
@@ -259,8 +291,8 @@ describe('DialogueIterator', () => {
     it('should filter responses using conditions', () => {
       const dialogue = Dialogue.fromJson(conditionalResponseDialogue);
       const context = new TestContext();
-      context.setFlag('flagA');
-      context.setFlag('flagB');
+      context.flags.touch('flagA');
+      context.flags.touch('flagB');
       const iterator = new DialogueIterator(dialogue, context);
       iterator.next();
       iterator.getEnabledResponses().map(r => r.text);
@@ -272,14 +304,14 @@ describe('DialogueIterator', () => {
     it('should support responses that set flags', () => {
       const dialogue = Dialogue.fromJson(responseSetsFlagsDialogue);
       const context = new TestContext();
-      expect(context.hasFlag('programmer')).to.be.false;
-      expect(context.hasFlag('polite')).to.be.false;
+      expect(context.flags.exists('programmer')).to.be.false;
+      expect(context.flags.exists('polite')).to.be.false;
       const iterator = new DialogueIterator(dialogue, context);
       expect(getTrace(iterator, [1])).to.deep.equal(
         ['Hello?', '>> Hello world!']
       );
-      expect(context.hasFlag('programmer')).to.be.true;
-      expect(context.hasFlag('polite')).to.be.false;
+      expect(context.flags.exists('programmer')).to.be.true;
+      expect(context.flags.exists('polite')).to.be.false;
     });
 
     it('should support responses that jump to other nodes', () => {
