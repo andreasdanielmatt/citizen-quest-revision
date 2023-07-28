@@ -131,6 +131,29 @@ describe('LogicParser', () => {
       expect(parser.evaluate('a = 1 & b = 1 & c = 2')).to.equal(1);
       expect(parser.evaluate('a = b & b != c & ^(a = c)')).to.equal(1);
     });
+
+    it('should support the COUNT function', () => {
+      parser.context.flags.touch('cat_a_1');
+      parser.context.flags.touch('cat_b_1');
+      parser.context.flags.touch('cat_b_2');
+      parser.context.flags.touch('cat_c_1');
+      parser.context.flags.touch('cat_c_2');
+      parser.context.flags.touch('cat_c_3');
+      parser.context.flags.touch('other');
+
+      expect(parser.evaluate('COUNT("cat_a")')).to.equal(1);
+      expect(parser.evaluate('COUNT("cat_b")')).to.equal(2);
+      expect(parser.evaluate('COUNT("cat_c")')).to.equal(3);
+      expect(parser.evaluate('COUNT("cat_c_2")')).to.equal(1);
+      expect(parser.evaluate('COUNT("other")')).to.equal(1);
+      expect(parser.evaluate('COUNT("cat")')).to.equal(6);
+      expect(parser.evaluate('COUNT("wrong")')).to.equal(0);
+      expect(parser.evaluate('COUNT("cat_a") = 1')).to.equal(1);
+      expect(parser.evaluate('COUNT("cat_a") > 1')).to.equal(0);
+      expect(parser.evaluate('COUNT("cat_b") > 1')).to.equal(1);
+      expect(parser.evaluate('COUNT("cat_c") > 2')).to.equal(1);
+      expect(parser.evaluate('COUNT("cat") > 6 | COUNT("other") = 1 ')).to.equal(1);
+    });
   });
 
   it('should fail with invalid syntax', () => {
@@ -141,5 +164,7 @@ describe('LogicParser', () => {
     expect(() => parser.evaluate('a &')).to.throw('Invalid term: &');
     expect(() => parser.evaluate('^')).to.throw('Invalid term: ^');
     expect(() => parser.evaluate('a b')).to.throw('Unexpected token "a"');
+    expect(() => parser.evaluate('COUNT(1)')).to.throw('Expected string');
+    expect(() => parser.evaluate('COUNT(cat)')).to.throw('Expected string');
   });
 });

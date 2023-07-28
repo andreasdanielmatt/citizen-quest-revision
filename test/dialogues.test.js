@@ -19,6 +19,7 @@ const setFlagsTouchDialogue = require('./fixtures/dialogues/conditions/set-flags
 const setFlagsIncDecDialogue = require('./fixtures/dialogues/conditions/set-flags-inc-dec.dialogue.json');
 const logicDialogue = require('./fixtures/dialogues/conditions/logic.dialogue.json');
 const comparisonDialogue = require('./fixtures/dialogues/conditions/comparison.dialogue.json');
+const countDialogue = require('./fixtures/dialogues/conditions/count.dialogue.json');
 const firstDialogue = require('./fixtures/dialogues/first/first-dialogue.json');
 const firstWithCondsDialogue = require('./fixtures/dialogues/first/first-with-conds.json');
 const firstBetweenSequencesDialogue = require('./fixtures/dialogues/first/first-between-sequences.json');
@@ -248,6 +249,16 @@ describe('DialogueIterator', () => {
       context.flags.set('flagA', 2);
       context.flags.set('flagB', 3);
       context.flags.set('flagC', 4);
+      const iterator = new DialogueIterator(dialogue, context);
+      expect(getTrace(iterator)).to.deep.equal(['A', 'B', 'C']);
+    });
+
+    it('should support conditions with the count function', () => {
+      const dialogue = Dialogue.fromJson(countDialogue);
+      const context = new TestContext();
+      context.flags.set('prefixA_flag1', 2);
+      context.flags.set('prefixA_flag2', 3);
+      context.flags.set('prefixB_flag1', 4);
       const iterator = new DialogueIterator(dialogue, context);
       expect(getTrace(iterator)).to.deep.equal(['A', 'B', 'C']);
     });

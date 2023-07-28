@@ -1,0 +1,30 @@
+{
+  "id": "logic-dialogue",
+  "items": [
+    {
+      "type": "sequence",
+      "items": [
+        {
+          "cond": "COUNT(\"prefixA\") = 2",
+          "text": "A"
+        },
+        {
+          "cond": "COUNT(\"prefixA_flag1\") = 2",
+          "text": "skip 1"
+        },
+        {
+          "cond": "COUNT(\"prefixB\") = 1",
+          "text": "B"
+        },
+        {
+          "cond": "COUNT(\"prefixB\") > COUNT(\"prefixA\")",
+          "text": "skip 2"
+        },
+        {
+          "cond": "COUNT(\"prefixC\") = 0",
+          "text": "C"
+        }
+      ]
+    }
+  ]
+}

@@ -202,6 +202,11 @@ The following operators are supported:
 - `>`: Greater than
 - `>=`: Greater than or equal to
 
+The following functions are supported:
+
+- `COUNT("prefix")`: Returns the number of flags (which are set, i.e. > 0) that start with `prefix`. 
+  The prefix must be entered within quotes.
+
 Parentheses can be used to group expressions.
 
 Example:

@@ -6,6 +6,10 @@ class FlagStore {
     this.events = new EventEmitter();
   }
 
+  all() {
+    return this.flags;
+  }
+
   exists(flag) {
     return !!this.flags[flag];
   }

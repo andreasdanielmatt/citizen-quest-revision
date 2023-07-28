@@ -15192,6 +15192,10 @@ class FlagStore {
     this.events = new EventEmitter();
   }
 
+  all() {
+    return this.flags;
+  }
+
   exists(flag) {
     return !!this.flags[flag];
   }
@@ -15248,26 +15252,45 @@ module.exports = FlagStore;
 const { ExpressionParser } = __webpack_require__(/*! expressionparser */ "./node_modules/expressionparser/dist/index.js");
 const DialogueSchema = __webpack_require__(/*! ../../../../specs/dialogue.schema.json */ "./specs/dialogue.schema.json");
 
+const num = (result) => {
+  if (typeof result !== 'number') {
+    throw new Error(`Expected number, found: ${typeof result} ${JSON.stringify(result)}`);
+  }
+
+  return result;
+};
+
+const str = (result) => {
+  if (typeof result !== 'string') {
+    throw new Error(`Expected string, found: ${typeof result} ${JSON.stringify(result)}`);
+  }
+
+  return result;
+};
+
 class LogicParser {
   constructor(context) {
     this.context = context;
 
     this.language = {
       INFIX_OPS: {
-        '<': (a, b) => (a() < b() ? 1 : 0),
-        '>': (a, b) => (a() > b() ? 1 : 0),
-        '>=': (a, b) => (a() >= b() ? 1 : 0),
-        '<=': (a, b) => (a() <= b() ? 1 : 0),
-        '=': (a, b) => (a() === b() ? 1 : 0),
-        '!=': (a, b) => (a() !== b() ? 1 : 0),
-        '&': (a, b) => ((!!a() && !!b()) ? 1 : 0),
-        '|': (a, b) => ((!!a() || !!b()) ? 1 : 0),
+        '<': (a, b) => (num(a()) < num(b()) ? 1 : 0),
+        '>': (a, b) => (num(a()) > num(b()) ? 1 : 0),
+        '>=': (a, b) => (num(a()) >= num(b()) ? 1 : 0),
+        '<=': (a, b) => (num(a()) <= num(b()) ? 1 : 0),
+        '=': (a, b) => (num(a()) === num(b()) ? 1 : 0),
+        '!=': (a, b) => (num(a()) !== num(b()) ? 1 : 0),
+        '&': (a, b) => ((!!num(a()) && !!num(b())) ? 1 : 0),
+        '|': (a, b) => ((!!num(a()) || !!num(b())) ? 1 : 0),
       },
       PREFIX_OPS: {
-        '^': a => (!a() ? 1 : 0),
+        '^': a => (!num(a()) ? 1 : 0),
+        COUNT: a => (this.prefixCount(str(a()))),
       },
       AMBIGUOUS: {},
-      PRECEDENCE: [['^'], ['<', '>', '>=', '<='], ['=', '!='], ['&', '|']],
+      PRECEDENCE: [['^', 'COUNT'], ['<', '>', '>=', '<='], ['=', '!='], ['&', '|']],
+      LITERAL_OPEN: '"',
+      LITERAL_CLOSE: '"',
       GROUP_OPEN: '(',
       GROUP_CLOSE: ')',
       SEPARATOR: ' ',
@@ -15306,6 +15329,19 @@ class LogicParser {
       return this.context.flags.value(term);
     }
     throw new Error(`Invalid term: ${term}`);
+  }
+
+  prefixCount(flagPrefix) {
+    const flags = Object.entries(this.context.flags.all())
+      .filter(([, value]) => value > 0)
+      .map(([key]) => key);
+
+    return flags.reduce((count, flag) => {
+      if (flag.startsWith(flagPrefix)) {
+        return count + 1;
+      }
+      return count;
+    }, 0);
   }
 }
 
@@ -17212,4 +17248,4 @@ cfgLoader.load([
 
 /******/ })()
 ;
-//# sourceMappingURL=default.dd478dc8f1d954b4de92.js.map
+//# sourceMappingURL=default.56e4176c14b4f94e8967.js.map
