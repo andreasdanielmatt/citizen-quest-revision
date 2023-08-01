@@ -14,19 +14,29 @@ class Countdown {
       this.interval = setInterval(() => {
         this.seconds -= 1;
         this.update();
-        if (this.seconds === 0) {
-          this.events.emit('end');
-          clearInterval(this.interval);
+        if (this.seconds <= 0) {
+          this.onEnd();
         }
       }, 1000);
     }
   }
 
+  forceEnd() {
+    this.seconds = 0;
+    this.update();
+    this.onEnd();
+  }
+
+  onEnd() {
+    clearInterval(this.interval);
+    this.events.emit('end');
+  }
+
   update() {
-    const minutes = Math.floor(this.seconds / 60);
-    const secondsLeft = this.seconds % 60;
-    const timeLeft = `${minutes}:${secondsLeft < 10 ? '0' : ''}${secondsLeft}`;
-    this.$element.html(timeLeft);
+    const timeLeft = Math.max(this.seconds, 0);
+    const secondsLeft = timeLeft % 60;
+    const minutes = Math.floor(timeLeft / 60);
+    this.$element.html(`${minutes}:${secondsLeft < 10 ? '0' : ''}${secondsLeft}`);
   }
 }
 

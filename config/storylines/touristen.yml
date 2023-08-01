@@ -9,12 +9,12 @@ storylines:
           en: "City Mayor"
           de: "Bürgermeisterin"
         spawn: { x: 3855, y: 3119 }
-      'finance_director':
+      'financeDirector':
         name:
           en: "Director of finances"
           de: "Leiter der Finanzverwaltung"
         spawn: { x: 4002, y: 3080 }
-      'parks_director':
+      'parksDirector':
         name:
           en: "Director of the environmental agency"
           de: "Leiterin des Umweltamts"
@@ -24,7 +24,7 @@ storylines:
           en: "Journalist"
           de: "Journalist"
         spawn: { x: 4928, y: 3384 }
-      'ferris_salesman':
+      'ferrisSalesman':
         name:
           en: "Spin City™ Salesman"
           de: "Drehmoment™ Verkaufsagent"
@@ -44,62 +44,62 @@ storylines:
           en: "Robot"
           de: "Roboter"
         spawn: {x: 5291, y: 3394}
-      'museum_director':
+      'museumDirector':
         name:
           en: "Museum Director"
           de: "Museumsdirektorin"
         spawn: {x: 6041, y: 2409}
-      'citizen_cool':
+      'citizenCool':
         name:
           en: "Concerned Citizen"
           de: "Zweifelnder Bürger"
         spawn: {x: 4603, y: 3149}
-      'citizen_braid':
+      'citizenBraid':
         name:
           en: "Optimistic Citizen"
           de: "Optimistische Bürgerin"
         spawn: {x: 1356, y: 2409}
-      'citizen_cat':
+      'citizenCat':
         name:
           en: "Curious Citizen"
           de: "Neugierige Bürgerin"
         spawn: {x: 6141, y: 1434}
-      'citizen_old_hip':
+      'citizenHipster':
         name:
           en: "Concerned Citizen"
           de: "Zweifelnder Bürger"
         spawn: {x: 3498, y: 1454}
-      'citizen_puan':
+      'citizenPuan':
         name:
           en: "Concerned Citizen"
           de: "Zweifelnde Bürgerin"
         spawn: {x: 5856, y: 3374}
-      'citizen_cage':
+      'citizenCage':
         name:
           en: "Optimistic Citizen"
           de: "Optimistischer Bürger"
         spawn: {x: 2274, y: 3434}
-      'citizen_punk':
+      'citizenPunk':
         name:
           en: "Citizen"
           de: "Bürgerin"
         spawn: {x: 3093, y: 3384}
-      'citizen_lila':
+      'citizenLila':
         name:
           en: "Citizen"
           de: "Bürgerin"
         spawn: {x: 6993, y: 2588}
-      'citizen_blue':
+      'citizenBlue':
         name:
           en: "Concerned Citizen"
           de: "Zweifelnde Bürgerin"
         spawn: {x: 3290, y: 1421}
-      'construction_worker':
+      'constructionWorker':
         name:
           en: "Concerned Citizen"
           de: "Zweifelnde Bürgerin"
         spawn: {x: 2686, y: 1403}
-      'citizen_queen':
+      'citizenQueen':
         name:
           en: "Concerned Citizen"
           de: "Zweifelnde Bürgerin"
@@ -108,7 +108,7 @@ storylines:
       'mayor':
         - type: first
           items:
-            - cond: 'citizen_assembly'
+            - cond: 'pnt.empowerment.citizenAssembly'
               text:
                 en: 'We’ll form a citizen assembly and evaluate the Ferris wheel project together.'
                 de: 'Wir werden eine Bürgerversammlung organisieren und das Riesenradprojekt gemeinsam bewerten.'
@@ -116,33 +116,33 @@ storylines:
                 en: 'Everybody is happy with my idea of a Ferris wheel, right?'
                 de: 'Alle sind mit meiner Idee eines Riesenrads einverstanden, oder?'
               responses:
-                - cond: '(issue_1 & ^issue_2 & ^issue_3) | (^issue_1 & issue_2 & ^issue_3) | (^issue_1 & ^issue_2 & issue_3)'
+                - cond: 'COUNT("op.neg") = 1'
                   text:
                     en: 'Some citizens have concerns.'
                     de: 'Einzelne Bürger*innen haben Bedenken.'
                   thenText:
                     de: 'Irgendjemand beschwert sich immer. Wenn es nur eine*r ist, ist es besser, ihn/sie zu ignorieren.'
                     en: "There's always someone who complains. Only one? Just ignore them."
-                - cond: '(issue_1 & issue_2 & ^issue_3) | (issue_1 & ^issue_2 & issue_3) | (^issue_1 & issue_2 & issue_3)'
+                - cond: 'COUNT("op.neg") = 2'
                   text:
                     en: 'Some citizens have concerns.'
                     de: 'Einige Bürger*innen haben Bedenken.'
                   thenText:
                     en: 'Just a few? See if you can find more.'
                     de: 'Nur ein paar? Vielleicht finden sich noch mehr.'
-                - cond: 'issue_1 & issue_2 & issue_3'
+                - cond: 'COUNT("op.neg") >= 3'
                   text:
                     en: 'Many citizens have concerns.'
                     de: 'Viele Bürger*innen haben Bedenken.'
                   thenText:
                     en: 'Maybe we should have a citizen assembly and evaluate the project together.'
                     de: 'Vielleicht sollten wir eine Bürgerversammlung einberufen und das Projekt gemeinsam bewerten.'
-                  set: ['citizen_assembly']
-      'finance_director':
+                  set: ['pnt.empowerment.citizenAssembly', 'pnt.empowerment.citizenAssembly.double']
+      'financeDirector':
         - type: first
-          set: ['talked_finance']
+          set: ['talkedTo.financeDirector']
           items:
-            - cond: 'solved_finance'
+            - cond: 'pnt.empowerment.reinvest'
               text:
                 en: 'We will invest the profits from the Ferris wheel in nearby areas.'
                 de: 'Wir werden die Gewinne aus dem Riesenrad in nahe gelegene Stadtteile investieren.'
@@ -150,18 +150,18 @@ storylines:
                 en: 'The city will receive profits from the Ferris wheel. We’re still deciding how to spend the extra money.'
                 de: 'Die Stadt wird die Gewinne aus dem Riesenrad erhalten. Wir entscheiden noch darüber, wie wir das zusätzliche Geld ausgeben.'
               responses:
-                - cond: 'issue_finance'
+                - cond: 'op.neg.neglectedArea'
                   text:
                     en: 'People who live in that area say it’s neglected.'
                     de: 'Die Leute, die in diesem Viertel leben, sagen, es sei vernachlässigt.'
                   thenText:
                     en: 'I think it would be fair to invest the money there.'
                     de: 'Ich denke, es wäre fair, das Geld dort zu investieren.'
-                  set: ['solved_finance']
-      'parks_director':
+                  set: ['pnt.empowerment.reinvest']
+      'parksDirector':
         - type: first
           items:
-            - cond: 'government_idea_birds'
+            - cond: 'pnt.empowerment.environmentalImpact'
               text:
                 en: 'We will fund a study by the university to study the impact of the wheel’s lights on birds and bats.'
                 de: 'Wir werden eine Studie der Universität finanzieren, um die Auswirkungen der Lichter des Riesenrads auf Vögel und Fledermäuse zu untersuchen.'
@@ -169,35 +169,35 @@ storylines:
                 en: 'We requested that the Ferris wheel be powered with renewable energy, so the environmental impact will be minimal.'
                 de: 'Wir haben beantragt, dass das Riesenrad mit erneuerbarer Energie betrieben wird, damit die Umweltauswirkungen minimal sind.'
               responses:
-                - cond: 'issue_birds'
+                - cond: 'op.neg.birds'
                   text:
                     en: 'Scientists are concerned about the lights and animals.'
                     de: 'Wissenschaftler*innen sind besorgt wegen der Lichter und der Tiere'
                   thenText:
-                    en: 'Would they make a report for us?'
-                    de: 'Würden sie einen Bericht für uns erstellen?'
-                  set: ['government_idea_birds']
-      'ferris_salesman':
+                    en: 'We will fund a study by the university to study the impact of the wheel’s lights on birds and bats.'
+                    de: 'Wir werden eine Studie der Universität finanzieren, um die Auswirkungen der Lichter des Riesenrads auf Vögel und Fledermäuse zu untersuchen.'
+                  set: ['pnt.empowerment.environmentalImpact']
+      'ferrisSalesman':
         - text:
             en: 'I represent Spin City™. We are excited by the opportunity of building a fantastic Ferris wheel for this city.'
             de: 'Ich vertrete Drehmoment™. Wir sind begeistert von der Möglichkeit, ein fantastisches Riesenrad für diese Stadt zu bauen.'
           responses:
-            - cond: 'issue_birds'
+            - cond: 'op.neg.birds'
               text:
                 en: 'Its lights can confuse birds and bats.'
                 de: 'Seine Lichter können Vögel und Fledermäuse verwirren.'
               thenText:
                 en: 'No problem! We can play loud music to scare them away.'
                 de: 'Kein Problem! Wir können laute Musik spielen, um sie zu verscheuchen.'
-              set: ['salesman_idea_birds']
-            - cond: 'issue_1 | issue_2 | issue_3 | issue_finance'
+              set: ['talkedTo.ferrisSalesman.birds']
+            - cond: 'COUNT("op.neg") >= 1'
               text:
                 en: 'Some are not happy with the idea.'
                 de: 'Einige sind von der Idee nicht begeistert.'
               thenText:
                 en: 'To get things done, it’s best not to listen to negative people.'
                 de: 'Um etwas zu erreichen, ist es am besten, nicht auf negative Menschen zu hören.'
-            - cond: 'issue_neighbors'
+            - cond: 'op.neg.neighbors'
               text:
                 en: 'People who live nearby worry about the traffic, noise, and lights.'
                 de: 'Die Anwohner machen sich Sorgen über den Verkehr, den Lärm und die Lichter.'
@@ -207,34 +207,33 @@ storylines:
       'biologist':
         - type: 'first'
           items:
-            - cond: 'biologist_solved'
+            - cond: 'pnt.empowerment.environmentalImpact'
               text:
                 en: 'We will study the impact of the wheel’s lights on birds and bats and hopefully find a way to limit the issue.'
                 de: 'Wir werden die Auswirkungen der Riesenrad-Lichter auf Vögel und Fledermäuse untersuchen und hoffentlich einen Weg finden, um das Problem zu begrenzen.'
             - text:
                 en: 'The lights of a Ferris wheel can confuse birds and bats.'
                 de: 'Die Lichter eines Riesenrads können Vögel und Fledermäuse verwirren.'
-              set: ['issue_birds', 'issue_2']
+              set: ['op.neg.birds']
               responses:
-                - cond: 'salesman_idea_birds'
+                - cond: 'talkedTo.ferrisSalesman.birds'
                   text:
                     de: 'Man kann laute Musik spielen, um sie zu verscheuchen.'
                     en: 'They can play loud music to scare them away.'
                   thenText:
                     en: 'Hmmph! Don’t talk to me!'
                     de: 'Hmpf! Reden Sie nicht mit mir!'
-                - cond: 'government_idea_birds'
+                - cond: 'pnt.empowerment.environmentalImpact'
                   text:
                     en: 'The city government wants to fund a study.'
                     de: 'Die Stadtverwaltung will eine Studie finanzieren.'
                   thenText:
                     en: 'Hopefully, we’ll find a way to limit the environmental impact.'
                     de: 'Hoffentlich finden wir einen Weg, um die Auswirkungen auf die Umwelt zu begrenzen.'
-                  set: ['biologist_solved']
-      'citizen_puan':
+      'citizenPuan':
         - type: 'first'
           items:
-            - cond: 'citizen_puan_solved'
+            - cond: 'pnt.empathy.museum'
               text:
                 en: 'I love our museum and hope it’s not neglected.'
                 de: 'Ich liebe unser Museum und ich hoffe, dass es nicht vernachlässigt wird.'
@@ -242,19 +241,19 @@ storylines:
                 en: 'Why attract tourists with such an eyesore and not our museums?'
                 de: 'Warum sollte man Tourist*inen mit einem solchen Ungetüm anlocken und nicht mit unserem Museum?'
               responses:
-                - cond: 'museum_solved'
+                - cond: 'talkedTo.museumDirector'
                   text:
                     en: 'The museum expects tourists to visit both.'
                     de: 'Das Museum geht davon aus, dass die Tourist*innen beides besuchen werden.'
                   thenText:
                     en: 'Mmm. Maybe.'
                     de: 'Hmmm. Vielleicht.'
-                  set: ['citizen_puan_solved']
-      'museum_director':
+                  set: ['pnt.empathy.museum']
+      'museumDirector':
         - text:
             en: 'We hope the Ferris wheel attracts tourists who will also visit our museum after.'
             de: 'Wir hoffen, dass das Riesenrad Tourist*innen anlockt, die danach auch unser Museum besuchen werden.'
-          set: ['museum_solved']
+          set: ['talkedTo.museumDirector']
       'tourist':
         - type: 'random'
           items:
@@ -264,7 +263,7 @@ storylines:
           - text:
               en: 'I love the Ferris wheel in Viena. Iconic!'
               de: 'Ich liebe das Riesenrad in Wien! Eine Ikone!'
-      'citizen_cat':
+      'citizenCat':
         - text:
             en: 'What do YOU think?'
             de: 'Was denkst DU?'
@@ -278,43 +277,42 @@ storylines:
             - text:
                 en: 'I don’t know yet.'
                 de: 'Ich weiß es noch nicht.'
-      'citizen_cool':
+      'citizenCool':
         - type: first
           items:
-            - cond: 'citizen_cool_solved'
+            - cond: 'pnt.information.fakeNews.accident'
               text:
                 en: 'I’m concerned with the Ferris wheel’s safety.'
                 de: 'Ich mache mir Sorgen um die Sicherheit des Riesenrads.'
             - text:
                 en: 'They had a Ferris wheel in Nearbyville. It fell and crushed 50 people to death.'
                 de: 'In Nebenhausen hatten sie ein Riesenrad. Es stürzte ab und es verunglückten 50 Menschen.'
-              set: ['rumor']
+              set: ['heard.rumor.accident']
               responses:
-                - cond: 'rumor_solved'
+                - cond: 'pnt.information.fakeNews.accident'
                   text:
                     en: 'This is a fake rumor. That wheel still operates in Furtherburg.'
                     de: 'Das ist ein falsches Gerücht. Das Rad ist in Fernheim noch in Betrieb.'
                   thenText:
                     de: 'Ich mache mir Sorgen um die Sicherheit des Riesenrads.'
                     en: 'I’m concerned with the Ferris wheel’s safety.'
-                  set: ['citizen_cool_solved']
       'journalist':
         - text:
             en: 'We’re researching the history of Ferris wheels in the region for an article. There are many fake rumors circulating.'
             de: 'Wir recherchieren für einen Artikel über die Geschichte der Riesenräder in der Region. Es kursieren viele falsche Gerüchte.'
           responses:
-            - cond: 'rumor'
+            - cond: 'heard.rumor.accident'
               text:
                 en: 'What do you know about the accident in Nearbyville?'
                 de: 'Was wissen Sie über den Unfall in Nebenhausen?'
               thenText:
                 en: 'There was no accident. They sold their Ferris wheel to Furtherburg, and it’s still operating there.'
                 de: 'Es gab keinen Unfall. Sie haben ihr Riesenrad an Fernheim verkauft, und dort ist es immer noch in Betrieb.'
-              set: ['rumor_solved']
+              set: ['pnt.information.fakeNews.accident']
       'robot':
         - type: first
           items:
-            - cond: 'issue_birds'
+            - cond: 'op.neg.birds'
               text:
                 en: 'I hope the wheel gets rid of all the birds and bats, they’re just flying rats.'
                 de: 'Ich hoffe, dass das Riesenrad alle Vögel und Fledermäuse vertreibt, das sind doch nur fliegende Ratten.'
@@ -325,7 +323,7 @@ storylines:
                   thenText:
                     en: '“Ecosystem” is a concept from the time before supermarkets.'
                     de: '"Ökosystem" ist ein Begriff aus der Zeit bevor es Supermärkte gab.'
-            - cond: 'rumor'
+            - cond: 'heard.rumor.accident'
               text:
                 en: 'Anyone opposed to this project is opposed to technological progress.'
                 de: 'Wer gegen dieses Projekt ist, ist gegen den technischen Fortschritt.'
@@ -352,49 +350,49 @@ storylines:
                   thenText:
                     en: 'There are twelve Disney parks in the world. Did you personally visit all of them?'
                     de: 'Es gibt zwölf Disney_Parks auf der Welt. Hast du die alle persönlich besucht?'
-      'citizen_blue':
+      'citizenBlue':
         - type: first
           items:
-            - cond: 'citizen_neighbor_solved'
+            - cond: 'pnt.equity.neighbors'
               text:
                 en: 'I have A LOT to say in the citizen assembly.'
                 de: 'Ich habe in der Bürgerversammlung SEHR VIEL zu sagen.'
             - text:
                 en: 'Nobody asked us, and they’re placing it right next to our homes.'
                 de: 'Niemand hat uns gefragt, und sie stellen es direkt neben unsere Häuser.'
-              set: ['issue_1', 'issue_neighbors']
+              set: ['op.neg.neighbors']
               responses:
-                - cond: 'citizen_assembly'
+                - cond: 'pnt.empowerment.citizenAssembly'
                   text:
                     en: 'The mayor will call a citizen assembly.'
                     de: 'Die Bürgermeisterin wird eine Bürgerversammlung einberufen.'
                   thenText:
                     de: 'OK, ich hoffe, sie werden sich meine Bedenken anhören.'
                     en: 'OK, I hope they will listen to my concerns.'
-                  set: ['citizen_neighbor_solved']
-      'citizen_old_hip':
+                  set: ['pnt.equity.neighbors']
+      'citizenHipster':
         - type: first
           items:
-            - cond: 'citizen_old_hip_solved'
+            - cond: 'pnt.equity.neglectedArea'
               text:
                 de: 'Wenn die Stadt die Gewinne wieder investiert, um die lokalen Unternehmen zu unterstützen, könnte der Tourismus gute Möglichkeiten für uns bringen.'
                 en: 'If the city invests the profits back to help local businesses, tourism might bring good opportunities for us.'
             - text:
                 de: 'Das wird zu viel Verkehr, Lärm und Kriminalität in diesem ohnehin schon sehr vernachlässigten Viertel führen.'
                 en: 'This will add a lot of traffic, noise, and crime to the area, which is already very neglected.'
-              set: ['issue_finance', 'issue_2', 'issue_neighbors']
+              set: ['op.neg.neglectedArea']
               responses:
-                - cond: 'solved_finance'
+                - cond: 'pnt.empowerment.reinvest'
                   text:
                     en: 'The city promised to invest the profits back in this area.'
                     de: 'Die Stadt hat versprochen, die Gewinne wieder in dieses Viertel zu investieren.'
                   thenText:
                     en: 'If they help local businesses, we can be ready for tourists.'
                     de: 'Wenn sie die örtlichen Unternehmen unterstützen, können wir auf Touristen vorbereitet sein.'
-                  set: ['citizen_old_hip_solved']
-      'citizen_braid':
+                  set: ['pnt.equity.neglectedArea']
+      'citizenBraid':
         - type: 'random'
-          set: ['positive_1']
+          set: ['op.pos.citizenBraid']
           items:
             - text:
                 en: 'Tourism will help small local businesses.'
@@ -402,9 +400,9 @@ storylines:
             - text:
                 en: 'It can make us more unique and increase visitors.'
                 de: 'Er kann uns einzigartiger machen und die Besucherzahlen erhöhen.'
-      'citizen_cage':
+      'citizenCage':
         - type: 'random'
-          set: ['positive_2']
+          set: ['op.pos.citizenCage']
           items:
             - text:
                 en: 'There are fewer jobs each day. It’s a good idea to focus on tourism. '
@@ -412,51 +410,51 @@ storylines:
             - text:
                 en: 'Tourism will help small local businesses.'
                 de: 'Der Tourismus wird kleinen lokalen Unternehmen helfen.'
-      'citizen_punk':
+      'citizenPunk':
         - type: first
           items:
-            - cond: 'citizen_punk_solved'
+            - cond: 'pnt.empathy.positivity'
               text:
                 en: 'I was against the project, but now I’m not sure.'
                 de: 'Ich war gegen das Projekt, aber jetzt bin ich mir nicht mehr sicher.'
-            - cond: '^citizen_punk_solved & citizen_punk_partly_solved'
+            - cond: '^pnt.empathy.positivity & talkedTo.citizenPunk.partial.'
               text:
                 en: 'Most of my friends are against, but I’m beginning to see more positive opinions.'
                 de: 'Die meisten meiner Freunde sind dagegen, aber es gibt auch immer mehr positive Stimmen.'
               responses:
-                - cond: 'positive_1 & positive_2'
+                - cond: 'COUNT("op.pos") >= 2'
                   text:
                     en: 'I collected some positive opinions. Look.'
                     de: 'Ich habe einige positive Meinungen gesammelt. Schau mal.'
                   thenText:
                     en: '… OK. Those are interesting points.'
                     de: '… Okay. Das sind interessante Punkte.'
-                  set: [ 'citizen_punk_solved' ]
-            - cond: '^citizen_punk_solved & ^citizen_punk_partly_solved'
+                  set: [ 'pnt.empathy.positivity' ]
+            - cond: '^pnt.empathy.positivity & ^talkedTo.citizenPunk.partial'
               text:
                 en: 'I’ve spoken to many people and no one is in favor of this project.'
                 de: 'Ich habe mit vielen Leuten gesprochen und niemand ist für dieses Projekt.'
               responses:
-                - cond: 'positive_1 & positive_2'
+                - cond: 'COUNT("op.pos") >= 2'
                   text:
                     en: 'I collected some positive opinions. Look.'
                     de: 'Ich habe einige positive Meinungen gesammelt. Schau mal.'
                   thenText:
                     en: '… OK. Those are interesting points.'
                     de: '… Okay. Das sind interessante Punkte.'
-                  set: ['citizen_punk_solved']
-                - cond: '(positive_1 & ^positive_2) | (^positive_1 & positive_2)'
+                  set: ['pnt.empathy.positivity']
+                - cond: 'COUNT("op.pos") = 1'
                   text:
                     en: 'I collected some positive opinions. Look.'
                     de: 'Ich habe einige positive Meinungen gesammelt. Schau mal.'
                   thenText:
                     en: 'I was against the project, but now I’m not sure.'
                     de: 'Ich war gegen das Projekt, aber jetzt bin ich mir nicht mehr sicher.'
-                  set: ['citizen_punk_partly_solved']
-      'citizen_lila':
+                  set: ['talkedTo.citizenPunk.partial']
+      'citizenLila':
         - type: first
           items:
-            - cond: 'citizen_lila_solved'
+            - cond: 'pnt.information.fakeNews.profits'
               text:
                 en: 'I was against the project, but now I’m not sure.'
                 de: 'Ich war gegen das Projekt, aber jetzt bin ich mir nicht mehr sicher.'
@@ -464,61 +462,93 @@ storylines:
                 en: 'It will sell tickets, but a private company gets all the money.'
                 de: 'Es werden Eintrittskarten verkauft, aber ein privates Unternehmen bekommt das ganze Geld.'
               responses:
-                - cond: 'talked_finance'
+                - cond: 'talkedTo.financeDirector'
                   text:
                     en: 'Part of the profits will go to the city.'
                     de: 'Ein Teil des Gewinns wird an die Stadt gehen.'
                   thenText:
                     en: 'I didn’t know that.'
                     de: 'Das wusste ich nicht.'
-                  set: ['citizen_lila_solved']
-      'construction_worker':
+                  set: ['pnt.information.fakeNews.profits']
+      'constructionWorker':
         - type: first
           items:
-            - cond: 'construction_worker_solved'
+            - cond: 'pnt.empathy.tourismNegativeImpact'
               text:
                 en: 'I’m looking forward to the citizen assembly.'
                 de: 'Ich freue mich auf die Bürgerversammlung.'
             - text:
                 en: 'Tourism makes everything more expensive! And there are so few available apartments already.'
                 de: 'Der Tourismus macht alles teurer! Und es gibt schon jetzt so wenig freie Wohnungen.'
-              set: ['issue_3']
+              set: ['op.neg.constructionWorker']
               responses:
-                - cond: 'citizen_assembly'
+                - cond: 'pnt.empowerment.citizenAssembly'
                   text:
                     en: 'The mayor will call a citizen assembly.'
                     de: 'Die Bürgermeisterin wird eine Bürgerversammlung einberufen.'
                   thenText:
                     en: 'Oh, that’s great!'
                     de: 'Oh, das ist ja toll!'
-                  set: ['construction_worker_solved']
-      'citizen_queen':
+                  set: ['pnt.empathy.tourismNegativeImpact']
+      'citizenQueen':
         - type: first
           items:
-            - cond: 'citizen_queen_solved'
+            - cond: 'pnt.empathy.tourismCrime'
               text:
                 en: 'I’m not too optimistic that the citizen assembly will make a difference, but I’ll give them a chance.'
                 de: 'Ich bin nicht allzu optimistisch, dass die Bürgerversammlung etwas bewirken wird, aber ich werde ihr eine Chance geben.'
             - text: 'Touristen = Kriminalität!'
-              set: ['issue_3']
+              set: ['op.neg.citizenQueen']
               responses:
-                - cond: 'citizen_assembly'
+                - cond: 'pnt.empowerment.citizenAssembly'
                   text:
                     en: 'The mayor will call a citizen assembly.'
                     de: 'Die Bürgermeisterin wird eine Bürgerversammlung einberufen.'
                   thenText:
                     en: 'Mmmm... OK.'
                     de: 'Mmmm... OK.'
-                  set: ['citizen_queen_solved']
-    scoring:
-      citizen_assembly: empowerment
-      biologist_solved: empowerment
-      solved_finance: empowerment
-      citizen_cool_solved: information
-      citizen_lila_solved: information
-      citizen_puan_solved: empathy
-      citizen_punk_solved: empathy
-      construction_worker_solved: empathy
-      citizen_queen_solved: empathy
-      citizen_neighbor_solved: equity
-      citizen_old_hip_solved: equity
+                  set: ['pnt.empathy.tourismCrime']
+      _ending:
+        - type: sequence
+          items:
+            - type: first
+              items:
+                - cond: 'COUNT("pnt") > 1'
+                  text:
+                    de: "Der/die Bürgermeister*in und das Unternehmen Drehmoment™ vereinbarten den Bau eines neuen Riesenrads."
+                    en: "The major and the Spin City™ company agreed to build a new Ferris wheel."
+                - text:
+                    en: ':angry: The construction of the Ferris wheel was paused because of constant vandalism by angry citizens.'
+                    de: ':angry: Der Bau des Riesenrads wurde wegen andauernden Vandalismus durch zornige Bürger*innen unterbrochen.'
+                  set: [ 'ending.notBuilt' ]
+            - type: first
+              items:
+                - cond: 'pnt.empowerment.citizenAssembly'
+                  text:
+                    de: ':empowerment: Es wurde eine Bürgerversammlung einberufen, um das Riesenradprojekt zu diskutieren. Wir müssen uns die Bedenken anhören, Fragen prüfen und Entscheidungen auf der Grundlage von Informationen treffen.'
+                    en: ':empowerment: A citizen assembly was formed to discuss the Ferris wheel project. We need to hear concerns, study issues, and make choices based on information.'
+                - cond: 'COUNT("pnt") >= 6'
+                  text:
+                    de: ':neutral: Einige Bürger*innen sagen, es mache viel Spaß. Die meisten sagen, es sei eine große Geldverschwendung.'
+                    en: ':neutral: Some citizens say it’s a lot of fun. Most say it’s a big waste of money.'
+                - cond: 'COUNT("pnt") = 5'
+                  text:
+                    de: ':neutral: Es wurde von Anwohnern zur "hässlichsten Attraktion Deutschlands" gewählt.'
+                    en: ':neutral: It was voted “The ugliest attraction in Germany” by residents.'
+                - cond: 'COUNT("pnt") = 4'
+                  text:
+                    de: ':sad: Es zieht einige Tourist*innen an, aber die Einheimischen meiden die Gegend lieber.'
+                    en: ':sad: It attracts some tourists, but locals prefer to avoid the area.'
+                - text:
+                    de: ':sad: Die Bürger*innen protestierten wochenlang. Ein*e Richter*in entschied, dass das Riesenrad nur an Wochenenden und bei ausgeschalteter Beleuchtung betrieben werden darf.'
+                    en: ':sad: Citizens protested for weeks. A judge decided that the Ferris wheel must only operate on weekends and with its lights off.'
+            - type: first
+              items:
+                - cond: '^ending.notBuilt & pnt.empowerment.environmentalImpact'
+                  text:
+                    de: 'Die örtliche Universität nahm Änderungen am Projekt vor, um die Auswirkungen auf Vögel und Fledermäuse zu minimieren.'
+                    en: 'The local university made changes to the project to minimize the impact on local birds and bats.'
+                - cond: '^ending.notBuilt & pnt.empowerment.reinvest'
+                  text:
+                    de: 'Ein Teil des Gewinns wird für die Aufwertung des nördlichen Teils der Stadt verwendet.'
+                    en: 'A part of the profits is being used to improve the northern part of the city.'

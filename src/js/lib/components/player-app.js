@@ -18,6 +18,7 @@ const Countdown = require('../helpers-web/countdown');
 const DecisionScreen = require('../ui/decisionScreen');
 const ScoringOverlay = require('../ui/scoringOverlay');
 const { I18nTextAdapter } = require('../helpers/i18n');
+const readEnding = require('../dialogues/ending-reader');
 
 
 class PlayerApp {
@@ -51,7 +52,7 @@ class PlayerApp {
       this.$decisionLabel.html(text);
     }, this.lang, this.config.storylines.touristen.decision);
 
-    window.decisionLabelI18n = this.decisionLabelI18n;
+    this.endingScreen = null;
 
     this.countdown = new Countdown(config.game.duration);
     this.countdown.$element.appendTo(this.$storylineBar);
@@ -74,8 +75,12 @@ class PlayerApp {
         return;
       }
       seenFlags[flagId] = true;
-      if (this.config.storylines.touristen.scoring[flagId]) {
-        this.scoringOverlay.show(this.config.storylines.touristen.scoring[flagId]);
+      if (flagId.startsWith('pnt.')) {
+        const flagParts = flagId.split('.');
+        const category = flagParts[1];
+        if (category) {
+          this.scoringOverlay.show(category);
+        }
       }
     });
 
@@ -115,6 +120,7 @@ class PlayerApp {
 
     this.keyboardInputMgr = new KeyboardInputMgr();
     this.keyboardInputMgr.attachListeners();
+    this.keyboardInputMgr.addToggle('KeyE', () => { this.countdown.forceEnd(); });
     this.keyboardInputMgr.addToggle('KeyD', () => { this.stats.togglePanel(); });
     this.keyboardInputMgr.addToggle('KeyH', () => { this.toggleHitboxDisplay(); });
     this.keyboardInputMgr.addToggle('KeyX', () => { console.log(`x: ${this.pc.position.x}, y: ${this.pc.position.y}`); });
@@ -183,6 +189,9 @@ class PlayerApp {
     this.lang = lang;
     this.dialogueOverlay.setLang(this.lang);
     this.decisionLabelI18n.setLang(this.lang);
+    if (this.endingScreen) {
+      this.endingScreen.setLang(this.lang);
+    }
   }
 
   toggleLanguage() {
@@ -227,12 +236,16 @@ class PlayerApp {
     }
   }
 
+  getDialogueContext() {
+    return {
+      flags: this.flags,
+        random: max => Math.floor(Math.random() * max),
+    };
+  }
+
   playDialogue(dialogue, npc = null) {
     this.inputRouter.routeToDialogueOverlay(this.dialogueOverlay, this.dialogueSequencer);
-    this.dialogueSequencer.play(dialogue, {
-      flags: this.flags,
-      random: max => Math.floor(Math.random() * max),
-    }, { top: npc.name });
+    this.dialogueSequencer.play(dialogue, this.getDialogueContext(), { top: npc.name });
     this.dialogueSequencer.events.once('end', () => {
       this.inputRouter.routeToPcMovement(this);
     });
@@ -271,75 +284,13 @@ class PlayerApp {
   }
 
   handleStorylineEnd() {
-    const citizenAssembly = !!this.flags.value('citizen-assembly');
-    const environmentalImpact = !!this.flags.value('biologist-solved');
-    const reinvestment = !!this.flags.value('solved-finance');
-
-    let information = 0;
-    let empowerment = 0;
-    let empathy = 0;
-    let inclusion = 0;
-
-    empowerment += (citizenAssembly ? 2 : 0);
-    empowerment += (environmentalImpact ? 1 : 0);
-    empowerment += (reinvestment ? 1 : 0);
-    information += (!!this.flags.value('citizen-cool-solved') ? 1 : 0);
-    information += (!!this.flags.value('citizen-lila-solved') ? 1 : 0);
-    empathy += (!!this.flags.value('citizen-puan-solved') ? 1 : 0);
-    empathy += (!!this.flags.value('citizen-punk-solved') ? 1 : 0);
-    empathy += (!!this.flags.value('construction-worker-solved') ? 1 : 0);
-    empathy += (!!this.flags.value('citizen-queen-solved') ? 1 : 0);
-    inclusion += (!!this.flags.value('citizen-neighbor-solved') ? 1 : 0);
-    inclusion += (!!this.flags.value('citizen-old-hip-solved') ? 1 : 0);
-
-    let score = empowerment + information + empathy + inclusion;
-    let icon;
-    let lines = [];
-
-    // A decision has been reached…
-
-    if (score <= 1) {
-      lines.push("Der Bau des Riesenrads wurde wegen andauernden Vandalismus durch zornige Bürger*innen unterbrochen.");
-      icon = 'angry';
-    } else {
-      if (citizenAssembly) {
-        lines.push("Es wurde eine Bürgerversammlung einberufen, um das Riesenradprojekt zu diskutieren. Wir müssen uns die Bedenken anhören, Fragen prüfen und Entscheidungen auf der Grundlage von Informationen treffen.");
-        icon = 'empowerment';
-      } else {
-        lines.push("Die Bürgermeisterin und das Unternehmen Drehmoment™ vereinbarten den Bau eines neuen Riesenrads.");
-      }
-
-      if (environmentalImpact) {
-        lines.push("\nDie örtliche Universität nahm Änderungen am Projekt vor, um die Auswirkungen auf Vögel und Fledermäuse zu minimieren.");
-      }
-      if (reinvestment) {
-        lines.push("\nEin Teil des Gewinns wird für die Aufwertung des nördlichen Teils der Stadt verwendet.");
-        if (!citizenAssembly) {
-          icon = 'happy';
-        }
-      }
-
-      if (!citizenAssembly && !reinvestment) {
-        if (score >= 6) {
-          icon='neutral';
-          lines.push("\nEinige Bürger*innen sagen, es mache viel Spaß. Die meisten sagen, es sei eine große Geldverschwendung.");
-        } else if (score >= 5) {
-          icon='neutral';
-          lines.push("\nEs wurde von Anwohnern zur \"hässlichsten Attraktion Deutschlands\" gewählt.");
-        } else if (score >= 4) {
-          icon='sad';
-          lines.push("\nEs zieht einige Tourist*innen an, aber die Einheimischen meiden die Gegend lieber.");
-        } else {
-          icon='sad';
-          lines.push("\nDie Bürger*innen protestierten wochenlang. Ein*e Richter*in entschied, dass das Riesenrad nur an Wochenenden und bei ausgeschalteter Beleuchtung betrieben werden darf.");
-        }
-      }
-    }
+    const endingText = readEnding(this.getDialogue('_ending'), this.getDialogueContext());
+    const icon = 'skip';
 
     this.inputRouter.unroute();
-    const screen = new DecisionScreen();
-    this.$element.append(screen.$element);
-    screen.showDecision(lines, icon);
+    this.endingScreen = new DecisionScreen(this.config, this.lang);
+    this.$element.append(this.endingScreen.$element);
+    this.endingScreen.showDecision(endingText, icon);
   }
 }
 

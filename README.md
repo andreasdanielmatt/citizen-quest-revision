@@ -50,8 +50,12 @@ a friendly format.
 
 ## Debugging tools
 
-Press the 'd' key in the player app to put a stat panel on screen. Each press of 'd' toggles to a
-different panel.
+The following keyboard shortcuts are available in the player app:
+
+- 'd': Toggle stats panel. Each press of 'd' toggles to a different panel.
+- 'e': Ends the countdown and jumps to the game end.
+- 'h': Shows hitboxes.
+- 'x': Outputs the player's position to the javascript console.
 
 ## License
 

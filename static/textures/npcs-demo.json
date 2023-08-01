@@ -1,12 +1,12 @@
 {
   "frames": {
-    "citizen_cool": {
+    "citizenCool": {
       "frame": {"x": 0, "y": 0, "w": 72, "h": 156},
       "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
       "sourceSize": {"w": 72, "h": 156},
       "anchor": { "x": 36, "y": 156 }
     },
-    "ferris_salesman": {
+    "ferrisSalesman": {
       "frame": {"x": 72, "y": 0, "w": 72, "h": 156},
       "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
       "sourceSize": {"w": 72, "h": 156},
@@ -30,7 +30,7 @@
       "sourceSize": {"w": 72, "h": 156},
       "anchor": { "x": 36, "y": 156 }
     },
-    "parks_director": {
+    "parksDirector": {
       "frame": {"x": 360, "y": 0, "w": 72, "h": 156},
       "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
       "sourceSize": {"w": 72, "h": 156},
@@ -42,7 +42,7 @@
       "sourceSize": {"w": 72, "h": 156},
       "anchor": { "x": 36, "y": 156 }
     },
-    "finance_director": {
+    "financeDirector": {
       "frame": {"x": 504, "y": 0, "w": 72, "h": 156},
       "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
       "sourceSize": {"w": 72, "h": 156},
@@ -54,67 +54,67 @@
       "sourceSize": {"w": 72, "h": 156},
       "anchor": { "x": 36, "y": 156 }
     },
-    "museum_director": {
+    "museumDirector": {
       "frame": {"x": 0, "y": 156, "w": 72, "h": 156},
       "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
       "sourceSize": {"w": 72, "h": 156},
       "anchor": { "x": 36, "y": 0 }
     },
-    "citizen_braid": {
+    "citizenBraid": {
       "frame": {"x": 72, "y": 156, "w": 72, "h": 156},
       "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
       "sourceSize": {"w": 72, "h": 156},
       "anchor": { "x": 36, "y": 0 }
     },
-    "citizen_cat": {
+    "citizenCat": {
       "frame": {"x": 144, "y": 156, "w": 72, "h": 156},
       "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
       "sourceSize": {"w": 72, "h": 156},
       "anchor": {"x": 36, "y": 0}
     },
-    "citizen_old_hip": {
+    "citizenHipster": {
       "frame": {"x": 216, "y": 156, "w": 72, "h": 156},
       "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
       "sourceSize": {"w": 72, "h": 156},
       "anchor": {"x": 36, "y": 0}
     },
-    "citizen_puan": {
+    "citizenPuan": {
       "frame": {"x": 288, "y": 156, "w": 72, "h": 156},
       "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
       "sourceSize": {"w": 72, "h": 156},
       "anchor": {"x": 36, "y": 0}
     },
-    "citizen_cage": {
+    "citizenCage": {
       "frame": {"x": 360, "y": 156, "w": 72, "h": 156},
       "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
       "sourceSize": {"w": 72, "h": 156},
       "anchor": {"x": 36, "y": 0}
     },
-    "citizen_punk": {
+    "citizenPunk": {
       "frame": {"x": 432, "y": 156, "w": 72, "h": 156},
       "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
       "sourceSize": {"w": 72, "h": 156},
       "anchor": {"x": 36, "y": 0}
     },
-    "citizen_lila": {
+    "citizenLila": {
       "frame": {"x": 504, "y": 156, "w": 72, "h": 156},
       "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
       "sourceSize": {"w": 72, "h": 156},
       "anchor": {"x": 36, "y": 0}
     },
-    "citizen_blue": {
+    "citizenBlue": {
       "frame": {"x": 576, "y": 156, "w": 72, "h": 156},
       "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
       "sourceSize": {"w": 72, "h": 156},
       "anchor": {"x": 36, "y": 0}
     },
-    "construction_worker": {
+    "constructionWorker": {
       "frame": {"x": 0, "y": 312, "w": 72, "h": 156},
       "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
       "sourceSize": {"w": 72, "h": 156},
       "anchor": {"x": 36, "y": 0}
     },
-    "citizen_queen": {
+    "citizenQueen": {
       "frame": {"x": 72, "y": 312, "w": 72, "h": 156},
       "spriteSourceSize": {"x": 0, "y": 0, "w": 72, "h": 156},
       "sourceSize": {"w": 72, "h": 156},

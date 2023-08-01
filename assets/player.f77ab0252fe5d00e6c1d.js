@@ -9836,6 +9836,7 @@ const Countdown = __webpack_require__(/*! ../helpers-web/countdown */ "./src/js/
 const DecisionScreen = __webpack_require__(/*! ../ui/decisionScreen */ "./src/js/lib/ui/decisionScreen.js");
 const ScoringOverlay = __webpack_require__(/*! ../ui/scoringOverlay */ "./src/js/lib/ui/scoringOverlay.js");
 const { I18nTextAdapter } = __webpack_require__(/*! ../helpers/i18n */ "./src/js/lib/helpers/i18n.js");
+const readEnding = __webpack_require__(/*! ../dialogues/ending-reader */ "./src/js/lib/dialogues/ending-reader.js");
 
 
 class PlayerApp {
@@ -9869,7 +9870,7 @@ class PlayerApp {
       this.$decisionLabel.html(text);
     }, this.lang, this.config.storylines.touristen.decision);
 
-    window.decisionLabelI18n = this.decisionLabelI18n;
+    this.endingScreen = null;
 
     this.countdown = new Countdown(config.game.duration);
     this.countdown.$element.appendTo(this.$storylineBar);
@@ -9892,8 +9893,12 @@ class PlayerApp {
         return;
       }
       seenFlags[flagId] = true;
-      if (this.config.storylines.touristen.scoring[flagId]) {
-        this.scoringOverlay.show(this.config.storylines.touristen.scoring[flagId]);
+      if (flagId.startsWith('pnt.')) {
+        const flagParts = flagId.split('.');
+        const category = flagParts[1];
+        if (category) {
+          this.scoringOverlay.show(category);
+        }
       }
     });
 
@@ -9933,6 +9938,7 @@ class PlayerApp {
 
     this.keyboardInputMgr = new KeyboardInputMgr();
     this.keyboardInputMgr.attachListeners();
+    this.keyboardInputMgr.addToggle('KeyE', () => { this.countdown.forceEnd(); });
     this.keyboardInputMgr.addToggle('KeyD', () => { this.stats.togglePanel(); });
     this.keyboardInputMgr.addToggle('KeyH', () => { this.toggleHitboxDisplay(); });
     this.keyboardInputMgr.addToggle('KeyX', () => { console.log(`x: ${this.pc.position.x}, y: ${this.pc.position.y}`); });
@@ -10001,6 +10007,9 @@ class PlayerApp {
     this.lang = lang;
     this.dialogueOverlay.setLang(this.lang);
     this.decisionLabelI18n.setLang(this.lang);
+    if (this.endingScreen) {
+      this.endingScreen.setLang(this.lang);
+    }
   }
 
   toggleLanguage() {
@@ -10045,12 +10054,16 @@ class PlayerApp {
     }
   }
 
+  getDialogueContext() {
+    return {
+      flags: this.flags,
+        random: max => Math.floor(Math.random() * max),
+    };
+  }
+
   playDialogue(dialogue, npc = null) {
     this.inputRouter.routeToDialogueOverlay(this.dialogueOverlay, this.dialogueSequencer);
-    this.dialogueSequencer.play(dialogue, {
-      flags: this.flags,
-      random: max => Math.floor(Math.random() * max),
-    }, { top: npc.name });
+    this.dialogueSequencer.play(dialogue, this.getDialogueContext(), { top: npc.name });
     this.dialogueSequencer.events.once('end', () => {
       this.inputRouter.routeToPcMovement(this);
     });
@@ -10089,75 +10102,13 @@ class PlayerApp {
   }
 
   handleStorylineEnd() {
-    const citizenAssembly = !!this.flags.value('citizen-assembly');
-    const environmentalImpact = !!this.flags.value('biologist-solved');
-    const reinvestment = !!this.flags.value('solved-finance');
-
-    let information = 0;
-    let empowerment = 0;
-    let empathy = 0;
-    let inclusion = 0;
-
-    empowerment += (citizenAssembly ? 2 : 0);
-    empowerment += (environmentalImpact ? 1 : 0);
-    empowerment += (reinvestment ? 1 : 0);
-    information += (!!this.flags.value('citizen-cool-solved') ? 1 : 0);
-    information += (!!this.flags.value('citizen-lila-solved') ? 1 : 0);
-    empathy += (!!this.flags.value('citizen-puan-solved') ? 1 : 0);
-    empathy += (!!this.flags.value('citizen-punk-solved') ? 1 : 0);
-    empathy += (!!this.flags.value('construction-worker-solved') ? 1 : 0);
-    empathy += (!!this.flags.value('citizen-queen-solved') ? 1 : 0);
-    inclusion += (!!this.flags.value('citizen-neighbor-solved') ? 1 : 0);
-    inclusion += (!!this.flags.value('citizen-old-hip-solved') ? 1 : 0);
-
-    let score = empowerment + information + empathy + inclusion;
-    let icon;
-    let lines = [];
-
-    // A decision has been reached…
-
-    if (score <= 1) {
-      lines.push("Der Bau des Riesenrads wurde wegen andauernden Vandalismus durch zornige Bürger*innen unterbrochen.");
-      icon = 'angry';
-    } else {
-      if (citizenAssembly) {
-        lines.push("Es wurde eine Bürgerversammlung einberufen, um das Riesenradprojekt zu diskutieren. Wir müssen uns die Bedenken anhören, Fragen prüfen und Entscheidungen auf der Grundlage von Informationen treffen.");
-        icon = 'empowerment';
-      } else {
-        lines.push("Die Bürgermeisterin und das Unternehmen Drehmoment™ vereinbarten den Bau eines neuen Riesenrads.");
-      }
-
-      if (environmentalImpact) {
-        lines.push("\nDie örtliche Universität nahm Änderungen am Projekt vor, um die Auswirkungen auf Vögel und Fledermäuse zu minimieren.");
-      }
-      if (reinvestment) {
-        lines.push("\nEin Teil des Gewinns wird für die Aufwertung des nördlichen Teils der Stadt verwendet.");
-        if (!citizenAssembly) {
-          icon = 'happy';
-        }
-      }
-
-      if (!citizenAssembly && !reinvestment) {
-        if (score >= 6) {
-          icon='neutral';
-          lines.push("\nEinige Bürger*innen sagen, es mache viel Spaß. Die meisten sagen, es sei eine große Geldverschwendung.");
-        } else if (score >= 5) {
-          icon='neutral';
-          lines.push("\nEs wurde von Anwohnern zur \"hässlichsten Attraktion Deutschlands\" gewählt.");
-        } else if (score >= 4) {
-          icon='sad';
-          lines.push("\nEs zieht einige Tourist*innen an, aber die Einheimischen meiden die Gegend lieber.");
-        } else {
-          icon='sad';
-          lines.push("\nDie Bürger*innen protestierten wochenlang. Ein*e Richter*in entschied, dass das Riesenrad nur an Wochenenden und bei ausgeschalteter Beleuchtung betrieben werden darf.");
-        }
-      }
-    }
+    const endingText = readEnding(this.getDialogue('_ending'), this.getDialogueContext());
+    const icon = 'skip';
 
     this.inputRouter.unroute();
-    const screen = new DecisionScreen();
-    this.$element.append(screen.$element);
-    screen.showDecision(lines, icon);
+    this.endingScreen = new DecisionScreen(this.config, this.lang);
+    this.$element.append(this.endingScreen.$element);
+    this.endingScreen.showDecision(endingText, icon);
   }
 }
 
@@ -10995,6 +10946,39 @@ module.exports = Dialogue;
 
 /***/ }),
 
+/***/ "./src/js/lib/dialogues/ending-reader.js":
+/*!***********************************************!*\
+  !*** ./src/js/lib/dialogues/ending-reader.js ***!
+  \***********************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const DialogueIterator = __webpack_require__(/*! ./dialogue-iterator */ "./src/js/lib/dialogues/dialogue-iterator.js");
+const { mergeTexts } = __webpack_require__(/*! ../helpers/i18n */ "./src/js/lib/helpers/i18n.js");
+
+function readEnding(dialogue, context) {
+  const output = [];
+  const iterator = new DialogueIterator(dialogue, context);
+  while (!iterator.isEnd()) {
+    const activeNode = iterator.getActiveNode();
+    if (activeNode.responses !== undefined && activeNode.responses.length > 0) {
+      throw new Error('An ending dialogue must only contain statements with no responses');
+    }
+    if (activeNode.text) {
+      output.push(activeNode.text);
+    }
+    iterator.next();
+  }
+
+  return mergeTexts(output, {
+    separator: '\n',
+  });
+}
+
+module.exports = readEnding;
+
+
+/***/ }),
+
 /***/ "./src/js/lib/dialogues/flag-store.js":
 /*!********************************************!*\
   !*** ./src/js/lib/dialogues/flag-store.js ***!
@@ -11369,19 +11353,29 @@ class Countdown {
       this.interval = setInterval(() => {
         this.seconds -= 1;
         this.update();
-        if (this.seconds === 0) {
-          this.events.emit('end');
-          clearInterval(this.interval);
+        if (this.seconds <= 0) {
+          this.onEnd();
         }
       }, 1000);
     }
   }
 
+  forceEnd() {
+    this.seconds = 0;
+    this.update();
+    this.onEnd();
+  }
+
+  onEnd() {
+    clearInterval(this.interval);
+    this.events.emit('end');
+  }
+
   update() {
-    const minutes = Math.floor(this.seconds / 60);
-    const secondsLeft = this.seconds % 60;
-    const timeLeft = `${minutes}:${secondsLeft < 10 ? '0' : ''}${secondsLeft}`;
-    this.$element.html(timeLeft);
+    const timeLeft = Math.max(this.seconds, 0);
+    const secondsLeft = timeLeft % 60;
+    const minutes = Math.floor(timeLeft / 60);
+    this.$element.html(`${minutes}:${secondsLeft < 10 ? '0' : ''}${secondsLeft}`);
   }
 }
 
@@ -11629,6 +11623,60 @@ function getText(text, lang = null) {
   return text;
 }
 
+/**
+ * Given an array of texts (objects with language keys), merge them into a single object with the
+ * same keys. If any text is a simple string instead of an object, it is merged into all languages.
+ * If all texts are strings, a single string is returned.
+ *
+ * @param {Array} texts
+ * @param {Object} userOptions
+ *   - {string} separator - If set, the texts are joined with this separator
+ *   - {string} prefix - If set, the texts are prefixed with this string
+ *   - {string} suffix - If set, the texts are suffixed with this string
+ * @returns {string|Object}
+ */
+function mergeTexts(texts, userOptions = {}) {
+  const result = {};
+  const defaultOptions = {
+    separator: '',
+    prefix: '',
+    suffix: '',
+  };
+  const options = Object.assign({}, defaultOptions, userOptions);
+  let allStrings = true;
+  texts.forEach((text) => {
+    if (typeof text === 'object') {
+      allStrings = false;
+      Object.keys(text).forEach((lang) => {
+        result[lang] = '';
+      });
+    }
+  });
+
+  if (allStrings) {
+    return texts.map(t => `${options.prefix}${t}${options.suffix}`).join(options.separator);
+  }
+
+  texts.forEach((text, i) => {
+    let part;
+    Object.keys(result).forEach((lang) => {
+      if (typeof text === 'string') {
+        part = text;
+      } else if (text[lang] !== undefined) {
+        part = text[lang];
+      } else {
+        part = '';
+      }
+      result[lang] += `${options.prefix}${part}${options.suffix}`;
+      if (i < texts.length - 1) {
+        result[lang] += options.separator;
+      }
+    });
+  });
+
+  return result;
+}
+
 class I18nTextAdapter {
   constructor(setTextCallback, lang, text = null) {
     this.setTextCallback = setTextCallback;
@@ -11661,6 +11709,7 @@ class I18nTextAdapter {
 
 module.exports = {
   getText,
+  mergeTexts,
   I18nTextAdapter,
 };
 
@@ -12671,10 +12720,16 @@ module.exports = {
   \*****************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
 const SpeechText = __webpack_require__(/*! ../dialogues/speech-text */ "./src/js/lib/dialogues/speech-text.js");
+const { I18nTextAdapter } = __webpack_require__(/*! ../helpers/i18n */ "./src/js/lib/helpers/i18n.js");
 
 class DecisionScreen {
-  constructor() {
+  constructor(config, lang) {
+    this.config = config;
+    this.events = new EventEmitter();
+    this.lang = lang;
+
     this.$element = $('<div></div>')
       .addClass('decision-screen-wrapper');
 
@@ -12697,14 +12752,37 @@ class DecisionScreen {
 
     this.speech = new SpeechText();
     this.$text.append(this.speech.$element);
+
+    this.titleI18n = new I18nTextAdapter((text) => {
+      this.$title.text(text);
+    }, this.lang);
+
+    this.titleI18n.setText({
+      de: 'Eine Entscheidung wurde getroffen…',
+      en: 'A decision has been made…',
+    });
+
+    this.speechI18n = new I18nTextAdapter((text) => {
+      const { revealComplete } = this.speech;
+      this.speech.showText([{ string: text }]);
+      if (revealComplete) {
+        this.speech.revealAll();
+      }
+    }, this.lang);
   }
 
-  showDecision(lines, icon) {
+  showDecision(endingText, icon) {
     this.$icon.addClass(icon);
     this.$element.addClass('visible');
     setTimeout(() => {
-      this.speech.showText(lines.map((line) => ({ string: line })));
+      this.speechI18n.setText(endingText, true);
     }, 2000);
+  }
+
+  setLang(lang) {
+    this.lang = lang;
+    this.titleI18n.setLang(lang);
+    this.speechI18n.setLang(lang);
   }
 }
 
@@ -13273,4 +13351,4 @@ fetch(configUrl, { cache: 'no-store' })
 
 /******/ })()
 ;
-//# sourceMappingURL=player.415f26f4a1ef75c48da4.js.map
+//# sourceMappingURL=player.f77ab0252fe5d00e6c1d.js.map
