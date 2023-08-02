@@ -1,12 +1,14 @@
 class DialogueBalloon {
   constructor(classes) {
-    this.$title = $('<div></div>')
-      .addClass('title')
-      .html('The name of the speaker');
     this.$element = $('<div></div>')
       .addClass('balloon')
-      .addClass(classes)
-      .append(this.$title);
+      .addClass(classes);
+    this.$styling = $('<div></div>')
+      .appendTo(this.$element);
+    this.$title = $('<div></div>')
+      .addClass('title')
+      .html('The name of the speaker')
+      .appendTo(this.$styling);
   }
 
   show() {
@@ -20,6 +22,15 @@ class DialogueBalloon {
     } else {
       this.$title.html(title);
     }
+  }
+
+  setClasses(classes) {
+    this.removeClasses();
+    this.$styling.addClass(classes);
+  }
+
+  removeClasses() {
+    this.$styling.removeClass();
   }
 
   hide() {

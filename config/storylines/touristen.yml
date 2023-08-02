@@ -518,30 +518,36 @@ storylines:
                     de: "Der/die Bürgermeister*in und das Unternehmen Drehmoment™ vereinbarten den Bau eines neuen Riesenrads."
                     en: "The major and the Spin City™ company agreed to build a new Ferris wheel."
                 - text:
-                    en: ':angry: The construction of the Ferris wheel was paused because of constant vandalism by angry citizens.'
-                    de: ':angry: Der Bau des Riesenrads wurde wegen andauernden Vandalismus durch zornige Bürger*innen unterbrochen.'
+                    en: 'The construction of the Ferris wheel was paused because of constant vandalism by angry citizens.'
+                    de: 'Der Bau des Riesenrads wurde wegen andauernden Vandalismus durch zornige Bürger*innen unterbrochen.'
+                  class: 'citizensAngry'
                   set: [ 'ending.notBuilt' ]
             - type: first
               items:
                 - cond: 'pnt.empowerment.citizenAssembly'
                   text:
-                    de: ':empowerment: Es wurde eine Bürgerversammlung einberufen, um das Riesenradprojekt zu diskutieren. Wir müssen uns die Bedenken anhören, Fragen prüfen und Entscheidungen auf der Grundlage von Informationen treffen.'
-                    en: ':empowerment: A citizen assembly was formed to discuss the Ferris wheel project. We need to hear concerns, study issues, and make choices based on information.'
+                    de: 'Es wurde eine Bürgerversammlung einberufen, um das Riesenradprojekt zu diskutieren. Wir müssen uns die Bedenken anhören, Fragen prüfen und Entscheidungen auf der Grundlage von Informationen treffen.'
+                    en: 'A citizen assembly was formed to discuss the Ferris wheel project. We need to hear concerns, study issues, and make choices based on information.'
+                  class: 'citizensEmpowered'
                 - cond: 'COUNT("pnt") >= 6'
                   text:
-                    de: ':neutral: Einige Bürger*innen sagen, es mache viel Spaß. Die meisten sagen, es sei eine große Geldverschwendung.'
-                    en: ':neutral: Some citizens say it’s a lot of fun. Most say it’s a big waste of money.'
+                    de: 'Einige Bürger*innen sagen, es mache viel Spaß. Die meisten sagen, es sei eine große Geldverschwendung.'
+                    en: 'Some citizens say it’s a lot of fun. Most say it’s a big waste of money.'
+                  class: 'citizensNeutral'
                 - cond: 'COUNT("pnt") = 5'
                   text:
-                    de: ':neutral: Es wurde von Anwohnern zur "hässlichsten Attraktion Deutschlands" gewählt.'
-                    en: ':neutral: It was voted “The ugliest attraction in Germany” by residents.'
+                    de: 'Es wurde von Anwohnern zur "hässlichsten Attraktion Deutschlands" gewählt.'
+                    en: 'It was voted “The ugliest attraction in Germany” by residents.'
+                  class: 'citizensNeutral'
                 - cond: 'COUNT("pnt") = 4'
                   text:
-                    de: ':sad: Es zieht einige Tourist*innen an, aber die Einheimischen meiden die Gegend lieber.'
-                    en: ':sad: It attracts some tourists, but locals prefer to avoid the area.'
+                    de: 'Es zieht einige Tourist*innen an, aber die Einheimischen meiden die Gegend lieber.'
+                    en: 'It attracts some tourists, but locals prefer to avoid the area.'
+                  class: 'citizensSad'
                 - text:
-                    de: ':sad: Die Bürger*innen protestierten wochenlang. Ein*e Richter*in entschied, dass das Riesenrad nur an Wochenenden und bei ausgeschalteter Beleuchtung betrieben werden darf.'
-                    en: ':sad: Citizens protested for weeks. A judge decided that the Ferris wheel must only operate on weekends and with its lights off.'
+                    de: 'Die Bürger*innen protestierten wochenlang. Ein*e Richter*in entschied, dass das Riesenrad nur an Wochenenden und bei ausgeschalteter Beleuchtung betrieben werden darf.'
+                    en: 'Citizens protested for weeks. A judge decided that the Ferris wheel must only operate on weekends and with its lights off.'
+                  class: 'citizensSad'
             - type: first
               items:
                 - cond: '^ending.notBuilt & pnt.empowerment.environmentalImpact'

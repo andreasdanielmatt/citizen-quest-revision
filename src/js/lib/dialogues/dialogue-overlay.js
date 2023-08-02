@@ -42,11 +42,15 @@ class DialogueOverlay {
     this.topTitleI18n.setText(title);
   }
 
-  showSpeech(text) {
+  showSpeech(text, classes = null) {
     this.balloonTop.show();
     this.hidePressToContinue();
     this.speechTop.clear();
     this.speechTopI18n.setText(text, true);
+    this.balloonTop.removeClasses();
+    if (classes) {
+      this.balloonTop.setClasses(classes);
+    }
   }
 
   speedUpSpeech() {
@@ -57,10 +61,11 @@ class DialogueOverlay {
     this.balloonBottom.empty();
     this.balloonBottom.show();
     this.selectedOption = 0;
-    this.responseOptions = Object.entries(options).map(([id, text], i) => {
+    this.responseOptions = Object.entries(options).map(([id, [text, classes]], i) => {
       const label = $('<span></span>').addClass('text');
       const element = $('<div></div>')
         .addClass('response-option')
+        .addClass(classes)
         .toggleClass('selected', i === this.selectedOption)
         .append(label)
         .appendTo(this.balloonBottom.$element);

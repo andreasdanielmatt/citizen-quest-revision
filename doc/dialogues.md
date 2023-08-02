@@ -49,11 +49,13 @@ Example:
   "type": "statement",
   "cond": "flag1 | (^flag2 & flag3)",
   "text": "Dialogue text",
+  "class": ["aClass", "anotherClass"],
   "set": ["flag3", "flag4"],
   "responses": [
     {
       "cond": ["flag5", "flag6"],
       "text": "Response text",
+      "class": ["aClass", "anotherClass"],
       "set": ["flag7", "flag8"],
       "thenText": "Text to display after selecting this response",
       "then": "node_id"
@@ -67,6 +69,7 @@ Statement nodes have these properties:
 
 - `cond` (string, optional): A logical expression (see below).
 - `text` (string | object, required): The text to display.
+- `class` (string | array, optional): One or more classes that are set when the text is displayed.
 - `set` (string | array, optional): One or more flags that are set when the node becomes active.
 - `responses` (array, optional): An array of response objects.
 - `then` (string, optional): The ID of the next node to transition to.
@@ -90,8 +93,10 @@ A response object has these properties:
 
 - `cond` (string, optional): A logical expression (see below).
 - `text` (string | object, required): The text to display.
+- `class` (string | array, optional): One or more classes that are set when the response is displayed.
 - `set` (string | array, optional): One or more flags that are set when the response is selected.
 - `thenText` (string | object, optional): A text that will be displayed after the response is selected.
+- `thenClass` (string | array, optional): One or more classes that are set when the `thenText` is displayed.
 - `then` (string, optional): The ID of the next node to transition to.
 
 The player is offered all responses that have a `cond` that is true, up to the maximum number.

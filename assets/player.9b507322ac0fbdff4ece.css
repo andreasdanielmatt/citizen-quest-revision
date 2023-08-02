@@ -314,20 +314,21 @@ h1, h2, h3, h4, h5, h6 {
   background-repeat: no-repeat;
   background-position: center center;
 }
-.decision-screen .decision-screen-icon.empowerment {
+
+.decision-screen-wrapper .citizensEmpowered .decision-screen-icon {
   background-image: url(32c1e7da20d473fad22e.svg);
   margin-top: 0.5em;
 }
-.decision-screen .decision-screen-icon.happy {
+.decision-screen-wrapper .citizensHappy .decision-screen-icon {
   background-image: url(d79c03b62c63dca4b5e2.svg);
 }
-.decision-screen .decision-screen-icon.neutral {
+.decision-screen-wrapper .citizensNeutral .decision-screen-icon {
   background-image: url(8b808f3edfdf875e86d2.svg);
 }
-.decision-screen .decision-screen-icon.sad {
+.decision-screen-wrapper .citizensSad .decision-screen-icon {
   background-image: url(1cb78a1510cb4cef0fed.svg);
 }
-.decision-screen .decision-screen-icon.angry {
+.decision-screen-wrapper .citizensAngry .decision-screen-icon {
   background-image: url(a6d7bdb36bd21ada45b9.svg);
 }
 
@@ -466,4 +467,4 @@ html.with-fatal-error body {
   margin-bottom: 1.2em;
 }
 
-/*# sourceMappingURL=player.7976a53318826159b7e6.css.map*/
+/*# sourceMappingURL=player.9b507322ac0fbdff4ece.css.map*/

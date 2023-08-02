@@ -72,26 +72,28 @@
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center center;
+  }
+}
 
-    &.empowerment {
-      background-image: url('../../static/openmoji/decisions/empowerment.svg');
-      margin-top: 0.5em;
-    }
+.decision-screen-wrapper {
+  .citizensEmpowered .decision-screen-icon {
+    background-image: url('../../static/openmoji/decisions/empowerment.svg');
+    margin-top: 0.5em;
+  }
 
-    &.happy {
-      background-image: url('../../static/openmoji/decisions/happy.svg');
-    }
+  .citizensHappy .decision-screen-icon {
+    background-image: url('../../static/openmoji/decisions/happy.svg');
+  }
 
-    &.neutral {
-      background-image: url('../../static/openmoji/decisions/neutral.svg');
-    }
+  .citizensNeutral .decision-screen-icon {
+    background-image: url('../../static/openmoji/decisions/neutral.svg');
+  }
 
-    &.sad {
-      background-image: url('../../static/openmoji/decisions/sad.svg');
-    }
+  .citizensSad .decision-screen-icon {
+    background-image: url('../../static/openmoji/decisions/sad.svg');
+  }
 
-    &.angry {
-      background-image: url('../../static/openmoji/decisions/angry.svg');
-    }
+  .citizensAngry .decision-screen-icon {
+    background-image: url('../../static/openmoji/decisions/angry.svg');
   }
 }

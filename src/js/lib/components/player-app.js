@@ -284,13 +284,12 @@ class PlayerApp {
   }
 
   handleStorylineEnd() {
-    const endingText = readEnding(this.getDialogue('_ending'), this.getDialogueContext());
-    const icon = 'skip';
+    const [ endingText, classes ] = readEnding(this.getDialogue('_ending'), this.getDialogueContext());
 
     this.inputRouter.unroute();
     this.endingScreen = new DecisionScreen(this.config, this.lang);
     this.$element.append(this.endingScreen.$element);
-    this.endingScreen.showDecision(endingText, icon);
+    this.endingScreen.showDecision(endingText, classes);
   }
 }
 

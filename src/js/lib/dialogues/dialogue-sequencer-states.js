@@ -24,7 +24,7 @@ export class DialogueSequencerThenTextState extends DialogueSequencerState {
   onBegin() {
     this.speechDone = false;
     const response = this.dialogueIterator.getResponse(this.responseId);
-    this.dialogueOverlay.showSpeech(response.thenText);
+    this.dialogueOverlay.showSpeech(response.thenText, response.thenClass || null);
     this.dialogueOverlay.events.once('speechComplete', () => {
       this.speechDone = true;
       this.dialogueOverlay.showPressToContinue();
@@ -49,7 +49,9 @@ export class DialogueSequencerResponseState extends DialogueSequencerState {
 
   onBegin() {
     this.dialogueOverlay.showResponseOptions(
-      Object.fromEntries(this.responses.map((response) => [response.id, response.text]))
+      Object.fromEntries(this.responses.map(
+        response => [response.id, [response.text, response.class || null]]
+      ))
     );
   }
 
@@ -72,7 +74,7 @@ export class DialogueSequencerTextState extends DialogueSequencerState {
 
   onBegin() {
     this.speechDone = false;
-    this.dialogueOverlay.showSpeech(this.activeNode.text);
+    this.dialogueOverlay.showSpeech(this.activeNode.text, this.activeNode.class || null);
     this.dialogueOverlay.events.once('speechComplete', () => {
       this.speechDone = true;
       const responses = this.dialogueIterator.getEnabledResponses();

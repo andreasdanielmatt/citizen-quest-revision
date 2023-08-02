@@ -53,6 +53,25 @@
         }
       ]
     },
+    "class": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "pattern": "^-?[_a-zA-Z]+[_a-zA-Z0-9-]*$"
+    },
+    "classes": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/class"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/class"
+          }
+        }
+      ]
+    },
     "flag_id": {
       "type": "string",
       "minLength": 1,
@@ -173,6 +192,9 @@
         "text": {
           "$ref": "#/definitions/text"
         },
+        "class": {
+          "$ref": "#/definitions/classes"
+        },
         "set": {
           "$ref": "#/definitions/flag_assignments"
         },
@@ -196,6 +218,9 @@
         "text": {
           "$ref": "#/definitions/text"
         },
+        "class": {
+          "$ref": "#/definitions/classes"
+        },
         "set": {
           "$ref": "#/definitions/flag_assignments"
         },
@@ -204,6 +229,9 @@
         },
         "thenText": {
           "$ref": "#/definitions/text"
+        },
+        "thenClass": {
+          "$ref": "#/definitions/classes"
         }
       },
       "required": [

@@ -11,9 +11,12 @@ class DecisionScreen {
     this.$element = $('<div></div>')
       .addClass('decision-screen-wrapper');
 
+    this.$styleWrapper = $('<div></div>')
+      .appendTo(this.$element);
+
     this.$screen = $('<div></div>')
       .addClass('decision-screen')
-      .appendTo(this.$element);
+      .appendTo(this.$styleWrapper);
 
     this.$title = $('<h1></h1>')
       .addClass('decision-screen-title')
@@ -49,8 +52,9 @@ class DecisionScreen {
     }, this.lang);
   }
 
-  showDecision(endingText, icon) {
-    this.$icon.addClass(icon);
+  showDecision(endingText, classes) {
+    this.$styleWrapper.removeClass();
+    this.$styleWrapper.addClass(classes);
     this.$element.addClass('visible');
     setTimeout(() => {
       this.speechI18n.setText(endingText, true);

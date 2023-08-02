@@ -3,6 +3,7 @@ const { mergeTexts } = require('../helpers/i18n');
 
 function readEnding(dialogue, context) {
   const output = [];
+  const classes = [];
   const iterator = new DialogueIterator(dialogue, context);
   while (!iterator.isEnd()) {
     const activeNode = iterator.getActiveNode();
@@ -12,12 +13,22 @@ function readEnding(dialogue, context) {
     if (activeNode.text) {
       output.push(activeNode.text);
     }
+    if (activeNode.class) {
+      if (Array.isArray(activeNode.class)) {
+        classes.push(...activeNode.class);
+      } else if (typeof activeNode.class === 'string') {
+        classes.push(activeNode.class);
+      }
+    }
     iterator.next();
   }
 
-  return mergeTexts(output, {
-    separator: '\n',
-  });
+  return [
+    mergeTexts(output, {
+      separator: '\n',
+    }),
+    classes,
+  ];
 }
 
 module.exports = readEnding;
