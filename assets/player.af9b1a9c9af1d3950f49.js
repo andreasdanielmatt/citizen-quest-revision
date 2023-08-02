@@ -12868,7 +12868,7 @@ class CharacterView {
 
   createSprite() {
     const sprite = new PIXI.Sprite(this.textures['npcs-demo'].textures[this.character.id]);
-    sprite.anchor.set(0, 0);
+    sprite.anchor.set(0.5, 1);
 
     sprite.position = this.character.position;
     sprite.zIndex = sprite.position.y;
@@ -12908,11 +12908,13 @@ class PCView extends CharacterView {
     this.direction = 'e';
     this.isWalking = false;
     this.hitboxDisplay = this.createHitboxDisplay();
+    this.positionMarker = this.createPositionMarker();
+    this.display.addChild(this.positionMarker);
   }
 
   createSprite() {
     const sprite = new PIXI.AnimatedSprite(this.textures['character-basic'].animations['basic-es']);
-    sprite.anchor.set(0, 0);
+    sprite.anchor.set(0.5, 1);
 
     sprite.animationSpeed = PCView.SPRITE_ANIMATION_SPEED;
     sprite.play();
@@ -12929,6 +12931,18 @@ class PCView extends CharacterView {
     display.endFill();
     display.position = this.character.position;
     display.alpha = 0.5;
+    display.visible = false;
+
+    return display;
+  }
+
+  createPositionMarker() {
+    const display = new PIXI.Graphics();
+    // Do a simple square
+    display.beginFill(0x00ff00);
+    display.drawCircle(0, 0, 5);
+    display.endFill();
+    display.position = { x: 0, y: 0 };
     display.visible = false;
 
     return display;
@@ -13029,16 +13043,12 @@ class PCView extends CharacterView {
   }
 
   collisionPoints() {
-    // The collisions are only checked for two points at the baseline of the PC,
+    // The collisions are only checked for four points at the baseline of the PC,
     return [
-      {
-        x: 0,
-        y: this.display.height,
-      },
-      {
-        x: this.display.width,
-        y: this.display.height,
-      },
+      { x: -(this.display.width / 2 - PCView.COLL_X_OFFSET), y: -PCView.COLL_Y_OFFSET },
+      { x: -(this.display.width / 2 - PCView.COLL_X_OFFSET), y: 0 },
+      { x: this.display.width / 2 - PCView.COLL_X_OFFSET, y: -PCView.COLL_Y_OFFSET },
+      { x: this.display.width / 2 - PCView.COLL_X_OFFSET, y: 0 },
     ];
   }
 
@@ -13089,11 +13099,13 @@ class PCView extends CharacterView {
     this.hitboxDisplay.position.x = hitbox.left;
     this.hitboxDisplay.position.y = hitbox.top;
     this.hitboxDisplay.visible = true;
+    this.positionMarker.visible = true;
 
     // Show for one second
     clearTimeout(this.hitboxTimeout);
     this.hitboxTimeout = setTimeout(() => {
       this.hitboxDisplay.visible = false;
+      this.positionMarker.visible = false;
     }, 1000);
   }
 }
@@ -13103,6 +13115,8 @@ PCView.SPRITE_W = 72;
 PCView.SPRITE_ANIMATION_SPEED = 0.3;
 PCView.ACTION_HITBOX_H = 150;
 PCView.ACTION_HITBOX_W = 200;
+PCView.COLL_X_OFFSET = 10;
+PCView.COLL_Y_OFFSET = 10;
 
 module.exports = PCView;
 
@@ -13383,4 +13397,4 @@ fetch(configUrl, { cache: 'no-store' })
 
 /******/ })()
 ;
-//# sourceMappingURL=player.bb344b28aa65626c549e.js.map
+//# sourceMappingURL=player.af9b1a9c9af1d3950f49.js.map

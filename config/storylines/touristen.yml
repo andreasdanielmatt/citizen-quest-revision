@@ -8,102 +8,102 @@ storylines:
         name:
           en: "City Mayor"
           de: "Bürgermeisterin"
-        spawn: { x: 3855, y: 3119 }
+        spawn: { x: 3891, y: 3275 }
       'financeDirector':
         name:
           en: "Director of finances"
           de: "Leiter der Finanzverwaltung"
-        spawn: { x: 4002, y: 3080 }
+        spawn: { x: 4038, y: 3236 }
       'parksDirector':
         name:
           en: "Director of the environmental agency"
           de: "Leiterin des Umweltamts"
-        spawn: { x: 4137, y: 3080 }
+        spawn: { x: 4173, y: 3236 }
       'journalist':
         name:
           en: "Journalist"
           de: "Journalist"
-        spawn: { x: 4928, y: 3384 }
+        spawn: { x: 4964, y: 3540 }
       'ferrisSalesman':
         name:
           en: "Spin City™ Salesman"
           de: "Drehmoment™ Verkaufsagent"
-        spawn: {x: 4006, y: 3415}
+        spawn: {x: 4042, y: 3571}
       'biologist':
         name:
           en: "Biologist"
           de: "Biologin"
-        spawn: {x: 6993, y: 1679}
+        spawn: {x: 7029, y: 1835}
       'tourist':
         name:
           en: "Tourist"
           de: "Tourist"
-        spawn: {x: 4213, y: 2088}
+        spawn: {x: 4249, y: 2244}
       'robot':
         name:
           en: "Robot"
           de: "Roboter"
-        spawn: {x: 5291, y: 3394}
+        spawn: {x: 5327, y: 3550}
       'museumDirector':
         name:
           en: "Museum Director"
           de: "Museumsdirektorin"
-        spawn: {x: 6041, y: 2409}
+        spawn: {x: 6077, y: 2565}
       'citizenCool':
         name:
           en: "Concerned Citizen"
           de: "Zweifelnder Bürger"
-        spawn: {x: 4603, y: 3149}
+        spawn: {x: 4639, y: 3305}
       'citizenBraid':
         name:
           en: "Optimistic Citizen"
           de: "Optimistische Bürgerin"
-        spawn: {x: 1356, y: 2409}
+        spawn: {x: 1392, y: 2565}
       'citizenCat':
         name:
           en: "Curious Citizen"
           de: "Neugierige Bürgerin"
-        spawn: {x: 6141, y: 1434}
+        spawn: {x: 6177, y: 1590}
       'citizenHipster':
         name:
           en: "Concerned Citizen"
           de: "Zweifelnder Bürger"
-        spawn: {x: 3498, y: 1454}
+        spawn: {x: 3534, y: 1610}
       'citizenPuan':
         name:
           en: "Concerned Citizen"
           de: "Zweifelnde Bürgerin"
-        spawn: {x: 5856, y: 3374}
+        spawn: {x: 5892, y: 3530}
       'citizenCage':
         name:
           en: "Optimistic Citizen"
           de: "Optimistischer Bürger"
-        spawn: {x: 2274, y: 3434}
+        spawn: {x: 2310, y: 3590}
       'citizenPunk':
         name:
           en: "Citizen"
           de: "Bürgerin"
-        spawn: {x: 3093, y: 3384}
+        spawn: {x: 3129, y: 3540}
       'citizenLila':
         name:
           en: "Citizen"
           de: "Bürgerin"
-        spawn: {x: 6993, y: 2588}
+        spawn: {x: 7029, y: 2744}
       'citizenBlue':
         name:
           en: "Concerned Citizen"
           de: "Zweifelnde Bürgerin"
-        spawn: {x: 3290, y: 1421}
+        spawn: {x: 3326, y: 1577}
       'constructionWorker':
         name:
           en: "Concerned Citizen"
           de: "Zweifelnde Bürgerin"
-        spawn: {x: 2686, y: 1403}
+        spawn: {x: 2722, y: 1559}
       'citizenQueen':
         name:
           en: "Concerned Citizen"
           de: "Zweifelnde Bürgerin"
-        spawn: {x: 5183, y: 1419}
+        spawn: {x: 5219, y: 1575}
     dialogues:
       'mayor':
         - type: first

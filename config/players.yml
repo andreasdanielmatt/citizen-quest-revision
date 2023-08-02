@@ -5,10 +5,10 @@ players:
   #   enabled: true // Whether the player is enabled or not (defaults to true)
   1:
     color: '#27a6a8'
-    spawn: { x: 3462, y: 3200}
+    spawn: { x: 3555, y: 3420 }
   2:
     color: '#d331a3'
-    spawn: { x: 3512, y: 3200}
+    spawn: { x: 3640, y: 3420}
   3:
     color: '#ea7a24'
-    spawn: { x: 3562, y: 3200 }
+    spawn: { x: 3725, y: 3420 }

@@ -11,7 +11,7 @@ class CharacterView {
 
   createSprite() {
     const sprite = new PIXI.Sprite(this.textures['npcs-demo'].textures[this.character.id]);
-    sprite.anchor.set(0, 0);
+    sprite.anchor.set(0.5, 1);
 
     sprite.position = this.character.position;
     sprite.zIndex = sprite.position.y;
