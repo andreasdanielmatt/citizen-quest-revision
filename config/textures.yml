@@ -10,3 +10,7 @@ textures:
           srcs: 'character-basic.json'
         - name: 'npcs-demo'
           srcs: 'npcs-demo.json'
+        - name: 'mood-balloon'
+          srcs: 'mood-balloon.json'
+        - name: 'mood-icons'
+          srcs: 'mood-icons.json'

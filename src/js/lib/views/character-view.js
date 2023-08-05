@@ -1,5 +1,7 @@
 /* globals PIXI */
 
+const MoodBalloon = require('./mood-balloon');
+
 class CharacterView {
   constructor(config, textures, character, townView) {
     this.config = config;
@@ -7,6 +9,7 @@ class CharacterView {
     this.character = character;
     this.townView = townView;
     this.display = this.createSprite();
+    this.moodBalloon = null;
   }
 
   createSprite() {
@@ -19,6 +22,17 @@ class CharacterView {
     return sprite;
   }
 
+  showMoodBalloon(mood) {
+    if (this.moodBalloon === null) {
+      this.moodBalloon = new MoodBalloon(this);
+    }
+    this.moodBalloon.show(mood);
+  }
+
+  hideMoodBalloon() {
+    this.moodBalloon.hide();
+  }
+
   inRect(rect) {
     const { x, y } = this.character.position;
     return x >= rect.left && x <= rect.right
@@ -27,6 +41,5 @@ class CharacterView {
 }
 
 CharacterView.SPRITE_ANIMATION_SPEED = 0.3;
-
 
 module.exports = CharacterView;

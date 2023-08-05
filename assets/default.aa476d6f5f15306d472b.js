@@ -15542,6 +15542,63 @@ module.exports = SpeechText;
 
 /***/ }),
 
+/***/ "./src/js/lib/helpers-pixi/fader.js":
+/*!******************************************!*\
+  !*** ./src/js/lib/helpers-pixi/fader.js ***!
+  \******************************************/
+/***/ ((module) => {
+
+/* globals PIXI */
+
+class Fader {
+  constructor(display) {
+    this.display = display;
+    this.ticker = PIXI.Ticker.shared;
+    this.tickHandler = null;
+  }
+
+  removeTickHandler() {
+    if (this.tickHandler) {
+      this.ticker.remove(this.tickHandler);
+      this.tickHandler = null;
+    }
+  }
+
+  installTickHandler(duration, target, completeCallback = null) {
+    this.removeTickHandler();
+    const sign = Math.sign(target - this.display.alpha);
+    this.tickHandler = (time) => {
+      const deltaMS = time / PIXI.settings.TARGET_FPMS;
+      this.display.alpha += (deltaMS / duration) * sign;
+      if (Math.sign(target - this.display.alpha) !== sign) {
+        this.display.alpha = target;
+        this.removeTickHandler();
+        if (completeCallback) {
+          completeCallback();
+        }
+      }
+    };
+
+    this.ticker.add(this.tickHandler);
+  }
+
+  fadeOut(duration) {
+    this.installTickHandler(duration, 0, () => {
+      this.display.visible = false;
+    });
+  }
+
+  fadeIn(duration) {
+    this.display.visible = true;
+    this.installTickHandler(duration, 1);
+  }
+}
+
+module.exports = Fader;
+
+
+/***/ }),
+
 /***/ "./src/js/lib/helpers-web/countdown.js":
 /*!*********************************************!*\
   !*** ./src/js/lib/helpers-web/countdown.js ***!
@@ -16883,9 +16940,11 @@ module.exports = ScoringOverlay;
 /*!********************************************!*\
   !*** ./src/js/lib/views/character-view.js ***!
   \********************************************/
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 /* globals PIXI */
+
+const MoodBalloon = __webpack_require__(/*! ./mood-balloon */ "./src/js/lib/views/mood-balloon.js");
 
 class CharacterView {
   constructor(config, textures, character, townView) {
@@ -16894,6 +16953,7 @@ class CharacterView {
     this.character = character;
     this.townView = townView;
     this.display = this.createSprite();
+    this.moodBalloon = null;
   }
 
   createSprite() {
@@ -16906,6 +16966,17 @@ class CharacterView {
     return sprite;
   }
 
+  showMoodBalloon(mood) {
+    if (this.moodBalloon === null) {
+      this.moodBalloon = new MoodBalloon(this);
+    }
+    this.moodBalloon.show(mood);
+  }
+
+  hideMoodBalloon() {
+    this.moodBalloon.hide();
+  }
+
   inRect(rect) {
     const { x, y } = this.character.position;
     return x >= rect.left && x <= rect.right
@@ -16915,8 +16986,89 @@ class CharacterView {
 
 CharacterView.SPRITE_ANIMATION_SPEED = 0.3;
 
-
 module.exports = CharacterView;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/views/mood-balloon.js":
+/*!******************************************!*\
+  !*** ./src/js/lib/views/mood-balloon.js ***!
+  \******************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+/* globals PIXI, TWEEN */
+const Fader = __webpack_require__(/*! ../helpers-pixi/fader */ "./src/js/lib/helpers-pixi/fader.js");
+
+class MoodBalloon {
+  constructor(characterView) {
+    this.characterView = characterView;
+    this.display = this.createSprite();
+    this.moodIconDisplay = this.createMoodIconSprite();
+    this.display.addChild(this.moodIconDisplay);
+
+    this.characterView.display.addChild(this.display);
+    this.fader = new Fader(this.display);
+  }
+
+  createSprite() {
+    const sprite = new PIXI.AnimatedSprite(this.characterView.textures['mood-balloon'].animations['mood-balloon-in']);
+    sprite.anchor.set(0.5, 1);
+    sprite.position.set(
+      this.characterView.display.width * 0.25,
+      -this.characterView.display.height * 0.95
+    );
+    sprite.visible = false;
+    sprite.alpha = 0;
+    sprite.loop = false;
+    sprite.animationSpeed = 0.75;
+
+    return sprite;
+  }
+
+  createMoodIconSprite() {
+    const sprite = new PIXI.Sprite(this.characterView.textures['mood-icons'].textures['mood-icon-exclamation']);
+    sprite.anchor.set(0.5, 1);
+    sprite.position.set(0, 0);
+    sprite.visible = true;
+
+    return sprite;
+  }
+
+  setMoodIcon(mood) {
+    this.moodIconDisplay.texture = this.characterView.textures['mood-icons'].textures[`mood-icon-${mood}`];
+    this.moodIconDisplay.scale = { x: 0, y: 0};
+  }
+
+  show(mood) {
+    this.fader.fadeIn(200);
+    this.display.gotoAndPlay(0);
+    this.setMoodIcon(mood);
+    this.moodIconTween = new TWEEN.Tween({ scale: 0 })
+      .to({ scale: 1 })
+      .easing(TWEEN.Easing.Elastic.Out)
+      .onUpdate((v) => {
+        this.moodIconDisplay.scale = { x: v.scale, y: v.scale };
+      })
+      .start(100);
+    let elapsed = 0;
+    const tweenTicker = (time) => {
+      elapsed += Math.ceil(time / PIXI.settings.TARGET_FPMS);
+      this.moodIconTween.update(elapsed);
+    };
+    PIXI.Ticker.shared.add(tweenTicker);
+    this.moodIconTween.onComplete(() => {
+      PIXI.Ticker.shared.remove(tweenTicker);
+    });
+  }
+
+  hide() {
+    this.moodIconTween.stop();
+    this.fader.fadeOut(200);
+  }
+}
+
+module.exports = MoodBalloon;
 
 
 /***/ }),
@@ -17372,4 +17524,4 @@ cfgLoader.load([
 
 /******/ })()
 ;
-//# sourceMappingURL=default.6ec7b77ded1b07b0634f.js.map
+//# sourceMappingURL=default.aa476d6f5f15306d472b.js.map

@@ -1,0 +1,76 @@
+{
+  "frames": {
+    "mood-icon-equity": {
+      "frame": {"x": 0, "y": 0, "w": 84, "h": 62},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 84, "h": 62},
+      "sourceSize": {"w": 84, "h": 62},
+      "anchor": { "x": 42, "y": 62 }
+    },
+    "mood-icon-empathy": {
+      "frame": {"x": 84, "y": 0, "w": 84, "h": 62},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 84, "h": 62},
+      "sourceSize": {"w": 84, "h": 62},
+      "anchor": { "x": 42, "y": 62 }
+    },
+    "mood-icon-empowerment": {
+      "frame": {"x": 168, "y": 0, "w": 84, "h": 62},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 84, "h": 62},
+      "sourceSize": {"w": 84, "h": 62},
+      "anchor": { "x": 42, "y": 62 }
+    },
+    "mood-icon-information": {
+      "frame": {"x": 252, "y": 0, "w": 84, "h": 62},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 84, "h": 62},
+      "sourceSize": {"w": 84, "h": 62},
+      "anchor": { "x": 42, "y": 62 }
+    },
+    "mood-icon-interrogation": {
+      "frame": {"x": 336, "y": 0, "w": 84, "h": 62},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 84, "h": 62},
+      "sourceSize": {"w": 84, "h": 62},
+      "anchor": { "x": 42, "y": 62 }
+    },
+    "mood-icon-exclamation": {
+      "frame": {"x": 420, "y": 0, "w": 84, "h": 62},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 84, "h": 62},
+      "sourceSize": {"w": 84, "h": 62},
+      "anchor": { "x": 42, "y": 62 }
+    },
+    "mood-icon-checkmark": {
+      "frame": {"x": 0, "y": 62, "w": 84, "h": 62},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 84, "h": 62},
+      "sourceSize": {"w": 84, "h": 62},
+      "anchor": { "x": 42, "y": 62 }
+    },
+    "mood-icon-happy": {
+      "frame": {"x": 84, "y": 62, "w": 84, "h": 62},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 84, "h": 62},
+      "sourceSize": {"w": 84, "h": 62},
+      "anchor": { "x": 42, "y": 62 }
+    },
+    "mood-icon-neutral": {
+      "frame": {"x": 168, "y": 62, "w": 84, "h": 62},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 84, "h": 62},
+      "sourceSize": {"w": 84, "h": 62},
+      "anchor": { "x": 42, "y": 62 }
+    },
+    "mood-icon-sad": {
+      "frame": {"x": 252, "y": 62, "w": 84, "h": 62},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 84, "h": 62},
+      "sourceSize": {"w": 84, "h": 62},
+      "anchor": { "x": 42, "y": 62 }
+    },
+    "mood-icon-angry": {
+      "frame": {"x": 336, "y": 62, "w": 84, "h": 62},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 84, "h": 62},
+      "sourceSize": {"w": 84, "h": 62},
+      "anchor": { "x": 42, "y": 62 }
+    }
+  },
+  "meta": {
+    "image": "mood-icons.png",
+    "format": "RGBA8888",
+    "size": {"w": 504, "h": 186},
+    "scale": "1"
+  }
+}

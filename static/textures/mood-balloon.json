@@ -1,0 +1,56 @@
+{
+  "frames": {
+    "mood-balloon-1": {
+      "frame": {"x": 0, "y": 0, "w": 84, "h": 62},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 84, "h": 62},
+      "sourceSize": {"w": 84, "h": 62},
+      "anchor": { "x": 42, "y": 62 }
+    },
+    "mood-balloon-2": {
+      "frame": {"x": 84, "y": 0, "w": 84, "h": 62},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 84, "h": 62},
+      "sourceSize": {"w": 84, "h": 62},
+      "anchor": { "x": 42, "y": 62 }
+    },
+    "mood-balloon-3": {
+      "frame": {"x": 168, "y": 0, "w": 84, "h": 62},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 84, "h": 62},
+      "sourceSize": {"w": 84, "h": 62},
+      "anchor": { "x": 42, "y": 62 }
+    },
+    "mood-balloon-4": {
+      "frame": {"x": 252, "y": 0, "w": 84, "h": 62},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 84, "h": 62},
+      "sourceSize": {"w": 84, "h": 62},
+      "anchor": { "x": 42, "y": 62 }
+    },
+    "mood-balloon-5": {
+      "frame": {"x": 336, "y": 0, "w": 84, "h": 62},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 84, "h": 62},
+      "sourceSize": {"w": 84, "h": 62},
+      "anchor": { "x": 42, "y": 62 }
+    },
+    "mood-balloon-6": {
+      "frame": {"x": 420, "y": 0, "w": 84, "h": 62},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 84, "h": 62},
+      "sourceSize": {"w": 84, "h": 62},
+      "anchor": { "x": 42, "y": 62 }
+    },
+    "mood-balloon-7": {
+      "frame": {"x": 504, "y": 0, "w": 84, "h": 62},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 84, "h": 62},
+      "sourceSize": {"w": 84, "h": 62},
+      "anchor": { "x": 42, "y": 62 }
+    }
+  },
+  "animations": {
+    "mood-balloon-in": ["mood-balloon-1", "mood-balloon-2", "mood-balloon-3", "mood-balloon-4", "mood-balloon-5", "mood-balloon-6", "mood-balloon-7"],
+    "mood-balloon": ["mood-balloon-7"]
+  },
+  "meta": {
+    "image": "mood-balloon.png",
+    "format": "RGBA8888",
+    "size": {"w": 588, "h": 62},
+    "scale": "1"
+  }
+}
