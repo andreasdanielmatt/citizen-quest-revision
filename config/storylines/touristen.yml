@@ -104,40 +104,83 @@ storylines:
           en: "Concerned Citizen"
           de: "Zweifelnde Bürgerin"
         spawn: {x: 5219, y: 1575}
+    quests:
+      concernedCitizens:
+        npc: mayor
+        stages:
+          - cond: 'COUNT("op.neg") >= 3'
+            prompt:
+              en: "Go talk with the major"
+              de: "Gehe mit der Bürgermeisterin sprechen"
+          - prompt:
+              en: "Find 3 citizens who don't want the city to build a Ferris wheel."
+              de: "Finde 3 Bürger*innen, die nicht wollen, dass die Stadt ein Riesenrad baut."
+            counter:
+              expression: 'COUNT("op.neg")'
+              max: 3
     dialogues:
       'mayor':
         - type: first
           items:
-            - cond: 'pnt.empowerment.citizenAssembly'
+            - cond: '^quest.concernedCitizens.active & ^quest.concernedCitizens.done'
               text:
-                en: 'We’ll form a citizen assembly and evaluate the Ferris wheel project together.'
-                de: 'Wir werden eine Bürgerversammlung organisieren und das Riesenradprojekt gemeinsam bewerten.'
-            - text:
-                en: 'Everybody is happy with my idea of a Ferris wheel, right?'
-                de: 'Alle sind mit meiner Idee eines Riesenrads einverstanden, oder?'
+                en: "I think everyone loves the idea of having a Ferris wheel. No? Can you find people who don't?"
+                de: "Ich denke, jeder liebt die Idee, ein Riesenrad zu haben. Nein? Kannst du Leute finden, die es nicht tun?"
               responses:
-                - cond: 'COUNT("op.neg") = 1'
-                  text:
-                    en: 'Some citizens have concerns.'
-                    de: 'Einzelne Bürger*innen haben Bedenken.'
+                - text:
+                    en: "I'll try."
+                    de: "Ich werde es versuchen."
                   thenText:
-                    de: 'Irgendjemand beschwert sich immer. Wenn es nur eine*r ist, ist es besser, ihn/sie zu ignorieren.'
-                    en: "There's always someone who complains. Only one? Just ignore them."
-                - cond: 'COUNT("op.neg") = 2'
-                  text:
-                    en: 'Some citizens have concerns.'
-                    de: 'Einige Bürger*innen haben Bedenken.'
+                    en: "Great! Come back when you found them."
+                    de: "Super! Komm zurück, wenn du sie gefunden hast."
+                  set: [ 'quest.concernedCitizens.active' ]
+                - text:
+                    en: "Mmm... I'd rather help in another way"
+                    de: "Mmm... Ich würde lieber auf andere Weise helfen"
                   thenText:
-                    en: 'Just a few? See if you can find more.'
-                    de: 'Nur ein paar? Vielleicht finden sich noch mehr.'
-                - cond: 'COUNT("op.neg") >= 3'
-                  text:
-                    en: 'Many citizens have concerns.'
-                    de: 'Viele Bürger*innen haben Bedenken.'
-                  thenText:
-                    en: 'Maybe we should have a citizen assembly and evaluate the project together.'
-                    de: 'Vielleicht sollten wir eine Bürgerversammlung einberufen und das Projekt gemeinsam bewerten.'
-                  set: ['pnt.empowerment.citizenAssembly', 'pnt.empowerment.citizenAssembly.double']
+                      en: "Oh, okay. I'm sure you'll find something else to do."
+                      de: "Oh, okay. Ich bin sicher, du findest noch etwas anderes zu tun."
+            - cond: 'quest.concernedCitizens.active & COUNT("op.neg") < 3'
+              text:
+                en: "Have you found 3 citizens who don't want the Ferris wheel? Come back when you do."
+                de: "Hast du 3 Bürger*innen gefunden, die das Riesenrad nicht wollen? Komm zurück, wenn du es tust."
+            - cond: '(quest.concernedCitizens.active & COUNT("op.neg") >= 3) | quest.concernedCitizens.done'
+              text:
+                en: "I'm surprised that not everyone wants the ferris wheel. I'll organize a citizen assembly, and we'll evaluate the project together."
+                de: "Ich bin überrascht, dass nicht alle das Riesenrad wollen. Ich werde eine Bürgerversammlung organisieren und wir werden das Projekt gemeinsam bewerten."
+              set: [ 'quest.concernedCitizens.done', 'pnt.empowerment.citizenAssembly' ]
+#        - type: first
+#          items:
+#            - cond: 'pnt.empowerment.citizenAssembly'
+#              text:
+#                en: 'We’ll form a citizen assembly and evaluate the Ferris wheel project together.'
+#                de: 'Wir werden eine Bürgerversammlung organisieren und das Riesenradprojekt gemeinsam bewerten.'
+#            - text:
+#                en: 'Everybody is happy with my idea of a Ferris wheel, right?'
+#                de: 'Alle sind mit meiner Idee eines Riesenrads einverstanden, oder?'
+#              responses:
+#                - cond: 'COUNT("op.neg") = 1'
+#                  text:
+#                    en: 'Some citizens have concerns.'
+#                    de: 'Einzelne Bürger*innen haben Bedenken.'
+#                  thenText:
+#                    de: 'Irgendjemand beschwert sich immer. Wenn es nur eine*r ist, ist es besser, ihn/sie zu ignorieren.'
+#                    en: "There's always someone who complains. Only one? Just ignore them."
+#                - cond: 'COUNT("op.neg") = 2'
+#                  text:
+#                    en: 'Some citizens have concerns.'
+#                    de: 'Einige Bürger*innen haben Bedenken.'
+#                  thenText:
+#                    en: 'Just a few? See if you can find more.'
+#                    de: 'Nur ein paar? Vielleicht finden sich noch mehr.'
+#                - cond: 'COUNT("op.neg") >= 3'
+#                  text:
+#                    en: 'Many citizens have concerns.'
+#                    de: 'Viele Bürger*innen haben Bedenken.'
+#                  thenText:
+#                    en: 'Maybe we should have a citizen assembly and evaluate the project together.'
+#                    de: 'Vielleicht sollten wir eine Bürgerversammlung einberufen und das Projekt gemeinsam bewerten.'
+#                  set: ['pnt.empowerment.citizenAssembly', 'pnt.empowerment.citizenAssembly.double']
       'financeDirector':
         - type: first
           set: ['talkedTo.financeDirector']

@@ -11,6 +11,8 @@ const MultiplexInputMgr = require('../input/multiplex-input-mgr');
 const PlayerAppInputRouter = require('../input/player-app-input-router');
 const Character = require('../model/character');
 const FlagStore = require('../dialogues/flag-store');
+const QuestTracker = require('../model/quest-tracker');
+const QuestOverlay = require('../ui/questOverlay');
 const DialogueOverlay = require('../dialogues/dialogue-overlay');
 const DialogueSequencer = require('../dialogues/dialogue-sequencer');
 const Dialogue = require('../dialogues/dialogue');
@@ -42,7 +44,8 @@ class PlayerApp {
 
     this.$storylineBar = $('<div></div>')
       .addClass('storyline-bar')
-      .appendTo(this.$element);
+      .appendTo(this.$element)
+      .hide();
 
     this.$decisionLabel = $('<div></div>')
       .addClass('decision-label')
@@ -55,12 +58,17 @@ class PlayerApp {
     this.endingScreen = null;
 
     this.countdown = new Countdown(config.game.duration);
-    this.countdown.$element.appendTo(this.$storylineBar);
+    this.countdown.$element.appendTo(this.$element);
     this.countdown.events.on('end', () => {
       this.handleStorylineEnd();
     });
 
     this.flags = new FlagStore();
+    this.questTracker = new QuestTracker(config, this.flags);
+
+    this.questOverlay = new QuestOverlay(this.config, this.lang, this.questTracker);
+    this.$element.append(this.questOverlay.$element);
+
     this.dialogueOverlay = new DialogueOverlay(this.config, this.lang);
     this.dialogueSequencer = new DialogueSequencer(this.dialogueOverlay);
     this.$element.append(this.dialogueOverlay.$element);
@@ -172,6 +180,13 @@ class PlayerApp {
     });
 
     this.countdown.start();
+    this.updateNpcMoods();
+    this.questTracker.events.on('questActive', (questId) => {
+      this.updateNpcMoods();
+    });
+    this.questTracker.events.on('questDone', (questId) => {
+      this.updateNpcMoods();
+    });
 
     return this;
   }
@@ -188,6 +203,7 @@ class PlayerApp {
   setLanguage(lang) {
     this.lang = lang;
     this.dialogueOverlay.setLang(this.lang);
+    this.questOverlay.setLang(this.lang);
     this.decisionLabelI18n.setLang(this.lang);
     if (this.endingScreen) {
       this.endingScreen.setLang(this.lang);
@@ -277,6 +293,17 @@ class PlayerApp {
     if (this.showHitbox) {
       this.pcView.showActionHitbox(hitbox);
     }
+  }
+
+  updateNpcMoods() {
+    const npcsWithQuests = this.questTracker.getNpcsWithQuests();
+    this.npcViews.forEach((npcView) => {
+      if (npcsWithQuests.includes(npcView.character.id)) {
+        npcView.showMoodBalloon('exclamation');
+      } else {
+        npcView.hideMoodBalloon();
+      }
+    });
   }
 
   toggleHitboxDisplay() {

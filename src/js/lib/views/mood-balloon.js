@@ -17,7 +17,7 @@ class MoodBalloon {
     sprite.anchor.set(0.5, 1);
     sprite.position.set(
       this.characterView.display.width * 0.25,
-      -this.characterView.display.height * 0.95
+      -this.characterView.display.height
     );
     sprite.visible = false;
     sprite.alpha = 0;

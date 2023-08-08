@@ -2,7 +2,7 @@ const yaml = require('js-yaml');
 const CfgReaderFetch = require('./lib/loader/cfg-reader-fetch');
 const CfgLoader = require('./lib/loader/cfg-loader');
 const showFatalError = require('./lib/loader/show-fatal-error');
-const PlayerApp = require('./lib/components/player-app');
+const PlayerApp = require('./lib/app/player-app');
 require('./lib/live-test/live-test-manager');
 require('./lib/live-test/dialogue-live-tester');
 require('../sass/default.scss');

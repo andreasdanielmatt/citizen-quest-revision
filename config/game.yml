@@ -1,4 +1,4 @@
 game:
   languages: ['de', 'en']
-  defaultLanguage: de
+  defaultLanguage: en
   duration: 300

@@ -30,7 +30,9 @@ class CharacterView {
   }
 
   hideMoodBalloon() {
-    this.moodBalloon.hide();
+    if (this.moodBalloon) {
+      this.moodBalloon.hide();
+    }
   }
 
   inRect(rect) {
