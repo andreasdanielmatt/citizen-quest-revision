@@ -3,7 +3,7 @@ textures:
     - name: 'town-view'
       assets:
         - name: 'town-bg'
-          srcs: 'demo-town-bg.png'
+          srcs: 'https://futurium-democracy-tmp.s3.eu-central-1.amazonaws.com/demo-town-bg.png'
         - name: 'town-collmap'
           srcs: 'demo-town-collmap.png'
         - name: 'character-basic'
