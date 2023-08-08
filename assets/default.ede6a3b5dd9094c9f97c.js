@@ -14299,8 +14299,8 @@ class PlayerApp {
   updateNpcMoods() {
     const npcsWithQuests = this.questTracker.getNpcsWithQuests();
     this.npcViews.forEach((npcView) => {
-      if (npcsWithQuests.includes(npcView.character.id)) {
-        npcView.showMoodBalloon('exclamation');
+      if (Object.keys(npcsWithQuests).includes(npcView.character.id)) {
+        npcView.showMoodBalloon(npcsWithQuests[npcView.character.id]);
       } else {
         npcView.hideMoodBalloon();
       }
@@ -16903,15 +16903,16 @@ class QuestTracker {
 
   getNpcsWithQuests() {
     const availableQuests = this.getAvailableQuests();
-    return Object.entries(this.config.storylines.touristen.quests)
+    return Object.fromEntries(Object.entries(this.config.storylines.touristen.quests)
       .filter(([id]) => availableQuests.includes(id))
-      .map(([, props]) => props.npc);
+      .map(([, props]) => [props.npc, props.mood]));
   }
 
   setActiveQuest(questId) {
     if (questId !== this.activeQuestId) {
       if (this.activeQuestId) {
         this.events.emit('questInactive', this.activeQuestId);
+        this.flags.set(`quest.${this.activeQuestId}.active`, 0);
       }
       this.activeQuestId = questId;
       this.activeStage = null;
@@ -17825,4 +17826,4 @@ cfgLoader.load([
 
 /******/ })()
 ;
-//# sourceMappingURL=default.5e55a6db21ab1184a0fc.js.map
+//# sourceMappingURL=default.ede6a3b5dd9094c9f97c.js.map

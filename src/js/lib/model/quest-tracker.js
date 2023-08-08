@@ -39,15 +39,16 @@ class QuestTracker {
 
   getNpcsWithQuests() {
     const availableQuests = this.getAvailableQuests();
-    return Object.entries(this.config.storylines.touristen.quests)
+    return Object.fromEntries(Object.entries(this.config.storylines.touristen.quests)
       .filter(([id]) => availableQuests.includes(id))
-      .map(([, props]) => props.npc);
+      .map(([, props]) => [props.npc, props.mood]));
   }
 
   setActiveQuest(questId) {
     if (questId !== this.activeQuestId) {
       if (this.activeQuestId) {
         this.events.emit('questInactive', this.activeQuestId);
+        this.flags.set(`quest.${this.activeQuestId}.active`, 0);
       }
       this.activeQuestId = questId;
       this.activeStage = null;

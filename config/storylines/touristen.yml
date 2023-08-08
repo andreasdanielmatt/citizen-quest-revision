@@ -9,11 +9,11 @@ storylines:
           en: "City Mayor"
           de: "Bürgermeisterin"
         spawn: { x: 3891, y: 3275 }
-      'financeDirector':
-        name:
-          en: "Director of finances"
-          de: "Leiter der Finanzverwaltung"
-        spawn: { x: 4038, y: 3236 }
+#      'financeDirector':
+#        name:
+#          en: "Director of finances"
+#          de: "Leiter der Finanzverwaltung"
+#        spawn: { x: 4038, y: 3236 }
       'parksDirector':
         name:
           en: "Director of the environmental agency"
@@ -51,8 +51,8 @@ storylines:
         spawn: {x: 6077, y: 2565}
       'citizenCool':
         name:
-          en: "Concerned Citizen"
-          de: "Zweifelnder Bürger"
+          en: "Video blogger"
+          de: "Videobloggerin"
         spawn: {x: 4639, y: 3305}
       'citizenBraid':
         name:
@@ -107,6 +107,7 @@ storylines:
     quests:
       concernedCitizens:
         npc: mayor
+        mood: interrogation
         stages:
           - cond: 'COUNT("op.neg") >= 3'
             prompt:
@@ -118,6 +119,24 @@ storylines:
             counter:
               expression: 'COUNT("op.neg")'
               max: 3
+      fakeNews:
+        npc: citizenPunk
+        mood: exclamation
+        stages:
+          - cond: 'quest.fakeNews.checked'
+            prompt:
+              en: "Debunk the rumor by spreading the proof you received"
+              de: "Entkräfte das Gerücht, indem du den Beweis verbreitest, den du erhalten hast"
+          - prompt:
+              en: "Check if the rumor about the accident is true"
+              de: "Überprüfe, ob das Gerücht über den Unfall wahr ist"
+      environmentalImpact:
+        npc: parksDirector
+        mood: interrogation
+        stages:
+          - prompt:
+              en: "Could the Ferris wheel have a negative environmental impact? Consult an expert."
+              de: "Könnte das Riesenrad negative Auswirkungen auf die Umwelt haben? Konsultiere eine Expertin."
     dialogues:
       'mayor':
         - type: first
@@ -148,131 +167,86 @@ storylines:
               text:
                 en: "I'm surprised that not everyone wants the ferris wheel. I'll organize a citizen assembly, and we'll evaluate the project together."
                 de: "Ich bin überrascht, dass nicht alle das Riesenrad wollen. Ich werde eine Bürgerversammlung organisieren und wir werden das Projekt gemeinsam bewerten."
-              set: [ 'quest.concernedCitizens.done', 'pnt.empowerment.citizenAssembly' ]
-#        - type: first
-#          items:
-#            - cond: 'pnt.empowerment.citizenAssembly'
-#              text:
-#                en: 'We’ll form a citizen assembly and evaluate the Ferris wheel project together.'
-#                de: 'Wir werden eine Bürgerversammlung organisieren und das Riesenradprojekt gemeinsam bewerten.'
-#            - text:
-#                en: 'Everybody is happy with my idea of a Ferris wheel, right?'
-#                de: 'Alle sind mit meiner Idee eines Riesenrads einverstanden, oder?'
-#              responses:
-#                - cond: 'COUNT("op.neg") = 1'
-#                  text:
-#                    en: 'Some citizens have concerns.'
-#                    de: 'Einzelne Bürger*innen haben Bedenken.'
-#                  thenText:
-#                    de: 'Irgendjemand beschwert sich immer. Wenn es nur eine*r ist, ist es besser, ihn/sie zu ignorieren.'
-#                    en: "There's always someone who complains. Only one? Just ignore them."
-#                - cond: 'COUNT("op.neg") = 2'
-#                  text:
-#                    en: 'Some citizens have concerns.'
-#                    de: 'Einige Bürger*innen haben Bedenken.'
-#                  thenText:
-#                    en: 'Just a few? See if you can find more.'
-#                    de: 'Nur ein paar? Vielleicht finden sich noch mehr.'
-#                - cond: 'COUNT("op.neg") >= 3'
-#                  text:
-#                    en: 'Many citizens have concerns.'
-#                    de: 'Viele Bürger*innen haben Bedenken.'
-#                  thenText:
-#                    en: 'Maybe we should have a citizen assembly and evaluate the project together.'
-#                    de: 'Vielleicht sollten wir eine Bürgerversammlung einberufen und das Projekt gemeinsam bewerten.'
-#                  set: ['pnt.empowerment.citizenAssembly', 'pnt.empowerment.citizenAssembly.double']
-      'financeDirector':
-        - type: first
-          set: ['talkedTo.financeDirector']
-          items:
-            - cond: 'pnt.empowerment.reinvest'
-              text:
-                en: 'We will invest the profits from the Ferris wheel in nearby areas.'
-                de: 'Wir werden die Gewinne aus dem Riesenrad in nahe gelegene Stadtteile investieren.'
-            - text:
-                en: 'The city will receive profits from the Ferris wheel. We’re still deciding how to spend the extra money.'
-                de: 'Die Stadt wird die Gewinne aus dem Riesenrad erhalten. Wir entscheiden noch darüber, wie wir das zusätzliche Geld ausgeben.'
-              responses:
-                - cond: 'op.neg.neglectedArea'
-                  text:
-                    en: 'People who live in that area say it’s neglected.'
-                    de: 'Die Leute, die in diesem Viertel leben, sagen, es sei vernachlässigt.'
-                  thenText:
-                    en: 'I think it would be fair to invest the money there.'
-                    de: 'Ich denke, es wäre fair, das Geld dort zu investieren.'
-                  set: ['pnt.empowerment.reinvest']
+              set: [ 'quest.concernedCitizens.done', 'pnt.empathy.mayor' ]
       'parksDirector':
         - type: first
           items:
-            - cond: 'pnt.empowerment.environmentalImpact'
+            - cond: '^quest.environmentalImpact.active & ^quest.environmentalImpact.done'
               text:
-                en: 'We will fund a study by the university to study the impact of the wheel’s lights on birds and bats.'
-                de: 'Wir werden eine Studie der Universität finanzieren, um die Auswirkungen der Lichter des Riesenrads auf Vögel und Fledermäuse zu untersuchen.'
-            - text:
-                en: 'We requested that the Ferris wheel be powered with renewable energy, so the environmental impact will be minimal.'
-                de: 'Wir haben beantragt, dass das Riesenrad mit erneuerbarer Energie betrieben wird, damit die Umweltauswirkungen minimal sind.'
+                en: 'This will be the first 100% eco-friendly Ferris wheel in the world.'
+                de: 'Dies wird das erste 100% umweltfreundliche Riesenrad der Welt sein.'
               responses:
-                - cond: 'op.neg.birds'
-                  text:
-                    en: 'Scientists are concerned about the lights and animals.'
-                    de: 'Wissenschaftler*innen sind besorgt wegen der Lichter und der Tiere'
+                - text:
+                    en: "I'm glad to hear that!"
+                    de: "Das freut mich zu hören!"
                   thenText:
-                    en: 'We will fund a study by the university to study the impact of the wheel’s lights on birds and bats.'
-                    de: 'Wir werden eine Studie der Universität finanzieren, um die Auswirkungen der Lichter des Riesenrads auf Vögel und Fledermäuse zu untersuchen.'
-                  set: ['pnt.empowerment.environmentalImpact']
-      'ferrisSalesman':
-        - text:
-            en: 'I represent Spin City™. We are excited by the opportunity of building a fantastic Ferris wheel for this city.'
-            de: 'Ich vertrete Drehmoment™. Wir sind begeistert von der Möglichkeit, ein fantastisches Riesenrad für diese Stadt zu bauen.'
-          responses:
-            - cond: 'op.neg.birds'
+                    en: "We'll light it up with blue and green lights, for a calming effect."
+                    de: "Wir werden es mit blauen und grünen Lichtern beleuchten, für eine beruhigende Wirkung."
+                - text:
+                    en: "What about its energy use?"
+                    de: "Wie sieht es mit dem Energieverbrauch aus?"
+                  thenText:
+                    en: "We'll use 100% renewable energy to power the Ferris wheel."
+                    de: "Wir werden 100% erneuerbare Energie verwenden, um das Riesenrad zu betreiben."
+                - text:
+                    en: "What about the impact to animals?"
+                    de: "Wie sieht es mit den Auswirkungen auf Tiere aus?"
+                  thenText:
+                    en: "What about it? Should I be concerned? We need an expert opinion."
+                    de: "Was ist damit? Sollte ich mir Sorgen machen? Wir brauchen eine Expertenmeinung."
+                  set: ['quest.environmentalImpact.active']
+            - cond: 'quest.environmentalImpact.done'
               text:
-                en: 'Its lights can confuse birds and bats.'
-                de: 'Seine Lichter können Vögel und Fledermäuse verwirren.'
-              thenText:
-                en: 'No problem! We can play loud music to scare them away.'
-                de: 'Kein Problem! Wir können laute Musik spielen, um sie zu verscheuchen.'
-              set: ['talkedTo.ferrisSalesman.birds']
-            - cond: 'COUNT("op.neg") >= 1'
-              text:
-                en: 'Some are not happy with the idea.'
-                de: 'Einige sind von der Idee nicht begeistert.'
-              thenText:
-                en: 'To get things done, it’s best not to listen to negative people.'
-                de: 'Um etwas zu erreichen, ist es am besten, nicht auf negative Menschen zu hören.'
-            - cond: 'op.neg.neighbors'
-              text:
-                en: 'People who live nearby worry about the traffic, noise, and lights.'
-                de: 'Die Anwohner machen sich Sorgen über den Verkehr, den Lärm und die Lichter.'
-              thenText:
-                en: 'We’ll offer them a 10% discount.'
-                de: 'Wir bieten ihnen 10% Rabatt an.'
+                en: 'We will fund the university to study the impact of the wheel’s lights on birds and bats.'
+                de: 'Wir werden die Universität finanzieren, um die Auswirkungen der Lichter des Riesenrads auf Vögel und Fledermäuse zu untersuchen.'
       'biologist':
-        - type: 'first'
+        - type: first
           items:
-            - cond: 'pnt.empowerment.environmentalImpact'
+            - cond: 'quest.environmentalImpact.active & ^quest.environmentalImpact.done'
+              type: sequence
+              items:
+                - text:
+                    en: "Yes, we're concerned about the ferris wheel's environmental impact."
+                    de: "Ja, wir sind besorgt über die Umweltauswirkungen des Riesenrads."
+                - text:
+                    en: "We fear its lights could confuse the birds and bats."
+                    de: "Wir befürchten, dass seine Lichter die Vögel und Fledermäuse verwirren könnten."
+                - text:
+                    en: "We'll be happy to investigate more and advise the city."
+                    de: "Wir werden gerne weitere Untersuchungen durchführen und der Stadt beraten."
+                  set: ['quest.environmentalImpact.done', 'pnt.empowerment.environmentalImpact']
+            - cond: 'quest.environmentalImpact.done'
               text:
-                en: 'We will study the impact of the wheel’s lights on birds and bats and hopefully find a way to limit the issue.'
-                de: 'Wir werden die Auswirkungen der Riesenrad-Lichter auf Vögel und Fledermäuse untersuchen und hoffentlich einen Weg finden, um das Problem zu begrenzen.'
+                en: "We're investigating the environmental impact of the Ferris wheel's lights on birds and bats."
+                de: "Wir untersuchen die Auswirkungen der Lichter des Riesenrads auf Vögel und Fledermäuse."
             - text:
-                en: 'The lights of a Ferris wheel can confuse birds and bats.'
-                de: 'Die Lichter eines Riesenrads können Vögel und Fledermäuse verwirren.'
-              set: ['op.neg.birds']
-              responses:
-                - cond: 'talkedTo.ferrisSalesman.birds'
-                  text:
-                    de: 'Man kann laute Musik spielen, um sie zu verscheuchen.'
-                    en: 'They can play loud music to scare them away.'
-                  thenText:
-                    en: 'Hmmph! Don’t talk to me!'
-                    de: 'Hmpf! Reden Sie nicht mit mir!'
-                - cond: 'pnt.empowerment.environmentalImpact'
-                  text:
-                    en: 'The city government wants to fund a study.'
-                    de: 'Die Stadtverwaltung will eine Studie finanzieren.'
-                  thenText:
-                    en: 'Hopefully, we’ll find a way to limit the environmental impact.'
-                    de: 'Hoffentlich finden wir einen Weg, um die Auswirkungen auf die Umwelt zu begrenzen.'
+                en: "The scientific point of view should be taken into consideration when making decisions."
+                de: "Der wissenschaftliche Standpunkt sollte bei Entscheidungen berücksichtigt werden."
+      'museumDirector':
+        - type: first
+          items:
+            - cond: 'quest.environmentalImpact.active & ^quest.environmentalImpact.done'
+              type: sequence
+              items:
+                - text:
+                    en: "I guess it's likely that the ferris wheel will have an impact on the environment."
+                    de: "Ich denke, es ist wahrscheinlich, dass das Riesenrad Auswirkungen auf die Umwelt haben wird."
+                - text:
+                    en: "But it's not our specialty. You should talk to a researcher from the university."
+                    de: "Aber das ist nicht unser Fachgebiet. Sie sollten mit einem Forscher der Universität sprechen."
+            - text:
+                en: "We hope that people who come to ride the Ferris wheel will also visit the museum."
+                de: "Wir hoffen, dass die Leute, die zum Riesenrad fahren, auch das Museum besuchen werden."
+              set: ['talkedTo.museumDirector']
+      'ferrisSalesman':
+        - type: sequence
+          items:
+            - text:
+                en: 'I represent Spin City™. We are excited by the opportunity of building a fantastic Ferris wheel for this city.'
+                de: 'Ich vertrete Drehmoment™. Wir sind begeistert von der Möglichkeit, ein fantastisches Riesenrad für diese Stadt zu bauen.'
+            - text:
+                en: "It will improve the north part of the city, which is currently underdeveloped."
+                de: "Es wird den nördlichen Teil der Stadt verbessern, der derzeit unterentwickelt ist."
       'citizenPuan':
         - type: 'first'
           items:
@@ -292,11 +266,6 @@ storylines:
                     en: 'Mmm. Maybe.'
                     de: 'Hmmm. Vielleicht.'
                   set: ['pnt.empathy.museum']
-      'museumDirector':
-        - text:
-            en: 'We hope the Ferris wheel attracts tourists who will also visit our museum after.'
-            de: 'Wir hoffen, dass das Riesenrad Tourist*innen anlockt, die danach auch unser Museum besuchen werden.'
-          set: ['talkedTo.museumDirector']
       'tourist':
         - type: 'random'
           items:
@@ -307,51 +276,24 @@ storylines:
               en: 'I love the Ferris wheel in Viena. Iconic!'
               de: 'Ich liebe das Riesenrad in Wien! Eine Ikone!'
       'citizenCat':
-        - text:
-            en: 'What do YOU think?'
-            de: 'Was denkst DU?'
-          responses:
-            - text:
-                en: 'I’m in favor of building a Ferris wheel.'
-                de: 'Ich bin für den Bau des Riesenrads.'
-            - text:
-                en: 'I’m against building a Ferris wheel.'
-                de: 'Ich bin gegen den Bau des Riesenrads.'
-            - text:
-                en: 'I don’t know yet.'
-                de: 'Ich weiß es noch nicht.'
-      'citizenCool':
-        - type: first
+        - type: sequence
           items:
-            - cond: 'pnt.information.fakeNews.accident'
-              text:
-                en: 'I’m concerned with the Ferris wheel’s safety.'
-                de: 'Ich mache mir Sorgen um die Sicherheit des Riesenrads.'
             - text:
-                en: 'They had a Ferris wheel in Nearbyville. It fell and crushed 50 people to death.'
-                de: 'In Nebenhausen hatten sie ein Riesenrad. Es stürzte ab und es verunglückten 50 Menschen.'
-              set: ['heard.rumor.accident']
+                en: 'What do YOU think?'
+                de: 'Was denkst DU?'
               responses:
-                - cond: 'pnt.information.fakeNews.accident'
-                  text:
-                    en: 'This is a fake rumor. That wheel still operates in Furtherburg.'
-                    de: 'Das ist ein falsches Gerücht. Das Rad ist in Fernheim noch in Betrieb.'
-                  thenText:
-                    de: 'Ich mache mir Sorgen um die Sicherheit des Riesenrads.'
-                    en: 'I’m concerned with the Ferris wheel’s safety.'
-      'journalist':
-        - text:
-            en: 'We’re researching the history of Ferris wheels in the region for an article. There are many fake rumors circulating.'
-            de: 'Wir recherchieren für einen Artikel über die Geschichte der Riesenräder in der Region. Es kursieren viele falsche Gerüchte.'
-          responses:
-            - cond: 'heard.rumor.accident'
-              text:
-                en: 'What do you know about the accident in Nearbyville?'
-                de: 'Was wissen Sie über den Unfall in Nebenhausen?'
-              thenText:
-                en: 'There was no accident. They sold their Ferris wheel to Furtherburg, and it’s still operating there.'
-                de: 'Es gab keinen Unfall. Sie haben ihr Riesenrad an Fernheim verkauft, und dort ist es immer noch in Betrieb.'
-              set: ['pnt.information.fakeNews.accident']
+                - text:
+                    en: 'I’m in favor of building a Ferris wheel.'
+                    de: 'Ich bin für den Bau des Riesenrads.'
+                - text:
+                    en: 'I’m against building a Ferris wheel.'
+                    de: 'Ich bin gegen den Bau des Riesenrads.'
+                - text:
+                    en: 'I don’t know yet.'
+                    de: 'Ich weiß es noch nicht.'
+            - text:
+                en: "58% of the citizens are in favor. 33% are against. 9% don't know yet."
+                de: "58% der Bürger*innen sind dafür. 33% sind dagegen. 9% wissen es noch nicht."
       'robot':
         - type: first
           items:
@@ -456,44 +398,76 @@ storylines:
       'citizenPunk':
         - type: first
           items:
-            - cond: 'pnt.empathy.positivity'
+            - cond: '^quest.fakeNews.active & ^quest.fakeNews.done'
               text:
-                en: 'I was against the project, but now I’m not sure.'
-                de: 'Ich war gegen das Projekt, aber jetzt bin ich mir nicht mehr sicher.'
-            - cond: '^pnt.empathy.positivity & talkedTo.citizenPunk.partial.'
-              text:
-                en: 'Most of my friends are against, but I’m beginning to see more positive opinions.'
-                de: 'Die meisten meiner Freunde sind dagegen, aber es gibt auch immer mehr positive Stimmen.'
+                en: 'I read there was a Ferris wheel in Nearbyville. It fell and crushed 50 people to death.'
+                de: 'Ich habe gelesen, dass es in der Nachbarstadt ein Riesenrad gab. Es fiel um und zerquetschte 50 Menschen.'
               responses:
-                - cond: 'COUNT("op.pos") >= 2'
-                  text:
-                    en: 'I collected some positive opinions. Look.'
-                    de: 'Ich habe einige positive Meinungen gesammelt. Schau mal.'
+                - text:
+                    en: "Is that true?"
+                    de: 'Stimmt das?'
                   thenText:
-                    en: '… OK. Those are interesting points.'
-                    de: '… Okay. Das sind interessante Punkte.'
-                  set: [ 'pnt.empathy.positivity' ]
-            - cond: '^pnt.empathy.positivity & ^talkedTo.citizenPunk.partial'
+                    en: 'Yes, many friends sent me the news.'
+                    de: 'Ja, viele Freunde haben mir die Nachricht geschickt.'
+                - text:
+                    en: 'Let me check if that is true.'
+                    de: 'Lass mich prüfen, ob das stimmt.'
+                  thenText:
+                    en: "OK. But it's being shared by everyone. It must be true."
+                    de: 'OK. Aber es wird von allen geteilt. Es muss wahr sein.'
+                  set: [ 'quest.fakeNews.active' ]
+            - cond: 'quest.fakeNews.active & quest.fakeNews.checked & ^quest.fakeNews.done'
               text:
-                en: 'I’ve spoken to many people and no one is in favor of this project.'
-                de: 'Ich habe mit vielen Leuten gesprochen und niemand ist für dieses Projekt.'
-              responses:
-                - cond: 'COUNT("op.pos") >= 2'
-                  text:
-                    en: 'I collected some positive opinions. Look.'
-                    de: 'Ich habe einige positive Meinungen gesammelt. Schau mal.'
-                  thenText:
-                    en: '… OK. Those are interesting points.'
-                    de: '… Okay. Das sind interessante Punkte.'
-                  set: ['pnt.empathy.positivity']
-                - cond: 'COUNT("op.pos") = 1'
-                  text:
-                    en: 'I collected some positive opinions. Look.'
-                    de: 'Ich habe einige positive Meinungen gesammelt. Schau mal.'
-                  thenText:
-                    en: 'I was against the project, but now I’m not sure.'
-                    de: 'Ich war gegen das Projekt, aber jetzt bin ich mir nicht mehr sicher.'
-                  set: ['talkedTo.citizenPunk.partial']
+                en: 'The accident was fake news? The rumor is being shared online by everyone.'
+                de: 'Der Unfall war Fake News? Das Gerücht wird online von allen geteilt.'
+            - cond: 'quest.fakeNews.active & ^quest.fakeNews.done'
+              text:
+                en: 'Did you find anything? I remember seeing pictures of the accident in the newspaper.'
+                de: 'Hast du etwas gefunden? Ich erinnere mich, Bilder des Unfalls in der Zeitung gesehen zu haben.'
+            - cond: 'quest.fakeNews.done'
+              text:
+                en: 'I’m still concerned with the Ferris wheel’s safety.'
+                de: 'Ich mache mir immer noch Sorgen um die Sicherheit des Riesenrads.'
+      'journalist':
+        - cond: 'quest.fakeNews.active & ^quest.fakeNews.checked & ^quest.fakeNews.done'
+          type: sequence
+          items:
+            - text:
+                en: 'An accident in Nearbyville? Let me check.'
+                de: 'Ein Unfall in Nebenhausen? Lass mich nachsehen.'
+            - text: '...'
+            - text:
+                en: 'OK. It never happened. Nearbyville sold their ferris wheel to Furtherburg. It’s still operating there.'
+                de: 'OK. Er hat nie stattgefunden. Nebenhausen hat sein Riesenrad an Fernheim verkauft. Es ist immer noch in Betrieb.'
+            - text:
+                en: 'Too bad people read forums instead of newspapers.'
+                de: 'Schade, dass die Leute Foren statt Zeitungen lesen.'
+              set: ['quest.fakeNews.checked']
+        - cond: 'quest.fakeNews.active & ^quest.fakeNews.done'
+          text:
+            en: 'That ferris wheel operates all year round. It has a lot of positive reviews from visitors.'
+            de: 'Dieses Riesenrad ist das ganze Jahr über in Betrieb. Es hat viele positive Bewertungen von Besuchern.'
+        - text:
+            en: 'Nobody buys newspapers to read about ferris wheels.'
+            de: 'Niemand kauft Zeitungen, um über Riesenräder zu lesen.'
+      'citizenCool':
+        - cond: 'quest.fakeNews.active & quest.fakeNews.checked & ^quest.fakeNews.done'
+          type: sequence
+          items:
+            - text:
+                en: "The ferris wheel accident is fake? Wow! I'll post a video about it right away!"
+                de: 'Der Unfall mit dem Riesenrad ist gefälscht? Wow! Ich werde sofort ein Video darüber posten!'
+            - text:
+                en: "I'll get a lot of views!"
+                de: 'Ich werde viele Aufrufe bekommen!'
+              set: ['quest.fakeNews.done', 'pnt.information.fakeNews']
+        - cond: 'quest.fakeNews.active & ^quest.fakeNews.done'
+          text:
+            en: "Of course I know about the Nearbyville accident. I'm looking for photos of the accident for a video for my channel."
+            de: 'Natürlich weiß ich von dem Unfall in Nebenhausen. Ich suche nach Fotos des Unfalls für ein Video für meinen Kanal.'
+        - text:
+            en: 'Subscribe to my channel and turn on notifications!'
+            de: 'Abonniere meinen Kanal und schalte die Benachrichtigungen ein!'
       'citizenLila':
         - type: first
           items:

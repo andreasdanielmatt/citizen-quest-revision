@@ -298,8 +298,8 @@ class PlayerApp {
   updateNpcMoods() {
     const npcsWithQuests = this.questTracker.getNpcsWithQuests();
     this.npcViews.forEach((npcView) => {
-      if (npcsWithQuests.includes(npcView.character.id)) {
-        npcView.showMoodBalloon('exclamation');
+      if (Object.keys(npcsWithQuests).includes(npcView.character.id)) {
+        npcView.showMoodBalloon(npcsWithQuests[npcView.character.id]);
       } else {
         npcView.hideMoodBalloon();
       }
