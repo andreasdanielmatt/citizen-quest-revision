@@ -4,11 +4,17 @@ const showFatalError = require('./lib/loader/show-fatal-error');
 require('../sass/default.scss');
 const PlayerApp = require('./lib/app/player-app');
 const { getApiServerUrl, getSocketServerUrl } = require('./lib/net/server-url');
+const { initSentry } = require('./lib/helpers/sentry');
 
 const urlParams = new URLSearchParams(window.location.search);
 const playerId = urlParams.get('p') || '1';
 const statsPanel = urlParams.get('s') || null;
 const configUrl = `${getApiServerUrl()}config`;
+
+const sentryDSN = urlParams.get('sentry-dsn') || process.env.SENTRY_DSN;
+if (sentryDSN) {
+  initSentry(sentryDSN);
+}
 
 fetch(configUrl, { cache: 'no-store' })
   .then((response) => {

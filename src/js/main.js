@@ -3,11 +3,17 @@ const CfgReaderFetch = require('./lib/loader/cfg-reader-fetch');
 const CfgLoader = require('./lib/loader/cfg-loader');
 const showFatalError = require('./lib/loader/show-fatal-error');
 const PlayerApp = require('./lib/app/player-app');
+const { initSentry } = require('./lib/helpers/sentry');
 require('./lib/live-test/live-test-manager');
 require('./lib/live-test/dialogue-live-tester');
 require('../sass/default.scss');
 
 const urlParams = new URLSearchParams(window.location.search);
+
+const sentryDSN = urlParams.get('sentry-dsn') || process.env.SENTRY_DSN;
+if (sentryDSN) {
+  initSentry(sentryDSN);
+}
 
 const cfgLoader = new CfgLoader(CfgReaderFetch, yaml.load);
 cfgLoader.load([
