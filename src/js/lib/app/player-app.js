@@ -261,7 +261,8 @@ class PlayerApp {
 
   playDialogue(dialogue, npc = null) {
     this.inputRouter.routeToDialogueOverlay(this.dialogueOverlay, this.dialogueSequencer);
-    this.dialogueSequencer.play(dialogue, this.getDialogueContext(), { top: npc.name });
+    const title = npc ? npc.name : null;
+    this.dialogueSequencer.play(dialogue, this.getDialogueContext(), { top: title });
     this.dialogueSequencer.events.once('end', () => {
       this.inputRouter.routeToPcMovement(this);
     });

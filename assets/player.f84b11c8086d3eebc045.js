@@ -40050,7 +40050,8 @@ class PlayerApp {
 
   playDialogue(dialogue, npc = null) {
     this.inputRouter.routeToDialogueOverlay(this.dialogueOverlay, this.dialogueSequencer);
-    this.dialogueSequencer.play(dialogue, this.getDialogueContext(), { top: npc.name });
+    const title = npc ? npc.name : null;
+    this.dialogueSequencer.play(dialogue, this.getDialogueContext(), { top: title });
     this.dialogueSequencer.events.once('end', () => {
       this.inputRouter.routeToPcMovement(this);
     });
@@ -40133,7 +40134,6 @@ class DialogueBalloon {
       .appendTo(this.$element);
     this.$title = $('<div></div>')
       .addClass('title')
-      .html('The name of the speaker')
       .appendTo(this.$styling);
   }
 
@@ -43948,4 +43948,4 @@ fetch(configUrl, { cache: 'no-store' })
 
 /******/ })()
 ;
-//# sourceMappingURL=player.16ee0b00e99e241b02ae.js.map
+//# sourceMappingURL=player.f84b11c8086d3eebc045.js.map

@@ -27,6 +27,12 @@ The `player.html` client accepts the following query string parameters:
 - `p`: Player ID. Defaults to 1.
 - `s`: ID of the stats panel to show (fps, render, ping). Defaults to none.
 
+The `index.html` app accepts the following query string parameters:
+- `s`: ID of the stats panel to show (fps, render, ping). Defaults to none.
+- `t`: Time limit for the game, in seconds. Defaults to 300 seconds.
+- `test`: A live test to perform (e.g. `dialogue-responses`)
+
+
 ## Configuration
 
 The configuration files are in the `config` directory. The server has to be reloaded after any changes.

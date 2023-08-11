@@ -44233,7 +44233,8 @@ class PlayerApp {
 
   playDialogue(dialogue, npc = null) {
     this.inputRouter.routeToDialogueOverlay(this.dialogueOverlay, this.dialogueSequencer);
-    this.dialogueSequencer.play(dialogue, this.getDialogueContext(), { top: npc.name });
+    const title = npc ? npc.name : null;
+    this.dialogueSequencer.play(dialogue, this.getDialogueContext(), { top: title });
     this.dialogueSequencer.events.once('end', () => {
       this.inputRouter.routeToPcMovement(this);
     });
@@ -44316,7 +44317,6 @@ class DialogueBalloon {
       .appendTo(this.$element);
     this.$title = $('<div></div>')
       .addClass('title')
-      .html('The name of the speaker')
       .appendTo(this.$styling);
   }
 
@@ -47887,6 +47887,8 @@ __webpack_require__(/*! ./lib/live-test/dialogue-live-tester */ "./src/js/lib/li
 __webpack_require__(/*! ../sass/default.scss */ "./src/sass/default.scss");
 
 const urlParams = new URLSearchParams(window.location.search);
+const statsPanel = urlParams.get('s') || null;
+const liveTest = urlParams.get('test') || null;
 
 const sentryDSN = urlParams.get('sentry-dsn') || "MISSING_ENV_VAR".SENTRY_DSN;
 if (sentryDSN) {
@@ -47926,8 +47928,12 @@ cfgLoader.load([
     playerApp.resize();
   });
 
-  if (urlParams.get('test')) {
-    window.IMAGINARY.liveTestManager.run(playerApp, urlParams.get('test'));
+  if (statsPanel) {
+    playerApp.stats.showPanel(statsPanel);
+  }
+
+  if (liveTest) {
+    window.IMAGINARY.liveTestManager.run(playerApp, liveTest);
   }
 });
 
@@ -47935,4 +47941,4 @@ cfgLoader.load([
 
 /******/ })()
 ;
-//# sourceMappingURL=default.f63e415e0cecd41ea112.js.map
+//# sourceMappingURL=default.3c262378117013306f0b.js.map

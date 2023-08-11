@@ -9,6 +9,8 @@ require('./lib/live-test/dialogue-live-tester');
 require('../sass/default.scss');
 
 const urlParams = new URLSearchParams(window.location.search);
+const statsPanel = urlParams.get('s') || null;
+const liveTest = urlParams.get('test') || null;
 
 const sentryDSN = urlParams.get('sentry-dsn') || process.env.SENTRY_DSN;
 if (sentryDSN) {
@@ -48,7 +50,11 @@ cfgLoader.load([
     playerApp.resize();
   });
 
-  if (urlParams.get('test')) {
-    window.IMAGINARY.liveTestManager.run(playerApp, urlParams.get('test'));
+  if (statsPanel) {
+    playerApp.stats.showPanel(statsPanel);
+  }
+
+  if (liveTest) {
+    window.IMAGINARY.liveTestManager.run(playerApp, liveTest);
   }
 });

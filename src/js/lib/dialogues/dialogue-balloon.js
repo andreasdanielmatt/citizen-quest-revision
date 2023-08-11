@@ -7,7 +7,6 @@ class DialogueBalloon {
       .appendTo(this.$element);
     this.$title = $('<div></div>')
       .addClass('title')
-      .html('The name of the speaker')
       .appendTo(this.$styling);
   }
 
