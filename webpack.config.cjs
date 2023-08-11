@@ -7,7 +7,8 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 module.exports = {
   entry: {
     default: './src/js/main.js',
-    player: './src/js/player.js'
+    player: './src/js/player.js',
+    map: './src/js/map.js',
   },
   output: {
     filename: '[name].[contenthash].js',
@@ -60,6 +61,12 @@ module.exports = {
       template: path.resolve(__dirname, 'src/html/player.html'),
       filename: path.resolve(__dirname, 'player.html'),
       chunks: ['player'],
+      minify: true,
+    }),
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, 'src/html/map.html'),
+      filename: path.resolve(__dirname, 'map.html'),
+      chunks: ['map'],
       minify: true,
     }),
     new CleanWebpackPlugin({
