@@ -165,8 +165,8 @@ class PlayerApp {
       }
       this.pcView.animate(time);
       Object.entries(this.otherPcViews).forEach(([, pcView]) => {
-        pcView.display.position = pcView.pc.position;
-        pcView.display.zIndex = pcView.pc.position.y;
+        pcView.display.position = pcView.character.position;
+        pcView.display.zIndex = pcView.character.position.y;
       });
       this.townView.mainLayer.sortChildren();
 
