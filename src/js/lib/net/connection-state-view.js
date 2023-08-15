@@ -1,7 +1,11 @@
 const icon = require('../../../../static/fa/broadcast-tower-solid.svg');
 
+const RELAUNCH_DELAY_SECONDS = 5;
+
 class ConnectionStateView {
   constructor(connector) {
+    this.relaunching = false;
+
     this.$element = $('<div></div>')
       .addClass('connection-state-view');
 
@@ -22,6 +26,7 @@ class ConnectionStateView {
     connector.events.on('connectWait', this.handleConnectWait.bind(this));
     connector.events.on('connecting', this.handleConnecting.bind(this));
     connector.events.on('connect', this.handleConnect.bind(this));
+    connector.events.on('server-relaunched', this.handleServerRelaunched.bind(this));
   }
 
   show() {
@@ -41,12 +46,18 @@ class ConnectionStateView {
   }
 
   handleClosing() {
+    if (this.relaunching) {
+      return;
+    }
     this.setErrorMessage('Retrying connection');
     this.setErrorStatus('');
     this.show();
   }
 
   handleDisconnect() {
+    if (this.relaunching) {
+      return;
+    }
     this.setErrorMessage('Disconnected from server');
     this.setErrorStatus('');
     this.show();
@@ -62,6 +73,23 @@ class ConnectionStateView {
 
   handleConnect() {
     this.hide();
+  }
+
+  handleServerRelaunched() {
+    this.relaunching = true;
+    this.setErrorMessage('The server was restarted.<br />Reloading in');
+    this.setErrorStatus(`${RELAUNCH_DELAY_SECONDS} seconds`);
+    this.show();
+
+    let secondsLeft = RELAUNCH_DELAY_SECONDS;
+    const interval = setInterval(() => {
+      secondsLeft -= 1;
+      this.setErrorStatus(`${secondsLeft} seconds`);
+      if (secondsLeft <= 0) {
+        clearInterval(interval);
+        window.location.reload();
+      }
+    }, 1000);
   }
 }
 

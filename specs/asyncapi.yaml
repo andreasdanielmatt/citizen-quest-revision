@@ -23,6 +23,7 @@ channels:
       operationId: processReceivedMessage
       message:
         oneOf:
+          - $ref: '#/components/messages/serverInfoReq'
           - $ref: '#/components/messages/sync'
           - $ref: '#/components/messages/ping'
     subscribe:
@@ -32,9 +33,26 @@ channels:
         oneOf:
           - $ref: '#/components/messages/sync'
           - $ref: '#/components/messages/pong'
+          - $ref: '#/components/messages/serverInfo'
 
 components:
   messages:
+    serverInfoReq:
+      summary: Request information about the server.
+      payload:
+        $ref: "#/components/schemas/serverInfoReq"
+      x-response:
+        $ref: "#/components/schemas/serverInfo"
+    serverInfo:
+      summary: Information about the server.
+      payload:
+        $ref: "#/components/schemas/serverInfo"
+    sync:
+      summary: Synchronize the client with the server.
+      payload:
+        $ref: "#/components/schemas/sync"
+      x-response:
+        $ref: "#/components/schemas/sync"
     ping:
       summary: Ping the server to check if the connection is alive.
       payload:
@@ -46,6 +64,20 @@ components:
       payload:
         $ref: "#/components/schemas/pong"
   schemas:
+    serverInfoReq:
+      type: object
+      properties:
+        type:
+          type: string
+          const: serverInfo
+    serverInfo:
+      type: object
+      properties:
+        type:
+          type: string
+          const: serverInfo
+        serverId:
+          type: string
     sync:
       type: object
       properties:

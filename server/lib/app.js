@@ -6,7 +6,8 @@ const OpenApiValidator = require('express-openapi-validator');
 const Character = require('../../src/js/lib/model/character');
 
 function initApp(config) {
-  console.log('Initializing server.');
+  const serverID = `${process.pid}:${Date.now()}`;
+  console.log(`Initializing server (id=${serverID})`);
 
   const players = Object.fromEntries(Object.entries(config.players)
     .filter(([, player]) => player.enabled === undefined || player.enabled)
@@ -41,6 +42,13 @@ function initApp(config) {
         }
       });
     }
+  }
+
+  function sendServerInfo(socket) {
+    socket.send(JSON.stringify({
+      type: 'serverInfo',
+      serverID,
+    }));
   }
 
   function sendSync(socket) {
@@ -80,6 +88,9 @@ function initApp(config) {
           case 'ping':
             sendPong(socket);
             break;
+          case 'info':
+            sendServerInfo(socket);
+            break;
           default:
             console.warn(`Error: Received message of unknown type '${message.type}'`);
             break;
@@ -98,6 +109,8 @@ function initApp(config) {
       console.error(`Socket error (code: ${err.code})`);
       console.error(err);
     });
+
+    sendServerInfo(socket);
   });
 
   wss.on('close', () => {

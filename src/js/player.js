@@ -42,6 +42,9 @@ fetch(configUrl, { cache: 'no-store' })
 
     let syncReceived = false;
     const connector = new ServerSocketConnector(getSocketServerUrl());
+    const connStateView = new ConnectionStateView(connector);
+    $('body').append(connStateView.$element);
+
     connector.events.on('connect', () => {
       syncReceived = true;
     });
@@ -65,8 +68,6 @@ fetch(configUrl, { cache: 'no-store' })
         syncReceived = false;
       }
     });
-    const connStateView = new ConnectionStateView(connector);
-    $('body').append(connStateView.$element);
 
     if (statsPanel) {
       playerApp.stats.showPanel(statsPanel);

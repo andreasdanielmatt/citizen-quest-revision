@@ -44137,8 +44137,8 @@ class PlayerApp {
       }
       this.pcView.animate(time);
       Object.entries(this.otherPcViews).forEach(([, pcView]) => {
-        pcView.display.position = pcView.pc.position;
-        pcView.display.zIndex = pcView.pc.position.y;
+        pcView.display.position = pcView.character.position;
+        pcView.display.zIndex = pcView.character.position.y;
       });
       this.townView.mainLayer.sortChildren();
 
@@ -47941,4 +47941,4 @@ cfgLoader.load([
 
 /******/ })()
 ;
-//# sourceMappingURL=default.3c262378117013306f0b.js.map
+//# sourceMappingURL=default.d2fb98591f03745ecc11.js.map

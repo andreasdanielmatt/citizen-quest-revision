@@ -39954,8 +39954,8 @@ class PlayerApp {
       }
       this.pcView.animate(time);
       Object.entries(this.otherPcViews).forEach(([, pcView]) => {
-        pcView.display.position = pcView.pc.position;
-        pcView.display.zIndex = pcView.pc.position.y;
+        pcView.display.position = pcView.character.position;
+        pcView.display.zIndex = pcView.character.position.y;
       });
       this.townView.mainLayer.sortChildren();
 
@@ -42702,8 +42702,12 @@ module.exports = QuestTracker;
 
 const icon = __webpack_require__(/*! ../../../../static/fa/broadcast-tower-solid.svg */ "./static/fa/broadcast-tower-solid.svg");
 
+const RELAUNCH_DELAY_SECONDS = 5;
+
 class ConnectionStateView {
   constructor(connector) {
+    this.relaunching = false;
+
     this.$element = $('<div></div>')
       .addClass('connection-state-view');
 
@@ -42724,6 +42728,7 @@ class ConnectionStateView {
     connector.events.on('connectWait', this.handleConnectWait.bind(this));
     connector.events.on('connecting', this.handleConnecting.bind(this));
     connector.events.on('connect', this.handleConnect.bind(this));
+    connector.events.on('server-relaunched', this.handleServerRelaunched.bind(this));
   }
 
   show() {
@@ -42743,12 +42748,18 @@ class ConnectionStateView {
   }
 
   handleClosing() {
+    if (this.relaunching) {
+      return;
+    }
     this.setErrorMessage('Retrying connection');
     this.setErrorStatus('');
     this.show();
   }
 
   handleDisconnect() {
+    if (this.relaunching) {
+      return;
+    }
     this.setErrorMessage('Disconnected from server');
     this.setErrorStatus('');
     this.show();
@@ -42764,6 +42775,23 @@ class ConnectionStateView {
 
   handleConnect() {
     this.hide();
+  }
+
+  handleServerRelaunched() {
+    this.relaunching = true;
+    this.setErrorMessage('The server was restarted.<br />Reloading in');
+    this.setErrorStatus(`${RELAUNCH_DELAY_SECONDS} seconds`);
+    this.show();
+
+    let secondsLeft = RELAUNCH_DELAY_SECONDS;
+    const interval = setInterval(() => {
+      secondsLeft -= 1;
+      this.setErrorStatus(`${secondsLeft} seconds`);
+      if (secondsLeft <= 0) {
+        clearInterval(interval);
+        window.location.reload();
+      }
+    }, 1000);
   }
 }
 
@@ -42790,12 +42818,15 @@ class ServerSocketConnector {
     this.uri = uri;
     this.ws = null;
     this.connected = false;
+    this.autoReconnect = true;
+    this.serverId = null;
     // Must track isClosing because the socket might enter CLOSING state and not close immediately
     this.isClosing = false;
     this.events = new EventEmitter();
     this.pingTimeout = null;
     this.pongTimeout = null;
     this.reconnectTimeout = null;
+    this.serverInfoTimeout = null;
     this.connect();
   }
 
@@ -42813,6 +42844,23 @@ class ServerSocketConnector {
     // error, and on a connection failure onclose will be called.
 
     this.connected = false;
+  }
+
+  disconnect() {
+    console.log('Disconnecting...');
+    this.events.emit('disconnecting');
+    this.autoReconnect = false;
+    this.cancelPing();
+    this.cancelReconnect();
+    this.close();
+  }
+
+  close() {
+    if (!this.isClosing) {
+      this.isClosing = true;
+      this.events.emit('closing');
+    }
+    this.ws.close();
   }
 
   cancelReconnect() {
@@ -42856,7 +42904,9 @@ class ServerSocketConnector {
       ev.reason ? `(reason: ${ev.reason})` : ''
     );
     this.events.emit('disconnect');
-    this.reconnect();
+    if (this.autoReconnect) {
+      this.reconnect();
+    }
   }
 
   handleMessage(ev) {
@@ -42865,6 +42915,8 @@ class ServerSocketConnector {
       this.handleSync(message);
     } else if (message.type === 'pong') {
       this.handlePong();
+    } else if (message.type === 'serverInfo') {
+      this.handleServerInfo(message);
     }
   }
 
@@ -42875,6 +42927,18 @@ class ServerSocketConnector {
   handlePong() {
     this.cancelPongTimeout();
     this.schedulePing();
+  }
+
+  handleServerInfo(message) {
+    this.cancelServerInfoTimeout();
+    if (this.serverId === null) {
+      this.serverId = message.serverID;
+    } else if (this.serverId !== message.serverID) {
+      console.warn(`Received serverInfo with different serverID (${message.serverID})`);
+      this.events.emit('server-relaunched');
+      this.autoReconnect = false;
+      this.close();
+    }
   }
 
   send(data) {
@@ -42901,6 +42965,23 @@ class ServerSocketConnector {
     if (this.pongTimeout !== null) {
       clearTimeout(this.pongTimeout);
       this.pongTimeout = null;
+    }
+  }
+
+  scheduleServerInfoTimeout() {
+    this.cancelServerInfoTimeout();
+    this.serverInfoTimeout = setTimeout(() => {
+      this.serverInfoTimeout = null;
+      console.warn(`No serverInfo received after ${PONG_WAIT_TIME / 1000} seconds`);
+      console.warn('Closing connection');
+      this.close();
+    }, PONG_WAIT_TIME);
+  }
+
+  cancelServerInfoTimeout() {
+    if (this.serverInfoTimeout !== null) {
+      clearTimeout(this.serverInfoTimeout);
+      this.serverInfoTimeout = null;
     }
   }
 
@@ -43910,6 +43991,9 @@ fetch(configUrl, { cache: 'no-store' })
 
     let syncReceived = false;
     const connector = new ServerSocketConnector(getSocketServerUrl());
+    const connStateView = new ConnectionStateView(connector);
+    $('body').append(connStateView.$element);
+
     connector.events.on('connect', () => {
       syncReceived = true;
     });
@@ -43933,8 +44017,6 @@ fetch(configUrl, { cache: 'no-store' })
         syncReceived = false;
       }
     });
-    const connStateView = new ConnectionStateView(connector);
-    $('body').append(connStateView.$element);
 
     if (statsPanel) {
       playerApp.stats.showPanel(statsPanel);
@@ -43948,4 +44030,4 @@ fetch(configUrl, { cache: 'no-store' })
 
 /******/ })()
 ;
-//# sourceMappingURL=player.f84b11c8086d3eebc045.js.map
+//# sourceMappingURL=player.a80ecbba64b1033d0d21.js.map

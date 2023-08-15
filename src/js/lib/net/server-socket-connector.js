@@ -10,12 +10,15 @@ class ServerSocketConnector {
     this.uri = uri;
     this.ws = null;
     this.connected = false;
+    this.autoReconnect = true;
+    this.serverId = null;
     // Must track isClosing because the socket might enter CLOSING state and not close immediately
     this.isClosing = false;
     this.events = new EventEmitter();
     this.pingTimeout = null;
     this.pongTimeout = null;
     this.reconnectTimeout = null;
+    this.serverInfoTimeout = null;
     this.connect();
   }
 
@@ -33,6 +36,23 @@ class ServerSocketConnector {
     // error, and on a connection failure onclose will be called.
 
     this.connected = false;
+  }
+
+  disconnect() {
+    console.log('Disconnecting...');
+    this.events.emit('disconnecting');
+    this.autoReconnect = false;
+    this.cancelPing();
+    this.cancelReconnect();
+    this.close();
+  }
+
+  close() {
+    if (!this.isClosing) {
+      this.isClosing = true;
+      this.events.emit('closing');
+    }
+    this.ws.close();
   }
 
   cancelReconnect() {
@@ -76,7 +96,9 @@ class ServerSocketConnector {
       ev.reason ? `(reason: ${ev.reason})` : ''
     );
     this.events.emit('disconnect');
-    this.reconnect();
+    if (this.autoReconnect) {
+      this.reconnect();
+    }
   }
 
   handleMessage(ev) {
@@ -85,6 +107,8 @@ class ServerSocketConnector {
       this.handleSync(message);
     } else if (message.type === 'pong') {
       this.handlePong();
+    } else if (message.type === 'serverInfo') {
+      this.handleServerInfo(message);
     }
   }
 
@@ -95,6 +119,18 @@ class ServerSocketConnector {
   handlePong() {
     this.cancelPongTimeout();
     this.schedulePing();
+  }
+
+  handleServerInfo(message) {
+    this.cancelServerInfoTimeout();
+    if (this.serverId === null) {
+      this.serverId = message.serverID;
+    } else if (this.serverId !== message.serverID) {
+      console.warn(`Received serverInfo with different serverID (${message.serverID})`);
+      this.events.emit('server-relaunched');
+      this.autoReconnect = false;
+      this.close();
+    }
   }
 
   send(data) {
@@ -121,6 +157,23 @@ class ServerSocketConnector {
     if (this.pongTimeout !== null) {
       clearTimeout(this.pongTimeout);
       this.pongTimeout = null;
+    }
+  }
+
+  scheduleServerInfoTimeout() {
+    this.cancelServerInfoTimeout();
+    this.serverInfoTimeout = setTimeout(() => {
+      this.serverInfoTimeout = null;
+      console.warn(`No serverInfo received after ${PONG_WAIT_TIME / 1000} seconds`);
+      console.warn('Closing connection');
+      this.close();
+    }, PONG_WAIT_TIME);
+  }
+
+  cancelServerInfoTimeout() {
+    if (this.serverInfoTimeout !== null) {
+      clearTimeout(this.serverInfoTimeout);
+      this.serverInfoTimeout = null;
     }
   }
 
