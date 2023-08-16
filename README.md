@@ -20,6 +20,7 @@ The clients, in the root directory, are:
 
 - `index.html`: Demo/test client .
 - `player.html`: Player station client.
+- `map.html`: City map station client.
 
 ## Query strings
 
@@ -27,11 +28,13 @@ The `player.html` client accepts the following query string parameters:
 - `p`: Player ID. Defaults to 1.
 - `s`: ID of the stats panel to show (fps, render, ping). Defaults to none.
 
+The `map.html` client accepts the following query string parameters:
+- `s`: ID of the stats panel to show (fps, render, ping). Defaults to none.
+
 The `index.html` app accepts the following query string parameters:
 - `s`: ID of the stats panel to show (fps, render, ping). Defaults to none.
 - `t`: Time limit for the game, in seconds. Defaults to 300 seconds.
 - `test`: A live test to perform (e.g. `dialogue-responses`)
-
 
 ## Configuration
 
@@ -62,6 +65,10 @@ The following keyboard shortcuts are available in the player app:
 - 'e': Ends the countdown and jumps to the game end.
 - 'h': Shows hitboxes.
 - 'x': Outputs the player's position to the javascript console.
+
+The following keyboard shortcuts are available in the map app:
+
+- 'd': Toggle stats panel. Each press of 'd' toggles to a different panel.
 
 ## License
 

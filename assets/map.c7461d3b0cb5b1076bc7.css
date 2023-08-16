@@ -137,6 +137,70 @@ h1, h2, h3, h4, h5, h6 {
   height: 100%;
   line-height: 1.85em;
 }
+.map-app {
+  position: relative;
+  margin: auto;
+  overflow: hidden;
+}
+.map-app .pixi-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  font-size: 0;
+}
+.map-app .pixi-wrapper canvas {
+  width: 100%;
+  height: 100%;
+}
+.map-app .countdown {
+  position: absolute;
+  right: 0.8em;
+  bottom: 0.6em;
+  box-sizing: content-box;
+  font-size: 2em;
+  font-family: "Roboto Condensed", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  color: black;
+  background-color: white;
+  border: 6px solid #000;
+  text-align: center;
+  width: 10%;
+  height: 2em;
+  line-height: 2em;
+}
+.map-app .storyline-bar {
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 10%;
+  top: 0;
+  background-color: #ffe34a;
+  border-bottom: 0.75em solid black;
+  font-family: "Roboto Condensed", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+.map-app .storyline-bar .decision-label {
+  display: inline-block;
+  padding: 0.3em 0.75em;
+  font-size: 1.7em;
+  font-weight: bold;
+  color: black;
+}
+.map-app .storyline-bar .countdown {
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 2em;
+  color: black;
+  background-color: white;
+  text-align: center;
+  width: 10%;
+  height: 100%;
+  line-height: 1.85em;
+}
+
 @keyframes popIn {
   0% {
     transform: scale(0.5);
@@ -534,4 +598,4 @@ html.with-fatal-error body {
   margin-bottom: 1.2em;
 }
 
-/*# sourceMappingURL=player.987d93e5f792b5adfc8e.css.map*/
+/*# sourceMappingURL=map.c7461d3b0cb5b1076bc7.css.map*/

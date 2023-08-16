@@ -1,1 +1,0 @@
-{"version":3,"file":"map.2dfb180b5f54a0ec8384.js","mappings":";;;;;AAAA;AACA;AACA;AACA","sources":["webpack://future-democracy/./src/js/map.js"],"sourcesContent":["console.log(\"Peee\");\n$('[data-component=\"MapApp\"]').replaceWith(\n  $('<div class=\"error\">').text('Map is not implemented yet.')\n);\n"],"names":[],"sourceRoot":""}

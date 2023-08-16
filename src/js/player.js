@@ -2,9 +2,9 @@ const ServerSocketConnector = require('./lib/net/server-socket-connector');
 const ConnectionStateView = require('./lib/net/connection-state-view');
 const showFatalError = require('./lib/loader/show-fatal-error');
 require('../sass/default.scss');
-const PlayerApp = require('./lib/app/player-app');
 const { getApiServerUrl, getSocketServerUrl } = require('./lib/net/server-url');
 const { initSentry } = require('./lib/helpers/sentry');
+const PlayerApp = require('./lib/app/player-app');
 
 const urlParams = new URLSearchParams(window.location.search);
 const playerId = urlParams.get('p') || '1';

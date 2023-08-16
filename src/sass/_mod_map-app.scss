@@ -1,0 +1,65 @@
+.map-app {
+  position: relative;
+  margin: auto;
+  overflow: hidden;
+
+  .pixi-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    font-size: 0;
+
+    canvas {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .countdown {
+    position: absolute;
+    right: 0.8em;
+    bottom: 0.6em;
+    box-sizing: content-box;
+    font-size: 2em;
+    @include RobotoCondensedBold;
+    color: black;
+    background-color: white;
+    border: 6px solid $c-black;
+    text-align: center;
+    width: 10%;
+    height: 2em;
+    line-height: 2em;
+  }
+
+  .storyline-bar {
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 10%;
+    top: 0;
+    background-color: #ffe34a;
+    border-bottom: 0.75em solid black;
+    @include RobotoCondensedBold;
+
+    .decision-label {
+      display: inline-block;
+      padding: 0.3em 0.75em;
+      font-size: 1.7em;
+      font-weight: bold;
+      color: black;
+    }
+
+    .countdown {
+      position: absolute;
+      right: 0;
+      top: 0;
+      font-size: 2em;
+      color: black;
+      background-color: white;
+      text-align: center;
+      width: 10%;
+      height: 100%;
+      line-height: 1.85em;
+    }
+  }
+}

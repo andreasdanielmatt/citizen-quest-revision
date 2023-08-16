@@ -106,8 +106,11 @@ class PlayerApp {
 
     await this.loadTextures();
 
+    this.camera = new PIXI.Container();
+    this.camera.scale = new PIXI.Point(0.5, 0.5);
     this.townView = new TownView(this.config, this.textures);
-    this.pixiApp.stage.addChild(this.townView.display);
+    this.camera.addChild(this.townView.display);
+    this.pixiApp.stage.addChild(this.camera);
     this.pcView = new PCView(this.config, this.textures, this.pc, this.townView);
     this.otherPcViews = Object.fromEntries(
       Object.entries(this.otherPcs)
@@ -167,15 +170,18 @@ class PlayerApp {
       Object.entries(this.otherPcViews).forEach(([, pcView]) => {
         pcView.display.position = pcView.character.position;
         pcView.display.zIndex = pcView.character.position.y;
+        pcView.animate(time);
       });
       this.townView.mainLayer.sortChildren();
 
       // Set the town view's pivot so the PC is always centered on the screen,
       // but don't let the pivot go off the edge of the town
-      this.townView.display.pivot.set(
-        Math.max(0, Math.min(this.pcView.display.x + this.pcView.display.width / 2 - PlayerApp.APP_WIDTH / 2, this.townView.townSize.width - PlayerApp.APP_WIDTH)),
-        Math.max(0, Math.min(this.pcView.display.y + this.pcView.display.height / 2 - PlayerApp.APP_HEIGHT / 2 * 1.5, this.townView.townSize.height - PlayerApp.APP_HEIGHT)),
+      this.camera.pivot.set(
+        Math.max(0, Math.min(this.pcView.display.x + this.pcView.display.width / 2 - PlayerApp.APP_WIDTH / 2 / this.camera.scale.x, this.townView.townSize.width - PlayerApp.APP_WIDTH / this.camera.scale.x)),
+        Math.max(0, Math.min(this.pcView.display.y - this.pcView.display.height * 0.8 - PlayerApp.APP_HEIGHT / 2 / this.camera.scale.y, this.townView.townSize.height - PlayerApp.APP_HEIGHT / this.camera.scale.y)),
       );
+      window.camera = this.camera;
+      window.townView = this.townView;
       this.stats.frameEnd();
     });
 

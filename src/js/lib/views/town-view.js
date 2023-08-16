@@ -85,9 +85,6 @@ class TownView {
         3;
       this.collisionMap.set(i, gray < 128);
     }
-
-    window.isWalkable = this.isWalkable.bind(this);
-    window.collMap = this.collisionMap;
   }
 
   async loadAssets() {
