@@ -1,0 +1,112 @@
+{
+  "frames": {
+    "icon-equity": {
+      "frame": {"x": 0, "y": 0, "w": 64, "h": 64},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 64, "h": 64},
+      "sourceSize": {"w": 64, "h": 64},
+      "anchor": { "x": 32, "y": 32 }
+    },
+    "icon-empathy": {
+      "frame": {"x": 64, "y": 0, "w": 64, "h": 64},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 64, "h": 64},
+      "sourceSize": {"w": 64, "h": 64},
+      "anchor": { "x": 32, "y": 32 }
+    },
+    "icon-empowerment": {
+      "frame": {"x": 128, "y": 0, "w": 64, "h": 64},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 64, "h": 64},
+      "sourceSize": {"w": 64, "h": 64},
+      "anchor": { "x": 32, "y": 32 }
+    },
+    "icon-information": {
+      "frame": {"x": 192, "y": 0, "w": 64, "h": 64},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 64, "h": 64},
+      "sourceSize": {"w": 64, "h": 64},
+      "anchor": { "x": 32, "y": 32 }
+    },
+    "icon-checkmark": {
+      "frame": {"x": 0, "y": 64, "w": 64, "h": 64},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 64, "h": 64},
+      "sourceSize": {"w": 64, "h": 64},
+      "anchor": { "x": 32, "y": 32 }
+    },
+    "icon-exclamation": {
+      "frame": {"x": 64, "y": 64, "w": 64, "h": 64},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 64, "h": 64},
+      "sourceSize": {"w": 64, "h": 64},
+      "anchor": { "x": 32, "y": 32 }
+    },
+    "icon-interrogation": {
+      "frame": {"x": 128, "y": 64, "w": 64, "h": 64},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 64, "h": 64},
+      "sourceSize": {"w": 64, "h": 64},
+      "anchor": { "x": 32, "y": 32 }
+    },
+    "icon-happy": {
+      "frame": {"x": 0, "y": 128, "w": 64, "h": 64},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 64, "h": 64},
+      "sourceSize": {"w": 64, "h": 64},
+      "anchor": { "x": 32, "y": 32 }
+    },
+    "icon-neutral": {
+      "frame": {"x": 64, "y": 128, "w": 64, "h": 64},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 64, "h": 64},
+      "sourceSize": {"w": 64, "h": 64},
+      "anchor": { "x": 32, "y": 32 }
+    },
+    "icon-sad": {
+      "frame": {"x": 128, "y": 128, "w": 64, "h": 64},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 64, "h": 64},
+      "sourceSize": {"w": 64, "h": 64},
+      "anchor": { "x": 32, "y": 32 }
+    },
+    "icon-angry": {
+      "frame": {"x": 192, "y": 128, "w": 64, "h": 64},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 64, "h": 64},
+      "sourceSize": {"w": 64, "h": 64},
+      "anchor": { "x": 32, "y": 32 }
+    },
+    "icon-player-1": {
+      "frame": {"x": 0, "y": 192, "w": 64, "h": 64},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 64, "h": 64},
+      "sourceSize": {"w": 64, "h": 64},
+      "anchor": { "x": 32, "y": 32 }
+    },
+    "icon-player-2": {
+      "frame": {"x": 64, "y": 192, "w": 64, "h": 64},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 64, "h": 64},
+      "sourceSize": {"w": 64, "h": 64},
+      "anchor": { "x": 32, "y": 32 }
+    },
+    "icon-player-3": {
+      "frame": {"x": 128, "y": 192, "w": 64, "h": 64},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 64, "h": 64},
+      "sourceSize": {"w": 64, "h": 64},
+      "anchor": { "x": 32, "y": 32 }
+    },
+    "icon-player-4": {
+      "frame": {"x": 192, "y": 192, "w": 64, "h": 64},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 64, "h": 64},
+      "sourceSize": {"w": 64, "h": 64},
+      "anchor": { "x": 32, "y": 32 }
+    },
+    "icon-player-5": {
+      "frame": {"x": 256, "y": 192, "w": 64, "h": 64},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 64, "h": 64},
+      "sourceSize": {"w": 64, "h": 64},
+      "anchor": { "x": 32, "y": 32 }
+    },
+    "icon-player-6": {
+      "frame": {"x": 320, "y": 192, "w": 64, "h": 64},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 64, "h": 64},
+      "sourceSize": {"w": 64, "h": 64},
+      "anchor": { "x": 32, "y": 32 }
+    }
+  },
+  "meta": {
+    "image": "icons.png",
+    "format": "RGBA8888",
+    "size": {"w": 384, "h": 256},
+    "scale": "1"
+  }
+}

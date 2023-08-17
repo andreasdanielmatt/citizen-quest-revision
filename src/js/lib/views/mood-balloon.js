@@ -4,6 +4,7 @@ const Fader = require('../helpers-pixi/fader');
 class MoodBalloon {
   constructor(characterView) {
     this.characterView = characterView;
+    this.mood = null;
     this.display = this.createSprite();
     this.moodIconDisplay = this.createMoodIconSprite();
     this.display.addChild(this.moodIconDisplay);
@@ -28,20 +29,24 @@ class MoodBalloon {
   }
 
   createMoodIconSprite() {
-    const sprite = new PIXI.Sprite(this.characterView.textures['mood-icons'].textures['mood-icon-exclamation']);
+    const sprite = new PIXI.Sprite(this.characterView.textures.icons.textures['icon-exclamation']);
     sprite.anchor.set(0.5, 1);
-    sprite.position.set(0, 0);
+    sprite.position.set(7.5, -4);
     sprite.visible = true;
 
     return sprite;
   }
 
   setMoodIcon(mood) {
-    this.moodIconDisplay.texture = this.characterView.textures['mood-icons'].textures[`mood-icon-${mood}`];
-    this.moodIconDisplay.scale = { x: 0, y: 0};
+    this.moodIconDisplay.texture = this.characterView.textures.icons.textures[`icon-${mood}`];
+    this.moodIconDisplay.scale = { x: 0, y: 0 };
   }
 
   show(mood) {
+    if (this.mood === mood) {
+      return;
+    }
+    this.mood = mood;
     this.fader.fadeIn(200);
     this.display.gotoAndPlay(0);
     this.setMoodIcon(mood);
@@ -64,6 +69,7 @@ class MoodBalloon {
   }
 
   hide() {
+    this.mood = null;
     this.moodIconTween.stop();
     this.fader.fadeOut(200);
   }

@@ -7,6 +7,9 @@ const PCView = require('../views/pc-view');
 const CharacterView = require('../views/character-view');
 const Character = require('../model/character');
 const KeyboardInputMgr = require('../input/keyboard-input-mgr');
+const MapMarker = require('../views/map-marker');
+const FlagStore = require('../dialogues/flag-store');
+const QuestTracker = require('../model/quest-tracker');
 
 class MapApp {
   constructor(config) {
@@ -18,6 +21,12 @@ class MapApp {
     this.$pixiWrapper = $('<div></div>')
       .addClass('pixi-wrapper')
       .appendTo(this.$element);
+
+    this.flags = new FlagStore();
+    window.flags = this.flags;
+    this.questTracker = new QuestTracker(config, this.flags);
+    this.questMarkers = {};
+    window.questMarkers = this.questMarkers;
 
     this.pcs = Object.fromEntries(Object.entries(this.config.players)
       .filter(([, player]) => (player.enabled === undefined || player.enabled))
@@ -42,7 +51,11 @@ class MapApp {
     this.camera.addChild(this.townView.display);
     this.pcViews = Object.fromEntries(
       Object.entries(this.pcs)
-        .map(([id, pc]) => [id, new PCView(this.config, this.textures, pc, this.townView)])
+        .map(([id, pc]) => {
+          const pcView = new PCView(this.config, this.textures, pc, this.townView);
+          this.addMarker(pcView, `player-${pc.id}`);
+          return [id, pcView];
+        })
     );
     this.npcViews = Object.values(this.npcs)
       .map(npc => new CharacterView(this.config, this.textures, npc, this.townView));
@@ -75,6 +88,14 @@ class MapApp {
       this.stats.frameEnd();
     });
 
+    this.updateQuestMarkers();
+    this.questTracker.events.on('questActive', (questId) => {
+      this.updateQuestMarkers();
+    });
+    this.questTracker.events.on('questDone', (questId) => {
+      this.updateQuestMarkers();
+    });
+
     return this;
   }
 
@@ -90,6 +111,51 @@ class MapApp {
   resize() {
     this.$element.fillWithAspect(MapApp.APP_WIDTH / MapApp.APP_HEIGHT);
     this.$element.css('font-size', `${(this.$element.width() * MapApp.FONT_RATIO).toFixed(3)}px`);
+  }
+
+  addMarker(character, icon) {
+    const marker = new MapMarker(
+      this.textures['map-markers'].textures['pin-marker'],
+      this.textures.icons.textures[`icon-${icon}`], { x: 0.5, y: 1 }
+    );
+    marker.setScale(this.townView.display.width / MapApp.APP_WIDTH);
+    character.addAttachment('map-marker', marker);
+    character.display.addChild(marker.display);
+    marker.setPosition(0, -character.display.height);
+    marker.popper.show();
+  }
+
+  removeMarker(character, onComplete = () => {}) {
+    const marker = character.getAttachment('map-marker');
+    if (marker) {
+      marker.hide(() => {
+        character.removeAttachment('map-marker');
+        onComplete();
+      });
+    } else {
+      onComplete();
+    }
+  }
+
+  updateQuestMarkers() {
+    const npcsWithQuests = this.questTracker.getNpcsWithQuests();
+    this.npcViews.forEach((npcView) => {
+      const npcId = npcView.character.id;
+      if (Object.keys(npcsWithQuests).includes(npcId)) {
+        const questIcon = npcsWithQuests[npcView.character.id];
+        if (this.questMarkers[npcId] === undefined) {
+          this.addMarker(npcView, questIcon);
+        } else if (this.questMarkers[npcId] !== questIcon) {
+          this.removeMarker(npcView, () => {
+            this.addMarker(npcView, questIcon);
+          });
+        }
+        this.questMarkers[npcId] = questIcon;
+      } else if (this.questMarkers[npcId]) {
+        delete this.questMarkers[npcId];
+        this.removeMarker(npcView);
+      }
+    });
   }
 }
 

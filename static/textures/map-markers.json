@@ -1,0 +1,22 @@
+{
+  "frames": {
+    "round-marker": {
+      "frame": {"x": 0, "y": 0, "w": 58, "h": 58},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 58, "h": 58},
+      "sourceSize": {"w": 58, "h": 58},
+      "anchor": { "x": 29, "y": 29 }
+    },
+    "pin-marker": {
+      "frame": {"x": 58, "y": 0, "w": 58, "h": 74},
+      "spriteSourceSize": {"x": 0, "y": 0, "w": 58, "h": 74},
+      "sourceSize": {"w": 58, "h": 74},
+      "anchor": { "x": 29, "y": 74 }
+    }
+  },
+  "meta": {
+    "image": "map-markers.png",
+    "format": "RGBA8888",
+    "size": {"w": 116, "h": 74},
+    "scale": "1"
+  }
+}

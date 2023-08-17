@@ -107,7 +107,6 @@ class PlayerApp {
     await this.loadTextures();
 
     this.camera = new PIXI.Container();
-    this.camera.scale = new PIXI.Point(0.5, 0.5);
     this.townView = new TownView(this.config, this.textures);
     this.camera.addChild(this.townView.display);
     this.pixiApp.stage.addChild(this.camera);

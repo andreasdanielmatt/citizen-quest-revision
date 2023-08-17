@@ -10,6 +10,7 @@ class CharacterView {
     this.townView = townView;
     this.display = this.createSprite();
     this.moodBalloon = null;
+    this.attachments = {};
   }
 
   createSprite() {
@@ -39,6 +40,25 @@ class CharacterView {
     const { x, y } = this.character.position;
     return x >= rect.left && x <= rect.right
       && y >= rect.top && y <= rect.bottom;
+  }
+
+  addAttachment(id, attachment) {
+    if (this.attachments[id]) {
+      this.removeAttachment(id);
+    }
+    this.attachments[id] = attachment;
+    this.display.addChild(attachment.display);
+  }
+
+  removeAttachment(id) {
+    if (this.attachments[id]) {
+      this.display.removeChild(this.attachments[id].display);
+      delete this.attachments[id];
+    }
+  }
+
+  getAttachment(id) {
+    return this.attachments[id];
   }
 }
 
