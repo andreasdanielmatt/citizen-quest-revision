@@ -164,8 +164,8 @@ class PCView extends CharacterView {
       case 'e':
         top = y - PCView.ACTION_HITBOX_H / 2;
         bottom = y + PCView.ACTION_HITBOX_H / 2;
-        left = x;
-        right = x + PCView.ACTION_HITBOX_W;
+        left = x - PCView.SPRITE_W;
+        right = (x - PCView.SPRITE_W) + PCView.ACTION_HITBOX_W;
         break;
       case 'w':
         top = y - PCView.ACTION_HITBOX_H / 2;
@@ -176,14 +176,14 @@ class PCView extends CharacterView {
       case 'n':
         top = y - (PCView.ACTION_HITBOX_W / 4) * 3;
         bottom = y + PCView.ACTION_HITBOX_W / 4;
-        left = x + (PCView.SPRITE_W / 2) - (PCView.ACTION_HITBOX_W / 2);
-        right = x + (PCView.SPRITE_W / 2) + (PCView.ACTION_HITBOX_W / 2);
+        left = x - (PCView.ACTION_HITBOX_H / 2);
+        right = x + (PCView.ACTION_HITBOX_H / 2);
         break;
       case 's':
-        top = y;
-        bottom = y + PCView.ACTION_HITBOX_W;
-        left = x + (PCView.SPRITE_W / 2) - (PCView.ACTION_HITBOX_W / 2);
-        right = x + (PCView.SPRITE_W / 2) + (PCView.ACTION_HITBOX_W / 2);
+        top = y - PCView.ACTION_HITBOX_W / 4;
+        bottom = (y - PCView.ACTION_HITBOX_W / 4) + PCView.ACTION_HITBOX_W;
+        left = x - (PCView.ACTION_HITBOX_H / 2);
+        right = x + (PCView.ACTION_HITBOX_H / 2);
         break;
       default:
         throw new Error(`Invalid direction ${this.direction}`);
