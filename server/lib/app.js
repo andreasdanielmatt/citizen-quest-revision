@@ -4,6 +4,7 @@ const ws = require('ws');
 const cors = require('cors');
 const OpenApiValidator = require('express-openapi-validator');
 const Character = require('../../src/js/lib/model/character');
+const reportError = require('./errors');
 
 function initApp(config) {
   const serverID = `${process.pid}:${Date.now()}`;
@@ -32,7 +33,7 @@ function initApp(config) {
     if (message.players) {
       Object.entries(message.players).forEach(([id, props]) => {
         if (players[id] === undefined) {
-          console.error(`Error: Received sync data for unknown player ${id}`);
+          reportError(`Error: Received sync data for unknown player ${id}`);
         }
         if (props.position) {
           players[id].setPosition(props.position.x, props.position.y);
@@ -92,12 +93,11 @@ function initApp(config) {
             sendServerInfo(socket);
             break;
           default:
-            console.warn(`Error: Received message of unknown type '${message.type}'`);
+            reportError(`Error: Received message of unknown type '${message.type}'`);
             break;
         }
       } else {
-        console.error('Error: Received invalid message via websocket');
-        console.trace(message);
+        reportError(`Error: Received invalid message via websocket:\n${data}`);
       }
     });
 
@@ -106,25 +106,22 @@ function initApp(config) {
     });
 
     socket.on('error', (err) => {
-      console.error(`Socket error (code: ${err.code})`);
-      console.error(err);
+      reportError(`Socket error (code: ${err.code}): ${err.message}`);
     });
 
     sendServerInfo(socket);
   });
 
   wss.on('close', () => {
-    console.error('WebSocket Server closed');
+    console.log('WebSocket Server closed');
   });
 
   wss.on('error', (err) => {
-    console.error(`WebSocket Server error: ${err.message}`);
-    console.error(err);
+    reportError(`WebSocket Server error: ${err.message}`);
   });
 
   wss.on('wsClientError', (err) => {
-    console.error(`WebSocket Server client error: ${err.message}`);
-    console.error(err);
+    reportError(`WebSocket Server client error: ${err.message}`);
   });
 
   return [app, wss];

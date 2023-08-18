@@ -8,6 +8,7 @@ This server connects the different stations that form part of the exhibit.
 
 - **Port** (default 4850): Set through the PORT env var or the `-p` / `--port` options.
 - **Settings file** (default '../settings.yml'): Set through the SETTINGS_FILE env var or the `-s` / `--settings-file` options.
+- **Sentry DSN** (default undefined): Set through the SENTRY_DSN env var or the `--sentry-dsn` option.
 
 ## License
 
