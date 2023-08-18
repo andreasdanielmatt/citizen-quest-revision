@@ -5,35 +5,25 @@ require('../sass/default.scss');
 const { getApiServerUrl, getSocketServerUrl } = require('./lib/net/server-url');
 const { initSentry } = require('./lib/helpers/sentry');
 const PlayerApp = require('./lib/app/player-app');
+const fetchConfig = require('./lib/helpers-client/fetch-config');
+const fetchTextures = require('./lib/helpers-client/fetch-textures');
 
-const urlParams = new URLSearchParams(window.location.search);
-const playerId = urlParams.get('p') || '1';
-const statsPanel = urlParams.get('s') || null;
-const configUrl = `${getApiServerUrl()}config`;
+(async () => {
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const playerId = urlParams.get('p') || '1';
+    const statsPanel = urlParams.get('s') || null;
+    const configUrl = `${getApiServerUrl()}config`;
 
-const sentryDSN = urlParams.get('sentry-dsn') || process.env.SENTRY_DSN;
-if (sentryDSN) {
-  initSentry(sentryDSN);
-}
-
-fetch(configUrl, { cache: 'no-store' })
-  .then((response) => {
-    if (!response.ok) {
-      throw new Error(`HTTP error. Status: ${ response.status }`);
+    const sentryDSN = urlParams.get('sentry-dsn') || process.env.SENTRY_DSN;
+    if (sentryDSN) {
+      initSentry(sentryDSN);
     }
-    return response.json();
-  })
-  .catch((err) => {
-    console.log(err);
-    showFatalError(`Error fetching configuration from ${configUrl}`, err);
-    console.error(`Error fetching configuration from ${configUrl}`);
-    throw err;
-  })
-  .then((config) => {
-    const playerApp = new PlayerApp(config, playerId);
-    return playerApp.init();
-  })
-  .then((playerApp) => {
+
+    const config = await fetchConfig(configUrl);
+    const textures = await fetchTextures('./static/textures', config.textures, 'town-view');
+    const playerApp = new PlayerApp(config, textures, playerId);
+
     $('[data-component="PlayerApp"]').replaceWith(playerApp.$element);
     playerApp.resize();
     $(window).on('resize', () => {
@@ -52,12 +42,12 @@ fetch(configUrl, { cache: 'no-store' })
       syncReceived = true;
       playerApp.stats.ping();
       Object.entries(message.players).forEach(([id, player]) => {
-        if (id !== playerId && playerApp.otherPcs[id]) {
+        if (id !== playerId && playerApp.remotePcs[id]) {
           if (player.position) {
-            playerApp.otherPcs[id].setPosition(player.position.x, player.position.y);
+            playerApp.remotePcs[id].setPosition(player.position.x, player.position.y);
           }
           if (player.speed) {
-            playerApp.otherPcs[id].setSpeed(player.speed.x, player.speed.y);
+            playerApp.remotePcs[id].setSpeed(player.speed.x, player.speed.y);
           }
         }
       });
@@ -72,7 +62,8 @@ fetch(configUrl, { cache: 'no-store' })
     if (statsPanel) {
       playerApp.stats.showPanel(statsPanel);
     }
-  })
-  .catch((err) => {
+  } catch (err) {
+    showFatalError(err.message, err);
     console.error(err);
-  });
+  }
+})();

@@ -2,9 +2,10 @@ const EventEmitter = require('events');
 const LogicParser = require('../dialogues/logic-parser');
 
 class QuestTracker {
-  constructor(config, flags) {
+  constructor(config, storylineManager, flags) {
     this.config = config;
     this.flags = flags;
+    this.storylineManager = storylineManager;
     this.events = new EventEmitter();
     this.logicParser = new LogicParser({ flags });
 
@@ -18,7 +19,7 @@ class QuestTracker {
   handleFlagChange(flag, value) {
     const flagParts = flag.split('.');
     if (flagParts.length === 3 && flagParts[0] === 'quest') {
-      if (this.config.storylines.touristen.quests[flagParts[1]] !== undefined) {
+      if (this.storylineManager.hasQuest(flagParts[1])) {
         if (flagParts[2] === 'active' && value === 1) {
           this.onQuestActive(flagParts[1]);
         } else if (flagParts[2] === 'done' && value === 1) {
@@ -32,16 +33,17 @@ class QuestTracker {
   }
 
   getAvailableQuests() {
-    return Object.entries(this.config.storylines.touristen.quests)
-      .filter(([id]) => !this.flags.value(`quest.${id}.done`) && !this.flags.value(`quest.${id}.active`))
-      .map(([id]) => id);
+    return Object.keys(this.storylineManager.getAllQuests())
+      .filter(id => !this.flags.value(`quest.${id}.done`) && !this.flags.value(`quest.${id}.active`));
   }
 
   getNpcsWithQuests() {
     const availableQuests = this.getAvailableQuests();
-    return Object.fromEntries(Object.entries(this.config.storylines.touristen.quests)
-      .filter(([id]) => availableQuests.includes(id))
-      .map(([, props]) => [props.npc, props.mood]));
+    return Object.fromEntries(
+      Object.entries(this.storylineManager.getAllQuests())
+        .filter(([id]) => availableQuests.includes(id))
+        .map(([, props]) => [props.npc, props.mood])
+    );
   }
 
   setActiveQuest(questId) {
@@ -91,8 +93,7 @@ class QuestTracker {
     if (this.activeQuestId === null || this.activeStage === null) {
       return null;
     }
-    return this.config.storylines.touristen.quests[this.activeQuestId]
-      .stages[this.activeStage].prompt;
+    return this.storylineManager.getQuest(this.activeQuestId).stages[this.activeStage].prompt;
   }
 
   getActiveStageCounter() {
@@ -108,8 +109,7 @@ class QuestTracker {
       return null;
     }
 
-    const stage = this.config.storylines.touristen.quests[this.activeQuestId]
-      .stages[this.activeStage];
+    const stage = this.storylineManager.getQuest(this.activeQuestId).stages[this.activeStage];
     if (stage.counter !== undefined) {
       return stage.counter.max;
     }
@@ -120,7 +120,7 @@ class QuestTracker {
     if (!this.activeQuestId) {
       return;
     }
-    const newStage = this.config.storylines.touristen.quests[this.activeQuestId].stages
+    const newStage = this.storylineManager.getQuest(this.activeQuestId).stages
       .findIndex(stage => stage.cond === undefined || !!this.logicParser.evaluate(stage.cond));
 
     this.setActiveStage(newStage);
@@ -130,8 +130,7 @@ class QuestTracker {
     if (this.activeQuestId === null || this.activeStage === null) {
       return;
     }
-    const stage = this.config.storylines.touristen.quests[this.activeQuestId]
-      .stages[this.activeStage];
+    const stage = this.storylineManager.getQuest(this.activeQuestId).stages[this.activeStage];
     if (stage.counter !== undefined) {
       const newCount = this.logicParser.evaluate(stage.counter.expression);
       this.setStageCounter(newCount);

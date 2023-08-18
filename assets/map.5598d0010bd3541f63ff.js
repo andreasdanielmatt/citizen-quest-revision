@@ -33021,150 +33021,6 @@ exports["default"] = def;
 
 /***/ }),
 
-/***/ "./node_modules/deepmerge/dist/cjs.js":
-/*!********************************************!*\
-  !*** ./node_modules/deepmerge/dist/cjs.js ***!
-  \********************************************/
-/***/ ((module) => {
-
-"use strict";
-
-
-var isMergeableObject = function isMergeableObject(value) {
-	return isNonNullObject(value)
-		&& !isSpecial(value)
-};
-
-function isNonNullObject(value) {
-	return !!value && typeof value === 'object'
-}
-
-function isSpecial(value) {
-	var stringValue = Object.prototype.toString.call(value);
-
-	return stringValue === '[object RegExp]'
-		|| stringValue === '[object Date]'
-		|| isReactElement(value)
-}
-
-// see https://github.com/facebook/react/blob/b5ac963fb791d1298e7f396236383bc955f916c1/src/isomorphic/classic/element/ReactElement.js#L21-L25
-var canUseSymbol = typeof Symbol === 'function' && Symbol.for;
-var REACT_ELEMENT_TYPE = canUseSymbol ? Symbol.for('react.element') : 0xeac7;
-
-function isReactElement(value) {
-	return value.$$typeof === REACT_ELEMENT_TYPE
-}
-
-function emptyTarget(val) {
-	return Array.isArray(val) ? [] : {}
-}
-
-function cloneUnlessOtherwiseSpecified(value, options) {
-	return (options.clone !== false && options.isMergeableObject(value))
-		? deepmerge(emptyTarget(value), value, options)
-		: value
-}
-
-function defaultArrayMerge(target, source, options) {
-	return target.concat(source).map(function(element) {
-		return cloneUnlessOtherwiseSpecified(element, options)
-	})
-}
-
-function getMergeFunction(key, options) {
-	if (!options.customMerge) {
-		return deepmerge
-	}
-	var customMerge = options.customMerge(key);
-	return typeof customMerge === 'function' ? customMerge : deepmerge
-}
-
-function getEnumerableOwnPropertySymbols(target) {
-	return Object.getOwnPropertySymbols
-		? Object.getOwnPropertySymbols(target).filter(function(symbol) {
-			return Object.propertyIsEnumerable.call(target, symbol)
-		})
-		: []
-}
-
-function getKeys(target) {
-	return Object.keys(target).concat(getEnumerableOwnPropertySymbols(target))
-}
-
-function propertyIsOnObject(object, property) {
-	try {
-		return property in object
-	} catch(_) {
-		return false
-	}
-}
-
-// Protects from prototype poisoning and unexpected merging up the prototype chain.
-function propertyIsUnsafe(target, key) {
-	return propertyIsOnObject(target, key) // Properties are safe to merge if they don't exist in the target yet,
-		&& !(Object.hasOwnProperty.call(target, key) // unsafe if they exist up the prototype chain,
-			&& Object.propertyIsEnumerable.call(target, key)) // and also unsafe if they're nonenumerable.
-}
-
-function mergeObject(target, source, options) {
-	var destination = {};
-	if (options.isMergeableObject(target)) {
-		getKeys(target).forEach(function(key) {
-			destination[key] = cloneUnlessOtherwiseSpecified(target[key], options);
-		});
-	}
-	getKeys(source).forEach(function(key) {
-		if (propertyIsUnsafe(target, key)) {
-			return
-		}
-
-		if (propertyIsOnObject(target, key) && options.isMergeableObject(source[key])) {
-			destination[key] = getMergeFunction(key, options)(target[key], source[key], options);
-		} else {
-			destination[key] = cloneUnlessOtherwiseSpecified(source[key], options);
-		}
-	});
-	return destination
-}
-
-function deepmerge(target, source, options) {
-	options = options || {};
-	options.arrayMerge = options.arrayMerge || defaultArrayMerge;
-	options.isMergeableObject = options.isMergeableObject || isMergeableObject;
-	// cloneUnlessOtherwiseSpecified is added to `options` so that custom arrayMerge()
-	// implementations can use it. The caller may not replace it.
-	options.cloneUnlessOtherwiseSpecified = cloneUnlessOtherwiseSpecified;
-
-	var sourceIsArray = Array.isArray(source);
-	var targetIsArray = Array.isArray(target);
-	var sourceAndTargetTypesMatch = sourceIsArray === targetIsArray;
-
-	if (!sourceAndTargetTypesMatch) {
-		return cloneUnlessOtherwiseSpecified(source, options)
-	} else if (sourceIsArray) {
-		return options.arrayMerge(target, source, options)
-	} else {
-		return mergeObject(target, source, options)
-	}
-}
-
-deepmerge.all = function deepmergeAll(array, options) {
-	if (!Array.isArray(array)) {
-		throw new Error('first argument should be an array')
-	}
-
-	return array.reduce(function(prev, next) {
-		return deepmerge(prev, next, options)
-	}, {})
-};
-
-var deepmerge_1 = deepmerge;
-
-module.exports = deepmerge_1;
-
-
-/***/ }),
-
 /***/ "./node_modules/events/events.js":
 /*!***************************************!*\
   !*** ./node_modules/events/events.js ***!
@@ -35382,4189 +35238,6 @@ module.exports = function equal(a, b) {
   // true if both NaN, false otherwise
   return a!==a && b!==b;
 };
-
-
-/***/ }),
-
-/***/ "./node_modules/js-yaml/index.js":
-/*!***************************************!*\
-  !*** ./node_modules/js-yaml/index.js ***!
-  \***************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-
-var loader = __webpack_require__(/*! ./lib/loader */ "./node_modules/js-yaml/lib/loader.js");
-var dumper = __webpack_require__(/*! ./lib/dumper */ "./node_modules/js-yaml/lib/dumper.js");
-
-
-function renamed(from, to) {
-  return function () {
-    throw new Error('Function yaml.' + from + ' is removed in js-yaml 4. ' +
-      'Use yaml.' + to + ' instead, which is now safe by default.');
-  };
-}
-
-
-module.exports.Type = __webpack_require__(/*! ./lib/type */ "./node_modules/js-yaml/lib/type.js");
-module.exports.Schema = __webpack_require__(/*! ./lib/schema */ "./node_modules/js-yaml/lib/schema.js");
-module.exports.FAILSAFE_SCHEMA = __webpack_require__(/*! ./lib/schema/failsafe */ "./node_modules/js-yaml/lib/schema/failsafe.js");
-module.exports.JSON_SCHEMA = __webpack_require__(/*! ./lib/schema/json */ "./node_modules/js-yaml/lib/schema/json.js");
-module.exports.CORE_SCHEMA = __webpack_require__(/*! ./lib/schema/core */ "./node_modules/js-yaml/lib/schema/core.js");
-module.exports.DEFAULT_SCHEMA = __webpack_require__(/*! ./lib/schema/default */ "./node_modules/js-yaml/lib/schema/default.js");
-module.exports.load                = loader.load;
-module.exports.loadAll             = loader.loadAll;
-module.exports.dump                = dumper.dump;
-module.exports.YAMLException = __webpack_require__(/*! ./lib/exception */ "./node_modules/js-yaml/lib/exception.js");
-
-// Re-export all types in case user wants to create custom schema
-module.exports.types = {
-  binary:    __webpack_require__(/*! ./lib/type/binary */ "./node_modules/js-yaml/lib/type/binary.js"),
-  float:     __webpack_require__(/*! ./lib/type/float */ "./node_modules/js-yaml/lib/type/float.js"),
-  map:       __webpack_require__(/*! ./lib/type/map */ "./node_modules/js-yaml/lib/type/map.js"),
-  null:      __webpack_require__(/*! ./lib/type/null */ "./node_modules/js-yaml/lib/type/null.js"),
-  pairs:     __webpack_require__(/*! ./lib/type/pairs */ "./node_modules/js-yaml/lib/type/pairs.js"),
-  set:       __webpack_require__(/*! ./lib/type/set */ "./node_modules/js-yaml/lib/type/set.js"),
-  timestamp: __webpack_require__(/*! ./lib/type/timestamp */ "./node_modules/js-yaml/lib/type/timestamp.js"),
-  bool:      __webpack_require__(/*! ./lib/type/bool */ "./node_modules/js-yaml/lib/type/bool.js"),
-  int:       __webpack_require__(/*! ./lib/type/int */ "./node_modules/js-yaml/lib/type/int.js"),
-  merge:     __webpack_require__(/*! ./lib/type/merge */ "./node_modules/js-yaml/lib/type/merge.js"),
-  omap:      __webpack_require__(/*! ./lib/type/omap */ "./node_modules/js-yaml/lib/type/omap.js"),
-  seq:       __webpack_require__(/*! ./lib/type/seq */ "./node_modules/js-yaml/lib/type/seq.js"),
-  str:       __webpack_require__(/*! ./lib/type/str */ "./node_modules/js-yaml/lib/type/str.js")
-};
-
-// Removed functions from JS-YAML 3.0.x
-module.exports.safeLoad            = renamed('safeLoad', 'load');
-module.exports.safeLoadAll         = renamed('safeLoadAll', 'loadAll');
-module.exports.safeDump            = renamed('safeDump', 'dump');
-
-
-/***/ }),
-
-/***/ "./node_modules/js-yaml/lib/common.js":
-/*!********************************************!*\
-  !*** ./node_modules/js-yaml/lib/common.js ***!
-  \********************************************/
-/***/ ((module) => {
-
-"use strict";
-
-
-
-function isNothing(subject) {
-  return (typeof subject === 'undefined') || (subject === null);
-}
-
-
-function isObject(subject) {
-  return (typeof subject === 'object') && (subject !== null);
-}
-
-
-function toArray(sequence) {
-  if (Array.isArray(sequence)) return sequence;
-  else if (isNothing(sequence)) return [];
-
-  return [ sequence ];
-}
-
-
-function extend(target, source) {
-  var index, length, key, sourceKeys;
-
-  if (source) {
-    sourceKeys = Object.keys(source);
-
-    for (index = 0, length = sourceKeys.length; index < length; index += 1) {
-      key = sourceKeys[index];
-      target[key] = source[key];
-    }
-  }
-
-  return target;
-}
-
-
-function repeat(string, count) {
-  var result = '', cycle;
-
-  for (cycle = 0; cycle < count; cycle += 1) {
-    result += string;
-  }
-
-  return result;
-}
-
-
-function isNegativeZero(number) {
-  return (number === 0) && (Number.NEGATIVE_INFINITY === 1 / number);
-}
-
-
-module.exports.isNothing      = isNothing;
-module.exports.isObject       = isObject;
-module.exports.toArray        = toArray;
-module.exports.repeat         = repeat;
-module.exports.isNegativeZero = isNegativeZero;
-module.exports.extend         = extend;
-
-
-/***/ }),
-
-/***/ "./node_modules/js-yaml/lib/dumper.js":
-/*!********************************************!*\
-  !*** ./node_modules/js-yaml/lib/dumper.js ***!
-  \********************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-/*eslint-disable no-use-before-define*/
-
-var common              = __webpack_require__(/*! ./common */ "./node_modules/js-yaml/lib/common.js");
-var YAMLException       = __webpack_require__(/*! ./exception */ "./node_modules/js-yaml/lib/exception.js");
-var DEFAULT_SCHEMA      = __webpack_require__(/*! ./schema/default */ "./node_modules/js-yaml/lib/schema/default.js");
-
-var _toString       = Object.prototype.toString;
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-
-var CHAR_BOM                  = 0xFEFF;
-var CHAR_TAB                  = 0x09; /* Tab */
-var CHAR_LINE_FEED            = 0x0A; /* LF */
-var CHAR_CARRIAGE_RETURN      = 0x0D; /* CR */
-var CHAR_SPACE                = 0x20; /* Space */
-var CHAR_EXCLAMATION          = 0x21; /* ! */
-var CHAR_DOUBLE_QUOTE         = 0x22; /* " */
-var CHAR_SHARP                = 0x23; /* # */
-var CHAR_PERCENT              = 0x25; /* % */
-var CHAR_AMPERSAND            = 0x26; /* & */
-var CHAR_SINGLE_QUOTE         = 0x27; /* ' */
-var CHAR_ASTERISK             = 0x2A; /* * */
-var CHAR_COMMA                = 0x2C; /* , */
-var CHAR_MINUS                = 0x2D; /* - */
-var CHAR_COLON                = 0x3A; /* : */
-var CHAR_EQUALS               = 0x3D; /* = */
-var CHAR_GREATER_THAN         = 0x3E; /* > */
-var CHAR_QUESTION             = 0x3F; /* ? */
-var CHAR_COMMERCIAL_AT        = 0x40; /* @ */
-var CHAR_LEFT_SQUARE_BRACKET  = 0x5B; /* [ */
-var CHAR_RIGHT_SQUARE_BRACKET = 0x5D; /* ] */
-var CHAR_GRAVE_ACCENT         = 0x60; /* ` */
-var CHAR_LEFT_CURLY_BRACKET   = 0x7B; /* { */
-var CHAR_VERTICAL_LINE        = 0x7C; /* | */
-var CHAR_RIGHT_CURLY_BRACKET  = 0x7D; /* } */
-
-var ESCAPE_SEQUENCES = {};
-
-ESCAPE_SEQUENCES[0x00]   = '\\0';
-ESCAPE_SEQUENCES[0x07]   = '\\a';
-ESCAPE_SEQUENCES[0x08]   = '\\b';
-ESCAPE_SEQUENCES[0x09]   = '\\t';
-ESCAPE_SEQUENCES[0x0A]   = '\\n';
-ESCAPE_SEQUENCES[0x0B]   = '\\v';
-ESCAPE_SEQUENCES[0x0C]   = '\\f';
-ESCAPE_SEQUENCES[0x0D]   = '\\r';
-ESCAPE_SEQUENCES[0x1B]   = '\\e';
-ESCAPE_SEQUENCES[0x22]   = '\\"';
-ESCAPE_SEQUENCES[0x5C]   = '\\\\';
-ESCAPE_SEQUENCES[0x85]   = '\\N';
-ESCAPE_SEQUENCES[0xA0]   = '\\_';
-ESCAPE_SEQUENCES[0x2028] = '\\L';
-ESCAPE_SEQUENCES[0x2029] = '\\P';
-
-var DEPRECATED_BOOLEANS_SYNTAX = [
-  'y', 'Y', 'yes', 'Yes', 'YES', 'on', 'On', 'ON',
-  'n', 'N', 'no', 'No', 'NO', 'off', 'Off', 'OFF'
-];
-
-var DEPRECATED_BASE60_SYNTAX = /^[-+]?[0-9_]+(?::[0-9_]+)+(?:\.[0-9_]*)?$/;
-
-function compileStyleMap(schema, map) {
-  var result, keys, index, length, tag, style, type;
-
-  if (map === null) return {};
-
-  result = {};
-  keys = Object.keys(map);
-
-  for (index = 0, length = keys.length; index < length; index += 1) {
-    tag = keys[index];
-    style = String(map[tag]);
-
-    if (tag.slice(0, 2) === '!!') {
-      tag = 'tag:yaml.org,2002:' + tag.slice(2);
-    }
-    type = schema.compiledTypeMap['fallback'][tag];
-
-    if (type && _hasOwnProperty.call(type.styleAliases, style)) {
-      style = type.styleAliases[style];
-    }
-
-    result[tag] = style;
-  }
-
-  return result;
-}
-
-function encodeHex(character) {
-  var string, handle, length;
-
-  string = character.toString(16).toUpperCase();
-
-  if (character <= 0xFF) {
-    handle = 'x';
-    length = 2;
-  } else if (character <= 0xFFFF) {
-    handle = 'u';
-    length = 4;
-  } else if (character <= 0xFFFFFFFF) {
-    handle = 'U';
-    length = 8;
-  } else {
-    throw new YAMLException('code point within a string may not be greater than 0xFFFFFFFF');
-  }
-
-  return '\\' + handle + common.repeat('0', length - string.length) + string;
-}
-
-
-var QUOTING_TYPE_SINGLE = 1,
-    QUOTING_TYPE_DOUBLE = 2;
-
-function State(options) {
-  this.schema        = options['schema'] || DEFAULT_SCHEMA;
-  this.indent        = Math.max(1, (options['indent'] || 2));
-  this.noArrayIndent = options['noArrayIndent'] || false;
-  this.skipInvalid   = options['skipInvalid'] || false;
-  this.flowLevel     = (common.isNothing(options['flowLevel']) ? -1 : options['flowLevel']);
-  this.styleMap      = compileStyleMap(this.schema, options['styles'] || null);
-  this.sortKeys      = options['sortKeys'] || false;
-  this.lineWidth     = options['lineWidth'] || 80;
-  this.noRefs        = options['noRefs'] || false;
-  this.noCompatMode  = options['noCompatMode'] || false;
-  this.condenseFlow  = options['condenseFlow'] || false;
-  this.quotingType   = options['quotingType'] === '"' ? QUOTING_TYPE_DOUBLE : QUOTING_TYPE_SINGLE;
-  this.forceQuotes   = options['forceQuotes'] || false;
-  this.replacer      = typeof options['replacer'] === 'function' ? options['replacer'] : null;
-
-  this.implicitTypes = this.schema.compiledImplicit;
-  this.explicitTypes = this.schema.compiledExplicit;
-
-  this.tag = null;
-  this.result = '';
-
-  this.duplicates = [];
-  this.usedDuplicates = null;
-}
-
-// Indents every line in a string. Empty lines (\n only) are not indented.
-function indentString(string, spaces) {
-  var ind = common.repeat(' ', spaces),
-      position = 0,
-      next = -1,
-      result = '',
-      line,
-      length = string.length;
-
-  while (position < length) {
-    next = string.indexOf('\n', position);
-    if (next === -1) {
-      line = string.slice(position);
-      position = length;
-    } else {
-      line = string.slice(position, next + 1);
-      position = next + 1;
-    }
-
-    if (line.length && line !== '\n') result += ind;
-
-    result += line;
-  }
-
-  return result;
-}
-
-function generateNextLine(state, level) {
-  return '\n' + common.repeat(' ', state.indent * level);
-}
-
-function testImplicitResolving(state, str) {
-  var index, length, type;
-
-  for (index = 0, length = state.implicitTypes.length; index < length; index += 1) {
-    type = state.implicitTypes[index];
-
-    if (type.resolve(str)) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-// [33] s-white ::= s-space | s-tab
-function isWhitespace(c) {
-  return c === CHAR_SPACE || c === CHAR_TAB;
-}
-
-// Returns true if the character can be printed without escaping.
-// From YAML 1.2: "any allowed characters known to be non-printable
-// should also be escaped. [However,] This isn’t mandatory"
-// Derived from nb-char - \t - #x85 - #xA0 - #x2028 - #x2029.
-function isPrintable(c) {
-  return  (0x00020 <= c && c <= 0x00007E)
-      || ((0x000A1 <= c && c <= 0x00D7FF) && c !== 0x2028 && c !== 0x2029)
-      || ((0x0E000 <= c && c <= 0x00FFFD) && c !== CHAR_BOM)
-      ||  (0x10000 <= c && c <= 0x10FFFF);
-}
-
-// [34] ns-char ::= nb-char - s-white
-// [27] nb-char ::= c-printable - b-char - c-byte-order-mark
-// [26] b-char  ::= b-line-feed | b-carriage-return
-// Including s-white (for some reason, examples doesn't match specs in this aspect)
-// ns-char ::= c-printable - b-line-feed - b-carriage-return - c-byte-order-mark
-function isNsCharOrWhitespace(c) {
-  return isPrintable(c)
-    && c !== CHAR_BOM
-    // - b-char
-    && c !== CHAR_CARRIAGE_RETURN
-    && c !== CHAR_LINE_FEED;
-}
-
-// [127]  ns-plain-safe(c) ::= c = flow-out  ⇒ ns-plain-safe-out
-//                             c = flow-in   ⇒ ns-plain-safe-in
-//                             c = block-key ⇒ ns-plain-safe-out
-//                             c = flow-key  ⇒ ns-plain-safe-in
-// [128] ns-plain-safe-out ::= ns-char
-// [129]  ns-plain-safe-in ::= ns-char - c-flow-indicator
-// [130]  ns-plain-char(c) ::=  ( ns-plain-safe(c) - “:” - “#” )
-//                            | ( /* An ns-char preceding */ “#” )
-//                            | ( “:” /* Followed by an ns-plain-safe(c) */ )
-function isPlainSafe(c, prev, inblock) {
-  var cIsNsCharOrWhitespace = isNsCharOrWhitespace(c);
-  var cIsNsChar = cIsNsCharOrWhitespace && !isWhitespace(c);
-  return (
-    // ns-plain-safe
-    inblock ? // c = flow-in
-      cIsNsCharOrWhitespace
-      : cIsNsCharOrWhitespace
-        // - c-flow-indicator
-        && c !== CHAR_COMMA
-        && c !== CHAR_LEFT_SQUARE_BRACKET
-        && c !== CHAR_RIGHT_SQUARE_BRACKET
-        && c !== CHAR_LEFT_CURLY_BRACKET
-        && c !== CHAR_RIGHT_CURLY_BRACKET
-  )
-    // ns-plain-char
-    && c !== CHAR_SHARP // false on '#'
-    && !(prev === CHAR_COLON && !cIsNsChar) // false on ': '
-    || (isNsCharOrWhitespace(prev) && !isWhitespace(prev) && c === CHAR_SHARP) // change to true on '[^ ]#'
-    || (prev === CHAR_COLON && cIsNsChar); // change to true on ':[^ ]'
-}
-
-// Simplified test for values allowed as the first character in plain style.
-function isPlainSafeFirst(c) {
-  // Uses a subset of ns-char - c-indicator
-  // where ns-char = nb-char - s-white.
-  // No support of ( ( “?” | “:” | “-” ) /* Followed by an ns-plain-safe(c)) */ ) part
-  return isPrintable(c) && c !== CHAR_BOM
-    && !isWhitespace(c) // - s-white
-    // - (c-indicator ::=
-    // “-” | “?” | “:” | “,” | “[” | “]” | “{” | “}”
-    && c !== CHAR_MINUS
-    && c !== CHAR_QUESTION
-    && c !== CHAR_COLON
-    && c !== CHAR_COMMA
-    && c !== CHAR_LEFT_SQUARE_BRACKET
-    && c !== CHAR_RIGHT_SQUARE_BRACKET
-    && c !== CHAR_LEFT_CURLY_BRACKET
-    && c !== CHAR_RIGHT_CURLY_BRACKET
-    // | “#” | “&” | “*” | “!” | “|” | “=” | “>” | “'” | “"”
-    && c !== CHAR_SHARP
-    && c !== CHAR_AMPERSAND
-    && c !== CHAR_ASTERISK
-    && c !== CHAR_EXCLAMATION
-    && c !== CHAR_VERTICAL_LINE
-    && c !== CHAR_EQUALS
-    && c !== CHAR_GREATER_THAN
-    && c !== CHAR_SINGLE_QUOTE
-    && c !== CHAR_DOUBLE_QUOTE
-    // | “%” | “@” | “`”)
-    && c !== CHAR_PERCENT
-    && c !== CHAR_COMMERCIAL_AT
-    && c !== CHAR_GRAVE_ACCENT;
-}
-
-// Simplified test for values allowed as the last character in plain style.
-function isPlainSafeLast(c) {
-  // just not whitespace or colon, it will be checked to be plain character later
-  return !isWhitespace(c) && c !== CHAR_COLON;
-}
-
-// Same as 'string'.codePointAt(pos), but works in older browsers.
-function codePointAt(string, pos) {
-  var first = string.charCodeAt(pos), second;
-  if (first >= 0xD800 && first <= 0xDBFF && pos + 1 < string.length) {
-    second = string.charCodeAt(pos + 1);
-    if (second >= 0xDC00 && second <= 0xDFFF) {
-      // https://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae
-      return (first - 0xD800) * 0x400 + second - 0xDC00 + 0x10000;
-    }
-  }
-  return first;
-}
-
-// Determines whether block indentation indicator is required.
-function needIndentIndicator(string) {
-  var leadingSpaceRe = /^\n* /;
-  return leadingSpaceRe.test(string);
-}
-
-var STYLE_PLAIN   = 1,
-    STYLE_SINGLE  = 2,
-    STYLE_LITERAL = 3,
-    STYLE_FOLDED  = 4,
-    STYLE_DOUBLE  = 5;
-
-// Determines which scalar styles are possible and returns the preferred style.
-// lineWidth = -1 => no limit.
-// Pre-conditions: str.length > 0.
-// Post-conditions:
-//    STYLE_PLAIN or STYLE_SINGLE => no \n are in the string.
-//    STYLE_LITERAL => no lines are suitable for folding (or lineWidth is -1).
-//    STYLE_FOLDED => a line > lineWidth and can be folded (and lineWidth != -1).
-function chooseScalarStyle(string, singleLineOnly, indentPerLevel, lineWidth,
-  testAmbiguousType, quotingType, forceQuotes, inblock) {
-
-  var i;
-  var char = 0;
-  var prevChar = null;
-  var hasLineBreak = false;
-  var hasFoldableLine = false; // only checked if shouldTrackWidth
-  var shouldTrackWidth = lineWidth !== -1;
-  var previousLineBreak = -1; // count the first line correctly
-  var plain = isPlainSafeFirst(codePointAt(string, 0))
-          && isPlainSafeLast(codePointAt(string, string.length - 1));
-
-  if (singleLineOnly || forceQuotes) {
-    // Case: no block styles.
-    // Check for disallowed characters to rule out plain and single.
-    for (i = 0; i < string.length; char >= 0x10000 ? i += 2 : i++) {
-      char = codePointAt(string, i);
-      if (!isPrintable(char)) {
-        return STYLE_DOUBLE;
-      }
-      plain = plain && isPlainSafe(char, prevChar, inblock);
-      prevChar = char;
-    }
-  } else {
-    // Case: block styles permitted.
-    for (i = 0; i < string.length; char >= 0x10000 ? i += 2 : i++) {
-      char = codePointAt(string, i);
-      if (char === CHAR_LINE_FEED) {
-        hasLineBreak = true;
-        // Check if any line can be folded.
-        if (shouldTrackWidth) {
-          hasFoldableLine = hasFoldableLine ||
-            // Foldable line = too long, and not more-indented.
-            (i - previousLineBreak - 1 > lineWidth &&
-             string[previousLineBreak + 1] !== ' ');
-          previousLineBreak = i;
-        }
-      } else if (!isPrintable(char)) {
-        return STYLE_DOUBLE;
-      }
-      plain = plain && isPlainSafe(char, prevChar, inblock);
-      prevChar = char;
-    }
-    // in case the end is missing a \n
-    hasFoldableLine = hasFoldableLine || (shouldTrackWidth &&
-      (i - previousLineBreak - 1 > lineWidth &&
-       string[previousLineBreak + 1] !== ' '));
-  }
-  // Although every style can represent \n without escaping, prefer block styles
-  // for multiline, since they're more readable and they don't add empty lines.
-  // Also prefer folding a super-long line.
-  if (!hasLineBreak && !hasFoldableLine) {
-    // Strings interpretable as another type have to be quoted;
-    // e.g. the string 'true' vs. the boolean true.
-    if (plain && !forceQuotes && !testAmbiguousType(string)) {
-      return STYLE_PLAIN;
-    }
-    return quotingType === QUOTING_TYPE_DOUBLE ? STYLE_DOUBLE : STYLE_SINGLE;
-  }
-  // Edge case: block indentation indicator can only have one digit.
-  if (indentPerLevel > 9 && needIndentIndicator(string)) {
-    return STYLE_DOUBLE;
-  }
-  // At this point we know block styles are valid.
-  // Prefer literal style unless we want to fold.
-  if (!forceQuotes) {
-    return hasFoldableLine ? STYLE_FOLDED : STYLE_LITERAL;
-  }
-  return quotingType === QUOTING_TYPE_DOUBLE ? STYLE_DOUBLE : STYLE_SINGLE;
-}
-
-// Note: line breaking/folding is implemented for only the folded style.
-// NB. We drop the last trailing newline (if any) of a returned block scalar
-//  since the dumper adds its own newline. This always works:
-//    • No ending newline => unaffected; already using strip "-" chomping.
-//    • Ending newline    => removed then restored.
-//  Importantly, this keeps the "+" chomp indicator from gaining an extra line.
-function writeScalar(state, string, level, iskey, inblock) {
-  state.dump = (function () {
-    if (string.length === 0) {
-      return state.quotingType === QUOTING_TYPE_DOUBLE ? '""' : "''";
-    }
-    if (!state.noCompatMode) {
-      if (DEPRECATED_BOOLEANS_SYNTAX.indexOf(string) !== -1 || DEPRECATED_BASE60_SYNTAX.test(string)) {
-        return state.quotingType === QUOTING_TYPE_DOUBLE ? ('"' + string + '"') : ("'" + string + "'");
-      }
-    }
-
-    var indent = state.indent * Math.max(1, level); // no 0-indent scalars
-    // As indentation gets deeper, let the width decrease monotonically
-    // to the lower bound min(state.lineWidth, 40).
-    // Note that this implies
-    //  state.lineWidth ≤ 40 + state.indent: width is fixed at the lower bound.
-    //  state.lineWidth > 40 + state.indent: width decreases until the lower bound.
-    // This behaves better than a constant minimum width which disallows narrower options,
-    // or an indent threshold which causes the width to suddenly increase.
-    var lineWidth = state.lineWidth === -1
-      ? -1 : Math.max(Math.min(state.lineWidth, 40), state.lineWidth - indent);
-
-    // Without knowing if keys are implicit/explicit, assume implicit for safety.
-    var singleLineOnly = iskey
-      // No block styles in flow mode.
-      || (state.flowLevel > -1 && level >= state.flowLevel);
-    function testAmbiguity(string) {
-      return testImplicitResolving(state, string);
-    }
-
-    switch (chooseScalarStyle(string, singleLineOnly, state.indent, lineWidth,
-      testAmbiguity, state.quotingType, state.forceQuotes && !iskey, inblock)) {
-
-      case STYLE_PLAIN:
-        return string;
-      case STYLE_SINGLE:
-        return "'" + string.replace(/'/g, "''") + "'";
-      case STYLE_LITERAL:
-        return '|' + blockHeader(string, state.indent)
-          + dropEndingNewline(indentString(string, indent));
-      case STYLE_FOLDED:
-        return '>' + blockHeader(string, state.indent)
-          + dropEndingNewline(indentString(foldString(string, lineWidth), indent));
-      case STYLE_DOUBLE:
-        return '"' + escapeString(string, lineWidth) + '"';
-      default:
-        throw new YAMLException('impossible error: invalid scalar style');
-    }
-  }());
-}
-
-// Pre-conditions: string is valid for a block scalar, 1 <= indentPerLevel <= 9.
-function blockHeader(string, indentPerLevel) {
-  var indentIndicator = needIndentIndicator(string) ? String(indentPerLevel) : '';
-
-  // note the special case: the string '\n' counts as a "trailing" empty line.
-  var clip =          string[string.length - 1] === '\n';
-  var keep = clip && (string[string.length - 2] === '\n' || string === '\n');
-  var chomp = keep ? '+' : (clip ? '' : '-');
-
-  return indentIndicator + chomp + '\n';
-}
-
-// (See the note for writeScalar.)
-function dropEndingNewline(string) {
-  return string[string.length - 1] === '\n' ? string.slice(0, -1) : string;
-}
-
-// Note: a long line without a suitable break point will exceed the width limit.
-// Pre-conditions: every char in str isPrintable, str.length > 0, width > 0.
-function foldString(string, width) {
-  // In folded style, $k$ consecutive newlines output as $k+1$ newlines—
-  // unless they're before or after a more-indented line, or at the very
-  // beginning or end, in which case $k$ maps to $k$.
-  // Therefore, parse each chunk as newline(s) followed by a content line.
-  var lineRe = /(\n+)([^\n]*)/g;
-
-  // first line (possibly an empty line)
-  var result = (function () {
-    var nextLF = string.indexOf('\n');
-    nextLF = nextLF !== -1 ? nextLF : string.length;
-    lineRe.lastIndex = nextLF;
-    return foldLine(string.slice(0, nextLF), width);
-  }());
-  // If we haven't reached the first content line yet, don't add an extra \n.
-  var prevMoreIndented = string[0] === '\n' || string[0] === ' ';
-  var moreIndented;
-
-  // rest of the lines
-  var match;
-  while ((match = lineRe.exec(string))) {
-    var prefix = match[1], line = match[2];
-    moreIndented = (line[0] === ' ');
-    result += prefix
-      + (!prevMoreIndented && !moreIndented && line !== ''
-        ? '\n' : '')
-      + foldLine(line, width);
-    prevMoreIndented = moreIndented;
-  }
-
-  return result;
-}
-
-// Greedy line breaking.
-// Picks the longest line under the limit each time,
-// otherwise settles for the shortest line over the limit.
-// NB. More-indented lines *cannot* be folded, as that would add an extra \n.
-function foldLine(line, width) {
-  if (line === '' || line[0] === ' ') return line;
-
-  // Since a more-indented line adds a \n, breaks can't be followed by a space.
-  var breakRe = / [^ ]/g; // note: the match index will always be <= length-2.
-  var match;
-  // start is an inclusive index. end, curr, and next are exclusive.
-  var start = 0, end, curr = 0, next = 0;
-  var result = '';
-
-  // Invariants: 0 <= start <= length-1.
-  //   0 <= curr <= next <= max(0, length-2). curr - start <= width.
-  // Inside the loop:
-  //   A match implies length >= 2, so curr and next are <= length-2.
-  while ((match = breakRe.exec(line))) {
-    next = match.index;
-    // maintain invariant: curr - start <= width
-    if (next - start > width) {
-      end = (curr > start) ? curr : next; // derive end <= length-2
-      result += '\n' + line.slice(start, end);
-      // skip the space that was output as \n
-      start = end + 1;                    // derive start <= length-1
-    }
-    curr = next;
-  }
-
-  // By the invariants, start <= length-1, so there is something left over.
-  // It is either the whole string or a part starting from non-whitespace.
-  result += '\n';
-  // Insert a break if the remainder is too long and there is a break available.
-  if (line.length - start > width && curr > start) {
-    result += line.slice(start, curr) + '\n' + line.slice(curr + 1);
-  } else {
-    result += line.slice(start);
-  }
-
-  return result.slice(1); // drop extra \n joiner
-}
-
-// Escapes a double-quoted string.
-function escapeString(string) {
-  var result = '';
-  var char = 0;
-  var escapeSeq;
-
-  for (var i = 0; i < string.length; char >= 0x10000 ? i += 2 : i++) {
-    char = codePointAt(string, i);
-    escapeSeq = ESCAPE_SEQUENCES[char];
-
-    if (!escapeSeq && isPrintable(char)) {
-      result += string[i];
-      if (char >= 0x10000) result += string[i + 1];
-    } else {
-      result += escapeSeq || encodeHex(char);
-    }
-  }
-
-  return result;
-}
-
-function writeFlowSequence(state, level, object) {
-  var _result = '',
-      _tag    = state.tag,
-      index,
-      length,
-      value;
-
-  for (index = 0, length = object.length; index < length; index += 1) {
-    value = object[index];
-
-    if (state.replacer) {
-      value = state.replacer.call(object, String(index), value);
-    }
-
-    // Write only valid elements, put null instead of invalid elements.
-    if (writeNode(state, level, value, false, false) ||
-        (typeof value === 'undefined' &&
-         writeNode(state, level, null, false, false))) {
-
-      if (_result !== '') _result += ',' + (!state.condenseFlow ? ' ' : '');
-      _result += state.dump;
-    }
-  }
-
-  state.tag = _tag;
-  state.dump = '[' + _result + ']';
-}
-
-function writeBlockSequence(state, level, object, compact) {
-  var _result = '',
-      _tag    = state.tag,
-      index,
-      length,
-      value;
-
-  for (index = 0, length = object.length; index < length; index += 1) {
-    value = object[index];
-
-    if (state.replacer) {
-      value = state.replacer.call(object, String(index), value);
-    }
-
-    // Write only valid elements, put null instead of invalid elements.
-    if (writeNode(state, level + 1, value, true, true, false, true) ||
-        (typeof value === 'undefined' &&
-         writeNode(state, level + 1, null, true, true, false, true))) {
-
-      if (!compact || _result !== '') {
-        _result += generateNextLine(state, level);
-      }
-
-      if (state.dump && CHAR_LINE_FEED === state.dump.charCodeAt(0)) {
-        _result += '-';
-      } else {
-        _result += '- ';
-      }
-
-      _result += state.dump;
-    }
-  }
-
-  state.tag = _tag;
-  state.dump = _result || '[]'; // Empty sequence if no valid values.
-}
-
-function writeFlowMapping(state, level, object) {
-  var _result       = '',
-      _tag          = state.tag,
-      objectKeyList = Object.keys(object),
-      index,
-      length,
-      objectKey,
-      objectValue,
-      pairBuffer;
-
-  for (index = 0, length = objectKeyList.length; index < length; index += 1) {
-
-    pairBuffer = '';
-    if (_result !== '') pairBuffer += ', ';
-
-    if (state.condenseFlow) pairBuffer += '"';
-
-    objectKey = objectKeyList[index];
-    objectValue = object[objectKey];
-
-    if (state.replacer) {
-      objectValue = state.replacer.call(object, objectKey, objectValue);
-    }
-
-    if (!writeNode(state, level, objectKey, false, false)) {
-      continue; // Skip this pair because of invalid key;
-    }
-
-    if (state.dump.length > 1024) pairBuffer += '? ';
-
-    pairBuffer += state.dump + (state.condenseFlow ? '"' : '') + ':' + (state.condenseFlow ? '' : ' ');
-
-    if (!writeNode(state, level, objectValue, false, false)) {
-      continue; // Skip this pair because of invalid value.
-    }
-
-    pairBuffer += state.dump;
-
-    // Both key and value are valid.
-    _result += pairBuffer;
-  }
-
-  state.tag = _tag;
-  state.dump = '{' + _result + '}';
-}
-
-function writeBlockMapping(state, level, object, compact) {
-  var _result       = '',
-      _tag          = state.tag,
-      objectKeyList = Object.keys(object),
-      index,
-      length,
-      objectKey,
-      objectValue,
-      explicitPair,
-      pairBuffer;
-
-  // Allow sorting keys so that the output file is deterministic
-  if (state.sortKeys === true) {
-    // Default sorting
-    objectKeyList.sort();
-  } else if (typeof state.sortKeys === 'function') {
-    // Custom sort function
-    objectKeyList.sort(state.sortKeys);
-  } else if (state.sortKeys) {
-    // Something is wrong
-    throw new YAMLException('sortKeys must be a boolean or a function');
-  }
-
-  for (index = 0, length = objectKeyList.length; index < length; index += 1) {
-    pairBuffer = '';
-
-    if (!compact || _result !== '') {
-      pairBuffer += generateNextLine(state, level);
-    }
-
-    objectKey = objectKeyList[index];
-    objectValue = object[objectKey];
-
-    if (state.replacer) {
-      objectValue = state.replacer.call(object, objectKey, objectValue);
-    }
-
-    if (!writeNode(state, level + 1, objectKey, true, true, true)) {
-      continue; // Skip this pair because of invalid key.
-    }
-
-    explicitPair = (state.tag !== null && state.tag !== '?') ||
-                   (state.dump && state.dump.length > 1024);
-
-    if (explicitPair) {
-      if (state.dump && CHAR_LINE_FEED === state.dump.charCodeAt(0)) {
-        pairBuffer += '?';
-      } else {
-        pairBuffer += '? ';
-      }
-    }
-
-    pairBuffer += state.dump;
-
-    if (explicitPair) {
-      pairBuffer += generateNextLine(state, level);
-    }
-
-    if (!writeNode(state, level + 1, objectValue, true, explicitPair)) {
-      continue; // Skip this pair because of invalid value.
-    }
-
-    if (state.dump && CHAR_LINE_FEED === state.dump.charCodeAt(0)) {
-      pairBuffer += ':';
-    } else {
-      pairBuffer += ': ';
-    }
-
-    pairBuffer += state.dump;
-
-    // Both key and value are valid.
-    _result += pairBuffer;
-  }
-
-  state.tag = _tag;
-  state.dump = _result || '{}'; // Empty mapping if no valid pairs.
-}
-
-function detectType(state, object, explicit) {
-  var _result, typeList, index, length, type, style;
-
-  typeList = explicit ? state.explicitTypes : state.implicitTypes;
-
-  for (index = 0, length = typeList.length; index < length; index += 1) {
-    type = typeList[index];
-
-    if ((type.instanceOf  || type.predicate) &&
-        (!type.instanceOf || ((typeof object === 'object') && (object instanceof type.instanceOf))) &&
-        (!type.predicate  || type.predicate(object))) {
-
-      if (explicit) {
-        if (type.multi && type.representName) {
-          state.tag = type.representName(object);
-        } else {
-          state.tag = type.tag;
-        }
-      } else {
-        state.tag = '?';
-      }
-
-      if (type.represent) {
-        style = state.styleMap[type.tag] || type.defaultStyle;
-
-        if (_toString.call(type.represent) === '[object Function]') {
-          _result = type.represent(object, style);
-        } else if (_hasOwnProperty.call(type.represent, style)) {
-          _result = type.represent[style](object, style);
-        } else {
-          throw new YAMLException('!<' + type.tag + '> tag resolver accepts not "' + style + '" style');
-        }
-
-        state.dump = _result;
-      }
-
-      return true;
-    }
-  }
-
-  return false;
-}
-
-// Serializes `object` and writes it to global `result`.
-// Returns true on success, or false on invalid object.
-//
-function writeNode(state, level, object, block, compact, iskey, isblockseq) {
-  state.tag = null;
-  state.dump = object;
-
-  if (!detectType(state, object, false)) {
-    detectType(state, object, true);
-  }
-
-  var type = _toString.call(state.dump);
-  var inblock = block;
-  var tagStr;
-
-  if (block) {
-    block = (state.flowLevel < 0 || state.flowLevel > level);
-  }
-
-  var objectOrArray = type === '[object Object]' || type === '[object Array]',
-      duplicateIndex,
-      duplicate;
-
-  if (objectOrArray) {
-    duplicateIndex = state.duplicates.indexOf(object);
-    duplicate = duplicateIndex !== -1;
-  }
-
-  if ((state.tag !== null && state.tag !== '?') || duplicate || (state.indent !== 2 && level > 0)) {
-    compact = false;
-  }
-
-  if (duplicate && state.usedDuplicates[duplicateIndex]) {
-    state.dump = '*ref_' + duplicateIndex;
-  } else {
-    if (objectOrArray && duplicate && !state.usedDuplicates[duplicateIndex]) {
-      state.usedDuplicates[duplicateIndex] = true;
-    }
-    if (type === '[object Object]') {
-      if (block && (Object.keys(state.dump).length !== 0)) {
-        writeBlockMapping(state, level, state.dump, compact);
-        if (duplicate) {
-          state.dump = '&ref_' + duplicateIndex + state.dump;
-        }
-      } else {
-        writeFlowMapping(state, level, state.dump);
-        if (duplicate) {
-          state.dump = '&ref_' + duplicateIndex + ' ' + state.dump;
-        }
-      }
-    } else if (type === '[object Array]') {
-      if (block && (state.dump.length !== 0)) {
-        if (state.noArrayIndent && !isblockseq && level > 0) {
-          writeBlockSequence(state, level - 1, state.dump, compact);
-        } else {
-          writeBlockSequence(state, level, state.dump, compact);
-        }
-        if (duplicate) {
-          state.dump = '&ref_' + duplicateIndex + state.dump;
-        }
-      } else {
-        writeFlowSequence(state, level, state.dump);
-        if (duplicate) {
-          state.dump = '&ref_' + duplicateIndex + ' ' + state.dump;
-        }
-      }
-    } else if (type === '[object String]') {
-      if (state.tag !== '?') {
-        writeScalar(state, state.dump, level, iskey, inblock);
-      }
-    } else if (type === '[object Undefined]') {
-      return false;
-    } else {
-      if (state.skipInvalid) return false;
-      throw new YAMLException('unacceptable kind of an object to dump ' + type);
-    }
-
-    if (state.tag !== null && state.tag !== '?') {
-      // Need to encode all characters except those allowed by the spec:
-      //
-      // [35] ns-dec-digit    ::=  [#x30-#x39] /* 0-9 */
-      // [36] ns-hex-digit    ::=  ns-dec-digit
-      //                         | [#x41-#x46] /* A-F */ | [#x61-#x66] /* a-f */
-      // [37] ns-ascii-letter ::=  [#x41-#x5A] /* A-Z */ | [#x61-#x7A] /* a-z */
-      // [38] ns-word-char    ::=  ns-dec-digit | ns-ascii-letter | “-”
-      // [39] ns-uri-char     ::=  “%” ns-hex-digit ns-hex-digit | ns-word-char | “#”
-      //                         | “;” | “/” | “?” | “:” | “@” | “&” | “=” | “+” | “$” | “,”
-      //                         | “_” | “.” | “!” | “~” | “*” | “'” | “(” | “)” | “[” | “]”
-      //
-      // Also need to encode '!' because it has special meaning (end of tag prefix).
-      //
-      tagStr = encodeURI(
-        state.tag[0] === '!' ? state.tag.slice(1) : state.tag
-      ).replace(/!/g, '%21');
-
-      if (state.tag[0] === '!') {
-        tagStr = '!' + tagStr;
-      } else if (tagStr.slice(0, 18) === 'tag:yaml.org,2002:') {
-        tagStr = '!!' + tagStr.slice(18);
-      } else {
-        tagStr = '!<' + tagStr + '>';
-      }
-
-      state.dump = tagStr + ' ' + state.dump;
-    }
-  }
-
-  return true;
-}
-
-function getDuplicateReferences(object, state) {
-  var objects = [],
-      duplicatesIndexes = [],
-      index,
-      length;
-
-  inspectNode(object, objects, duplicatesIndexes);
-
-  for (index = 0, length = duplicatesIndexes.length; index < length; index += 1) {
-    state.duplicates.push(objects[duplicatesIndexes[index]]);
-  }
-  state.usedDuplicates = new Array(length);
-}
-
-function inspectNode(object, objects, duplicatesIndexes) {
-  var objectKeyList,
-      index,
-      length;
-
-  if (object !== null && typeof object === 'object') {
-    index = objects.indexOf(object);
-    if (index !== -1) {
-      if (duplicatesIndexes.indexOf(index) === -1) {
-        duplicatesIndexes.push(index);
-      }
-    } else {
-      objects.push(object);
-
-      if (Array.isArray(object)) {
-        for (index = 0, length = object.length; index < length; index += 1) {
-          inspectNode(object[index], objects, duplicatesIndexes);
-        }
-      } else {
-        objectKeyList = Object.keys(object);
-
-        for (index = 0, length = objectKeyList.length; index < length; index += 1) {
-          inspectNode(object[objectKeyList[index]], objects, duplicatesIndexes);
-        }
-      }
-    }
-  }
-}
-
-function dump(input, options) {
-  options = options || {};
-
-  var state = new State(options);
-
-  if (!state.noRefs) getDuplicateReferences(input, state);
-
-  var value = input;
-
-  if (state.replacer) {
-    value = state.replacer.call({ '': value }, '', value);
-  }
-
-  if (writeNode(state, 0, value, true, true)) return state.dump + '\n';
-
-  return '';
-}
-
-module.exports.dump = dump;
-
-
-/***/ }),
-
-/***/ "./node_modules/js-yaml/lib/exception.js":
-/*!***********************************************!*\
-  !*** ./node_modules/js-yaml/lib/exception.js ***!
-  \***********************************************/
-/***/ ((module) => {
-
-"use strict";
-// YAML error class. http://stackoverflow.com/questions/8458984
-//
-
-
-
-function formatError(exception, compact) {
-  var where = '', message = exception.reason || '(unknown reason)';
-
-  if (!exception.mark) return message;
-
-  if (exception.mark.name) {
-    where += 'in "' + exception.mark.name + '" ';
-  }
-
-  where += '(' + (exception.mark.line + 1) + ':' + (exception.mark.column + 1) + ')';
-
-  if (!compact && exception.mark.snippet) {
-    where += '\n\n' + exception.mark.snippet;
-  }
-
-  return message + ' ' + where;
-}
-
-
-function YAMLException(reason, mark) {
-  // Super constructor
-  Error.call(this);
-
-  this.name = 'YAMLException';
-  this.reason = reason;
-  this.mark = mark;
-  this.message = formatError(this, false);
-
-  // Include stack trace in error object
-  if (Error.captureStackTrace) {
-    // Chrome and NodeJS
-    Error.captureStackTrace(this, this.constructor);
-  } else {
-    // FF, IE 10+ and Safari 6+. Fallback for others
-    this.stack = (new Error()).stack || '';
-  }
-}
-
-
-// Inherit from Error
-YAMLException.prototype = Object.create(Error.prototype);
-YAMLException.prototype.constructor = YAMLException;
-
-
-YAMLException.prototype.toString = function toString(compact) {
-  return this.name + ': ' + formatError(this, compact);
-};
-
-
-module.exports = YAMLException;
-
-
-/***/ }),
-
-/***/ "./node_modules/js-yaml/lib/loader.js":
-/*!********************************************!*\
-  !*** ./node_modules/js-yaml/lib/loader.js ***!
-  \********************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-/*eslint-disable max-len,no-use-before-define*/
-
-var common              = __webpack_require__(/*! ./common */ "./node_modules/js-yaml/lib/common.js");
-var YAMLException       = __webpack_require__(/*! ./exception */ "./node_modules/js-yaml/lib/exception.js");
-var makeSnippet         = __webpack_require__(/*! ./snippet */ "./node_modules/js-yaml/lib/snippet.js");
-var DEFAULT_SCHEMA      = __webpack_require__(/*! ./schema/default */ "./node_modules/js-yaml/lib/schema/default.js");
-
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-
-
-var CONTEXT_FLOW_IN   = 1;
-var CONTEXT_FLOW_OUT  = 2;
-var CONTEXT_BLOCK_IN  = 3;
-var CONTEXT_BLOCK_OUT = 4;
-
-
-var CHOMPING_CLIP  = 1;
-var CHOMPING_STRIP = 2;
-var CHOMPING_KEEP  = 3;
-
-
-var PATTERN_NON_PRINTABLE         = /[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x84\x86-\x9F\uFFFE\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]/;
-var PATTERN_NON_ASCII_LINE_BREAKS = /[\x85\u2028\u2029]/;
-var PATTERN_FLOW_INDICATORS       = /[,\[\]\{\}]/;
-var PATTERN_TAG_HANDLE            = /^(?:!|!!|![a-z\-]+!)$/i;
-var PATTERN_TAG_URI               = /^(?:!|[^,\[\]\{\}])(?:%[0-9a-f]{2}|[0-9a-z\-#;\/\?:@&=\+\$,_\.!~\*'\(\)\[\]])*$/i;
-
-
-function _class(obj) { return Object.prototype.toString.call(obj); }
-
-function is_EOL(c) {
-  return (c === 0x0A/* LF */) || (c === 0x0D/* CR */);
-}
-
-function is_WHITE_SPACE(c) {
-  return (c === 0x09/* Tab */) || (c === 0x20/* Space */);
-}
-
-function is_WS_OR_EOL(c) {
-  return (c === 0x09/* Tab */) ||
-         (c === 0x20/* Space */) ||
-         (c === 0x0A/* LF */) ||
-         (c === 0x0D/* CR */);
-}
-
-function is_FLOW_INDICATOR(c) {
-  return c === 0x2C/* , */ ||
-         c === 0x5B/* [ */ ||
-         c === 0x5D/* ] */ ||
-         c === 0x7B/* { */ ||
-         c === 0x7D/* } */;
-}
-
-function fromHexCode(c) {
-  var lc;
-
-  if ((0x30/* 0 */ <= c) && (c <= 0x39/* 9 */)) {
-    return c - 0x30;
-  }
-
-  /*eslint-disable no-bitwise*/
-  lc = c | 0x20;
-
-  if ((0x61/* a */ <= lc) && (lc <= 0x66/* f */)) {
-    return lc - 0x61 + 10;
-  }
-
-  return -1;
-}
-
-function escapedHexLen(c) {
-  if (c === 0x78/* x */) { return 2; }
-  if (c === 0x75/* u */) { return 4; }
-  if (c === 0x55/* U */) { return 8; }
-  return 0;
-}
-
-function fromDecimalCode(c) {
-  if ((0x30/* 0 */ <= c) && (c <= 0x39/* 9 */)) {
-    return c - 0x30;
-  }
-
-  return -1;
-}
-
-function simpleEscapeSequence(c) {
-  /* eslint-disable indent */
-  return (c === 0x30/* 0 */) ? '\x00' :
-        (c === 0x61/* a */) ? '\x07' :
-        (c === 0x62/* b */) ? '\x08' :
-        (c === 0x74/* t */) ? '\x09' :
-        (c === 0x09/* Tab */) ? '\x09' :
-        (c === 0x6E/* n */) ? '\x0A' :
-        (c === 0x76/* v */) ? '\x0B' :
-        (c === 0x66/* f */) ? '\x0C' :
-        (c === 0x72/* r */) ? '\x0D' :
-        (c === 0x65/* e */) ? '\x1B' :
-        (c === 0x20/* Space */) ? ' ' :
-        (c === 0x22/* " */) ? '\x22' :
-        (c === 0x2F/* / */) ? '/' :
-        (c === 0x5C/* \ */) ? '\x5C' :
-        (c === 0x4E/* N */) ? '\x85' :
-        (c === 0x5F/* _ */) ? '\xA0' :
-        (c === 0x4C/* L */) ? '\u2028' :
-        (c === 0x50/* P */) ? '\u2029' : '';
-}
-
-function charFromCodepoint(c) {
-  if (c <= 0xFFFF) {
-    return String.fromCharCode(c);
-  }
-  // Encode UTF-16 surrogate pair
-  // https://en.wikipedia.org/wiki/UTF-16#Code_points_U.2B010000_to_U.2B10FFFF
-  return String.fromCharCode(
-    ((c - 0x010000) >> 10) + 0xD800,
-    ((c - 0x010000) & 0x03FF) + 0xDC00
-  );
-}
-
-var simpleEscapeCheck = new Array(256); // integer, for fast access
-var simpleEscapeMap = new Array(256);
-for (var i = 0; i < 256; i++) {
-  simpleEscapeCheck[i] = simpleEscapeSequence(i) ? 1 : 0;
-  simpleEscapeMap[i] = simpleEscapeSequence(i);
-}
-
-
-function State(input, options) {
-  this.input = input;
-
-  this.filename  = options['filename']  || null;
-  this.schema    = options['schema']    || DEFAULT_SCHEMA;
-  this.onWarning = options['onWarning'] || null;
-  // (Hidden) Remove? makes the loader to expect YAML 1.1 documents
-  // if such documents have no explicit %YAML directive
-  this.legacy    = options['legacy']    || false;
-
-  this.json      = options['json']      || false;
-  this.listener  = options['listener']  || null;
-
-  this.implicitTypes = this.schema.compiledImplicit;
-  this.typeMap       = this.schema.compiledTypeMap;
-
-  this.length     = input.length;
-  this.position   = 0;
-  this.line       = 0;
-  this.lineStart  = 0;
-  this.lineIndent = 0;
-
-  // position of first leading tab in the current line,
-  // used to make sure there are no tabs in the indentation
-  this.firstTabInLine = -1;
-
-  this.documents = [];
-
-  /*
-  this.version;
-  this.checkLineBreaks;
-  this.tagMap;
-  this.anchorMap;
-  this.tag;
-  this.anchor;
-  this.kind;
-  this.result;*/
-
-}
-
-
-function generateError(state, message) {
-  var mark = {
-    name:     state.filename,
-    buffer:   state.input.slice(0, -1), // omit trailing \0
-    position: state.position,
-    line:     state.line,
-    column:   state.position - state.lineStart
-  };
-
-  mark.snippet = makeSnippet(mark);
-
-  return new YAMLException(message, mark);
-}
-
-function throwError(state, message) {
-  throw generateError(state, message);
-}
-
-function throwWarning(state, message) {
-  if (state.onWarning) {
-    state.onWarning.call(null, generateError(state, message));
-  }
-}
-
-
-var directiveHandlers = {
-
-  YAML: function handleYamlDirective(state, name, args) {
-
-    var match, major, minor;
-
-    if (state.version !== null) {
-      throwError(state, 'duplication of %YAML directive');
-    }
-
-    if (args.length !== 1) {
-      throwError(state, 'YAML directive accepts exactly one argument');
-    }
-
-    match = /^([0-9]+)\.([0-9]+)$/.exec(args[0]);
-
-    if (match === null) {
-      throwError(state, 'ill-formed argument of the YAML directive');
-    }
-
-    major = parseInt(match[1], 10);
-    minor = parseInt(match[2], 10);
-
-    if (major !== 1) {
-      throwError(state, 'unacceptable YAML version of the document');
-    }
-
-    state.version = args[0];
-    state.checkLineBreaks = (minor < 2);
-
-    if (minor !== 1 && minor !== 2) {
-      throwWarning(state, 'unsupported YAML version of the document');
-    }
-  },
-
-  TAG: function handleTagDirective(state, name, args) {
-
-    var handle, prefix;
-
-    if (args.length !== 2) {
-      throwError(state, 'TAG directive accepts exactly two arguments');
-    }
-
-    handle = args[0];
-    prefix = args[1];
-
-    if (!PATTERN_TAG_HANDLE.test(handle)) {
-      throwError(state, 'ill-formed tag handle (first argument) of the TAG directive');
-    }
-
-    if (_hasOwnProperty.call(state.tagMap, handle)) {
-      throwError(state, 'there is a previously declared suffix for "' + handle + '" tag handle');
-    }
-
-    if (!PATTERN_TAG_URI.test(prefix)) {
-      throwError(state, 'ill-formed tag prefix (second argument) of the TAG directive');
-    }
-
-    try {
-      prefix = decodeURIComponent(prefix);
-    } catch (err) {
-      throwError(state, 'tag prefix is malformed: ' + prefix);
-    }
-
-    state.tagMap[handle] = prefix;
-  }
-};
-
-
-function captureSegment(state, start, end, checkJson) {
-  var _position, _length, _character, _result;
-
-  if (start < end) {
-    _result = state.input.slice(start, end);
-
-    if (checkJson) {
-      for (_position = 0, _length = _result.length; _position < _length; _position += 1) {
-        _character = _result.charCodeAt(_position);
-        if (!(_character === 0x09 ||
-              (0x20 <= _character && _character <= 0x10FFFF))) {
-          throwError(state, 'expected valid JSON character');
-        }
-      }
-    } else if (PATTERN_NON_PRINTABLE.test(_result)) {
-      throwError(state, 'the stream contains non-printable characters');
-    }
-
-    state.result += _result;
-  }
-}
-
-function mergeMappings(state, destination, source, overridableKeys) {
-  var sourceKeys, key, index, quantity;
-
-  if (!common.isObject(source)) {
-    throwError(state, 'cannot merge mappings; the provided source object is unacceptable');
-  }
-
-  sourceKeys = Object.keys(source);
-
-  for (index = 0, quantity = sourceKeys.length; index < quantity; index += 1) {
-    key = sourceKeys[index];
-
-    if (!_hasOwnProperty.call(destination, key)) {
-      destination[key] = source[key];
-      overridableKeys[key] = true;
-    }
-  }
-}
-
-function storeMappingPair(state, _result, overridableKeys, keyTag, keyNode, valueNode,
-  startLine, startLineStart, startPos) {
-
-  var index, quantity;
-
-  // The output is a plain object here, so keys can only be strings.
-  // We need to convert keyNode to a string, but doing so can hang the process
-  // (deeply nested arrays that explode exponentially using aliases).
-  if (Array.isArray(keyNode)) {
-    keyNode = Array.prototype.slice.call(keyNode);
-
-    for (index = 0, quantity = keyNode.length; index < quantity; index += 1) {
-      if (Array.isArray(keyNode[index])) {
-        throwError(state, 'nested arrays are not supported inside keys');
-      }
-
-      if (typeof keyNode === 'object' && _class(keyNode[index]) === '[object Object]') {
-        keyNode[index] = '[object Object]';
-      }
-    }
-  }
-
-  // Avoid code execution in load() via toString property
-  // (still use its own toString for arrays, timestamps,
-  // and whatever user schema extensions happen to have @@toStringTag)
-  if (typeof keyNode === 'object' && _class(keyNode) === '[object Object]') {
-    keyNode = '[object Object]';
-  }
-
-
-  keyNode = String(keyNode);
-
-  if (_result === null) {
-    _result = {};
-  }
-
-  if (keyTag === 'tag:yaml.org,2002:merge') {
-    if (Array.isArray(valueNode)) {
-      for (index = 0, quantity = valueNode.length; index < quantity; index += 1) {
-        mergeMappings(state, _result, valueNode[index], overridableKeys);
-      }
-    } else {
-      mergeMappings(state, _result, valueNode, overridableKeys);
-    }
-  } else {
-    if (!state.json &&
-        !_hasOwnProperty.call(overridableKeys, keyNode) &&
-        _hasOwnProperty.call(_result, keyNode)) {
-      state.line = startLine || state.line;
-      state.lineStart = startLineStart || state.lineStart;
-      state.position = startPos || state.position;
-      throwError(state, 'duplicated mapping key');
-    }
-
-    // used for this specific key only because Object.defineProperty is slow
-    if (keyNode === '__proto__') {
-      Object.defineProperty(_result, keyNode, {
-        configurable: true,
-        enumerable: true,
-        writable: true,
-        value: valueNode
-      });
-    } else {
-      _result[keyNode] = valueNode;
-    }
-    delete overridableKeys[keyNode];
-  }
-
-  return _result;
-}
-
-function readLineBreak(state) {
-  var ch;
-
-  ch = state.input.charCodeAt(state.position);
-
-  if (ch === 0x0A/* LF */) {
-    state.position++;
-  } else if (ch === 0x0D/* CR */) {
-    state.position++;
-    if (state.input.charCodeAt(state.position) === 0x0A/* LF */) {
-      state.position++;
-    }
-  } else {
-    throwError(state, 'a line break is expected');
-  }
-
-  state.line += 1;
-  state.lineStart = state.position;
-  state.firstTabInLine = -1;
-}
-
-function skipSeparationSpace(state, allowComments, checkIndent) {
-  var lineBreaks = 0,
-      ch = state.input.charCodeAt(state.position);
-
-  while (ch !== 0) {
-    while (is_WHITE_SPACE(ch)) {
-      if (ch === 0x09/* Tab */ && state.firstTabInLine === -1) {
-        state.firstTabInLine = state.position;
-      }
-      ch = state.input.charCodeAt(++state.position);
-    }
-
-    if (allowComments && ch === 0x23/* # */) {
-      do {
-        ch = state.input.charCodeAt(++state.position);
-      } while (ch !== 0x0A/* LF */ && ch !== 0x0D/* CR */ && ch !== 0);
-    }
-
-    if (is_EOL(ch)) {
-      readLineBreak(state);
-
-      ch = state.input.charCodeAt(state.position);
-      lineBreaks++;
-      state.lineIndent = 0;
-
-      while (ch === 0x20/* Space */) {
-        state.lineIndent++;
-        ch = state.input.charCodeAt(++state.position);
-      }
-    } else {
-      break;
-    }
-  }
-
-  if (checkIndent !== -1 && lineBreaks !== 0 && state.lineIndent < checkIndent) {
-    throwWarning(state, 'deficient indentation');
-  }
-
-  return lineBreaks;
-}
-
-function testDocumentSeparator(state) {
-  var _position = state.position,
-      ch;
-
-  ch = state.input.charCodeAt(_position);
-
-  // Condition state.position === state.lineStart is tested
-  // in parent on each call, for efficiency. No needs to test here again.
-  if ((ch === 0x2D/* - */ || ch === 0x2E/* . */) &&
-      ch === state.input.charCodeAt(_position + 1) &&
-      ch === state.input.charCodeAt(_position + 2)) {
-
-    _position += 3;
-
-    ch = state.input.charCodeAt(_position);
-
-    if (ch === 0 || is_WS_OR_EOL(ch)) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-function writeFoldedLines(state, count) {
-  if (count === 1) {
-    state.result += ' ';
-  } else if (count > 1) {
-    state.result += common.repeat('\n', count - 1);
-  }
-}
-
-
-function readPlainScalar(state, nodeIndent, withinFlowCollection) {
-  var preceding,
-      following,
-      captureStart,
-      captureEnd,
-      hasPendingContent,
-      _line,
-      _lineStart,
-      _lineIndent,
-      _kind = state.kind,
-      _result = state.result,
-      ch;
-
-  ch = state.input.charCodeAt(state.position);
-
-  if (is_WS_OR_EOL(ch)      ||
-      is_FLOW_INDICATOR(ch) ||
-      ch === 0x23/* # */    ||
-      ch === 0x26/* & */    ||
-      ch === 0x2A/* * */    ||
-      ch === 0x21/* ! */    ||
-      ch === 0x7C/* | */    ||
-      ch === 0x3E/* > */    ||
-      ch === 0x27/* ' */    ||
-      ch === 0x22/* " */    ||
-      ch === 0x25/* % */    ||
-      ch === 0x40/* @ */    ||
-      ch === 0x60/* ` */) {
-    return false;
-  }
-
-  if (ch === 0x3F/* ? */ || ch === 0x2D/* - */) {
-    following = state.input.charCodeAt(state.position + 1);
-
-    if (is_WS_OR_EOL(following) ||
-        withinFlowCollection && is_FLOW_INDICATOR(following)) {
-      return false;
-    }
-  }
-
-  state.kind = 'scalar';
-  state.result = '';
-  captureStart = captureEnd = state.position;
-  hasPendingContent = false;
-
-  while (ch !== 0) {
-    if (ch === 0x3A/* : */) {
-      following = state.input.charCodeAt(state.position + 1);
-
-      if (is_WS_OR_EOL(following) ||
-          withinFlowCollection && is_FLOW_INDICATOR(following)) {
-        break;
-      }
-
-    } else if (ch === 0x23/* # */) {
-      preceding = state.input.charCodeAt(state.position - 1);
-
-      if (is_WS_OR_EOL(preceding)) {
-        break;
-      }
-
-    } else if ((state.position === state.lineStart && testDocumentSeparator(state)) ||
-               withinFlowCollection && is_FLOW_INDICATOR(ch)) {
-      break;
-
-    } else if (is_EOL(ch)) {
-      _line = state.line;
-      _lineStart = state.lineStart;
-      _lineIndent = state.lineIndent;
-      skipSeparationSpace(state, false, -1);
-
-      if (state.lineIndent >= nodeIndent) {
-        hasPendingContent = true;
-        ch = state.input.charCodeAt(state.position);
-        continue;
-      } else {
-        state.position = captureEnd;
-        state.line = _line;
-        state.lineStart = _lineStart;
-        state.lineIndent = _lineIndent;
-        break;
-      }
-    }
-
-    if (hasPendingContent) {
-      captureSegment(state, captureStart, captureEnd, false);
-      writeFoldedLines(state, state.line - _line);
-      captureStart = captureEnd = state.position;
-      hasPendingContent = false;
-    }
-
-    if (!is_WHITE_SPACE(ch)) {
-      captureEnd = state.position + 1;
-    }
-
-    ch = state.input.charCodeAt(++state.position);
-  }
-
-  captureSegment(state, captureStart, captureEnd, false);
-
-  if (state.result) {
-    return true;
-  }
-
-  state.kind = _kind;
-  state.result = _result;
-  return false;
-}
-
-function readSingleQuotedScalar(state, nodeIndent) {
-  var ch,
-      captureStart, captureEnd;
-
-  ch = state.input.charCodeAt(state.position);
-
-  if (ch !== 0x27/* ' */) {
-    return false;
-  }
-
-  state.kind = 'scalar';
-  state.result = '';
-  state.position++;
-  captureStart = captureEnd = state.position;
-
-  while ((ch = state.input.charCodeAt(state.position)) !== 0) {
-    if (ch === 0x27/* ' */) {
-      captureSegment(state, captureStart, state.position, true);
-      ch = state.input.charCodeAt(++state.position);
-
-      if (ch === 0x27/* ' */) {
-        captureStart = state.position;
-        state.position++;
-        captureEnd = state.position;
-      } else {
-        return true;
-      }
-
-    } else if (is_EOL(ch)) {
-      captureSegment(state, captureStart, captureEnd, true);
-      writeFoldedLines(state, skipSeparationSpace(state, false, nodeIndent));
-      captureStart = captureEnd = state.position;
-
-    } else if (state.position === state.lineStart && testDocumentSeparator(state)) {
-      throwError(state, 'unexpected end of the document within a single quoted scalar');
-
-    } else {
-      state.position++;
-      captureEnd = state.position;
-    }
-  }
-
-  throwError(state, 'unexpected end of the stream within a single quoted scalar');
-}
-
-function readDoubleQuotedScalar(state, nodeIndent) {
-  var captureStart,
-      captureEnd,
-      hexLength,
-      hexResult,
-      tmp,
-      ch;
-
-  ch = state.input.charCodeAt(state.position);
-
-  if (ch !== 0x22/* " */) {
-    return false;
-  }
-
-  state.kind = 'scalar';
-  state.result = '';
-  state.position++;
-  captureStart = captureEnd = state.position;
-
-  while ((ch = state.input.charCodeAt(state.position)) !== 0) {
-    if (ch === 0x22/* " */) {
-      captureSegment(state, captureStart, state.position, true);
-      state.position++;
-      return true;
-
-    } else if (ch === 0x5C/* \ */) {
-      captureSegment(state, captureStart, state.position, true);
-      ch = state.input.charCodeAt(++state.position);
-
-      if (is_EOL(ch)) {
-        skipSeparationSpace(state, false, nodeIndent);
-
-        // TODO: rework to inline fn with no type cast?
-      } else if (ch < 256 && simpleEscapeCheck[ch]) {
-        state.result += simpleEscapeMap[ch];
-        state.position++;
-
-      } else if ((tmp = escapedHexLen(ch)) > 0) {
-        hexLength = tmp;
-        hexResult = 0;
-
-        for (; hexLength > 0; hexLength--) {
-          ch = state.input.charCodeAt(++state.position);
-
-          if ((tmp = fromHexCode(ch)) >= 0) {
-            hexResult = (hexResult << 4) + tmp;
-
-          } else {
-            throwError(state, 'expected hexadecimal character');
-          }
-        }
-
-        state.result += charFromCodepoint(hexResult);
-
-        state.position++;
-
-      } else {
-        throwError(state, 'unknown escape sequence');
-      }
-
-      captureStart = captureEnd = state.position;
-
-    } else if (is_EOL(ch)) {
-      captureSegment(state, captureStart, captureEnd, true);
-      writeFoldedLines(state, skipSeparationSpace(state, false, nodeIndent));
-      captureStart = captureEnd = state.position;
-
-    } else if (state.position === state.lineStart && testDocumentSeparator(state)) {
-      throwError(state, 'unexpected end of the document within a double quoted scalar');
-
-    } else {
-      state.position++;
-      captureEnd = state.position;
-    }
-  }
-
-  throwError(state, 'unexpected end of the stream within a double quoted scalar');
-}
-
-function readFlowCollection(state, nodeIndent) {
-  var readNext = true,
-      _line,
-      _lineStart,
-      _pos,
-      _tag     = state.tag,
-      _result,
-      _anchor  = state.anchor,
-      following,
-      terminator,
-      isPair,
-      isExplicitPair,
-      isMapping,
-      overridableKeys = Object.create(null),
-      keyNode,
-      keyTag,
-      valueNode,
-      ch;
-
-  ch = state.input.charCodeAt(state.position);
-
-  if (ch === 0x5B/* [ */) {
-    terminator = 0x5D;/* ] */
-    isMapping = false;
-    _result = [];
-  } else if (ch === 0x7B/* { */) {
-    terminator = 0x7D;/* } */
-    isMapping = true;
-    _result = {};
-  } else {
-    return false;
-  }
-
-  if (state.anchor !== null) {
-    state.anchorMap[state.anchor] = _result;
-  }
-
-  ch = state.input.charCodeAt(++state.position);
-
-  while (ch !== 0) {
-    skipSeparationSpace(state, true, nodeIndent);
-
-    ch = state.input.charCodeAt(state.position);
-
-    if (ch === terminator) {
-      state.position++;
-      state.tag = _tag;
-      state.anchor = _anchor;
-      state.kind = isMapping ? 'mapping' : 'sequence';
-      state.result = _result;
-      return true;
-    } else if (!readNext) {
-      throwError(state, 'missed comma between flow collection entries');
-    } else if (ch === 0x2C/* , */) {
-      // "flow collection entries can never be completely empty", as per YAML 1.2, section 7.4
-      throwError(state, "expected the node content, but found ','");
-    }
-
-    keyTag = keyNode = valueNode = null;
-    isPair = isExplicitPair = false;
-
-    if (ch === 0x3F/* ? */) {
-      following = state.input.charCodeAt(state.position + 1);
-
-      if (is_WS_OR_EOL(following)) {
-        isPair = isExplicitPair = true;
-        state.position++;
-        skipSeparationSpace(state, true, nodeIndent);
-      }
-    }
-
-    _line = state.line; // Save the current line.
-    _lineStart = state.lineStart;
-    _pos = state.position;
-    composeNode(state, nodeIndent, CONTEXT_FLOW_IN, false, true);
-    keyTag = state.tag;
-    keyNode = state.result;
-    skipSeparationSpace(state, true, nodeIndent);
-
-    ch = state.input.charCodeAt(state.position);
-
-    if ((isExplicitPair || state.line === _line) && ch === 0x3A/* : */) {
-      isPair = true;
-      ch = state.input.charCodeAt(++state.position);
-      skipSeparationSpace(state, true, nodeIndent);
-      composeNode(state, nodeIndent, CONTEXT_FLOW_IN, false, true);
-      valueNode = state.result;
-    }
-
-    if (isMapping) {
-      storeMappingPair(state, _result, overridableKeys, keyTag, keyNode, valueNode, _line, _lineStart, _pos);
-    } else if (isPair) {
-      _result.push(storeMappingPair(state, null, overridableKeys, keyTag, keyNode, valueNode, _line, _lineStart, _pos));
-    } else {
-      _result.push(keyNode);
-    }
-
-    skipSeparationSpace(state, true, nodeIndent);
-
-    ch = state.input.charCodeAt(state.position);
-
-    if (ch === 0x2C/* , */) {
-      readNext = true;
-      ch = state.input.charCodeAt(++state.position);
-    } else {
-      readNext = false;
-    }
-  }
-
-  throwError(state, 'unexpected end of the stream within a flow collection');
-}
-
-function readBlockScalar(state, nodeIndent) {
-  var captureStart,
-      folding,
-      chomping       = CHOMPING_CLIP,
-      didReadContent = false,
-      detectedIndent = false,
-      textIndent     = nodeIndent,
-      emptyLines     = 0,
-      atMoreIndented = false,
-      tmp,
-      ch;
-
-  ch = state.input.charCodeAt(state.position);
-
-  if (ch === 0x7C/* | */) {
-    folding = false;
-  } else if (ch === 0x3E/* > */) {
-    folding = true;
-  } else {
-    return false;
-  }
-
-  state.kind = 'scalar';
-  state.result = '';
-
-  while (ch !== 0) {
-    ch = state.input.charCodeAt(++state.position);
-
-    if (ch === 0x2B/* + */ || ch === 0x2D/* - */) {
-      if (CHOMPING_CLIP === chomping) {
-        chomping = (ch === 0x2B/* + */) ? CHOMPING_KEEP : CHOMPING_STRIP;
-      } else {
-        throwError(state, 'repeat of a chomping mode identifier');
-      }
-
-    } else if ((tmp = fromDecimalCode(ch)) >= 0) {
-      if (tmp === 0) {
-        throwError(state, 'bad explicit indentation width of a block scalar; it cannot be less than one');
-      } else if (!detectedIndent) {
-        textIndent = nodeIndent + tmp - 1;
-        detectedIndent = true;
-      } else {
-        throwError(state, 'repeat of an indentation width identifier');
-      }
-
-    } else {
-      break;
-    }
-  }
-
-  if (is_WHITE_SPACE(ch)) {
-    do { ch = state.input.charCodeAt(++state.position); }
-    while (is_WHITE_SPACE(ch));
-
-    if (ch === 0x23/* # */) {
-      do { ch = state.input.charCodeAt(++state.position); }
-      while (!is_EOL(ch) && (ch !== 0));
-    }
-  }
-
-  while (ch !== 0) {
-    readLineBreak(state);
-    state.lineIndent = 0;
-
-    ch = state.input.charCodeAt(state.position);
-
-    while ((!detectedIndent || state.lineIndent < textIndent) &&
-           (ch === 0x20/* Space */)) {
-      state.lineIndent++;
-      ch = state.input.charCodeAt(++state.position);
-    }
-
-    if (!detectedIndent && state.lineIndent > textIndent) {
-      textIndent = state.lineIndent;
-    }
-
-    if (is_EOL(ch)) {
-      emptyLines++;
-      continue;
-    }
-
-    // End of the scalar.
-    if (state.lineIndent < textIndent) {
-
-      // Perform the chomping.
-      if (chomping === CHOMPING_KEEP) {
-        state.result += common.repeat('\n', didReadContent ? 1 + emptyLines : emptyLines);
-      } else if (chomping === CHOMPING_CLIP) {
-        if (didReadContent) { // i.e. only if the scalar is not empty.
-          state.result += '\n';
-        }
-      }
-
-      // Break this `while` cycle and go to the funciton's epilogue.
-      break;
-    }
-
-    // Folded style: use fancy rules to handle line breaks.
-    if (folding) {
-
-      // Lines starting with white space characters (more-indented lines) are not folded.
-      if (is_WHITE_SPACE(ch)) {
-        atMoreIndented = true;
-        // except for the first content line (cf. Example 8.1)
-        state.result += common.repeat('\n', didReadContent ? 1 + emptyLines : emptyLines);
-
-      // End of more-indented block.
-      } else if (atMoreIndented) {
-        atMoreIndented = false;
-        state.result += common.repeat('\n', emptyLines + 1);
-
-      // Just one line break - perceive as the same line.
-      } else if (emptyLines === 0) {
-        if (didReadContent) { // i.e. only if we have already read some scalar content.
-          state.result += ' ';
-        }
-
-      // Several line breaks - perceive as different lines.
-      } else {
-        state.result += common.repeat('\n', emptyLines);
-      }
-
-    // Literal style: just add exact number of line breaks between content lines.
-    } else {
-      // Keep all line breaks except the header line break.
-      state.result += common.repeat('\n', didReadContent ? 1 + emptyLines : emptyLines);
-    }
-
-    didReadContent = true;
-    detectedIndent = true;
-    emptyLines = 0;
-    captureStart = state.position;
-
-    while (!is_EOL(ch) && (ch !== 0)) {
-      ch = state.input.charCodeAt(++state.position);
-    }
-
-    captureSegment(state, captureStart, state.position, false);
-  }
-
-  return true;
-}
-
-function readBlockSequence(state, nodeIndent) {
-  var _line,
-      _tag      = state.tag,
-      _anchor   = state.anchor,
-      _result   = [],
-      following,
-      detected  = false,
-      ch;
-
-  // there is a leading tab before this token, so it can't be a block sequence/mapping;
-  // it can still be flow sequence/mapping or a scalar
-  if (state.firstTabInLine !== -1) return false;
-
-  if (state.anchor !== null) {
-    state.anchorMap[state.anchor] = _result;
-  }
-
-  ch = state.input.charCodeAt(state.position);
-
-  while (ch !== 0) {
-    if (state.firstTabInLine !== -1) {
-      state.position = state.firstTabInLine;
-      throwError(state, 'tab characters must not be used in indentation');
-    }
-
-    if (ch !== 0x2D/* - */) {
-      break;
-    }
-
-    following = state.input.charCodeAt(state.position + 1);
-
-    if (!is_WS_OR_EOL(following)) {
-      break;
-    }
-
-    detected = true;
-    state.position++;
-
-    if (skipSeparationSpace(state, true, -1)) {
-      if (state.lineIndent <= nodeIndent) {
-        _result.push(null);
-        ch = state.input.charCodeAt(state.position);
-        continue;
-      }
-    }
-
-    _line = state.line;
-    composeNode(state, nodeIndent, CONTEXT_BLOCK_IN, false, true);
-    _result.push(state.result);
-    skipSeparationSpace(state, true, -1);
-
-    ch = state.input.charCodeAt(state.position);
-
-    if ((state.line === _line || state.lineIndent > nodeIndent) && (ch !== 0)) {
-      throwError(state, 'bad indentation of a sequence entry');
-    } else if (state.lineIndent < nodeIndent) {
-      break;
-    }
-  }
-
-  if (detected) {
-    state.tag = _tag;
-    state.anchor = _anchor;
-    state.kind = 'sequence';
-    state.result = _result;
-    return true;
-  }
-  return false;
-}
-
-function readBlockMapping(state, nodeIndent, flowIndent) {
-  var following,
-      allowCompact,
-      _line,
-      _keyLine,
-      _keyLineStart,
-      _keyPos,
-      _tag          = state.tag,
-      _anchor       = state.anchor,
-      _result       = {},
-      overridableKeys = Object.create(null),
-      keyTag        = null,
-      keyNode       = null,
-      valueNode     = null,
-      atExplicitKey = false,
-      detected      = false,
-      ch;
-
-  // there is a leading tab before this token, so it can't be a block sequence/mapping;
-  // it can still be flow sequence/mapping or a scalar
-  if (state.firstTabInLine !== -1) return false;
-
-  if (state.anchor !== null) {
-    state.anchorMap[state.anchor] = _result;
-  }
-
-  ch = state.input.charCodeAt(state.position);
-
-  while (ch !== 0) {
-    if (!atExplicitKey && state.firstTabInLine !== -1) {
-      state.position = state.firstTabInLine;
-      throwError(state, 'tab characters must not be used in indentation');
-    }
-
-    following = state.input.charCodeAt(state.position + 1);
-    _line = state.line; // Save the current line.
-
-    //
-    // Explicit notation case. There are two separate blocks:
-    // first for the key (denoted by "?") and second for the value (denoted by ":")
-    //
-    if ((ch === 0x3F/* ? */ || ch === 0x3A/* : */) && is_WS_OR_EOL(following)) {
-
-      if (ch === 0x3F/* ? */) {
-        if (atExplicitKey) {
-          storeMappingPair(state, _result, overridableKeys, keyTag, keyNode, null, _keyLine, _keyLineStart, _keyPos);
-          keyTag = keyNode = valueNode = null;
-        }
-
-        detected = true;
-        atExplicitKey = true;
-        allowCompact = true;
-
-      } else if (atExplicitKey) {
-        // i.e. 0x3A/* : */ === character after the explicit key.
-        atExplicitKey = false;
-        allowCompact = true;
-
-      } else {
-        throwError(state, 'incomplete explicit mapping pair; a key node is missed; or followed by a non-tabulated empty line');
-      }
-
-      state.position += 1;
-      ch = following;
-
-    //
-    // Implicit notation case. Flow-style node as the key first, then ":", and the value.
-    //
-    } else {
-      _keyLine = state.line;
-      _keyLineStart = state.lineStart;
-      _keyPos = state.position;
-
-      if (!composeNode(state, flowIndent, CONTEXT_FLOW_OUT, false, true)) {
-        // Neither implicit nor explicit notation.
-        // Reading is done. Go to the epilogue.
-        break;
-      }
-
-      if (state.line === _line) {
-        ch = state.input.charCodeAt(state.position);
-
-        while (is_WHITE_SPACE(ch)) {
-          ch = state.input.charCodeAt(++state.position);
-        }
-
-        if (ch === 0x3A/* : */) {
-          ch = state.input.charCodeAt(++state.position);
-
-          if (!is_WS_OR_EOL(ch)) {
-            throwError(state, 'a whitespace character is expected after the key-value separator within a block mapping');
-          }
-
-          if (atExplicitKey) {
-            storeMappingPair(state, _result, overridableKeys, keyTag, keyNode, null, _keyLine, _keyLineStart, _keyPos);
-            keyTag = keyNode = valueNode = null;
-          }
-
-          detected = true;
-          atExplicitKey = false;
-          allowCompact = false;
-          keyTag = state.tag;
-          keyNode = state.result;
-
-        } else if (detected) {
-          throwError(state, 'can not read an implicit mapping pair; a colon is missed');
-
-        } else {
-          state.tag = _tag;
-          state.anchor = _anchor;
-          return true; // Keep the result of `composeNode`.
-        }
-
-      } else if (detected) {
-        throwError(state, 'can not read a block mapping entry; a multiline key may not be an implicit key');
-
-      } else {
-        state.tag = _tag;
-        state.anchor = _anchor;
-        return true; // Keep the result of `composeNode`.
-      }
-    }
-
-    //
-    // Common reading code for both explicit and implicit notations.
-    //
-    if (state.line === _line || state.lineIndent > nodeIndent) {
-      if (atExplicitKey) {
-        _keyLine = state.line;
-        _keyLineStart = state.lineStart;
-        _keyPos = state.position;
-      }
-
-      if (composeNode(state, nodeIndent, CONTEXT_BLOCK_OUT, true, allowCompact)) {
-        if (atExplicitKey) {
-          keyNode = state.result;
-        } else {
-          valueNode = state.result;
-        }
-      }
-
-      if (!atExplicitKey) {
-        storeMappingPair(state, _result, overridableKeys, keyTag, keyNode, valueNode, _keyLine, _keyLineStart, _keyPos);
-        keyTag = keyNode = valueNode = null;
-      }
-
-      skipSeparationSpace(state, true, -1);
-      ch = state.input.charCodeAt(state.position);
-    }
-
-    if ((state.line === _line || state.lineIndent > nodeIndent) && (ch !== 0)) {
-      throwError(state, 'bad indentation of a mapping entry');
-    } else if (state.lineIndent < nodeIndent) {
-      break;
-    }
-  }
-
-  //
-  // Epilogue.
-  //
-
-  // Special case: last mapping's node contains only the key in explicit notation.
-  if (atExplicitKey) {
-    storeMappingPair(state, _result, overridableKeys, keyTag, keyNode, null, _keyLine, _keyLineStart, _keyPos);
-  }
-
-  // Expose the resulting mapping.
-  if (detected) {
-    state.tag = _tag;
-    state.anchor = _anchor;
-    state.kind = 'mapping';
-    state.result = _result;
-  }
-
-  return detected;
-}
-
-function readTagProperty(state) {
-  var _position,
-      isVerbatim = false,
-      isNamed    = false,
-      tagHandle,
-      tagName,
-      ch;
-
-  ch = state.input.charCodeAt(state.position);
-
-  if (ch !== 0x21/* ! */) return false;
-
-  if (state.tag !== null) {
-    throwError(state, 'duplication of a tag property');
-  }
-
-  ch = state.input.charCodeAt(++state.position);
-
-  if (ch === 0x3C/* < */) {
-    isVerbatim = true;
-    ch = state.input.charCodeAt(++state.position);
-
-  } else if (ch === 0x21/* ! */) {
-    isNamed = true;
-    tagHandle = '!!';
-    ch = state.input.charCodeAt(++state.position);
-
-  } else {
-    tagHandle = '!';
-  }
-
-  _position = state.position;
-
-  if (isVerbatim) {
-    do { ch = state.input.charCodeAt(++state.position); }
-    while (ch !== 0 && ch !== 0x3E/* > */);
-
-    if (state.position < state.length) {
-      tagName = state.input.slice(_position, state.position);
-      ch = state.input.charCodeAt(++state.position);
-    } else {
-      throwError(state, 'unexpected end of the stream within a verbatim tag');
-    }
-  } else {
-    while (ch !== 0 && !is_WS_OR_EOL(ch)) {
-
-      if (ch === 0x21/* ! */) {
-        if (!isNamed) {
-          tagHandle = state.input.slice(_position - 1, state.position + 1);
-
-          if (!PATTERN_TAG_HANDLE.test(tagHandle)) {
-            throwError(state, 'named tag handle cannot contain such characters');
-          }
-
-          isNamed = true;
-          _position = state.position + 1;
-        } else {
-          throwError(state, 'tag suffix cannot contain exclamation marks');
-        }
-      }
-
-      ch = state.input.charCodeAt(++state.position);
-    }
-
-    tagName = state.input.slice(_position, state.position);
-
-    if (PATTERN_FLOW_INDICATORS.test(tagName)) {
-      throwError(state, 'tag suffix cannot contain flow indicator characters');
-    }
-  }
-
-  if (tagName && !PATTERN_TAG_URI.test(tagName)) {
-    throwError(state, 'tag name cannot contain such characters: ' + tagName);
-  }
-
-  try {
-    tagName = decodeURIComponent(tagName);
-  } catch (err) {
-    throwError(state, 'tag name is malformed: ' + tagName);
-  }
-
-  if (isVerbatim) {
-    state.tag = tagName;
-
-  } else if (_hasOwnProperty.call(state.tagMap, tagHandle)) {
-    state.tag = state.tagMap[tagHandle] + tagName;
-
-  } else if (tagHandle === '!') {
-    state.tag = '!' + tagName;
-
-  } else if (tagHandle === '!!') {
-    state.tag = 'tag:yaml.org,2002:' + tagName;
-
-  } else {
-    throwError(state, 'undeclared tag handle "' + tagHandle + '"');
-  }
-
-  return true;
-}
-
-function readAnchorProperty(state) {
-  var _position,
-      ch;
-
-  ch = state.input.charCodeAt(state.position);
-
-  if (ch !== 0x26/* & */) return false;
-
-  if (state.anchor !== null) {
-    throwError(state, 'duplication of an anchor property');
-  }
-
-  ch = state.input.charCodeAt(++state.position);
-  _position = state.position;
-
-  while (ch !== 0 && !is_WS_OR_EOL(ch) && !is_FLOW_INDICATOR(ch)) {
-    ch = state.input.charCodeAt(++state.position);
-  }
-
-  if (state.position === _position) {
-    throwError(state, 'name of an anchor node must contain at least one character');
-  }
-
-  state.anchor = state.input.slice(_position, state.position);
-  return true;
-}
-
-function readAlias(state) {
-  var _position, alias,
-      ch;
-
-  ch = state.input.charCodeAt(state.position);
-
-  if (ch !== 0x2A/* * */) return false;
-
-  ch = state.input.charCodeAt(++state.position);
-  _position = state.position;
-
-  while (ch !== 0 && !is_WS_OR_EOL(ch) && !is_FLOW_INDICATOR(ch)) {
-    ch = state.input.charCodeAt(++state.position);
-  }
-
-  if (state.position === _position) {
-    throwError(state, 'name of an alias node must contain at least one character');
-  }
-
-  alias = state.input.slice(_position, state.position);
-
-  if (!_hasOwnProperty.call(state.anchorMap, alias)) {
-    throwError(state, 'unidentified alias "' + alias + '"');
-  }
-
-  state.result = state.anchorMap[alias];
-  skipSeparationSpace(state, true, -1);
-  return true;
-}
-
-function composeNode(state, parentIndent, nodeContext, allowToSeek, allowCompact) {
-  var allowBlockStyles,
-      allowBlockScalars,
-      allowBlockCollections,
-      indentStatus = 1, // 1: this>parent, 0: this=parent, -1: this<parent
-      atNewLine  = false,
-      hasContent = false,
-      typeIndex,
-      typeQuantity,
-      typeList,
-      type,
-      flowIndent,
-      blockIndent;
-
-  if (state.listener !== null) {
-    state.listener('open', state);
-  }
-
-  state.tag    = null;
-  state.anchor = null;
-  state.kind   = null;
-  state.result = null;
-
-  allowBlockStyles = allowBlockScalars = allowBlockCollections =
-    CONTEXT_BLOCK_OUT === nodeContext ||
-    CONTEXT_BLOCK_IN  === nodeContext;
-
-  if (allowToSeek) {
-    if (skipSeparationSpace(state, true, -1)) {
-      atNewLine = true;
-
-      if (state.lineIndent > parentIndent) {
-        indentStatus = 1;
-      } else if (state.lineIndent === parentIndent) {
-        indentStatus = 0;
-      } else if (state.lineIndent < parentIndent) {
-        indentStatus = -1;
-      }
-    }
-  }
-
-  if (indentStatus === 1) {
-    while (readTagProperty(state) || readAnchorProperty(state)) {
-      if (skipSeparationSpace(state, true, -1)) {
-        atNewLine = true;
-        allowBlockCollections = allowBlockStyles;
-
-        if (state.lineIndent > parentIndent) {
-          indentStatus = 1;
-        } else if (state.lineIndent === parentIndent) {
-          indentStatus = 0;
-        } else if (state.lineIndent < parentIndent) {
-          indentStatus = -1;
-        }
-      } else {
-        allowBlockCollections = false;
-      }
-    }
-  }
-
-  if (allowBlockCollections) {
-    allowBlockCollections = atNewLine || allowCompact;
-  }
-
-  if (indentStatus === 1 || CONTEXT_BLOCK_OUT === nodeContext) {
-    if (CONTEXT_FLOW_IN === nodeContext || CONTEXT_FLOW_OUT === nodeContext) {
-      flowIndent = parentIndent;
-    } else {
-      flowIndent = parentIndent + 1;
-    }
-
-    blockIndent = state.position - state.lineStart;
-
-    if (indentStatus === 1) {
-      if (allowBlockCollections &&
-          (readBlockSequence(state, blockIndent) ||
-           readBlockMapping(state, blockIndent, flowIndent)) ||
-          readFlowCollection(state, flowIndent)) {
-        hasContent = true;
-      } else {
-        if ((allowBlockScalars && readBlockScalar(state, flowIndent)) ||
-            readSingleQuotedScalar(state, flowIndent) ||
-            readDoubleQuotedScalar(state, flowIndent)) {
-          hasContent = true;
-
-        } else if (readAlias(state)) {
-          hasContent = true;
-
-          if (state.tag !== null || state.anchor !== null) {
-            throwError(state, 'alias node should not have any properties');
-          }
-
-        } else if (readPlainScalar(state, flowIndent, CONTEXT_FLOW_IN === nodeContext)) {
-          hasContent = true;
-
-          if (state.tag === null) {
-            state.tag = '?';
-          }
-        }
-
-        if (state.anchor !== null) {
-          state.anchorMap[state.anchor] = state.result;
-        }
-      }
-    } else if (indentStatus === 0) {
-      // Special case: block sequences are allowed to have same indentation level as the parent.
-      // http://www.yaml.org/spec/1.2/spec.html#id2799784
-      hasContent = allowBlockCollections && readBlockSequence(state, blockIndent);
-    }
-  }
-
-  if (state.tag === null) {
-    if (state.anchor !== null) {
-      state.anchorMap[state.anchor] = state.result;
-    }
-
-  } else if (state.tag === '?') {
-    // Implicit resolving is not allowed for non-scalar types, and '?'
-    // non-specific tag is only automatically assigned to plain scalars.
-    //
-    // We only need to check kind conformity in case user explicitly assigns '?'
-    // tag, for example like this: "!<?> [0]"
-    //
-    if (state.result !== null && state.kind !== 'scalar') {
-      throwError(state, 'unacceptable node kind for !<?> tag; it should be "scalar", not "' + state.kind + '"');
-    }
-
-    for (typeIndex = 0, typeQuantity = state.implicitTypes.length; typeIndex < typeQuantity; typeIndex += 1) {
-      type = state.implicitTypes[typeIndex];
-
-      if (type.resolve(state.result)) { // `state.result` updated in resolver if matched
-        state.result = type.construct(state.result);
-        state.tag = type.tag;
-        if (state.anchor !== null) {
-          state.anchorMap[state.anchor] = state.result;
-        }
-        break;
-      }
-    }
-  } else if (state.tag !== '!') {
-    if (_hasOwnProperty.call(state.typeMap[state.kind || 'fallback'], state.tag)) {
-      type = state.typeMap[state.kind || 'fallback'][state.tag];
-    } else {
-      // looking for multi type
-      type = null;
-      typeList = state.typeMap.multi[state.kind || 'fallback'];
-
-      for (typeIndex = 0, typeQuantity = typeList.length; typeIndex < typeQuantity; typeIndex += 1) {
-        if (state.tag.slice(0, typeList[typeIndex].tag.length) === typeList[typeIndex].tag) {
-          type = typeList[typeIndex];
-          break;
-        }
-      }
-    }
-
-    if (!type) {
-      throwError(state, 'unknown tag !<' + state.tag + '>');
-    }
-
-    if (state.result !== null && type.kind !== state.kind) {
-      throwError(state, 'unacceptable node kind for !<' + state.tag + '> tag; it should be "' + type.kind + '", not "' + state.kind + '"');
-    }
-
-    if (!type.resolve(state.result, state.tag)) { // `state.result` updated in resolver if matched
-      throwError(state, 'cannot resolve a node with !<' + state.tag + '> explicit tag');
-    } else {
-      state.result = type.construct(state.result, state.tag);
-      if (state.anchor !== null) {
-        state.anchorMap[state.anchor] = state.result;
-      }
-    }
-  }
-
-  if (state.listener !== null) {
-    state.listener('close', state);
-  }
-  return state.tag !== null ||  state.anchor !== null || hasContent;
-}
-
-function readDocument(state) {
-  var documentStart = state.position,
-      _position,
-      directiveName,
-      directiveArgs,
-      hasDirectives = false,
-      ch;
-
-  state.version = null;
-  state.checkLineBreaks = state.legacy;
-  state.tagMap = Object.create(null);
-  state.anchorMap = Object.create(null);
-
-  while ((ch = state.input.charCodeAt(state.position)) !== 0) {
-    skipSeparationSpace(state, true, -1);
-
-    ch = state.input.charCodeAt(state.position);
-
-    if (state.lineIndent > 0 || ch !== 0x25/* % */) {
-      break;
-    }
-
-    hasDirectives = true;
-    ch = state.input.charCodeAt(++state.position);
-    _position = state.position;
-
-    while (ch !== 0 && !is_WS_OR_EOL(ch)) {
-      ch = state.input.charCodeAt(++state.position);
-    }
-
-    directiveName = state.input.slice(_position, state.position);
-    directiveArgs = [];
-
-    if (directiveName.length < 1) {
-      throwError(state, 'directive name must not be less than one character in length');
-    }
-
-    while (ch !== 0) {
-      while (is_WHITE_SPACE(ch)) {
-        ch = state.input.charCodeAt(++state.position);
-      }
-
-      if (ch === 0x23/* # */) {
-        do { ch = state.input.charCodeAt(++state.position); }
-        while (ch !== 0 && !is_EOL(ch));
-        break;
-      }
-
-      if (is_EOL(ch)) break;
-
-      _position = state.position;
-
-      while (ch !== 0 && !is_WS_OR_EOL(ch)) {
-        ch = state.input.charCodeAt(++state.position);
-      }
-
-      directiveArgs.push(state.input.slice(_position, state.position));
-    }
-
-    if (ch !== 0) readLineBreak(state);
-
-    if (_hasOwnProperty.call(directiveHandlers, directiveName)) {
-      directiveHandlers[directiveName](state, directiveName, directiveArgs);
-    } else {
-      throwWarning(state, 'unknown document directive "' + directiveName + '"');
-    }
-  }
-
-  skipSeparationSpace(state, true, -1);
-
-  if (state.lineIndent === 0 &&
-      state.input.charCodeAt(state.position)     === 0x2D/* - */ &&
-      state.input.charCodeAt(state.position + 1) === 0x2D/* - */ &&
-      state.input.charCodeAt(state.position + 2) === 0x2D/* - */) {
-    state.position += 3;
-    skipSeparationSpace(state, true, -1);
-
-  } else if (hasDirectives) {
-    throwError(state, 'directives end mark is expected');
-  }
-
-  composeNode(state, state.lineIndent - 1, CONTEXT_BLOCK_OUT, false, true);
-  skipSeparationSpace(state, true, -1);
-
-  if (state.checkLineBreaks &&
-      PATTERN_NON_ASCII_LINE_BREAKS.test(state.input.slice(documentStart, state.position))) {
-    throwWarning(state, 'non-ASCII line breaks are interpreted as content');
-  }
-
-  state.documents.push(state.result);
-
-  if (state.position === state.lineStart && testDocumentSeparator(state)) {
-
-    if (state.input.charCodeAt(state.position) === 0x2E/* . */) {
-      state.position += 3;
-      skipSeparationSpace(state, true, -1);
-    }
-    return;
-  }
-
-  if (state.position < (state.length - 1)) {
-    throwError(state, 'end of the stream or a document separator is expected');
-  } else {
-    return;
-  }
-}
-
-
-function loadDocuments(input, options) {
-  input = String(input);
-  options = options || {};
-
-  if (input.length !== 0) {
-
-    // Add tailing `\n` if not exists
-    if (input.charCodeAt(input.length - 1) !== 0x0A/* LF */ &&
-        input.charCodeAt(input.length - 1) !== 0x0D/* CR */) {
-      input += '\n';
-    }
-
-    // Strip BOM
-    if (input.charCodeAt(0) === 0xFEFF) {
-      input = input.slice(1);
-    }
-  }
-
-  var state = new State(input, options);
-
-  var nullpos = input.indexOf('\0');
-
-  if (nullpos !== -1) {
-    state.position = nullpos;
-    throwError(state, 'null byte is not allowed in input');
-  }
-
-  // Use 0 as string terminator. That significantly simplifies bounds check.
-  state.input += '\0';
-
-  while (state.input.charCodeAt(state.position) === 0x20/* Space */) {
-    state.lineIndent += 1;
-    state.position += 1;
-  }
-
-  while (state.position < (state.length - 1)) {
-    readDocument(state);
-  }
-
-  return state.documents;
-}
-
-
-function loadAll(input, iterator, options) {
-  if (iterator !== null && typeof iterator === 'object' && typeof options === 'undefined') {
-    options = iterator;
-    iterator = null;
-  }
-
-  var documents = loadDocuments(input, options);
-
-  if (typeof iterator !== 'function') {
-    return documents;
-  }
-
-  for (var index = 0, length = documents.length; index < length; index += 1) {
-    iterator(documents[index]);
-  }
-}
-
-
-function load(input, options) {
-  var documents = loadDocuments(input, options);
-
-  if (documents.length === 0) {
-    /*eslint-disable no-undefined*/
-    return undefined;
-  } else if (documents.length === 1) {
-    return documents[0];
-  }
-  throw new YAMLException('expected a single document in the stream, but found more');
-}
-
-
-module.exports.loadAll = loadAll;
-module.exports.load    = load;
-
-
-/***/ }),
-
-/***/ "./node_modules/js-yaml/lib/schema.js":
-/*!********************************************!*\
-  !*** ./node_modules/js-yaml/lib/schema.js ***!
-  \********************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-/*eslint-disable max-len*/
-
-var YAMLException = __webpack_require__(/*! ./exception */ "./node_modules/js-yaml/lib/exception.js");
-var Type          = __webpack_require__(/*! ./type */ "./node_modules/js-yaml/lib/type.js");
-
-
-function compileList(schema, name) {
-  var result = [];
-
-  schema[name].forEach(function (currentType) {
-    var newIndex = result.length;
-
-    result.forEach(function (previousType, previousIndex) {
-      if (previousType.tag === currentType.tag &&
-          previousType.kind === currentType.kind &&
-          previousType.multi === currentType.multi) {
-
-        newIndex = previousIndex;
-      }
-    });
-
-    result[newIndex] = currentType;
-  });
-
-  return result;
-}
-
-
-function compileMap(/* lists... */) {
-  var result = {
-        scalar: {},
-        sequence: {},
-        mapping: {},
-        fallback: {},
-        multi: {
-          scalar: [],
-          sequence: [],
-          mapping: [],
-          fallback: []
-        }
-      }, index, length;
-
-  function collectType(type) {
-    if (type.multi) {
-      result.multi[type.kind].push(type);
-      result.multi['fallback'].push(type);
-    } else {
-      result[type.kind][type.tag] = result['fallback'][type.tag] = type;
-    }
-  }
-
-  for (index = 0, length = arguments.length; index < length; index += 1) {
-    arguments[index].forEach(collectType);
-  }
-  return result;
-}
-
-
-function Schema(definition) {
-  return this.extend(definition);
-}
-
-
-Schema.prototype.extend = function extend(definition) {
-  var implicit = [];
-  var explicit = [];
-
-  if (definition instanceof Type) {
-    // Schema.extend(type)
-    explicit.push(definition);
-
-  } else if (Array.isArray(definition)) {
-    // Schema.extend([ type1, type2, ... ])
-    explicit = explicit.concat(definition);
-
-  } else if (definition && (Array.isArray(definition.implicit) || Array.isArray(definition.explicit))) {
-    // Schema.extend({ explicit: [ type1, type2, ... ], implicit: [ type1, type2, ... ] })
-    if (definition.implicit) implicit = implicit.concat(definition.implicit);
-    if (definition.explicit) explicit = explicit.concat(definition.explicit);
-
-  } else {
-    throw new YAMLException('Schema.extend argument should be a Type, [ Type ], ' +
-      'or a schema definition ({ implicit: [...], explicit: [...] })');
-  }
-
-  implicit.forEach(function (type) {
-    if (!(type instanceof Type)) {
-      throw new YAMLException('Specified list of YAML types (or a single Type object) contains a non-Type object.');
-    }
-
-    if (type.loadKind && type.loadKind !== 'scalar') {
-      throw new YAMLException('There is a non-scalar type in the implicit list of a schema. Implicit resolving of such types is not supported.');
-    }
-
-    if (type.multi) {
-      throw new YAMLException('There is a multi type in the implicit list of a schema. Multi tags can only be listed as explicit.');
-    }
-  });
-
-  explicit.forEach(function (type) {
-    if (!(type instanceof Type)) {
-      throw new YAMLException('Specified list of YAML types (or a single Type object) contains a non-Type object.');
-    }
-  });
-
-  var result = Object.create(Schema.prototype);
-
-  result.implicit = (this.implicit || []).concat(implicit);
-  result.explicit = (this.explicit || []).concat(explicit);
-
-  result.compiledImplicit = compileList(result, 'implicit');
-  result.compiledExplicit = compileList(result, 'explicit');
-  result.compiledTypeMap  = compileMap(result.compiledImplicit, result.compiledExplicit);
-
-  return result;
-};
-
-
-module.exports = Schema;
-
-
-/***/ }),
-
-/***/ "./node_modules/js-yaml/lib/schema/core.js":
-/*!*************************************************!*\
-  !*** ./node_modules/js-yaml/lib/schema/core.js ***!
-  \*************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-// Standard YAML's Core schema.
-// http://www.yaml.org/spec/1.2/spec.html#id2804923
-//
-// NOTE: JS-YAML does not support schema-specific tag resolution restrictions.
-// So, Core schema has no distinctions from JSON schema is JS-YAML.
-
-
-
-
-
-module.exports = __webpack_require__(/*! ./json */ "./node_modules/js-yaml/lib/schema/json.js");
-
-
-/***/ }),
-
-/***/ "./node_modules/js-yaml/lib/schema/default.js":
-/*!****************************************************!*\
-  !*** ./node_modules/js-yaml/lib/schema/default.js ***!
-  \****************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-// JS-YAML's default schema for `safeLoad` function.
-// It is not described in the YAML specification.
-//
-// This schema is based on standard YAML's Core schema and includes most of
-// extra types described at YAML tag repository. (http://yaml.org/type/)
-
-
-
-
-
-module.exports = (__webpack_require__(/*! ./core */ "./node_modules/js-yaml/lib/schema/core.js").extend)({
-  implicit: [
-    __webpack_require__(/*! ../type/timestamp */ "./node_modules/js-yaml/lib/type/timestamp.js"),
-    __webpack_require__(/*! ../type/merge */ "./node_modules/js-yaml/lib/type/merge.js")
-  ],
-  explicit: [
-    __webpack_require__(/*! ../type/binary */ "./node_modules/js-yaml/lib/type/binary.js"),
-    __webpack_require__(/*! ../type/omap */ "./node_modules/js-yaml/lib/type/omap.js"),
-    __webpack_require__(/*! ../type/pairs */ "./node_modules/js-yaml/lib/type/pairs.js"),
-    __webpack_require__(/*! ../type/set */ "./node_modules/js-yaml/lib/type/set.js")
-  ]
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/js-yaml/lib/schema/failsafe.js":
-/*!*****************************************************!*\
-  !*** ./node_modules/js-yaml/lib/schema/failsafe.js ***!
-  \*****************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-// Standard YAML's Failsafe schema.
-// http://www.yaml.org/spec/1.2/spec.html#id2802346
-
-
-
-
-
-var Schema = __webpack_require__(/*! ../schema */ "./node_modules/js-yaml/lib/schema.js");
-
-
-module.exports = new Schema({
-  explicit: [
-    __webpack_require__(/*! ../type/str */ "./node_modules/js-yaml/lib/type/str.js"),
-    __webpack_require__(/*! ../type/seq */ "./node_modules/js-yaml/lib/type/seq.js"),
-    __webpack_require__(/*! ../type/map */ "./node_modules/js-yaml/lib/type/map.js")
-  ]
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/js-yaml/lib/schema/json.js":
-/*!*************************************************!*\
-  !*** ./node_modules/js-yaml/lib/schema/json.js ***!
-  \*************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-// Standard YAML's JSON schema.
-// http://www.yaml.org/spec/1.2/spec.html#id2803231
-//
-// NOTE: JS-YAML does not support schema-specific tag resolution restrictions.
-// So, this schema is not such strict as defined in the YAML specification.
-// It allows numbers in binary notaion, use `Null` and `NULL` as `null`, etc.
-
-
-
-
-
-module.exports = (__webpack_require__(/*! ./failsafe */ "./node_modules/js-yaml/lib/schema/failsafe.js").extend)({
-  implicit: [
-    __webpack_require__(/*! ../type/null */ "./node_modules/js-yaml/lib/type/null.js"),
-    __webpack_require__(/*! ../type/bool */ "./node_modules/js-yaml/lib/type/bool.js"),
-    __webpack_require__(/*! ../type/int */ "./node_modules/js-yaml/lib/type/int.js"),
-    __webpack_require__(/*! ../type/float */ "./node_modules/js-yaml/lib/type/float.js")
-  ]
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/js-yaml/lib/snippet.js":
-/*!*********************************************!*\
-  !*** ./node_modules/js-yaml/lib/snippet.js ***!
-  \*********************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-
-var common = __webpack_require__(/*! ./common */ "./node_modules/js-yaml/lib/common.js");
-
-
-// get snippet for a single line, respecting maxLength
-function getLine(buffer, lineStart, lineEnd, position, maxLineLength) {
-  var head = '';
-  var tail = '';
-  var maxHalfLength = Math.floor(maxLineLength / 2) - 1;
-
-  if (position - lineStart > maxHalfLength) {
-    head = ' ... ';
-    lineStart = position - maxHalfLength + head.length;
-  }
-
-  if (lineEnd - position > maxHalfLength) {
-    tail = ' ...';
-    lineEnd = position + maxHalfLength - tail.length;
-  }
-
-  return {
-    str: head + buffer.slice(lineStart, lineEnd).replace(/\t/g, '→') + tail,
-    pos: position - lineStart + head.length // relative position
-  };
-}
-
-
-function padStart(string, max) {
-  return common.repeat(' ', max - string.length) + string;
-}
-
-
-function makeSnippet(mark, options) {
-  options = Object.create(options || null);
-
-  if (!mark.buffer) return null;
-
-  if (!options.maxLength) options.maxLength = 79;
-  if (typeof options.indent      !== 'number') options.indent      = 1;
-  if (typeof options.linesBefore !== 'number') options.linesBefore = 3;
-  if (typeof options.linesAfter  !== 'number') options.linesAfter  = 2;
-
-  var re = /\r?\n|\r|\0/g;
-  var lineStarts = [ 0 ];
-  var lineEnds = [];
-  var match;
-  var foundLineNo = -1;
-
-  while ((match = re.exec(mark.buffer))) {
-    lineEnds.push(match.index);
-    lineStarts.push(match.index + match[0].length);
-
-    if (mark.position <= match.index && foundLineNo < 0) {
-      foundLineNo = lineStarts.length - 2;
-    }
-  }
-
-  if (foundLineNo < 0) foundLineNo = lineStarts.length - 1;
-
-  var result = '', i, line;
-  var lineNoLength = Math.min(mark.line + options.linesAfter, lineEnds.length).toString().length;
-  var maxLineLength = options.maxLength - (options.indent + lineNoLength + 3);
-
-  for (i = 1; i <= options.linesBefore; i++) {
-    if (foundLineNo - i < 0) break;
-    line = getLine(
-      mark.buffer,
-      lineStarts[foundLineNo - i],
-      lineEnds[foundLineNo - i],
-      mark.position - (lineStarts[foundLineNo] - lineStarts[foundLineNo - i]),
-      maxLineLength
-    );
-    result = common.repeat(' ', options.indent) + padStart((mark.line - i + 1).toString(), lineNoLength) +
-      ' | ' + line.str + '\n' + result;
-  }
-
-  line = getLine(mark.buffer, lineStarts[foundLineNo], lineEnds[foundLineNo], mark.position, maxLineLength);
-  result += common.repeat(' ', options.indent) + padStart((mark.line + 1).toString(), lineNoLength) +
-    ' | ' + line.str + '\n';
-  result += common.repeat('-', options.indent + lineNoLength + 3 + line.pos) + '^' + '\n';
-
-  for (i = 1; i <= options.linesAfter; i++) {
-    if (foundLineNo + i >= lineEnds.length) break;
-    line = getLine(
-      mark.buffer,
-      lineStarts[foundLineNo + i],
-      lineEnds[foundLineNo + i],
-      mark.position - (lineStarts[foundLineNo] - lineStarts[foundLineNo + i]),
-      maxLineLength
-    );
-    result += common.repeat(' ', options.indent) + padStart((mark.line + i + 1).toString(), lineNoLength) +
-      ' | ' + line.str + '\n';
-  }
-
-  return result.replace(/\n$/, '');
-}
-
-
-module.exports = makeSnippet;
-
-
-/***/ }),
-
-/***/ "./node_modules/js-yaml/lib/type.js":
-/*!******************************************!*\
-  !*** ./node_modules/js-yaml/lib/type.js ***!
-  \******************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var YAMLException = __webpack_require__(/*! ./exception */ "./node_modules/js-yaml/lib/exception.js");
-
-var TYPE_CONSTRUCTOR_OPTIONS = [
-  'kind',
-  'multi',
-  'resolve',
-  'construct',
-  'instanceOf',
-  'predicate',
-  'represent',
-  'representName',
-  'defaultStyle',
-  'styleAliases'
-];
-
-var YAML_NODE_KINDS = [
-  'scalar',
-  'sequence',
-  'mapping'
-];
-
-function compileStyleAliases(map) {
-  var result = {};
-
-  if (map !== null) {
-    Object.keys(map).forEach(function (style) {
-      map[style].forEach(function (alias) {
-        result[String(alias)] = style;
-      });
-    });
-  }
-
-  return result;
-}
-
-function Type(tag, options) {
-  options = options || {};
-
-  Object.keys(options).forEach(function (name) {
-    if (TYPE_CONSTRUCTOR_OPTIONS.indexOf(name) === -1) {
-      throw new YAMLException('Unknown option "' + name + '" is met in definition of "' + tag + '" YAML type.');
-    }
-  });
-
-  // TODO: Add tag format check.
-  this.options       = options; // keep original options in case user wants to extend this type later
-  this.tag           = tag;
-  this.kind          = options['kind']          || null;
-  this.resolve       = options['resolve']       || function () { return true; };
-  this.construct     = options['construct']     || function (data) { return data; };
-  this.instanceOf    = options['instanceOf']    || null;
-  this.predicate     = options['predicate']     || null;
-  this.represent     = options['represent']     || null;
-  this.representName = options['representName'] || null;
-  this.defaultStyle  = options['defaultStyle']  || null;
-  this.multi         = options['multi']         || false;
-  this.styleAliases  = compileStyleAliases(options['styleAliases'] || null);
-
-  if (YAML_NODE_KINDS.indexOf(this.kind) === -1) {
-    throw new YAMLException('Unknown kind "' + this.kind + '" is specified for "' + tag + '" YAML type.');
-  }
-}
-
-module.exports = Type;
-
-
-/***/ }),
-
-/***/ "./node_modules/js-yaml/lib/type/binary.js":
-/*!*************************************************!*\
-  !*** ./node_modules/js-yaml/lib/type/binary.js ***!
-  \*************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-/*eslint-disable no-bitwise*/
-
-
-var Type = __webpack_require__(/*! ../type */ "./node_modules/js-yaml/lib/type.js");
-
-
-// [ 64, 65, 66 ] -> [ padding, CR, LF ]
-var BASE64_MAP = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=\n\r';
-
-
-function resolveYamlBinary(data) {
-  if (data === null) return false;
-
-  var code, idx, bitlen = 0, max = data.length, map = BASE64_MAP;
-
-  // Convert one by one.
-  for (idx = 0; idx < max; idx++) {
-    code = map.indexOf(data.charAt(idx));
-
-    // Skip CR/LF
-    if (code > 64) continue;
-
-    // Fail on illegal characters
-    if (code < 0) return false;
-
-    bitlen += 6;
-  }
-
-  // If there are any bits left, source was corrupted
-  return (bitlen % 8) === 0;
-}
-
-function constructYamlBinary(data) {
-  var idx, tailbits,
-      input = data.replace(/[\r\n=]/g, ''), // remove CR/LF & padding to simplify scan
-      max = input.length,
-      map = BASE64_MAP,
-      bits = 0,
-      result = [];
-
-  // Collect by 6*4 bits (3 bytes)
-
-  for (idx = 0; idx < max; idx++) {
-    if ((idx % 4 === 0) && idx) {
-      result.push((bits >> 16) & 0xFF);
-      result.push((bits >> 8) & 0xFF);
-      result.push(bits & 0xFF);
-    }
-
-    bits = (bits << 6) | map.indexOf(input.charAt(idx));
-  }
-
-  // Dump tail
-
-  tailbits = (max % 4) * 6;
-
-  if (tailbits === 0) {
-    result.push((bits >> 16) & 0xFF);
-    result.push((bits >> 8) & 0xFF);
-    result.push(bits & 0xFF);
-  } else if (tailbits === 18) {
-    result.push((bits >> 10) & 0xFF);
-    result.push((bits >> 2) & 0xFF);
-  } else if (tailbits === 12) {
-    result.push((bits >> 4) & 0xFF);
-  }
-
-  return new Uint8Array(result);
-}
-
-function representYamlBinary(object /*, style*/) {
-  var result = '', bits = 0, idx, tail,
-      max = object.length,
-      map = BASE64_MAP;
-
-  // Convert every three bytes to 4 ASCII characters.
-
-  for (idx = 0; idx < max; idx++) {
-    if ((idx % 3 === 0) && idx) {
-      result += map[(bits >> 18) & 0x3F];
-      result += map[(bits >> 12) & 0x3F];
-      result += map[(bits >> 6) & 0x3F];
-      result += map[bits & 0x3F];
-    }
-
-    bits = (bits << 8) + object[idx];
-  }
-
-  // Dump tail
-
-  tail = max % 3;
-
-  if (tail === 0) {
-    result += map[(bits >> 18) & 0x3F];
-    result += map[(bits >> 12) & 0x3F];
-    result += map[(bits >> 6) & 0x3F];
-    result += map[bits & 0x3F];
-  } else if (tail === 2) {
-    result += map[(bits >> 10) & 0x3F];
-    result += map[(bits >> 4) & 0x3F];
-    result += map[(bits << 2) & 0x3F];
-    result += map[64];
-  } else if (tail === 1) {
-    result += map[(bits >> 2) & 0x3F];
-    result += map[(bits << 4) & 0x3F];
-    result += map[64];
-    result += map[64];
-  }
-
-  return result;
-}
-
-function isBinary(obj) {
-  return Object.prototype.toString.call(obj) ===  '[object Uint8Array]';
-}
-
-module.exports = new Type('tag:yaml.org,2002:binary', {
-  kind: 'scalar',
-  resolve: resolveYamlBinary,
-  construct: constructYamlBinary,
-  predicate: isBinary,
-  represent: representYamlBinary
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/js-yaml/lib/type/bool.js":
-/*!***********************************************!*\
-  !*** ./node_modules/js-yaml/lib/type/bool.js ***!
-  \***********************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var Type = __webpack_require__(/*! ../type */ "./node_modules/js-yaml/lib/type.js");
-
-function resolveYamlBoolean(data) {
-  if (data === null) return false;
-
-  var max = data.length;
-
-  return (max === 4 && (data === 'true' || data === 'True' || data === 'TRUE')) ||
-         (max === 5 && (data === 'false' || data === 'False' || data === 'FALSE'));
-}
-
-function constructYamlBoolean(data) {
-  return data === 'true' ||
-         data === 'True' ||
-         data === 'TRUE';
-}
-
-function isBoolean(object) {
-  return Object.prototype.toString.call(object) === '[object Boolean]';
-}
-
-module.exports = new Type('tag:yaml.org,2002:bool', {
-  kind: 'scalar',
-  resolve: resolveYamlBoolean,
-  construct: constructYamlBoolean,
-  predicate: isBoolean,
-  represent: {
-    lowercase: function (object) { return object ? 'true' : 'false'; },
-    uppercase: function (object) { return object ? 'TRUE' : 'FALSE'; },
-    camelcase: function (object) { return object ? 'True' : 'False'; }
-  },
-  defaultStyle: 'lowercase'
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/js-yaml/lib/type/float.js":
-/*!************************************************!*\
-  !*** ./node_modules/js-yaml/lib/type/float.js ***!
-  \************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var common = __webpack_require__(/*! ../common */ "./node_modules/js-yaml/lib/common.js");
-var Type   = __webpack_require__(/*! ../type */ "./node_modules/js-yaml/lib/type.js");
-
-var YAML_FLOAT_PATTERN = new RegExp(
-  // 2.5e4, 2.5 and integers
-  '^(?:[-+]?(?:[0-9][0-9_]*)(?:\\.[0-9_]*)?(?:[eE][-+]?[0-9]+)?' +
-  // .2e4, .2
-  // special case, seems not from spec
-  '|\\.[0-9_]+(?:[eE][-+]?[0-9]+)?' +
-  // .inf
-  '|[-+]?\\.(?:inf|Inf|INF)' +
-  // .nan
-  '|\\.(?:nan|NaN|NAN))$');
-
-function resolveYamlFloat(data) {
-  if (data === null) return false;
-
-  if (!YAML_FLOAT_PATTERN.test(data) ||
-      // Quick hack to not allow integers end with `_`
-      // Probably should update regexp & check speed
-      data[data.length - 1] === '_') {
-    return false;
-  }
-
-  return true;
-}
-
-function constructYamlFloat(data) {
-  var value, sign;
-
-  value  = data.replace(/_/g, '').toLowerCase();
-  sign   = value[0] === '-' ? -1 : 1;
-
-  if ('+-'.indexOf(value[0]) >= 0) {
-    value = value.slice(1);
-  }
-
-  if (value === '.inf') {
-    return (sign === 1) ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
-
-  } else if (value === '.nan') {
-    return NaN;
-  }
-  return sign * parseFloat(value, 10);
-}
-
-
-var SCIENTIFIC_WITHOUT_DOT = /^[-+]?[0-9]+e/;
-
-function representYamlFloat(object, style) {
-  var res;
-
-  if (isNaN(object)) {
-    switch (style) {
-      case 'lowercase': return '.nan';
-      case 'uppercase': return '.NAN';
-      case 'camelcase': return '.NaN';
-    }
-  } else if (Number.POSITIVE_INFINITY === object) {
-    switch (style) {
-      case 'lowercase': return '.inf';
-      case 'uppercase': return '.INF';
-      case 'camelcase': return '.Inf';
-    }
-  } else if (Number.NEGATIVE_INFINITY === object) {
-    switch (style) {
-      case 'lowercase': return '-.inf';
-      case 'uppercase': return '-.INF';
-      case 'camelcase': return '-.Inf';
-    }
-  } else if (common.isNegativeZero(object)) {
-    return '-0.0';
-  }
-
-  res = object.toString(10);
-
-  // JS stringifier can build scientific format without dots: 5e-100,
-  // while YAML requres dot: 5.e-100. Fix it with simple hack
-
-  return SCIENTIFIC_WITHOUT_DOT.test(res) ? res.replace('e', '.e') : res;
-}
-
-function isFloat(object) {
-  return (Object.prototype.toString.call(object) === '[object Number]') &&
-         (object % 1 !== 0 || common.isNegativeZero(object));
-}
-
-module.exports = new Type('tag:yaml.org,2002:float', {
-  kind: 'scalar',
-  resolve: resolveYamlFloat,
-  construct: constructYamlFloat,
-  predicate: isFloat,
-  represent: representYamlFloat,
-  defaultStyle: 'lowercase'
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/js-yaml/lib/type/int.js":
-/*!**********************************************!*\
-  !*** ./node_modules/js-yaml/lib/type/int.js ***!
-  \**********************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var common = __webpack_require__(/*! ../common */ "./node_modules/js-yaml/lib/common.js");
-var Type   = __webpack_require__(/*! ../type */ "./node_modules/js-yaml/lib/type.js");
-
-function isHexCode(c) {
-  return ((0x30/* 0 */ <= c) && (c <= 0x39/* 9 */)) ||
-         ((0x41/* A */ <= c) && (c <= 0x46/* F */)) ||
-         ((0x61/* a */ <= c) && (c <= 0x66/* f */));
-}
-
-function isOctCode(c) {
-  return ((0x30/* 0 */ <= c) && (c <= 0x37/* 7 */));
-}
-
-function isDecCode(c) {
-  return ((0x30/* 0 */ <= c) && (c <= 0x39/* 9 */));
-}
-
-function resolveYamlInteger(data) {
-  if (data === null) return false;
-
-  var max = data.length,
-      index = 0,
-      hasDigits = false,
-      ch;
-
-  if (!max) return false;
-
-  ch = data[index];
-
-  // sign
-  if (ch === '-' || ch === '+') {
-    ch = data[++index];
-  }
-
-  if (ch === '0') {
-    // 0
-    if (index + 1 === max) return true;
-    ch = data[++index];
-
-    // base 2, base 8, base 16
-
-    if (ch === 'b') {
-      // base 2
-      index++;
-
-      for (; index < max; index++) {
-        ch = data[index];
-        if (ch === '_') continue;
-        if (ch !== '0' && ch !== '1') return false;
-        hasDigits = true;
-      }
-      return hasDigits && ch !== '_';
-    }
-
-
-    if (ch === 'x') {
-      // base 16
-      index++;
-
-      for (; index < max; index++) {
-        ch = data[index];
-        if (ch === '_') continue;
-        if (!isHexCode(data.charCodeAt(index))) return false;
-        hasDigits = true;
-      }
-      return hasDigits && ch !== '_';
-    }
-
-
-    if (ch === 'o') {
-      // base 8
-      index++;
-
-      for (; index < max; index++) {
-        ch = data[index];
-        if (ch === '_') continue;
-        if (!isOctCode(data.charCodeAt(index))) return false;
-        hasDigits = true;
-      }
-      return hasDigits && ch !== '_';
-    }
-  }
-
-  // base 10 (except 0)
-
-  // value should not start with `_`;
-  if (ch === '_') return false;
-
-  for (; index < max; index++) {
-    ch = data[index];
-    if (ch === '_') continue;
-    if (!isDecCode(data.charCodeAt(index))) {
-      return false;
-    }
-    hasDigits = true;
-  }
-
-  // Should have digits and should not end with `_`
-  if (!hasDigits || ch === '_') return false;
-
-  return true;
-}
-
-function constructYamlInteger(data) {
-  var value = data, sign = 1, ch;
-
-  if (value.indexOf('_') !== -1) {
-    value = value.replace(/_/g, '');
-  }
-
-  ch = value[0];
-
-  if (ch === '-' || ch === '+') {
-    if (ch === '-') sign = -1;
-    value = value.slice(1);
-    ch = value[0];
-  }
-
-  if (value === '0') return 0;
-
-  if (ch === '0') {
-    if (value[1] === 'b') return sign * parseInt(value.slice(2), 2);
-    if (value[1] === 'x') return sign * parseInt(value.slice(2), 16);
-    if (value[1] === 'o') return sign * parseInt(value.slice(2), 8);
-  }
-
-  return sign * parseInt(value, 10);
-}
-
-function isInteger(object) {
-  return (Object.prototype.toString.call(object)) === '[object Number]' &&
-         (object % 1 === 0 && !common.isNegativeZero(object));
-}
-
-module.exports = new Type('tag:yaml.org,2002:int', {
-  kind: 'scalar',
-  resolve: resolveYamlInteger,
-  construct: constructYamlInteger,
-  predicate: isInteger,
-  represent: {
-    binary:      function (obj) { return obj >= 0 ? '0b' + obj.toString(2) : '-0b' + obj.toString(2).slice(1); },
-    octal:       function (obj) { return obj >= 0 ? '0o'  + obj.toString(8) : '-0o'  + obj.toString(8).slice(1); },
-    decimal:     function (obj) { return obj.toString(10); },
-    /* eslint-disable max-len */
-    hexadecimal: function (obj) { return obj >= 0 ? '0x' + obj.toString(16).toUpperCase() :  '-0x' + obj.toString(16).toUpperCase().slice(1); }
-  },
-  defaultStyle: 'decimal',
-  styleAliases: {
-    binary:      [ 2,  'bin' ],
-    octal:       [ 8,  'oct' ],
-    decimal:     [ 10, 'dec' ],
-    hexadecimal: [ 16, 'hex' ]
-  }
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/js-yaml/lib/type/map.js":
-/*!**********************************************!*\
-  !*** ./node_modules/js-yaml/lib/type/map.js ***!
-  \**********************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var Type = __webpack_require__(/*! ../type */ "./node_modules/js-yaml/lib/type.js");
-
-module.exports = new Type('tag:yaml.org,2002:map', {
-  kind: 'mapping',
-  construct: function (data) { return data !== null ? data : {}; }
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/js-yaml/lib/type/merge.js":
-/*!************************************************!*\
-  !*** ./node_modules/js-yaml/lib/type/merge.js ***!
-  \************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var Type = __webpack_require__(/*! ../type */ "./node_modules/js-yaml/lib/type.js");
-
-function resolveYamlMerge(data) {
-  return data === '<<' || data === null;
-}
-
-module.exports = new Type('tag:yaml.org,2002:merge', {
-  kind: 'scalar',
-  resolve: resolveYamlMerge
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/js-yaml/lib/type/null.js":
-/*!***********************************************!*\
-  !*** ./node_modules/js-yaml/lib/type/null.js ***!
-  \***********************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var Type = __webpack_require__(/*! ../type */ "./node_modules/js-yaml/lib/type.js");
-
-function resolveYamlNull(data) {
-  if (data === null) return true;
-
-  var max = data.length;
-
-  return (max === 1 && data === '~') ||
-         (max === 4 && (data === 'null' || data === 'Null' || data === 'NULL'));
-}
-
-function constructYamlNull() {
-  return null;
-}
-
-function isNull(object) {
-  return object === null;
-}
-
-module.exports = new Type('tag:yaml.org,2002:null', {
-  kind: 'scalar',
-  resolve: resolveYamlNull,
-  construct: constructYamlNull,
-  predicate: isNull,
-  represent: {
-    canonical: function () { return '~';    },
-    lowercase: function () { return 'null'; },
-    uppercase: function () { return 'NULL'; },
-    camelcase: function () { return 'Null'; },
-    empty:     function () { return '';     }
-  },
-  defaultStyle: 'lowercase'
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/js-yaml/lib/type/omap.js":
-/*!***********************************************!*\
-  !*** ./node_modules/js-yaml/lib/type/omap.js ***!
-  \***********************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var Type = __webpack_require__(/*! ../type */ "./node_modules/js-yaml/lib/type.js");
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-var _toString       = Object.prototype.toString;
-
-function resolveYamlOmap(data) {
-  if (data === null) return true;
-
-  var objectKeys = [], index, length, pair, pairKey, pairHasKey,
-      object = data;
-
-  for (index = 0, length = object.length; index < length; index += 1) {
-    pair = object[index];
-    pairHasKey = false;
-
-    if (_toString.call(pair) !== '[object Object]') return false;
-
-    for (pairKey in pair) {
-      if (_hasOwnProperty.call(pair, pairKey)) {
-        if (!pairHasKey) pairHasKey = true;
-        else return false;
-      }
-    }
-
-    if (!pairHasKey) return false;
-
-    if (objectKeys.indexOf(pairKey) === -1) objectKeys.push(pairKey);
-    else return false;
-  }
-
-  return true;
-}
-
-function constructYamlOmap(data) {
-  return data !== null ? data : [];
-}
-
-module.exports = new Type('tag:yaml.org,2002:omap', {
-  kind: 'sequence',
-  resolve: resolveYamlOmap,
-  construct: constructYamlOmap
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/js-yaml/lib/type/pairs.js":
-/*!************************************************!*\
-  !*** ./node_modules/js-yaml/lib/type/pairs.js ***!
-  \************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var Type = __webpack_require__(/*! ../type */ "./node_modules/js-yaml/lib/type.js");
-
-var _toString = Object.prototype.toString;
-
-function resolveYamlPairs(data) {
-  if (data === null) return true;
-
-  var index, length, pair, keys, result,
-      object = data;
-
-  result = new Array(object.length);
-
-  for (index = 0, length = object.length; index < length; index += 1) {
-    pair = object[index];
-
-    if (_toString.call(pair) !== '[object Object]') return false;
-
-    keys = Object.keys(pair);
-
-    if (keys.length !== 1) return false;
-
-    result[index] = [ keys[0], pair[keys[0]] ];
-  }
-
-  return true;
-}
-
-function constructYamlPairs(data) {
-  if (data === null) return [];
-
-  var index, length, pair, keys, result,
-      object = data;
-
-  result = new Array(object.length);
-
-  for (index = 0, length = object.length; index < length; index += 1) {
-    pair = object[index];
-
-    keys = Object.keys(pair);
-
-    result[index] = [ keys[0], pair[keys[0]] ];
-  }
-
-  return result;
-}
-
-module.exports = new Type('tag:yaml.org,2002:pairs', {
-  kind: 'sequence',
-  resolve: resolveYamlPairs,
-  construct: constructYamlPairs
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/js-yaml/lib/type/seq.js":
-/*!**********************************************!*\
-  !*** ./node_modules/js-yaml/lib/type/seq.js ***!
-  \**********************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var Type = __webpack_require__(/*! ../type */ "./node_modules/js-yaml/lib/type.js");
-
-module.exports = new Type('tag:yaml.org,2002:seq', {
-  kind: 'sequence',
-  construct: function (data) { return data !== null ? data : []; }
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/js-yaml/lib/type/set.js":
-/*!**********************************************!*\
-  !*** ./node_modules/js-yaml/lib/type/set.js ***!
-  \**********************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var Type = __webpack_require__(/*! ../type */ "./node_modules/js-yaml/lib/type.js");
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-
-function resolveYamlSet(data) {
-  if (data === null) return true;
-
-  var key, object = data;
-
-  for (key in object) {
-    if (_hasOwnProperty.call(object, key)) {
-      if (object[key] !== null) return false;
-    }
-  }
-
-  return true;
-}
-
-function constructYamlSet(data) {
-  return data !== null ? data : {};
-}
-
-module.exports = new Type('tag:yaml.org,2002:set', {
-  kind: 'mapping',
-  resolve: resolveYamlSet,
-  construct: constructYamlSet
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/js-yaml/lib/type/str.js":
-/*!**********************************************!*\
-  !*** ./node_modules/js-yaml/lib/type/str.js ***!
-  \**********************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var Type = __webpack_require__(/*! ../type */ "./node_modules/js-yaml/lib/type.js");
-
-module.exports = new Type('tag:yaml.org,2002:str', {
-  kind: 'scalar',
-  construct: function (data) { return data !== null ? data : ''; }
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/js-yaml/lib/type/timestamp.js":
-/*!****************************************************!*\
-  !*** ./node_modules/js-yaml/lib/type/timestamp.js ***!
-  \****************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var Type = __webpack_require__(/*! ../type */ "./node_modules/js-yaml/lib/type.js");
-
-var YAML_DATE_REGEXP = new RegExp(
-  '^([0-9][0-9][0-9][0-9])'          + // [1] year
-  '-([0-9][0-9])'                    + // [2] month
-  '-([0-9][0-9])$');                   // [3] day
-
-var YAML_TIMESTAMP_REGEXP = new RegExp(
-  '^([0-9][0-9][0-9][0-9])'          + // [1] year
-  '-([0-9][0-9]?)'                   + // [2] month
-  '-([0-9][0-9]?)'                   + // [3] day
-  '(?:[Tt]|[ \\t]+)'                 + // ...
-  '([0-9][0-9]?)'                    + // [4] hour
-  ':([0-9][0-9])'                    + // [5] minute
-  ':([0-9][0-9])'                    + // [6] second
-  '(?:\\.([0-9]*))?'                 + // [7] fraction
-  '(?:[ \\t]*(Z|([-+])([0-9][0-9]?)' + // [8] tz [9] tz_sign [10] tz_hour
-  '(?::([0-9][0-9]))?))?$');           // [11] tz_minute
-
-function resolveYamlTimestamp(data) {
-  if (data === null) return false;
-  if (YAML_DATE_REGEXP.exec(data) !== null) return true;
-  if (YAML_TIMESTAMP_REGEXP.exec(data) !== null) return true;
-  return false;
-}
-
-function constructYamlTimestamp(data) {
-  var match, year, month, day, hour, minute, second, fraction = 0,
-      delta = null, tz_hour, tz_minute, date;
-
-  match = YAML_DATE_REGEXP.exec(data);
-  if (match === null) match = YAML_TIMESTAMP_REGEXP.exec(data);
-
-  if (match === null) throw new Error('Date resolve error');
-
-  // match: [1] year [2] month [3] day
-
-  year = +(match[1]);
-  month = +(match[2]) - 1; // JS month starts with 0
-  day = +(match[3]);
-
-  if (!match[4]) { // no hour
-    return new Date(Date.UTC(year, month, day));
-  }
-
-  // match: [4] hour [5] minute [6] second [7] fraction
-
-  hour = +(match[4]);
-  minute = +(match[5]);
-  second = +(match[6]);
-
-  if (match[7]) {
-    fraction = match[7].slice(0, 3);
-    while (fraction.length < 3) { // milli-seconds
-      fraction += '0';
-    }
-    fraction = +fraction;
-  }
-
-  // match: [8] tz [9] tz_sign [10] tz_hour [11] tz_minute
-
-  if (match[9]) {
-    tz_hour = +(match[10]);
-    tz_minute = +(match[11] || 0);
-    delta = (tz_hour * 60 + tz_minute) * 60000; // delta in mili-seconds
-    if (match[9] === '-') delta = -delta;
-  }
-
-  date = new Date(Date.UTC(year, month, day, hour, minute, second, fraction));
-
-  if (delta) date.setTime(date.getTime() - delta);
-
-  return date;
-}
-
-function representYamlTimestamp(object /*, style*/) {
-  return object.toISOString();
-}
-
-module.exports = new Type('tag:yaml.org,2002:timestamp', {
-  kind: 'scalar',
-  resolve: resolveYamlTimestamp,
-  construct: constructYamlTimestamp,
-  instanceOf: Date,
-  represent: representYamlTimestamp
-});
 
 
 /***/ }),
@@ -43964,889 +39637,210 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 /***/ }),
 
-/***/ "./src/js/lib/app/player-app.js":
-/*!**************************************!*\
-  !*** ./src/js/lib/app/player-app.js ***!
-  \**************************************/
+/***/ "./src/js/lib/app/map-app.js":
+/*!***********************************!*\
+  !*** ./src/js/lib/app/map-app.js ***!
+  \***********************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 /* globals PIXI */
-const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
-const Stats = __webpack_require__(/*! ../helpers-web/stats.js */ "./src/js/lib/helpers-web/stats.js");
-const TownView = __webpack_require__(/*! ../views/town-view */ "./src/js/lib/views/town-view.js");
+
 __webpack_require__(/*! ../helpers-web/fill-with-aspect */ "./src/js/lib/helpers-web/fill-with-aspect.js");
-const PCView = __webpack_require__(/*! ../views/pc-view */ "./src/js/lib/views/pc-view.js");
-const CharacterView = __webpack_require__(/*! ../views/character-view */ "./src/js/lib/views/character-view.js");
-const KeyboardInputMgr = __webpack_require__(/*! ../input/keyboard-input-mgr */ "./src/js/lib/input/keyboard-input-mgr.js");
-const GamepadInputMgr = __webpack_require__(/*! ../input/gamepad-input-mgr */ "./src/js/lib/input/gamepad-input-mgr.js");
-const MultiplexInputMgr = __webpack_require__(/*! ../input/multiplex-input-mgr */ "./src/js/lib/input/multiplex-input-mgr.js");
-const PlayerAppInputRouter = __webpack_require__(/*! ../input/player-app-input-router */ "./src/js/lib/input/player-app-input-router.js");
-const Character = __webpack_require__(/*! ../model/character */ "./src/js/lib/model/character.js");
+const Stats = __webpack_require__(/*! ../helpers-web/stats */ "./src/js/lib/helpers-web/stats.js");
+const StorylineManager = __webpack_require__(/*! ../model/storyline-manager */ "./src/js/lib/model/storyline-manager.js");
 const FlagStore = __webpack_require__(/*! ../dialogues/flag-store */ "./src/js/lib/dialogues/flag-store.js");
 const QuestTracker = __webpack_require__(/*! ../model/quest-tracker */ "./src/js/lib/model/quest-tracker.js");
-const QuestOverlay = __webpack_require__(/*! ../ui/questOverlay */ "./src/js/lib/ui/questOverlay.js");
-const DialogueOverlay = __webpack_require__(/*! ../dialogues/dialogue-overlay */ "./src/js/lib/dialogues/dialogue-overlay.js");
-const DialogueSequencer = __webpack_require__(/*! ../dialogues/dialogue-sequencer */ "./src/js/lib/dialogues/dialogue-sequencer.js");
-const Dialogue = __webpack_require__(/*! ../dialogues/dialogue */ "./src/js/lib/dialogues/dialogue.js");
-const Countdown = __webpack_require__(/*! ../helpers-web/countdown */ "./src/js/lib/helpers-web/countdown.js");
-const DecisionScreen = __webpack_require__(/*! ../ui/decisionScreen */ "./src/js/lib/ui/decisionScreen.js");
-const ScoringOverlay = __webpack_require__(/*! ../ui/scoringOverlay */ "./src/js/lib/ui/scoringOverlay.js");
-const { I18nTextAdapter } = __webpack_require__(/*! ../helpers/i18n */ "./src/js/lib/helpers/i18n.js");
-const readEnding = __webpack_require__(/*! ../dialogues/ending-reader */ "./src/js/lib/dialogues/ending-reader.js");
+const TownView = __webpack_require__(/*! ../views/town-view */ "./src/js/lib/views/town-view.js");
+const PCView = __webpack_require__(/*! ../views/pc-view */ "./src/js/lib/views/pc-view.js");
+const CharacterView = __webpack_require__(/*! ../views/character-view */ "./src/js/lib/views/character-view.js");
+const Character = __webpack_require__(/*! ../model/character */ "./src/js/lib/model/character.js");
+const KeyboardInputMgr = __webpack_require__(/*! ../input/keyboard-input-mgr */ "./src/js/lib/input/keyboard-input-mgr.js");
+const MapMarker = __webpack_require__(/*! ../views/map-marker */ "./src/js/lib/views/map-marker.js");
 
-
-class PlayerApp {
-  constructor(config, playerId) {
+class MapApp {
+  constructor(config, textures) {
     this.config = config;
-    this.lang = config.game.defaultLanguage;
-    this.playerId = playerId;
-    this.pc = new Character(playerId, this.config.players[playerId]);
-    this.otherPcs = Object.fromEntries(Object.entries(this.config.players)
-      .filter(([id, player]) => (player.enabled === undefined || player.enabled) && id !== playerId)
-      .map(([id]) => [id, new Character(id, this.config.players[id])]));
-    this.canControlPc = false;
-    this.npcs = Object.entries(config.storylines.touristen.npcs).map(([id, props]) => new Character(id, props));
+    this.textures = textures;
 
+    // Game logic
+    this.flags = new FlagStore();
+    this.storylineManager = new StorylineManager(config);
+    this.storylineManager.events.on('storylineChanged',
+      this.handleStorylineChanged.bind(this));
+    window.setStoryline = this.storylineManager.setCurrentStoryline.bind(this.storylineManager);
+
+    this.questTracker = new QuestTracker(config, this.storylineManager, this.flags);
+    this.questMarkers = {};
+
+    this.questTracker.events.on('questActive', () => {
+      this.updateQuestMarkers();
+    });
+    this.questTracker.events.on('questDone', () => {
+      this.updateQuestMarkers();
+    });
+
+    this.pcs = {};
+    this.pcViews = {};
+    this.npcViews = {};
+
+    // HTML elements
     this.$element = $('<div></div>')
-      .addClass('player-app');
+      .addClass('map-app');
 
     this.$pixiWrapper = $('<div></div>')
       .addClass('pixi-wrapper')
       .appendTo(this.$element);
 
-    this.$storylineBar = $('<div></div>')
-      .addClass('storyline-bar')
-      .appendTo(this.$element)
-      .hide();
-
-    this.$decisionLabel = $('<div></div>')
-      .addClass('decision-label')
-      .appendTo(this.$storylineBar);
-
-    this.decisionLabelI18n = new I18nTextAdapter((text) => {
-      this.$decisionLabel.html(text);
-    }, this.lang, this.config.storylines.touristen.decision);
-
-    this.endingScreen = null;
-
-    this.countdown = new Countdown(config.game.duration);
-    this.countdown.$element.appendTo(this.$element);
-    this.countdown.events.on('end', () => {
-      this.handleStorylineEnd();
-    });
-
-    this.flags = new FlagStore();
-    this.questTracker = new QuestTracker(config, this.flags);
-
-    this.questOverlay = new QuestOverlay(this.config, this.lang, this.questTracker);
-    this.$element.append(this.questOverlay.$element);
-
-    this.dialogueOverlay = new DialogueOverlay(this.config, this.lang);
-    this.dialogueSequencer = new DialogueSequencer(this.dialogueOverlay);
-    this.$element.append(this.dialogueOverlay.$element);
-
-    this.scoringOverlay = new ScoringOverlay(this.config);
-    this.$element.append(this.scoringOverlay.$element);
-
-    // Temporary scoring manager
-    const seenFlags = {};
-    this.flags.events.on('flag', (flagId) => {
-      if (seenFlags[flagId]) {
-        return;
-      }
-      seenFlags[flagId] = true;
-      if (flagId.startsWith('pnt.')) {
-        const flagParts = flagId.split('.');
-        const category = flagParts[1];
-        if (category) {
-          this.scoringOverlay.show(category);
-        }
-      }
-    });
-
-    this.showHitbox = false;
-  }
-
-  async init() {
+    // PIXI
     this.pixiApp = new PIXI.Application({
-      // todo: get these from config or constants
-      width: PlayerApp.APP_WIDTH,
-      height: PlayerApp.APP_HEIGHT,
+      width: MapApp.APP_WIDTH,
+      height: MapApp.APP_HEIGHT,
       backgroundColor: 0xffffff,
     });
     this.$pixiWrapper.append(this.pixiApp.view);
 
-    await this.loadTextures();
-
     this.camera = new PIXI.Container();
+    this.pixiApp.stage.addChild(this.camera);
     this.townView = new TownView(this.config, this.textures);
     this.camera.addChild(this.townView.display);
-    this.pixiApp.stage.addChild(this.camera);
-    this.pcView = new PCView(this.config, this.textures, this.pc, this.townView);
-    this.otherPcViews = Object.fromEntries(
-      Object.entries(this.otherPcs)
-        .map(([id, pc]) => [id, new PCView(this.config, this.textures, pc, this.townView)])
-    );
-    this.npcViews = Object.values(this.npcs).map(npc => new CharacterView(this.config, this.textures, npc, this.townView));
 
-    this.townView.mainLayer.addChild(this.pcView.display);
-    this.townView.bgLayer.addChild(this.pcView.hitboxDisplay);
-    this.townView.mainLayer.addChild(...this.npcViews.map(npcView => npcView.display));
-    if (Object.values(this.otherPcViews).length > 0) {
-      this.townView.mainLayer.addChild(...Object.values(this.otherPcViews)
-        .map(pcView => pcView.display));
-    }
+    this.camera.width = MapApp.APP_WIDTH;
+    this.camera.height = MapApp.APP_HEIGHT;
 
+    // HTML Overlays
     this.stats = new Stats();
     this.$element.append(this.stats.dom);
 
+    // Input
     this.keyboardInputMgr = new KeyboardInputMgr();
     this.keyboardInputMgr.attachListeners();
-    this.keyboardInputMgr.addToggle('KeyE', () => { this.countdown.forceEnd(); });
     this.keyboardInputMgr.addToggle('KeyD', () => { this.stats.togglePanel(); });
-    this.keyboardInputMgr.addToggle('KeyH', () => { this.toggleHitboxDisplay(); });
-    this.keyboardInputMgr.addToggle('KeyX', () => { console.log(`x: ${this.pc.position.x}, y: ${this.pc.position.y}`); });
 
-    const gamepadMapperConfig =
-      this.config?.players?.[this.playerId]?.['gamepadMapping'] ?? {};
-    this.gamepadInputMgr = new GamepadInputMgr(gamepadMapperConfig);
-    this.gamepadInputMgr.attachListeners();
-
-    this.multiplexInputMgr = new MultiplexInputMgr(
-      this.keyboardInputMgr,
-      this.gamepadInputMgr
-    );
-    this.multiplexInputMgr.attachListeners();
-
-    const inputMgrs = [
-      this.keyboardInputMgr,
-      this.gamepadInputMgr,
-      this.multiplexInputMgr, // the multiplexer must be the last one
-    ];
-
-    const inputMgr = this.multiplexInputMgr;
-    inputMgr.events.on('lang', () => { this.toggleLanguage(); });
-
-    this.inputRouter = new PlayerAppInputRouter(inputMgr);
-    this.inputRouter.routeToPcMovement(this);
-
+    // Game loop
     this.pixiApp.ticker.add((time) => {
       this.stats.frameBegin();
-      inputMgrs.forEach((inputMgr) => inputMgr.update());
-      if (this.canControlPc) {
-        const { x, y } = inputMgr.getDirection();
-        this.pc.setSpeed(x * 10, y * 10);
-      }
-      this.pcView.animate(time);
-      Object.entries(this.otherPcViews).forEach(([, pcView]) => {
+
+      Object.entries(this.pcViews).forEach(([, pcView]) => {
         pcView.display.position = pcView.character.position;
         pcView.display.zIndex = pcView.character.position.y;
         pcView.animate(time);
       });
       this.townView.mainLayer.sortChildren();
 
-      // Set the town view's pivot so the PC is always centered on the screen,
-      // but don't let the pivot go off the edge of the town
-      this.camera.pivot.set(
-        Math.max(0, Math.min(this.pcView.display.x + this.pcView.display.width / 2 - PlayerApp.APP_WIDTH / 2 / this.camera.scale.x, this.townView.townSize.width - PlayerApp.APP_WIDTH / this.camera.scale.x)),
-        Math.max(0, Math.min(this.pcView.display.y - this.pcView.display.height * 0.8 - PlayerApp.APP_HEIGHT / 2 / this.camera.scale.y, this.townView.townSize.height - PlayerApp.APP_HEIGHT / this.camera.scale.y)),
-      );
-      window.camera = this.camera;
-      window.townView = this.townView;
       this.stats.frameEnd();
     });
 
-    this.countdown.start();
-    this.updateNpcMoods();
-    this.questTracker.events.on('questActive', (questId) => {
-      this.updateNpcMoods();
-    });
-    this.questTracker.events.on('questDone', (questId) => {
-      this.updateNpcMoods();
-    });
-
-    return this;
-  }
-
-  async loadTextures() {
-    PIXI.Assets.init({
-      basePath: './static/textures',
-      manifest: this.config.textures,
-    });
-
-    this.textures = await PIXI.Assets.loadBundle('town-view');
-  }
-
-  setLanguage(lang) {
-    this.lang = lang;
-    this.dialogueOverlay.setLang(this.lang);
-    this.questOverlay.setLang(this.lang);
-    this.decisionLabelI18n.setLang(this.lang);
-    if (this.endingScreen) {
-      this.endingScreen.setLang(this.lang);
-    }
-  }
-
-  toggleLanguage() {
-    const langIndex = this.config.game.languages.indexOf(this.lang);
-    if (langIndex === this.config.game.languages.length - 1) {
-      this.setLanguage(this.config.game.languages[0]);
-    } else {
-      this.setLanguage(this.config.game.languages[langIndex + 1]);
-    }
+    // Temporary
+    this.storylineManager.setCurrentStoryline('touristen');
+    this.addPc('1');
+    this.addPc('2');
+    this.addPc('3');
   }
 
   resize() {
-    this.$element.fillWithAspect(PlayerApp.APP_WIDTH / PlayerApp.APP_HEIGHT);
-    this.$element.css('font-size', `${(this.$element.width() * PlayerApp.FONT_RATIO).toFixed(3)}px`);
+    this.$element.fillWithAspect(MapApp.APP_WIDTH / MapApp.APP_HEIGHT);
+    this.$element.css('font-size', `${(this.$element.width() * MapApp.FONT_RATIO).toFixed(3)}px`);
   }
 
-  enablePcControl() {
-    this.canControlPc = true;
+  handleStorylineChanged() {
+    this.clearNpcs();
+    Object.entries(this.storylineManager.getNpcs()).forEach(([id, props]) => {
+      this.addNpc(new Character(id, props));
+    });
+    this.updateQuestMarkers();
   }
 
-  disablePcControl() {
-    this.canControlPc = false;
-    this.pc.setSpeed(0, 0);
+  addPc(id) {
+    const pc = new Character(id, this.config.players[id]);
+    this.pcs[id] = pc;
+
+    const view = new PCView(this.config, this.textures, pc, this.townView);
+    this.pcViews[id] = view;
+    this.townView.mainLayer.addChild(view.display);
+
+    this.addMarker(view, `player-${id}`);
   }
 
-  getDialogue(dialogueId) {
-    const items = this.config.storylines.touristen.dialogues[dialogueId];
-    if (!items) throw new Error(`No dialogue found with id ${dialogueId}`);
-    try {
-      return Dialogue.fromJson({
-        id: dialogueId,
-        items,
+  removePc(id) {
+    if (this.pcViews[id]) {
+      this.townView.mainLayer.removeChild(this.pcViews[id].display);
+      delete this.pcs[id];
+      delete this.pcViews[id];
+    }
+  }
+
+  addNpc(npc) {
+    const view = new CharacterView(this.config, this.textures, npc, this.townView);
+    this.npcViews[npc.id] = view;
+    this.townView.mainLayer.addChild(view.display);
+  }
+
+  removeNpc(id) {
+    if (this.npcViews[id]) {
+      this.townView.mainLayer.removeChild(this.npcViews[id].display);
+      delete this.npcViews[id];
+    }
+  }
+
+  clearNpcs() {
+    Object.values(this.npcViews).forEach((npcView) => {
+      this.townView.mainLayer.removeChild(npcView.display);
+    });
+    this.npcViews = [];
+  }
+
+  addMarker(character, icon) {
+    const marker = new MapMarker(
+      this.textures['map-markers'].textures['pin-marker'],
+      this.textures.icons.textures[`icon-${icon}`], { x: 0.5, y: 1 }
+    );
+    marker.setScale(this.townView.display.width / MapApp.APP_WIDTH);
+    character.addAttachment('map-marker', marker);
+    character.display.addChild(marker.display);
+    marker.setPosition(0, -character.display.height);
+    marker.popper.show();
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  removeMarker(character, onComplete = () => {}) {
+    const marker = character.getAttachment('map-marker');
+    if (marker) {
+      marker.hide(() => {
+        character.removeAttachment('map-marker');
+        onComplete();
       });
-    } catch (e) {
-      if(e.errors) {
-        console.error(`Error parsing dialogue with id ${dialogueId}:`);
-        e.errors.forEach((error) => {
-          console.error(error);
-        });
-      }
-      throw e;
-    }
-  }
-
-  getDialogueContext() {
-    return {
-      flags: this.flags,
-        random: max => Math.floor(Math.random() * max),
-    };
-  }
-
-  playDialogue(dialogue, npc = null) {
-    this.inputRouter.routeToDialogueOverlay(this.dialogueOverlay, this.dialogueSequencer);
-    const title = npc ? npc.name : null;
-    this.dialogueSequencer.play(dialogue, this.getDialogueContext(), { top: title });
-    this.dialogueSequencer.events.once('end', () => {
-      this.inputRouter.routeToPcMovement(this);
-    });
-  }
-
-  getNpcsInRect(rect) {
-    return this.npcViews.filter(npcView => npcView.inRect(rect))
-      .map(npcView => npcView.character);
-  }
-
-  pcAction() {
-    const hitbox = this.pcView.getActionHitbox();
-    const npcs = this.getNpcsInRect(hitbox);
-    let closestNpc = null;
-    let closestDistance = null;
-    npcs.forEach((npc) => {
-      const distance = Math.max(
-        Math.abs(this.pc.position.x - npc.position.x),
-        Math.abs(this.pc.position.y - npc.position.y)
-      );
-      if (closestDistance === null || distance < closestDistance) {
-        closestNpc = npc;
-        closestDistance = distance;
-      }
-    });
-    if (closestNpc) {
-      this.playDialogue(this.getDialogue(closestNpc.dialogue || closestNpc.id), closestNpc);
-    }
-    if (this.showHitbox) {
-      this.pcView.showActionHitbox(hitbox);
-    }
-  }
-
-  updateNpcMoods() {
-    const npcsWithQuests = this.questTracker.getNpcsWithQuests();
-    this.npcViews.forEach((npcView) => {
-      if (Object.keys(npcsWithQuests).includes(npcView.character.id)) {
-        npcView.showMoodBalloon(npcsWithQuests[npcView.character.id]);
-      } else {
-        npcView.hideMoodBalloon();
-      }
-    });
-  }
-
-  toggleHitboxDisplay() {
-    this.showHitbox = !this.showHitbox;
-  }
-
-  handleStorylineEnd() {
-    const [ endingText, classes ] = readEnding(this.getDialogue('_ending'), this.getDialogueContext());
-
-    this.inputRouter.unroute();
-    this.endingScreen = new DecisionScreen(this.config, this.lang);
-    this.$element.append(this.endingScreen.$element);
-    this.endingScreen.showDecision(endingText, classes);
-  }
-}
-
-PlayerApp.APP_WIDTH = 1024;
-PlayerApp.APP_HEIGHT = 768;
-PlayerApp.FONT_RATIO = 0.0175; // 1.75% of the width of the app
-
-module.exports = PlayerApp;
-
-
-/***/ }),
-
-/***/ "./src/js/lib/dialogues/dialogue-balloon.js":
-/*!**************************************************!*\
-  !*** ./src/js/lib/dialogues/dialogue-balloon.js ***!
-  \**************************************************/
-/***/ ((module) => {
-
-class DialogueBalloon {
-  constructor(classes) {
-    this.$element = $('<div></div>')
-      .addClass('balloon')
-      .addClass(classes);
-    this.$styling = $('<div></div>')
-      .appendTo(this.$element);
-    this.$title = $('<div></div>')
-      .addClass('title')
-      .appendTo(this.$styling);
-  }
-
-  show() {
-    this.cancelHide();
-    this.$element.addClass('visible');
-  }
-
-  setTitle(title = null) {
-    if (title === null) {
-      this.$title.hide();
     } else {
-      this.$title.html(title);
+      onComplete();
     }
   }
 
-  setClasses(classes) {
-    this.removeClasses();
-    this.$styling.addClass(classes);
-  }
-
-  removeClasses() {
-    this.$styling.removeClass();
-  }
-
-  hide() {
-    this.$element.addClass('fading');
-    if (this.timeout) {
-      clearTimeout(this.timeout);
-    }
-    this.timeout = setTimeout(() => {
-      this.$element.removeClass('fading');
-      this.$element.removeClass('visible');
-      this.$element.removeClass('press-to-continue');
-    }, 250);
-  }
-
-  cancelHide() {
-    if (this.timeout) {
-      clearTimeout(this.timeout);
-    }
-    this.$element.removeClass('fading');
-  }
-
-  showPressToContinue() {
-    this.$element.addClass('press-to-continue');
-  }
-
-  hidePressToContinue() {
-    this.$element.removeClass('press-to-continue');
-  }
-
-  empty() {
-    this.$element.empty();
-  }
-
-  append(element) {
-    this.$element.append(element);
-  }
-}
-
-module.exports = DialogueBalloon;
-
-
-/***/ }),
-
-/***/ "./src/js/lib/dialogues/dialogue-iterator.js":
-/*!***************************************************!*\
-  !*** ./src/js/lib/dialogues/dialogue-iterator.js ***!
-  \***************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const LogicParser = __webpack_require__(/*! ./logic-parser */ "./src/js/lib/dialogues/logic-parser.js");
-const DialogueSchema = __webpack_require__(/*! ../../../../specs/dialogue.schema.json */ "./specs/dialogue.schema.json");
-
-/**
- * An interface for the context object passed to the dialogue iterator.
- * @interface
- */
-// eslint-disable-next-line no-unused-vars
-class DialogueIteratorContextInterface {
-  /**
-   * Returns a random number between 0 and max.
-   * @param {number} max
-   */
-  // eslint-disable-next-line no-unused-vars,class-methods-use-this
-  random(max) {
-    throw new Error('Not implemented');
-  }
-
-  /**
-   * @property {FlagStore} flags
-   */
-}
-
-/**
- * Iterates through a dialogue tree.
- */
-class DialogueIterator {
-  /**
-   * Creates a new iterator for the given dialogue.
-   *
-   * @param {Dialogue} dialogue
-   * @param {DialogueIteratorContextInterface} context
-   */
-  constructor(dialogue, context) {
-    this.dialogue = dialogue;
-    this.context = context;
-    this.conditionParser = new LogicParser(context);
-    this.reset();
-  }
-
-  /**
-   * Resets the iterator to the beginning of the dialogue.
-   */
-  reset() {
-    this.activeNode = this.dialogue.root;
-  }
-
-  /**
-   * Returns true if the iterator has reached the end of the dialogue.
-   * @returns {boolean}
-   */
-  isEnd() {
-    return this.activeNode === null;
-  }
-
-  /**
-   * Returns the current active node.
-   * @returns {*|null}
-   */
-  getActiveNode() {
-    return this.activeNode;
-  }
-
-  /**
-   * Returns responses in the current active node that have all their conditions met.
-   *
-   * @returns {Array|null}
-   */
-  getEnabledResponses() {
-    if (this.activeNode === null) {
-      return null;
-    }
-
-    if (!this.activeNode.responses) {
-      return null;
-    }
-
-    return this.activeNode.responses
-      .filter(response => !response.cond || !!this.conditionParser.evaluate(response.cond));
-  }
-
-  /**
-   * Returns the response with the given ID in the active node.
-   *
-   * @param {string} responseId
-   * @returns {Object|null}
-   */
-  getResponse(responseId) {
-    if (this.activeNode === null) {
-      return null;
-    }
-
-    if (!this.activeNode.responses) {
-      return null;
-    }
-
-    return this.activeNode.responsesById[responseId];
-  }
-
-  /**
-   * Advances the iterator to the next node.
-   *
-   * @throws Error if the active node type is unknown.
-   */
-  next() {
-    if (this.activeNode === null) {
-      return;
-    }
-
-    const enabledResponses = this.getEnabledResponses();
-    if (enabledResponses && enabledResponses.length > 0) {
-      throw new Error(`Can't use next() on a node of type 'statement' with responses (${this.activeNode.id}:${this.dialogue.root.id})`);
-    }
-
-    this.setFlags(this.activeNode.set);
-
-    let transitioned = false;
-    switch (this.activeNode.type) {
-      case 'statement':
-        transitioned = this.nextOnStatement();
-        break;
-      case 'root':
-      case 'first':
-        transitioned = this.nextOnFirst();
-        break;
-      case 'sequence':
-        transitioned = this.nextOnSequence();
-        break;
-      case 'random':
-        transitioned = this.nextOnRandom();
-        break;
-      default:
-        throw new Error(`Unknown node type: ${this.activeNode.type} (${this.activeNode.id}:${this.dialogue.root.id})`);
-    }
-    if (transitioned === false) {
-      transitioned = this.nextThroughParent();
-    }
-    if (transitioned === false) {
-      this.activeNode = null;
-    }
-  }
-
-  nextWithResponse(responseId) {
-    if (this.activeNode === null) {
-      return;
-    }
-
-    if (this.activeNode.responses === undefined) {
-      throw new Error(`Can't use nextWithResponse on a node without responses (${this.activeNode.type}:${this.dialogue.root.id})`);
-    }
-
-    const response = this.activeNode.responsesById[responseId];
-    if (!response) {
-      throw new Error(`Unknown response id: ${responseId} (${this.activeNode.id}:${this.dialogue.root.id})`);
-    }
-
-    this.setFlags(this.activeNode.set);
-    this.setFlags(response.set);
-    if (response.then) {
-      this.goTo(response.then);
-      return;
-    }
-
-    if (!this.nextOnStatement()) {
-      this.activeNode = null;
-    }
-  }
-
-  /**
-   * Jumps to a node identified by its id.
-   *
-   * @private
-   * @throws Error if the node id is not found.
-   * @param {string} nodeId
-   */
-  goTo(nodeId) {
-    const nextNode = this.dialogue.getNode(nodeId);
-    if (nextNode === undefined) {
-      throw new Error(`Can't find node id: ${nodeId} (active node = ${this.activeNode}:${this.dialogue.root.id})`);
-    }
-    this.activeNode = nextNode;
-  }
-
-  getEnabledItems(items) {
-    if (!items) return [];
-    return items.filter((item) => {
-      try {
-        return (item.cond === undefined || items.cond === null || item.cond.trim() === ''
-          || this.conditionParser.evaluate(item.cond));
-      } catch (e) {
-        throw new Error(`Error parsing condition: ${item.cond} (${this.activeNode.id}:${this.dialogue.root.id}): ${e.message}`);
-      }
-    });
-  }
-
-  setFlags(assignments) {
-    if (!assignments) return;
-    assignments.forEach((assignment) => {
-      this.processAssignment(assignment);
-    });
-  }
-
-  processAssignment(assignment) {
-    // Parse through a regex
-    // flag ((operator) intLiteral)?
-    const match = assignment.match(/([a-zA-Z_][.a-zA-Z0-9_]*)(\s*([+-]?=)\s*([0-9]{1,3}))?/);
-    if (!match) {
-      throw new Error(`Invalid assignment: ${assignment} (${this.activeNode.id}:${this.dialogue.root.id})`);
-    }
-    const [, flag, , operator, intLiteral] = match;
-    if (operator === undefined) {
-      this.context.flags.touch(flag);
-    }
-    if (operator === '=') {
-      this.context.flags.set(flag, parseInt(intLiteral, 10));
-    }
-    if (operator === '+=') {
-      this.context.flags.inc(flag, parseInt(intLiteral, 10));
-    }
-    if (operator === '-=') {
-      this.context.flags.dec(flag, parseInt(intLiteral, 10));
-    }
-  }
-
-  /**
-   * Jumps to the next node when the active node is of type 'first'
-   *
-   * @private
-   * @returns {boolean} true if the transition to the next node was successful.
-   */
-  nextOnFirst() {
-    const matchingItems = this.getEnabledItems(this.activeNode.items);
-    this.activeNode = matchingItems.length > 0 ? matchingItems[0] : null;
-    return true;
-  }
-
-  /**
-   * Jumps to the next node when the active node is of type 'sequence'
-   *
-   * @private
-   * @returns {boolean} true if the transition to the next node was successful.
-   */
-  nextOnSequence() {
-    const matchingItems = this.getEnabledItems(this.activeNode.items);
-    if (matchingItems.length > 0) {
-      [this.activeNode] = matchingItems;
-      return true;
-    }
-    return false;
-  }
-
-  /**
-   * Jumps to the next node when the active node is of type 'random'
-   *
-   * @private
-   * @returns {boolean} true if the transition to the next node was successful.
-   */
-  nextOnRandom() {
-    const matchingItems = this.getEnabledItems(this.activeNode.items);
-    if (matchingItems.length > 0) {
-      const index = this.context.random(matchingItems.length);
-      this.activeNode = matchingItems[index];
-      return true;
-    }
-    return false;
-  }
-
-  /**
-   * Jumps to the next node when the active node is of type 'statement'
-   *
-   * @private
-   * @returns {boolean} true if the transition to the next node was successful.
-   */
-  nextOnStatement() {
-    if (this.activeNode.then) {
-      this.goTo(this.activeNode.then);
-      return true;
-    }
-    return false;
-  }
-
-  /**
-   * Jumps to the next node by traversing the parent nodes.
-   *
-   * @private
-   * @returns {boolean} true if the transition to the next node was successful.
-   */
-  nextThroughParent() {
-    let currentParent = this.activeNode.parent;
-    let currentChild = this.activeNode;
-    while (currentParent) {
-      if (currentParent.type === 'sequence') {
-        const matchingItems = this.getEnabledItems(currentParent.items);
-        const index = matchingItems.indexOf(currentChild);
-        if (index < matchingItems.length - 1) {
-          this.activeNode = matchingItems[index + 1];
-          return true;
+  updateQuestMarkers() {
+    const npcsWithQuests = this.questTracker.getNpcsWithQuests();
+    Object.values(this.npcViews).forEach((npcView) => {
+      const npcId = npcView.character.id;
+      if (Object.keys(npcsWithQuests).includes(npcId)) {
+        const questIcon = npcsWithQuests[npcView.character.id];
+        if (this.questMarkers[npcId] === undefined) {
+          this.addMarker(npcView, questIcon);
+        } else if (this.questMarkers[npcId] !== questIcon) {
+          this.removeMarker(npcView, () => {
+            this.addMarker(npcView, questIcon);
+          });
         }
+        this.questMarkers[npcId] = questIcon;
+      } else if (this.questMarkers[npcId]) {
+        delete this.questMarkers[npcId];
+        this.removeMarker(npcView);
       }
-      if (currentParent.then) {
-        this.goTo(currentParent.then);
-        return true;
-      }
-      currentChild = currentParent;
-      currentParent = currentParent.parent;
-    }
-    return false;
+    });
   }
 }
 
-module.exports = DialogueIterator;
+MapApp.APP_WIDTH = 1920;
+MapApp.APP_HEIGHT = 1080;
+MapApp.FONT_RATIO = 0.0175; // 1.75% of the width of the app
 
-
-/***/ }),
-
-/***/ "./src/js/lib/dialogues/dialogue-overlay.js":
-/*!**************************************************!*\
-  !*** ./src/js/lib/dialogues/dialogue-overlay.js ***!
-  \**************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
-const DialogueBalloon = __webpack_require__(/*! ./dialogue-balloon */ "./src/js/lib/dialogues/dialogue-balloon.js");
-const SpeechText = __webpack_require__(/*! ./speech-text */ "./src/js/lib/dialogues/speech-text.js");
-const { I18nTextAdapter } = __webpack_require__(/*! ../helpers/i18n */ "./src/js/lib/helpers/i18n.js");
-
-class DialogueOverlay {
-  constructor(config, lang) {
-    this.config = config;
-    this.events = new EventEmitter();
-    this.lang = lang;
-
-    this.$element = $('<div></div>')
-      .addClass('dialogue-overlay');
-
-    this.balloonTop = new DialogueBalloon(['balloon-speech', 'top']);
-    this.$element.append(this.balloonTop.$element);
-    this.topTitleI18n = new I18nTextAdapter((text) => {
-      this.balloonTop.setTitle(text);
-    }, this.lang);
-
-    this.balloonBottom = new DialogueBalloon(['bottom']);
-    this.$element.append(this.balloonBottom.$element);
-
-    this.speechTop = new SpeechText();
-    this.balloonTop.append(this.speechTop.$element);
-    this.speechTop.events.on('complete', () => {
-      this.events.emit('speechComplete');
-    });
-    this.speechTopI18n = new I18nTextAdapter((text) => {
-      const { revealComplete } = this.speechTop;
-      this.speechTop.showText([{ string: text }]);
-      if (revealComplete) {
-        this.speechTop.revealAll();
-      }
-    }, this.lang);
-
-    this.responseOptions = [];
-    this.selectedOption = 0;
-  }
-
-  setTopTitle(title) {
-    this.topTitleI18n.setText(title);
-  }
-
-  showSpeech(text, classes = null) {
-    this.balloonTop.show();
-    this.hidePressToContinue();
-    this.speechTop.clear();
-    this.speechTopI18n.setText(text, true);
-    this.balloonTop.removeClasses();
-    if (classes) {
-      this.balloonTop.setClasses(classes);
-    }
-  }
-
-  speedUpSpeech() {
-    this.speechTop.speedUp();
-  }
-
-  showResponseOptions(options) {
-    this.balloonBottom.empty();
-    this.balloonBottom.show();
-    this.selectedOption = 0;
-    this.responseOptions = Object.entries(options).map(([id, [text, classes]], i) => {
-      const label = $('<span></span>').addClass('text');
-      const element = $('<div></div>')
-        .addClass('response-option')
-        .addClass(classes)
-        .toggleClass('selected', i === this.selectedOption)
-        .append(label)
-        .appendTo(this.balloonBottom.$element);
-
-      const i18n = new I18nTextAdapter((newText) => {
-        label.text(newText);
-      }, this.lang, text);
-
-      return {
-        id,
-        element,
-        i18n,
-      };
-    });
-  }
-
-  setLang(lang) {
-    this.lang = lang;
-    this.topTitleI18n.setLang(lang);
-    this.speechTopI18n.setLang(lang);
-    this.responseOptions.forEach(option => option.i18n.setLang(lang));
-  }
-
-  hideSpeech() {
-    this.balloonTop.hide();
-  }
-
-  hideResponseOptions() {
-    this.balloonBottom.hide();
-  }
-
-  hide() {
-    this.hideSpeech();
-    this.hideResponseOptions();
-  }
-
-  selectResponseOption(index) {
-    this.selectedOption = Math.max(Math.min(index, this.responseOptions.length - 1), 0);
-    this.responseOptions.forEach((option, i) => option.element
-      .toggleClass('selected', i === this.selectedOption));
-  }
-
-  selectNextResponseOption() {
-    this.selectResponseOption(this.selectedOption + 1);
-  }
-
-  selectPreviousResponseOption() {
-    this.selectResponseOption(this.selectedOption - 1);
-  }
-
-  getSelectedResponseId() {
-    return this.responseOptions[this.selectedOption].id;
-  }
-
-  showPressToContinue() {
-    this.balloonTop.showPressToContinue();
-  }
-
-  hidePressToContinue() {
-    this.balloonTop.hidePressToContinue();
-  }
-}
-
-module.exports = DialogueOverlay;
+module.exports = MapApp;
 
 
 /***/ }),
@@ -44874,202 +39868,6 @@ function validateDialogueDefinition(dialogueDefinition) {
 }
 
 module.exports = { validateDialogueDefinition };
-
-
-/***/ }),
-
-/***/ "./src/js/lib/dialogues/dialogue-sequencer-states.js":
-/*!***********************************************************!*\
-  !*** ./src/js/lib/dialogues/dialogue-sequencer-states.js ***!
-  \***********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "DialogueSequencerResponseState": () => (/* binding */ DialogueSequencerResponseState),
-/* harmony export */   "DialogueSequencerState": () => (/* binding */ DialogueSequencerState),
-/* harmony export */   "DialogueSequencerTextState": () => (/* binding */ DialogueSequencerTextState),
-/* harmony export */   "DialogueSequencerThenTextState": () => (/* binding */ DialogueSequencerThenTextState)
-/* harmony export */ });
-class DialogueSequencerState {
-  constructor(dialogueSequencer) {
-    this.dialogueSequencer = dialogueSequencer;
-    this.dialogueOverlay = dialogueSequencer.dialogueOverlay;
-    this.dialogueIterator = dialogueSequencer.dialogueIterator;
-    this.activeNode = this.dialogueIterator.getActiveNode();
-  }
-
-  onBegin() {
-
-  }
-
-  onAction() {
-
-  }
-}
-
-class DialogueSequencerThenTextState extends DialogueSequencerState {
-  constructor(dialogueSequencer, responseId) {
-    super(dialogueSequencer);
-    this.responseId = responseId;
-  }
-
-  onBegin() {
-    this.speechDone = false;
-    const response = this.dialogueIterator.getResponse(this.responseId);
-    this.dialogueOverlay.showSpeech(response.thenText, response.thenClass || null);
-    this.dialogueOverlay.events.once('speechComplete', () => {
-      this.speechDone = true;
-      this.dialogueOverlay.showPressToContinue();
-    });
-  }
-
-  onAction() {
-    if (this.speechDone) {
-      this.dialogueOverlay.hideSpeech();
-      this.dialogueSequencer.endUi(this.responseId);
-    } else {
-      this.dialogueOverlay.speedUpSpeech();
-    }
-  }
-}
-
-class DialogueSequencerResponseState extends DialogueSequencerState {
-  constructor(dialogueSequencer) {
-    super(dialogueSequencer);
-    this.responses = this.dialogueIterator.getEnabledResponses();
-  }
-
-  onBegin() {
-    this.dialogueOverlay.showResponseOptions(
-      Object.fromEntries(this.responses.map(
-        response => [response.id, [response.text, response.class || null]]
-      ))
-    );
-  }
-
-  onAction() {
-    this.dialogueOverlay.hideResponseOptions();
-    this.dialogueOverlay.hideSpeech();
-    const responseId = this.dialogueOverlay.getSelectedResponseId();
-    const selectedResponse = this.dialogueIterator.getResponse(responseId);
-    if (selectedResponse.thenText) {
-      this.dialogueSequencer.setUiState(
-        new DialogueSequencerThenTextState(this.dialogueSequencer, responseId)
-      );
-    } else {
-      this.dialogueSequencer.endUi(responseId);
-    }
-  }
-}
-
-class DialogueSequencerTextState extends DialogueSequencerState {
-
-  onBegin() {
-    this.speechDone = false;
-    this.dialogueOverlay.showSpeech(this.activeNode.text, this.activeNode.class || null);
-    this.dialogueOverlay.events.once('speechComplete', () => {
-      this.speechDone = true;
-      const responses = this.dialogueIterator.getEnabledResponses();
-      if (responses && responses.length > 0) {
-        this.dialogueSequencer.setUiState(
-          new DialogueSequencerResponseState(this.dialogueSequencer)
-        );
-      } else {
-        this.dialogueOverlay.showPressToContinue();
-      }
-    });
-  }
-
-  onAction() {
-    if (this.speechDone) {
-      this.dialogueOverlay.hideSpeech();
-      this.dialogueSequencer.endUi();
-    } else {
-      this.dialogueOverlay.speedUpSpeech();
-    }
-  }
-}
-
-
-/***/ }),
-
-/***/ "./src/js/lib/dialogues/dialogue-sequencer.js":
-/*!****************************************************!*\
-  !*** ./src/js/lib/dialogues/dialogue-sequencer.js ***!
-  \****************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
-const DialogueIterator = __webpack_require__(/*! ./dialogue-iterator */ "./src/js/lib/dialogues/dialogue-iterator.js");
-const { DialogueSequencerTextState } = __webpack_require__(/*! ./dialogue-sequencer-states */ "./src/js/lib/dialogues/dialogue-sequencer-states.js");
-
-class DialogueSequencer {
-  constructor(dialogueOverlay) {
-    this.dialogueOverlay = dialogueOverlay;
-    this.dialogue = null;
-    this.dialogueIterator = null;
-    this.uiState = null;
-
-    this.events = new EventEmitter();
-  }
-
-  setUiState(state) {
-    this.uiState = state;
-    this.uiState.onBegin();
-  }
-
-  endUi(responseId = null) {
-    this.uiState = null;
-    if (responseId !== null) {
-      this.dialogueIterator.nextWithResponse(responseId);
-    } else {
-      this.dialogueIterator.next();
-    }
-    this.runUntilInteractivity();
-  }
-
-  play(dialogue, context, options) {
-    this.dialogue = dialogue;
-    this.dialogueOverlay.setTopTitle(options.top || null);
-    this.dialogueIterator = new DialogueIterator(dialogue, context);
-    this.runUntilInteractivity();
-  }
-
-  runUntilInteractivity() {
-    const { dialogueIterator } = this;
-
-    if (!this.handledByUI(dialogueIterator.getActiveNode())) {
-      do {
-        dialogueIterator.next();
-      } while (!dialogueIterator.isEnd() && !this.handledByUI(dialogueIterator.getActiveNode()));
-    }
-
-    if (this.handledByUI(dialogueIterator.getActiveNode())) {
-      this.setUiState(new DialogueSequencerTextState(this));
-    } else {
-      this.onDialogueEnd();
-    }
-  }
-
-  onDialogueEnd() {
-    this.dialogueOverlay.hide();
-    this.events.emit('end');
-  }
-
-  action() {
-    if (this.uiState) {
-      this.uiState.onAction();
-    }
-  }
-
-  handledByUI(node) {
-    return node && node.type === 'statement';
-  }
-}
-
-module.exports = DialogueSequencer;
 
 
 /***/ }),
@@ -45145,50 +39943,6 @@ class Dialogue {
 }
 
 module.exports = Dialogue;
-
-
-/***/ }),
-
-/***/ "./src/js/lib/dialogues/ending-reader.js":
-/*!***********************************************!*\
-  !*** ./src/js/lib/dialogues/ending-reader.js ***!
-  \***********************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const DialogueIterator = __webpack_require__(/*! ./dialogue-iterator */ "./src/js/lib/dialogues/dialogue-iterator.js");
-const { mergeTexts } = __webpack_require__(/*! ../helpers/i18n */ "./src/js/lib/helpers/i18n.js");
-
-function readEnding(dialogue, context) {
-  const output = [];
-  const classes = [];
-  const iterator = new DialogueIterator(dialogue, context);
-  while (!iterator.isEnd()) {
-    const activeNode = iterator.getActiveNode();
-    if (activeNode.responses !== undefined && activeNode.responses.length > 0) {
-      throw new Error('An ending dialogue must only contain statements with no responses');
-    }
-    if (activeNode.text) {
-      output.push(activeNode.text);
-    }
-    if (activeNode.class) {
-      if (Array.isArray(activeNode.class)) {
-        classes.push(...activeNode.class);
-      } else if (typeof activeNode.class === 'string') {
-        classes.push(activeNode.class);
-      }
-    }
-    iterator.next();
-  }
-
-  return [
-    mergeTexts(output, {
-      separator: '\n',
-    }),
-    classes,
-  ];
-}
-
-module.exports = readEnding;
 
 
 /***/ }),
@@ -45365,182 +40119,46 @@ module.exports = LogicParser;
 
 /***/ }),
 
-/***/ "./src/js/lib/dialogues/speech-text.js":
-/*!*********************************************!*\
-  !*** ./src/js/lib/dialogues/speech-text.js ***!
-  \*********************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+/***/ "./src/js/lib/helpers-client/fetch-config.js":
+/*!***************************************************!*\
+  !*** ./src/js/lib/helpers-client/fetch-config.js ***!
+  \***************************************************/
+/***/ ((module) => {
 
-/**
- * Copyright (c) 2023 by Drew Conley (https://codepen.io/punkydrewster713/pen/zYKdywP)
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
- * and associated documentation files (the "Software"), to deal in the Software without restriction,
- * including without limitation the rights to use, copy, modify, merge, publish, distribute,
- * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all copies or
- * substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
- * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
- * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- * Modified by Eric Londaits for IMAGINARY gGmbH.
- * Copyright (c) 2023 IMAGINARY gGmbH
- */
-const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
-
-class SpeechText {
-  constructor() {
-    this.$element = $('<div></div>')
-      .addClass('speech-text');
-
-    this.isSpace = /\s/;
-    this.timedReveal = this.timedReveal.bind(this);
-    this.revealCharacterTimeout = null;
-    this.events = new EventEmitter();
-    this.speedFactor = 1;
-    this.revealComplete = false;
-  }
-
-  /**
-   * Private method to reveal a character
-   *
-   * @private
-   * @param {Object} character
-   * @param {HTMLElement} character.span
-   * @param {Array} character.classes
-   */
-  revealCharacter(character) {
-    character.span.classList.add('revealed');
-    character.classes.forEach((c) => {
-      character.span.classList.add(c);
-    });
-  }
-
-  /**
-   * Private method to reveal a list of characters with a delay between each
-   *
-   * @private
-   * @param {Array} Array of characters with the following properties:
-   * - span {HTMLElement} The span $element to be revealed
-   * - isSpace {Boolean} Whether or not the character is a space
-   * - delayAfter {Number} Delay after the character is revealed
-   * - classes {Array} Array of classes to be added to the character
-   * - stop {Boolean} Whether or not to stop after the character
-   */
-  timedReveal(list) {
-    const next = list.splice(0, 1)[0];
-    this.revealCharacter(next);
-    const delay = next.isSpace && !next.pause ? 0 : next.delayAfter;
-
-    if (list.length > 0) {
-      this.revealCharacterTimeout = setTimeout(() => {
-        this.timedReveal(list);
-      }, delay * this.speedFactor);
-    } else {
-      this.onComplete();
+async function fetchConfig(url) {
+  try {
+    const response = await fetch(url, { cache: 'no-store' });
+    if (!response.ok) {
+      throw new Error(`HTTP error. Status: ${response.status}`);
     }
-  }
-
-  /**
-   * Set the text to be displayed
-   *
-   * @param lines {Array} Array of objects with the following properties:
-   * - speed {Number} (optional) Speed of the text in milliseconds
-   * - string {String} Text to be displayed
-   * - classes {Array} (optional) Array of classes to be added to the text
-   * - stop {Boolean} (optional) Whether or not to stop after the line
-   */
-  showText(lines) {
-    this.clear();
-
-    this.characters = [];
-    lines.forEach((line, index) => {
-      if (index < lines.length - 1) {
-        line.string += ' '; // Add a space between lines
-      }
-      line.string.split('').forEach((character) => {
-        const span = document.createElement('span');
-        span.textContent = character;
-        if (character === '\n') {
-          this.$element.append($('<div>').addClass('break'));
-        } else {
-          this.$element.append(span);
-          this.characters.push({
-            span,
-            isSpace: this.isSpace.test(character) && !line.pause,
-            delayAfter: line.speed || SpeechText.Speeds.normal,
-            classes: line.classes || [],
-          });
-        }
-      });
-    });
-
-    this.resume();
-  }
-
-  /**
-   * Stop the reveal of the text
-   */
-  stop() {
-    clearTimeout(this.revealCharacterTimeout);
-    this.speedFactor = 1;
-  }
-
-  /**
-   * Resume the reveal of the text
-   */
-  resume() {
-    clearTimeout(this.revealCharacterTimeout);
-    this.revealCharacterTimeout = setTimeout(() => {
-      this.timedReveal(this.characters);
-    }, 600);
-  }
-
-  /**
-   * Clear the text
-   */
-  clear() {
-    this.stop();
-    this.$element.empty();
-    this.revealComplete = false;
-  }
-
-  /**
-   * Reveal all characters immediately
-   */
-  revealAll() {
-    this.stop();
-    this.characters.forEach((c) => {
-      this.revealCharacter(c);
-    });
-    this.onComplete();
-  }
-
-  speedUp() {
-    this.speedFactor = 0.2;
-  }
-
-  onComplete() {
-    this.revealComplete = true;
-    this.events.emit('complete');
+    return response.json();
+  } catch (err) {
+    throw new Error(`Error fetching configuration from ${url}: ${err.message}`);
   }
 }
 
-SpeechText.Speeds = {
-  pause: 500,
-  slow: 120,
-  normal: 60,
-  fast: 40,
-  superFast: 10,
-};
+module.exports = fetchConfig;
 
-module.exports = SpeechText;
+
+/***/ }),
+
+/***/ "./src/js/lib/helpers-client/fetch-textures.js":
+/*!*****************************************************!*\
+  !*** ./src/js/lib/helpers-client/fetch-textures.js ***!
+  \*****************************************************/
+/***/ ((module) => {
+
+/* globals PIXI */
+
+async function fetchTextures(basePath, manifest, bundle) {
+  await PIXI.Assets.init({
+    basePath,
+    manifest,
+  });
+  return PIXI.Assets.loadBundle(bundle);
+}
+
+module.exports = fetchTextures;
 
 
 /***/ }),
@@ -45602,55 +40220,108 @@ module.exports = Fader;
 
 /***/ }),
 
-/***/ "./src/js/lib/helpers-web/countdown.js":
-/*!*********************************************!*\
-  !*** ./src/js/lib/helpers-web/countdown.js ***!
-  \*********************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+/***/ "./src/js/lib/helpers-pixi/tween.js":
+/*!******************************************!*\
+  !*** ./src/js/lib/helpers-pixi/tween.js ***!
+  \******************************************/
+/***/ ((module) => {
 
-const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
+/* globals PIXI, TWEEN */
 
-class Countdown {
-  constructor(seconds) {
-    this.seconds = seconds;
-    this.events = new EventEmitter();
-    this.$element = $('<div></div>')
-      .addClass('countdown');
-    this.update();
+class PixiTween {
+  constructor(userOptions) {
+    const defaultOptions = {
+      from: 0,
+      to: 1,
+      duration: 1000,
+      delay: 0,
+      easing: TWEEN.Easing.Sinusoidal.InOut,
+      onUpdate: () => {},
+      onComplete: null,
+    };
+
+    this.options = Object.assign({}, defaultOptions, userOptions);
+
+    this.tweenTicker = this.tweenTicker.bind(this);
+    this.elapsed = 0;
+
+    this.tween = new TWEEN.Tween({ value: this.options.from })
+      .to({ value: this.options.to }, this.options.duration)
+      .easing(this.options.easing)
+      .onUpdate(this.options.onUpdate)
+      .start(this.options.delay);
+
+    PIXI.Ticker.shared.add(this.tweenTicker);
+    this.tween.onComplete(this.onComplete.bind(this));
   }
 
-  start() {
-    if (this.seconds > 0) {
-      this.interval = setInterval(() => {
-        this.seconds -= 1;
-        this.update();
-        if (this.seconds <= 0) {
-          this.onEnd();
-        }
-      }, 1000);
+  stop() {
+    this.tween.stop();
+    this.onComplete();
+  }
+
+  onComplete() {
+    PIXI.Ticker.shared.remove(this.tweenTicker);
+    if (this.options.onComplete) {
+      this.options.onComplete();
     }
   }
 
-  forceEnd() {
-    this.seconds = 0;
-    this.update();
-    this.onEnd();
-  }
-
-  onEnd() {
-    clearInterval(this.interval);
-    this.events.emit('end');
-  }
-
-  update() {
-    const timeLeft = Math.max(this.seconds, 0);
-    const secondsLeft = timeLeft % 60;
-    const minutes = Math.floor(timeLeft / 60);
-    this.$element.html(`${minutes}:${secondsLeft < 10 ? '0' : ''}${secondsLeft}`);
+  tweenTicker(time) {
+    this.elapsed += Math.ceil(time / PIXI.settings.TARGET_FPMS);
+    this.tween.update(this.elapsed);
   }
 }
 
-module.exports = Countdown;
+PixiTween.popOut = (displayObject, onComplete = null) => new PixiTween({
+  from: Math.max(displayObject.scale.x, 0),
+  tween: TWEEN.Easing.Elastic.Out,
+  onUpdate: (o) => {
+    displayObject.scale = { x: o.value, y: o.value };
+  },
+  onComplete,
+});
+
+PixiTween.popIn = (displayObject, onComplete = null) => new PixiTween({
+  from: Math.min(displayObject.scale.x, 1),
+  to: 0,
+  tween: TWEEN.Easing.Elastic.Out,
+  onUpdate: (o) => {
+    displayObject.scale = { x: o.value, y: o.value };
+  },
+  onComplete,
+});
+
+PixiTween.Popper = (displayObject) => {
+  let tween = null;
+  return {
+    show: (onComplete = null) => {
+      if (tween) {
+        tween.stop();
+      }
+      displayObject.visible = true;
+      tween = PixiTween.popOut(displayObject, onComplete);
+    },
+    hide: (onComplete = null) => {
+      if (tween) {
+        tween.stop();
+      }
+      tween = PixiTween.popIn(displayObject, () => {
+        displayObject.visible = false;
+        if (onComplete) {
+          onComplete();
+        }
+      });
+    },
+    stop: () => {
+      if (tween) {
+        tween.stop();
+      }
+    },
+  };
+};
+
+module.exports = PixiTween;
 
 
 /***/ }),
@@ -45881,112 +40552,6 @@ module.exports = Stats;
 
 /***/ }),
 
-/***/ "./src/js/lib/helpers/i18n.js":
-/*!************************************!*\
-  !*** ./src/js/lib/helpers/i18n.js ***!
-  \************************************/
-/***/ ((module) => {
-
-function getText(text, lang = null) {
-  if (lang !== null && typeof text === 'object') {
-    return text[lang];
-  }
-  return text;
-}
-
-/**
- * Given an array of texts (objects with language keys), merge them into a single object with the
- * same keys. If any text is a simple string instead of an object, it is merged into all languages.
- * If all texts are strings, a single string is returned.
- *
- * @param {Array} texts
- * @param {Object} userOptions
- *   - {string} separator - If set, the texts are joined with this separator
- *   - {string} prefix - If set, the texts are prefixed with this string
- *   - {string} suffix - If set, the texts are suffixed with this string
- * @returns {string|Object}
- */
-function mergeTexts(texts, userOptions = {}) {
-  const result = {};
-  const defaultOptions = {
-    separator: '',
-    prefix: '',
-    suffix: '',
-  };
-  const options = Object.assign({}, defaultOptions, userOptions);
-  let allStrings = true;
-  texts.forEach((text) => {
-    if (typeof text === 'object') {
-      allStrings = false;
-      Object.keys(text).forEach((lang) => {
-        result[lang] = '';
-      });
-    }
-  });
-
-  if (allStrings) {
-    return texts.map(t => `${options.prefix}${t}${options.suffix}`).join(options.separator);
-  }
-
-  texts.forEach((text, i) => {
-    let part;
-    Object.keys(result).forEach((lang) => {
-      if (typeof text === 'string') {
-        part = text;
-      } else if (text[lang] !== undefined) {
-        part = text[lang];
-      } else {
-        part = '';
-      }
-      result[lang] += `${options.prefix}${part}${options.suffix}`;
-      if (i < texts.length - 1) {
-        result[lang] += options.separator;
-      }
-    });
-  });
-
-  return result;
-}
-
-class I18nTextAdapter {
-  constructor(setTextCallback, lang, text = null) {
-    this.setTextCallback = setTextCallback;
-    this.currentLang = lang;
-    this.currentText = text;
-
-    this.update();
-  }
-
-  update() {
-    if (this.currentText !== null) {
-      this.setTextCallback(getText(this.currentText, this.currentLang));
-    }
-  }
-
-  setText(text, forceUpdate = false) {
-    if (forceUpdate || JSON.stringify(text) !== JSON.stringify(this.currentText)) {
-      this.currentText = text;
-      this.update();
-    }
-  }
-
-  setLang(lang) {
-    if (lang !== this.currentLang) {
-      this.currentLang = lang;
-      this.update();
-    }
-  }
-}
-
-module.exports = {
-  getText,
-  mergeTexts,
-  I18nTextAdapter,
-};
-
-
-/***/ }),
-
 /***/ "./src/js/lib/helpers/sentry.js":
 /*!**************************************!*\
   !*** ./src/js/lib/helpers/sentry.js ***!
@@ -46013,203 +40578,6 @@ function initSentry(sentryDSN) {
 }
 
 module.exports = { initSentry };
-
-
-/***/ }),
-
-/***/ "./src/js/lib/input/gamepad-input-mgr.js":
-/*!***********************************************!*\
-  !*** ./src/js/lib/input/gamepad-input-mgr.js ***!
-  \***********************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const deepmerge = __webpack_require__(/*! deepmerge */ "./node_modules/deepmerge/dist/cjs.js");
-
-const InputMgr = __webpack_require__(/*! ./input-mgr */ "./src/js/lib/input/input-mgr.js");
-
-/**
- * @typedef {{axes?:{InputMgrEventNames:number},buttons?:{InputMgrEventNames:number}}} GamepadMapperConfig
- */
-
-/**
- * Gamepad configuration for standard gamepads.
- *
- * @type {GamepadMapperConfig}
- */
-const standardMapperConfig = {
-  axes: {
-    up: -1,
-    down: 1,
-    left: -0,
-    right: 0,
-  },
-  buttons: {
-    up: 12,
-    down: 13,
-    left: 14,
-    right: 15,
-    action: 1,
-    lang: 9,
-  },
-};
-
-/**
- * Handles gamepad and joystick input from the first available device.
- *
- * @augments InputMgr
- */
-class GamepadInputMgr extends InputMgr {
-  /**
-   * @param {GamepadMapperConfig} [mapperConfig]
-   */
-  constructor(mapperConfig = {}) {
-    super();
-    console.log(
-      mapperConfig,
-      deepmerge(standardMapperConfig, mapperConfig ?? {}),
-    );
-    this.mapper = new GamepadMapper(
-      deepmerge(standardMapperConfig, mapperConfig ?? {}),
-    );
-    this.gamepadIndex = -1;
-    this.handleGamepadDisConnected = () => {
-      const gamepad = navigator.getGamepads().find((g) => g !== null);
-      if (typeof gamepad !== 'undefined') {
-        console.log(`Using gamepad ${gamepad.index}: ${gamepad.id}`);
-        this.gamepadIndex = gamepad.index;
-      } else {
-        console.log('No gamepad connected');
-        this.gamepadIndex = -1;
-      }
-    };
-  }
-
-  attachListeners() {
-    if (this.isListening()) return;
-    window.addEventListener('gamepadconnected', this.handleGamepadDisConnected);
-    window.addEventListener(
-      'gamepaddisconnected',
-      this.handleGamepadDisConnected
-    );
-    super.attachListeners();
-    /**
-     * TODO: Deal with SecurityError from missing gamepad permission.
-     * TODO: Deal [missing secure context](https://github.com/w3c/gamepad/pull/120).
-     * TODO: Handle browsers that don't support gamepads.
-     * TODO: Emit warning when Gamepad API can not be used due the above reasons.
-     */
-  }
-
-  detachListeners() {
-    if (!this.isListening()) return;
-    window.removeEventListener(
-      'gamepaddisconnected',
-      this.handleGamepadDisConnected
-    );
-    this.hasListenersAttached = false;
-    this.gamepadIndex = -1;
-    super.detachListeners();
-  }
-
-  updateState() {
-    const gamepad = navigator.getGamepads()[this.gamepadIndex] ?? null;
-    if (gamepad !== null && gamepad.connected) {
-      const newState = this.mapper.grab(gamepad);
-      Object.assign(this.state, newState);
-    }
-  }
-}
-
-/**
- * Maps gamepad and joystick input to events.
- *
- * Different gamepads and joysticks have different mappings of buttons and axes.
- * This class maps the input to the standard representation corresponding to the events emitted by
- * {@link GamepadInputMgr.events}.
- */
-class GamepadMapper {
-  /**
-   * Initilize the mapper with a configuration.
-   *
-   * @param {GamepadMapperConfig} config The configuration for mapping button pressed
-   *    and movement along axes to event names. If the same event name is mapped to an axis and a button, the axis takes
-   *    precedence.
-   */
-  constructor(config) {
-    this.config = config;
-
-    /**
-     * List of pairs of event name and corresponding function to grab the actual value from the gamepad while applying
-     * the mapping.
-     *
-     * @private {[[string,(gamepad:Gamepad) => boolean]]}
-     */
-    this.grabbers = InputMgr.eventNames.map((e) => [
-      e,
-      GamepadMapper.createGrabberForConfigKey(config, e),
-    ]);
-  }
-
-  /**
-   * Create function for grabbing the actual value from the gamepad while applying
-   * the mapping based on the internal config and the given event name.
-   *
-   * @param {GamepadMapperConfig} config The gamepad mapper configuration.
-   * @param {string} key The event name.
-   * @returns {(gamepad:Gamepad) => boolean}
-   */
-  static createGrabberForConfigKey(config, key) {
-    const fromAxis =
-      typeof config?.axes?.[key] !== 'undefined'
-        ? GamepadMapper.createGrabberForAxis(config.axes[key])
-        : () => false;
-    const fromButton =
-      typeof config?.buttons?.[key] !== 'undefined'
-        ? GamepadMapper.createGrabberForButton(config.buttons[key])
-        : () => false;
-    return (gamepad) => fromAxis(gamepad) || fromButton(gamepad);
-  }
-
-  /**
-   * Create function for grabbing the value from a gamepad axis.
-   *
-   * TODO: Add support for a customizable axis threshold.
-   *
-   * @param {number} signedIndex The index of the axis. Negative values are interpreted as the negative axis (including +0 and -0).
-   * @returns {(gamepad:Gamepad) => boolean}
-   */
-  static createGrabberForAxis(signedIndex) {
-    const index = Math.abs(signedIndex);
-    const threshold = 0.5;
-    // the division is intentional to distinguish between positive and negative zero (IEEE 754)
-    const sign = Math.sign(1.0 / signedIndex);
-    return (gamepad) => sign * (gamepad.axes[index] ?? 0.0) >= threshold;
-  }
-
-  /**
-   * Create function for grabbing the value from a gamepad button.
-   *
-   * @param {number} index The index of the button.
-   * @returns {(gamepad:Gamepad) => boolean}
-   */
-  static createGrabberForButton(index) {
-    return (gamepad) => gamepad.buttons[index]?.pressed ?? false;
-  }
-
-  /**
-   *  Grab the input from the gamepad for all event names.
-   *
-   * @param {Gamepad} gamepad The gamepad to grab the input from. Must not be null.
-   * @returns {InputMgrState}
-   */
-  grab(gamepad) {
-    return /** @type {InputMgrState} */ Object.fromEntries(
-      this.grabbers.map(([key, grabber]) => [key, grabber(gamepad)])
-    );
-  }
-}
-
-module.exports = GamepadInputMgr;
 
 
 /***/ }),
@@ -46481,320 +40849,6 @@ module.exports = KeyboardInputMgr;
 
 /***/ }),
 
-/***/ "./src/js/lib/input/multiplex-input-mgr.js":
-/*!*************************************************!*\
-  !*** ./src/js/lib/input/multiplex-input-mgr.js ***!
-  \*************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const InputMgr = __webpack_require__(/*! ./input-mgr */ "./src/js/lib/input/input-mgr.js");
-
-/**
- * Combines input from multiple input managers into one.
- *
- * The lifecycle management and updating of the wrapped input managers is up to the user of this class.
- *
- * @augments InputMgr
- */
-class MultiplexInputMgr extends InputMgr {
-  constructor(...inputMgrs) {
-    super();
-    this.inputMgrs = [];
-    inputMgrs.forEach((inputMgr) => this.addInputMgr(inputMgr));
-  }
-
-  /**
-   * Add an input manager to the multiplexer.
-   *
-   * @param {InputMgr} inputMgr
-   */
-  addInputMgr(inputMgr) {
-    this.inputMgrs.push(inputMgr);
-  }
-
-  /**
-   * Remove an input manager from the multiplexer.
-   *
-   * @param {InputMgr} inputMgr
-   */
-  removeInputMgr(inputMgr) {
-    const inputMgrIndex = this.inputMgrs.indexOf(inputMgr);
-    if (inputMgrIndex >= 0) {
-      this.inputMgrs.splice(inputMgrIndex, 1);
-    }
-  }
-
-  updateState() {
-    const newState = this.inputMgrs
-      .map((inputMgr) => inputMgr.getState())
-      .reduce((acc, state) => {
-        InputMgr.eventNames.forEach((eventName) => {
-          acc[eventName] ||= state[eventName];
-        });
-        return acc;
-      }, InputMgr.getInitialState());
-    Object.assign(this.state, newState);
-  }
-}
-
-module.exports = MultiplexInputMgr;
-
-
-/***/ }),
-
-/***/ "./src/js/lib/input/player-app-input-connections.js":
-/*!**********************************************************!*\
-  !*** ./src/js/lib/input/player-app-input-connections.js ***!
-  \**********************************************************/
-/***/ ((module) => {
-
-class DialogueOverlayConnection {
-  constructor(inputManager, dialogueOverlay, dialogueSequencer) {
-    this.inputManager = inputManager;
-    this.dialogueOverlay = dialogueOverlay;
-    this.dialogueSequencer = dialogueSequencer;
-
-    this.handleUp = this.handleUp.bind(this);
-    this.handleDown = this.handleDown.bind(this);
-    this.handleAction = this.handleAction.bind(this);
-  }
-
-  route() {
-    this.inputManager.events.on('down', this.handleDown);
-    this.inputManager.events.on('up', this.handleUp);
-    this.inputManager.events.on('action', this.handleAction);
-  }
-
-  unroute() {
-    this.inputManager.events.off('down', this.handleDown);
-    this.inputManager.events.off('up', this.handleUp);
-    this.inputManager.events.off('action', this.handleAction);
-  }
-
-  handleDown() {
-    this.dialogueOverlay.selectNextResponseOption();
-  }
-
-  handleUp() {
-    this.dialogueOverlay.selectPreviousResponseOption();
-  }
-
-  handleAction() {
-    this.dialogueSequencer.action();
-  }
-}
-
-class PcMovementConnection {
-  constructor(inputManager, playerApp) {
-    this.inputManager = inputManager;
-    this.playerApp = playerApp;
-    this.handleAction = this.handleAction.bind(this);
-  }
-
-  route() {
-    this.playerApp.enablePcControl();
-    this.inputManager.events.on('action', this.handleAction);
-  }
-
-  unroute() {
-    this.playerApp.disablePcControl();
-    this.inputManager.events.off('action', this.handleAction);
-  }
-
-  handleAction() {
-    this.playerApp.pcAction();
-  }
-}
-
-module.exports = {
-  DialogueOverlayConnection,
-  PcMovementConnection,
-};
-
-
-/***/ }),
-
-/***/ "./src/js/lib/input/player-app-input-router.js":
-/*!*****************************************************!*\
-  !*** ./src/js/lib/input/player-app-input-router.js ***!
-  \*****************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const { DialogueOverlayConnection, PcMovementConnection } = __webpack_require__(/*! ./player-app-input-connections */ "./src/js/lib/input/player-app-input-connections.js");
-
-class PlayerAppInputRouter {
-  constructor(inputManager) {
-    this.inputManager = inputManager;
-    this.currentConnection = null;
-  }
-
-  setConnection(connection) {
-    this.unroute();
-    this.currentConnection = connection;
-    this.currentConnection.route();
-  }
-
-  unroute() {
-    if (this.currentConnection) {
-      this.currentConnection.unroute();
-    }
-  }
-
-  routeToPcMovement(playerApp) {
-    this.setConnection(new PcMovementConnection(this.inputManager, playerApp));
-  }
-
-  routeToDialogueOverlay(dialogueOverlay, dialogueSequencer) {
-    this.setConnection(new DialogueOverlayConnection(this.inputManager, dialogueOverlay, dialogueSequencer));
-  }
-}
-
-module.exports = PlayerAppInputRouter;
-
-
-/***/ }),
-
-/***/ "./src/js/lib/live-test/dialogue-live-tester.js":
-/*!******************************************************!*\
-  !*** ./src/js/lib/live-test/dialogue-live-tester.js ***!
-  \******************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const Dialogue = __webpack_require__(/*! ../dialogues/dialogue */ "./src/js/lib/dialogues/dialogue.js");
-const helloWorldDialogue = __webpack_require__(
-  /*! ../../../../test/fixtures/dialogues/core/hello-world.dialogue.json */ "./test/fixtures/dialogues/core/hello-world.dialogue.json");
-
-class DialogueLiveTester {
-  // eslint-disable-next-line class-methods-use-this
-  async run(playerApp, dialogueId) {
-    if (!dialogueId.match(/^[a-z0-9-_]+$/)) {
-      throw new Error(`Invalid dialogue ID: ${dialogueId}`);
-    }
-    const fixturePath = `test/fixtures/dialogues/live/${dialogueId}.json`;
-    return fetch(fixturePath, { cache: 'no-store' })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error. Status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((json) => {
-        const dialogue = Dialogue.fromJson(json);
-        playerApp.playDialogue(dialogue);
-      })
-      .catch((err) => {
-        throw err;
-      });
-  }
-}
-
-if (window && window.IMAGINARY && window.IMAGINARY.liveTestManager) {
-  window.IMAGINARY.liveTestManager.registerTester('dialogue', new DialogueLiveTester());
-}
-
-module.exports = DialogueLiveTester;
-
-
-/***/ }),
-
-/***/ "./src/js/lib/live-test/live-test-manager.js":
-/*!***************************************************!*\
-  !*** ./src/js/lib/live-test/live-test-manager.js ***!
-  \***************************************************/
-/***/ ((module) => {
-
-class LiveTestManager {
-  constructor() {
-    this.testers = {};
-  }
-
-  registerTester(type, tester) {
-    this.testers[type] = tester;
-  }
-
-  run(context, testDefinition) {
-    const definitionParts = testDefinition.match(/^([^-]+)(-(.+))?$/);
-    const testType = definitionParts[1];
-    const testArgs = definitionParts[3];
-    if (this.testers[testType] === undefined) {
-      throw new Error(`Unknown test type: ${testType}`);
-    }
-    return this.testers[testType].run(context, testArgs);
-  }
-}
-
-if (window && !window.IMAGINARY) {
-  window.IMAGINARY = {};
-}
-
-if (window && window.IMAGINARY.liveTestManager === undefined) {
-  window.IMAGINARY.liveTestManager = new LiveTestManager();
-}
-
-module.exports = LiveTestManager;
-
-
-/***/ }),
-
-/***/ "./src/js/lib/loader/cfg-loader.js":
-/*!*****************************************!*\
-  !*** ./src/js/lib/loader/cfg-loader.js ***!
-  \*****************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const deepmerge = __webpack_require__(/*! deepmerge */ "./node_modules/deepmerge/dist/cjs.js");
-
-const overwriteMerge = (destinationArray, sourceArray) => sourceArray;
-
-class CfgLoader {
-  constructor(cfgReader, cfgParser) {
-    this.reader = cfgReader;
-    this.parser = cfgParser;
-  }
-
-  async load(files) {
-    const segments = [];
-    const promises = [];
-
-    files.forEach((file, i) => {
-      promises.push(
-        this.reader(file)
-          .then(cfgText => this.parser(cfgText))
-          .then((cfgSegment) => {
-            // We keep the segments in order
-            segments[i] = cfgSegment;
-          })
-          .catch((err) => {
-            throw new Error(`Error in file ${file}: ${err}`);
-          })
-      );
-    });
-
-    return Promise.all(promises).then(() => deepmerge.all(segments.filter(s => s), { arrayMerge: overwriteMerge }));
-  }
-}
-
-module.exports = CfgLoader;
-
-
-/***/ }),
-
-/***/ "./src/js/lib/loader/cfg-reader-fetch.js":
-/*!***********************************************!*\
-  !*** ./src/js/lib/loader/cfg-reader-fetch.js ***!
-  \***********************************************/
-/***/ ((module) => {
-
-function CfgReaderFetch(filename) {
-  return fetch(filename, { cache: 'no-store' })
-    .then(response => response.text());
-}
-
-module.exports = CfgReaderFetch;
-
-
-/***/ }),
-
 /***/ "./src/js/lib/loader/show-fatal-error.js":
 /*!***********************************************!*\
   !*** ./src/js/lib/loader/show-fatal-error.js ***!
@@ -46872,9 +40926,10 @@ const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/ev
 const LogicParser = __webpack_require__(/*! ../dialogues/logic-parser */ "./src/js/lib/dialogues/logic-parser.js");
 
 class QuestTracker {
-  constructor(config, flags) {
+  constructor(config, storylineManager, flags) {
     this.config = config;
     this.flags = flags;
+    this.storylineManager = storylineManager;
     this.events = new EventEmitter();
     this.logicParser = new LogicParser({ flags });
 
@@ -46888,7 +40943,7 @@ class QuestTracker {
   handleFlagChange(flag, value) {
     const flagParts = flag.split('.');
     if (flagParts.length === 3 && flagParts[0] === 'quest') {
-      if (this.config.storylines.touristen.quests[flagParts[1]] !== undefined) {
+      if (this.storylineManager.hasQuest(flagParts[1])) {
         if (flagParts[2] === 'active' && value === 1) {
           this.onQuestActive(flagParts[1]);
         } else if (flagParts[2] === 'done' && value === 1) {
@@ -46902,16 +40957,17 @@ class QuestTracker {
   }
 
   getAvailableQuests() {
-    return Object.entries(this.config.storylines.touristen.quests)
-      .filter(([id]) => !this.flags.value(`quest.${id}.done`) && !this.flags.value(`quest.${id}.active`))
-      .map(([id]) => id);
+    return Object.keys(this.storylineManager.getAllQuests())
+      .filter(id => !this.flags.value(`quest.${id}.done`) && !this.flags.value(`quest.${id}.active`));
   }
 
   getNpcsWithQuests() {
     const availableQuests = this.getAvailableQuests();
-    return Object.fromEntries(Object.entries(this.config.storylines.touristen.quests)
-      .filter(([id]) => availableQuests.includes(id))
-      .map(([, props]) => [props.npc, props.mood]));
+    return Object.fromEntries(
+      Object.entries(this.storylineManager.getAllQuests())
+        .filter(([id]) => availableQuests.includes(id))
+        .map(([, props]) => [props.npc, props.mood])
+    );
   }
 
   setActiveQuest(questId) {
@@ -46961,8 +41017,7 @@ class QuestTracker {
     if (this.activeQuestId === null || this.activeStage === null) {
       return null;
     }
-    return this.config.storylines.touristen.quests[this.activeQuestId]
-      .stages[this.activeStage].prompt;
+    return this.storylineManager.getQuest(this.activeQuestId).stages[this.activeStage].prompt;
   }
 
   getActiveStageCounter() {
@@ -46978,8 +41033,7 @@ class QuestTracker {
       return null;
     }
 
-    const stage = this.config.storylines.touristen.quests[this.activeQuestId]
-      .stages[this.activeStage];
+    const stage = this.storylineManager.getQuest(this.activeQuestId).stages[this.activeStage];
     if (stage.counter !== undefined) {
       return stage.counter.max;
     }
@@ -46990,7 +41044,7 @@ class QuestTracker {
     if (!this.activeQuestId) {
       return;
     }
-    const newStage = this.config.storylines.touristen.quests[this.activeQuestId].stages
+    const newStage = this.storylineManager.getQuest(this.activeQuestId).stages
       .findIndex(stage => stage.cond === undefined || !!this.logicParser.evaluate(stage.cond));
 
     this.setActiveStage(newStage);
@@ -47000,8 +41054,7 @@ class QuestTracker {
     if (this.activeQuestId === null || this.activeStage === null) {
       return;
     }
-    const stage = this.config.storylines.touristen.quests[this.activeQuestId]
-      .stages[this.activeStage];
+    const stage = this.storylineManager.getQuest(this.activeQuestId).stages[this.activeStage];
     if (stage.counter !== undefined) {
       const newCount = this.logicParser.evaluate(stage.counter.expression);
       this.setStageCounter(newCount);
@@ -47023,127 +41076,133 @@ module.exports = QuestTracker;
 
 /***/ }),
 
-/***/ "./src/js/lib/ui/decisionScreen.js":
-/*!*****************************************!*\
-  !*** ./src/js/lib/ui/decisionScreen.js ***!
-  \*****************************************/
+/***/ "./src/js/lib/model/storyline-manager.js":
+/*!***********************************************!*\
+  !*** ./src/js/lib/model/storyline-manager.js ***!
+  \***********************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
-const SpeechText = __webpack_require__(/*! ../dialogues/speech-text */ "./src/js/lib/dialogues/speech-text.js");
-const { I18nTextAdapter } = __webpack_require__(/*! ../helpers/i18n */ "./src/js/lib/helpers/i18n.js");
+const Dialogue = __webpack_require__(/*! ../dialogues/dialogue */ "./src/js/lib/dialogues/dialogue.js");
 
-class DecisionScreen {
-  constructor(config, lang) {
+class StorylineManager {
+  constructor(config) {
     this.config = config;
     this.events = new EventEmitter();
-    this.lang = lang;
+    this.currentStorylineId = null;
+  }
 
-    this.$element = $('<div></div>')
-      .addClass('decision-screen-wrapper');
+  setCurrentStoryline(id) {
+    if (this.currentStorylineId !== id) {
+      this.currentStorylineId = id;
+      this.events.emit('storylineChanged', id);
+    }
+  }
 
-    this.$styleWrapper = $('<div></div>')
-      .appendTo(this.$element);
+  getAllStorylineIds() {
+    return Object.entries(this.config.storylines)
+      .filter(([, storyline]) => storyline.enabled !== false)
+      .map(([id]) => id);
+  }
 
-    this.$screen = $('<div></div>')
-      .addClass('decision-screen')
-      .appendTo(this.$styleWrapper);
+  getStoryline(id) {
+    return this.config.storylines[id] || null;
+  }
 
-    this.$title = $('<h1></h1>')
-      .addClass('decision-screen-title')
-      .text('Eine Entscheidung wurde getroffen…')
-      .appendTo(this.$screen);
+  getCurrentStoryline() {
+    if (this.currentStorylineId === null) {
+      return null;
+    }
 
-    this.$icon = $('<div></div>')
-      .addClass('decision-screen-icon')
-      .appendTo(this.$screen);
+    return this.getStoryline(this.currentStorylineId);
+  }
 
-    this.$text = $('<div></div>')
-      .addClass('decision-screen-text')
-      .appendTo(this.$screen);
+  getDecision() {
+    const currentStoryline = this.getCurrentStoryline();
+    return currentStoryline ? currentStoryline.decision : null;
+  }
 
-    this.speech = new SpeechText();
-    this.$text.append(this.speech.$element);
+  hasQuest(id) {
+    return this.getCurrentStoryline().quests[id] !== undefined;
+  }
 
-    this.titleI18n = new I18nTextAdapter((text) => {
-      this.$title.text(text);
-    }, this.lang);
+  getQuest(id) {
+    return this.getCurrentStoryline().quests[id] || null;
+  }
 
-    this.titleI18n.setText({
-      de: 'Eine Entscheidung wurde getroffen…',
-      en: 'A decision has been made…',
-    });
+  getAllQuests() {
+    const currentStoryline = this.getCurrentStoryline();
+    return currentStoryline ? currentStoryline.quests || {} : {};
+  }
 
-    this.speechI18n = new I18nTextAdapter((text) => {
-      const { revealComplete } = this.speech;
-      this.speech.showText([{ string: text }]);
-      if (revealComplete) {
-        this.speech.revealAll();
+  getDialogue(id) {
+    const currentStoryline = this.getCurrentStoryline();
+    const items = currentStoryline ? currentStoryline.dialogues[id] : null;
+    if (!items) throw new Error(`No dialogue found with id ${id}`);
+    try {
+      return Dialogue.fromJson({
+        id,
+        items,
+      });
+    } catch (e) {
+      if (e.errors) {
+        const errorText = [];
+        errorText.push(`Error parsing dialogue with id ${id}:`);
+        e.errors.forEach((error) => {
+          errorText.push(`- ${error}`);
+        });
+        throw new Error(errorText.join('\n'));
       }
-    }, this.lang);
+      throw e;
+    }
   }
 
-  showDecision(endingText, classes) {
-    this.$styleWrapper.removeClass();
-    this.$styleWrapper.addClass(classes);
-    this.$element.addClass('visible');
-    setTimeout(() => {
-      this.speechI18n.setText(endingText, true);
-    }, 2000);
-  }
-
-  setLang(lang) {
-    this.lang = lang;
-    this.titleI18n.setLang(lang);
-    this.speechI18n.setLang(lang);
+  getNpcs() {
+    const currentStoryline = this.getCurrentStoryline();
+    return currentStoryline ? this.getCurrentStoryline().npcs || {} : {};
   }
 }
 
-module.exports = DecisionScreen;
+module.exports = StorylineManager;
 
 
 /***/ }),
 
-/***/ "./src/js/lib/ui/questOverlay.js":
-/*!***************************************!*\
-  !*** ./src/js/lib/ui/questOverlay.js ***!
-  \***************************************/
+/***/ "./src/js/lib/net/connection-state-view.js":
+/*!*************************************************!*\
+  !*** ./src/js/lib/net/connection-state-view.js ***!
+  \*************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { I18nTextAdapter } = __webpack_require__(/*! ../helpers/i18n */ "./src/js/lib/helpers/i18n.js");
+const icon = __webpack_require__(/*! ../../../../static/fa/broadcast-tower-solid.svg */ "./static/fa/broadcast-tower-solid.svg");
 
-class QuestOverlay {
-  constructor(config, lang, questTracker) {
-    this.config = config;
-    this.lang = lang;
-    this.questTracker = questTracker;
-    this.lastUpdate = 0;
+const RELAUNCH_DELAY_SECONDS = 5;
+
+class ConnectionStateView {
+  constructor(connector) {
+    this.relaunching = false;
 
     this.$element = $('<div></div>')
-      .addClass('quest-overlay', 'visible');
+      .addClass('connection-state-view');
 
-    this.$prompt = $('<div></div>')
-      .addClass('prompt')
+    this.$icon = $('<img>')
+      .attr('src', icon)
+      .addClass('connection-state-view-icon')
       .appendTo(this.$element);
 
-    this.promptI18n = new I18nTextAdapter((newText) => {
-      this.$prompt.text(newText);
-    }, this.lang);
-
-    this.$counter = $('<div></div>')
-      .addClass('counter')
+    this.$errorMessage = $('<div></div>')
+      .addClass('connection-state-view-error text-danger')
+      .appendTo(this.$element);
+    this.$errorStatus = $('<div></div>')
+      .addClass('connection-state-view-status')
       .appendTo(this.$element);
 
-    this.questTracker.events.on('questActive', this.handleQuestActive.bind(this));
-    this.questTracker.events.on('questInactive', this.handleQuestInactive.bind(this));
-    this.questTracker.events.on('questDone', this.handleQuestDone.bind(this));
-    this.questTracker.events.on('stageChanged', this.handleStageChange.bind(this));
-    this.questTracker.events.on('stageCountChanged', this.handleStageCountChanged.bind(this));
-  }
-
-  setLang(lang) {
-    this.lang = lang;
-    this.promptI18n.setLang(lang);
+    connector.events.on('closing', this.handleClosing.bind(this));
+    connector.events.on('disconnect', this.handleDisconnect.bind(this));
+    connector.events.on('connectWait', this.handleConnectWait.bind(this));
+    connector.events.on('connecting', this.handleConnecting.bind(this));
+    connector.events.on('connect', this.handleConnect.bind(this));
+    connector.events.on('server-relaunched', this.handleServerRelaunched.bind(this));
   }
 
   show() {
@@ -47154,90 +41213,332 @@ class QuestOverlay {
     this.$element.removeClass('visible');
   }
 
-  setPrompt(text) {
-    this.hide();
-    if (text !== null) {
-      setTimeout(() => {
-        this.promptI18n.setText(text);
-        this.show();
-      }, 500);
+  setErrorMessage(message) {
+    this.$errorMessage.html(message);
+  }
+
+  setErrorStatus(status) {
+    this.$errorStatus.html(status);
+  }
+
+  handleClosing() {
+    if (this.relaunching) {
+      return;
     }
+    this.setErrorMessage('Retrying connection');
+    this.setErrorStatus('');
+    this.show();
   }
 
-  clearCounter() {
-    this.$counter.empty();
-    this.$counter.hide();
-  }
-
-  createCounter(max) {
-    this.$counter.show();
-    for (let i = 0; i < max; i += 1) {
-      $('<span></span>')
-        .addClass('counter-item')
-        .appendTo(this.$counter);
+  handleDisconnect() {
+    if (this.relaunching) {
+      return;
     }
+    this.setErrorMessage('Disconnected from server');
+    this.setErrorStatus('');
+    this.show();
   }
 
-  updateCounter(value) {
-    this.$counter.children().each((index, element) => {
-      $(element).toggleClass('active', index < value);
-    });
+  handleConnectWait() {
+    this.setErrorStatus('Waiting to reconnect...');
   }
 
-  handleQuestActive(questId) {
+  handleConnecting() {
+    this.setErrorStatus('Connecting...');
   }
 
-  handleQuestInactive(questId) {
+  handleConnect() {
     this.hide();
   }
 
-  handleQuestDone(questId) {
-  }
+  handleServerRelaunched() {
+    this.relaunching = true;
+    this.setErrorMessage('The server was restarted.<br />Reloading in');
+    this.setErrorStatus(`${RELAUNCH_DELAY_SECONDS} seconds`);
+    this.show();
 
-  handleStageChange() {
-    setTimeout(() => {
-      this.setPrompt(this.questTracker.getActivePrompt());
-      this.clearCounter();
-      const max = this.questTracker.getActiveStageCounterMax();
-      if (max) {
-        this.createCounter(max);
+    let secondsLeft = RELAUNCH_DELAY_SECONDS;
+    const interval = setInterval(() => {
+      secondsLeft -= 1;
+      this.setErrorStatus(`${secondsLeft} seconds`);
+      if (secondsLeft <= 0) {
+        clearInterval(interval);
+        window.location.reload();
       }
-    }, Math.max(0, 1000 - (Date.now() - this.lastUpdate)));
-  }
-
-  handleStageCountChanged(activeQuestId, count) {
-    this.updateCounter(count);
-    this.lastUpdate = Date.now();
+    }, 1000);
   }
 }
 
-module.exports = QuestOverlay;
+module.exports = ConnectionStateView;
 
 
 /***/ }),
 
-/***/ "./src/js/lib/ui/scoringOverlay.js":
-/*!*****************************************!*\
-  !*** ./src/js/lib/ui/scoringOverlay.js ***!
-  \*****************************************/
-/***/ ((module) => {
+/***/ "./src/js/lib/net/server-socket-connector.js":
+/*!***************************************************!*\
+  !*** ./src/js/lib/net/server-socket-connector.js ***!
+  \***************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-class ScoringOverlay {
-  constructor(config) {
-    this.config = config;
-    this.$element = $('<div></div>')
-      .addClass('scoring-overlay');
+/* eslint-disable no-console */
+const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
+
+const PING_TIME = 1000 * 10;
+const PONG_WAIT_TIME = 1000 * 10;
+const RECONNECT_TIME = 1000 * 5;
+
+class ServerSocketConnector {
+  constructor(uri) {
+    this.uri = uri;
+    this.ws = null;
+    this.connected = false;
+    this.autoReconnect = true;
+    this.serverId = null;
+    // Must track isClosing because the socket might enter CLOSING state and not close immediately
+    this.isClosing = false;
+    this.events = new EventEmitter();
+    this.pingTimeout = null;
+    this.pongTimeout = null;
+    this.reconnectTimeout = null;
+    this.serverInfoTimeout = null;
+    this.connect();
   }
 
-  show(achievement) {
-    $('<div></div>')
-      .addClass('achievement')
-      .addClass(`achievement-${achievement}`)
-      .appendTo(this.$element);
+  connect() {
+    this.cancelPing();
+    this.cancelReconnect();
+
+    this.events.emit('connecting');
+    console.log(`Connecting to ${this.uri}...`);
+    this.ws = new WebSocket(this.uri);
+    this.ws.onopen = this.handleOpen.bind(this);
+    this.ws.onclose = this.handleClose.bind(this);
+    this.ws.onmessage = this.handleMessage.bind(this);
+    // ws.onerror is not handled because the event gives no data about the
+    // error, and on a connection failure onclose will be called.
+
+    this.connected = false;
+  }
+
+  disconnect() {
+    console.log('Disconnecting...');
+    this.events.emit('disconnecting');
+    this.autoReconnect = false;
+    this.cancelPing();
+    this.cancelReconnect();
+    this.close();
+  }
+
+  close() {
+    if (!this.isClosing) {
+      this.isClosing = true;
+      this.events.emit('closing');
+    }
+    this.ws.close();
+  }
+
+  cancelReconnect() {
+    if (this.reconnectTimeout !== null) {
+      clearTimeout(this.reconnectTimeout);
+      this.reconnectTimeout = null;
+    }
+  }
+
+  reconnect() {
+    this.cancelReconnect();
+    this.reconnectTimeout = setTimeout(() => {
+      this.reconnectTimeout = null;
+      this.connect();
+    }, RECONNECT_TIME);
+    this.events.emit('connectWait');
+    console.log(`Will attempt to reconnect in ${RECONNECT_TIME / 1000} seconds...`);
+  }
+
+  handleOpen() {
+    this.cancelReconnect();
+    this.cancelPongTimeout();
+
+    this.connected = true;
+    this.isClosing = false;
+    console.log('Connected.');
+    this.events.emit('connect');
+    this.schedulePing();
+  }
+
+  handleClose(ev) {
+    this.connected = false;
+    this.isClosing = false;
+    this.cancelPing();
+    this.cancelPongTimeout();
+    // ev.code is defined here https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent
+    // but according to people the only code one normally gets is 1006 (Abnormal Closure)
+    console.error(
+      `Disconnected with code ${ev.code}`,
+      ev.code === 1006 ? ': Abnormal closure' : '',
+      ev.reason ? `(reason: ${ev.reason})` : ''
+    );
+    this.events.emit('disconnect');
+    if (this.autoReconnect) {
+      this.reconnect();
+    }
+  }
+
+  handleMessage(ev) {
+    const message = JSON.parse(ev.data);
+    if (message.type === 'sync') {
+      this.handleSync(message);
+    } else if (message.type === 'pong') {
+      this.handlePong();
+    } else if (message.type === 'serverInfo') {
+      this.handleServerInfo(message);
+    }
+  }
+
+  handleSync(message) {
+    this.events.emit('sync', message);
+  }
+
+  handlePong() {
+    this.cancelPongTimeout();
+    this.schedulePing();
+  }
+
+  handleServerInfo(message) {
+    this.cancelServerInfoTimeout();
+    if (this.serverId === null) {
+      this.serverId = message.serverID;
+    } else if (this.serverId !== message.serverID) {
+      console.warn(`Received serverInfo with different serverID (${message.serverID})`);
+      this.events.emit('server-relaunched');
+      this.autoReconnect = false;
+      this.close();
+    }
+  }
+
+  send(data) {
+    const message = typeof data === 'string' ? { type: data } : data;
+    this.ws.send(JSON.stringify(message));
+  }
+
+  cancelPing() {
+    if (this.pingTimeout !== null) {
+      clearTimeout(this.pingTimeout);
+      this.pingTimeout = null;
+    }
+  }
+
+  schedulePing() {
+    this.cancelPing();
+    this.pingTimeout = setTimeout(() => {
+      this.pingTimeout = null;
+      this.ping();
+    }, PING_TIME);
+  }
+
+  cancelPongTimeout() {
+    if (this.pongTimeout !== null) {
+      clearTimeout(this.pongTimeout);
+      this.pongTimeout = null;
+    }
+  }
+
+  scheduleServerInfoTimeout() {
+    this.cancelServerInfoTimeout();
+    this.serverInfoTimeout = setTimeout(() => {
+      this.serverInfoTimeout = null;
+      console.warn(`No serverInfo received after ${PONG_WAIT_TIME / 1000} seconds`);
+      console.warn('Closing connection');
+      this.close();
+    }, PONG_WAIT_TIME);
+  }
+
+  cancelServerInfoTimeout() {
+    if (this.serverInfoTimeout !== null) {
+      clearTimeout(this.serverInfoTimeout);
+      this.serverInfoTimeout = null;
+    }
+  }
+
+  startPongTimeout() {
+    this.cancelPongTimeout();
+    this.pongTimeout = setTimeout(() => {
+      this.pongTimeout = null;
+      console.warn(`PONG not received after ${PONG_WAIT_TIME / 1000} seconds`);
+      console.warn('Closing connection');
+      if (!this.isClosing) {
+        this.isClosing = true;
+        this.events.emit('closing');
+      }
+      this.ws.close();
+    }, PONG_WAIT_TIME);
+  }
+
+  ping() {
+    this.send('ping');
+    this.startPongTimeout();
+  }
+
+  sync(player = null) {
+    const message = {
+      type: 'sync',
+    };
+    if (player !== null) {
+      message.players = Object.fromEntries([[player.id,
+        {
+          position: player.position,
+          speed: player.speed,
+        },
+      ]]);
+    }
+    this.send(message);
   }
 }
 
-module.exports = ScoringOverlay;
+module.exports = ServerSocketConnector;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/net/server-url.js":
+/*!**************************************!*\
+  !*** ./src/js/lib/net/server-url.js ***!
+  \**************************************/
+/***/ ((module) => {
+
+function withLeadingSlash(str) {
+  return str[0] === '/' ? str : `/${str}`;
+}
+
+function withTrailingSlash(str) {
+  return str[str.length - 1] === '/' ? str : `${str}/`;
+}
+
+function withTrailingColon(str) {
+  return str[str.length - 1] === ':' ? str : `${str}:`;
+}
+
+function getApiServerUrl() {
+  const protocol = withTrailingColon("MISSING_ENV_VAR".API_SERVER_PROTOCOL || window.location.protocol);
+  const host = "MISSING_ENV_VAR".API_SERVER_HOST || window.location.hostname;
+  const port = "4850" || 0;
+  const root = withTrailingSlash(withLeadingSlash("MISSING_ENV_VAR".API_SERVER_ROOT || '/'));
+
+  return `${protocol}//${host}:${port}${root}`;
+}
+
+function getSocketServerUrl() {
+  const protocol = withTrailingColon("MISSING_ENV_VAR".SOCKET_SERVER_PROTOCOL || 'ws');
+  const host = "MISSING_ENV_VAR".SOCKET_SERVER_HOST || window.location.hostname;
+  const port = "4850" || 0;
+  const root = withTrailingSlash(withLeadingSlash("MISSING_ENV_VAR".SOCKET_SERVER_ROOT || '/'));
+
+  return `${protocol}//${host}:${port}${root}`;
+}
+
+module.exports = {
+  getApiServerUrl,
+  getSocketServerUrl,
+};
 
 
 /***/ }),
@@ -47315,6 +41616,53 @@ class CharacterView {
 CharacterView.SPRITE_ANIMATION_SPEED = 0.3;
 
 module.exports = CharacterView;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/views/map-marker.js":
+/*!****************************************!*\
+  !*** ./src/js/lib/views/map-marker.js ***!
+  \****************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+/* globals PIXI */
+const { Popper } = __webpack_require__(/*! ../helpers-pixi/tween */ "./src/js/lib/helpers-pixi/tween.js");
+
+class MapMarker {
+  constructor(texture, contentTexture, anchor = null) {
+    this.display = new PIXI.Container();
+    this.markerDisplay = new PIXI.Sprite(texture);
+    this.display.addChild(this.markerDisplay);
+    this.contentDisplay = new PIXI.Sprite(contentTexture);
+    this.markerDisplay.addChild(this.contentDisplay);
+    this.contentDisplay.anchor.set(0.5, 0.5);
+    this.contentDisplay.position
+      .set(0, -this.markerDisplay.height + this.contentDisplay.height / 2 - 1.5);
+    this.markerDisplay.anchor.set(anchor ? anchor.x : 0, anchor ? anchor.y : 0);
+    this.markerDisplay.visible = false;
+    this.markerDisplay.scale = 0;
+    this.popper = Popper(this.markerDisplay);
+  }
+
+  setScale(scale) {
+    this.display.scale.set(scale, scale);
+  }
+
+  setPosition(x, y) {
+    this.display.position.set(x, y);
+  }
+
+  show(onComplete = null) {
+    this.popper.show(onComplete);
+  }
+
+  hide(onComplete = null) {
+    this.popper.hide(onComplete);
+  }
+}
+
+module.exports = MapMarker;
 
 
 /***/ }),
@@ -47756,6 +42104,17 @@ module.exports = TownView;
 
 /***/ }),
 
+/***/ "./static/fa/broadcast-tower-solid.svg":
+/*!*********************************************!*\
+  !*** ./static/fa/broadcast-tower-solid.svg ***!
+  \*********************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+module.exports = __webpack_require__.p + "ead51173b07512a4bf13.svg";
+
+/***/ }),
+
 /***/ "./node_modules/ajv/dist/refs/data.json":
 /*!**********************************************!*\
   !*** ./node_modules/ajv/dist/refs/data.json ***!
@@ -47786,17 +42145,6 @@ module.exports = JSON.parse('{"$schema":"http://json-schema.org/draft-07/schema#
 
 "use strict";
 module.exports = JSON.parse('{"$id":"https://github.com/IMAGINARY/future-democracy/specs/dialogue.schema.json","$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"id":{"$ref":"#/definitions/node_id"},"items":{"type":"array","items":{"$ref":"#/definitions/node"}}},"required":["id","items"],"definitions":{"node_id":{"type":"string","minLength":1,"maxLength":100,"pattern":"^[a-zA-Z_][a-zA-Z0-9_-]*$"},"node":{"oneOf":[{"$ref":"#/definitions/sequence"},{"$ref":"#/definitions/random"},{"$ref":"#/definitions/first"},{"$ref":"#/definitions/statement"}]},"text":{"oneOf":[{"type":"string","minLength":1,"maxLength":1000},{"type":"object","additionalProperties":{"type":"string"}}]},"class":{"type":"string","minLength":1,"maxLength":100,"pattern":"^-?[_a-zA-Z]+[_a-zA-Z0-9-]*$"},"classes":{"oneOf":[{"$ref":"#/definitions/class"},{"type":"array","items":{"$ref":"#/definitions/class"}}]},"flag_id":{"type":"string","minLength":1,"maxLength":100,"pattern":"^[a-zA-Z_][.a-zA-Z0-9_]*$"},"flags":{"type":"array","items":{"$ref":"#/definitions/flag_id"},"minItems":0,"maxItems":100},"flag_assignments":{"type":"array","items":{"$ref":"#/definitions/flag_assignment"},"minItems":0,"maxItems":100},"flag_assignment":{"type":"string","minLength":1,"maxLength":100,"pattern":"^[a-zA-Z_][.a-zA-Z0-9_-]*(\\\\s*[+-]?=\\\\s*[0-9]{1,3})?$"},"condition":{"type":"string","minLength":1,"maxLength":1000},"sequence":{"type":"object","properties":{"type":{"const":"sequence"},"items":{"type":"array","items":{"$ref":"#/definitions/node"}},"cond":{"$ref":"#/definitions/condition"},"set":{"$ref":"#/definitions/flag_assignments"}},"required":["type","items"]},"random":{"type":"object","properties":{"type":{"const":"random"},"items":{"type":"array","items":{"$ref":"#/definitions/node"}},"cond":{"$ref":"#/definitions/condition"},"set":{"$ref":"#/definitions/flag_assignments"}},"required":["type","items"]},"first":{"type":"object","properties":{"type":{"const":"first"},"items":{"type":"array","items":{"$ref":"#/definitions/node"}},"cond":{"$ref":"#/definitions/condition"},"set":{"$ref":"#/definitions/flag_assignments"}},"required":["type","items"]},"statement":{"type":"object","properties":{"type":{"const":"statement"},"id":{"$ref":"#/definitions/node_id"},"cond":{"$ref":"#/definitions/condition"},"text":{"$ref":"#/definitions/text"},"class":{"$ref":"#/definitions/classes"},"set":{"$ref":"#/definitions/flag_assignments"},"responses":{"type":"array","items":{"$ref":"#/definitions/response"}}},"required":["text"]},"response":{"type":"object","properties":{"cond":{"$ref":"#/definitions/condition"},"text":{"$ref":"#/definitions/text"},"class":{"$ref":"#/definitions/classes"},"set":{"$ref":"#/definitions/flag_assignments"},"then":{"$ref":"#/definitions/node_id"},"thenText":{"$ref":"#/definitions/text"},"thenClass":{"$ref":"#/definitions/classes"}},"required":["text"]}}}');
-
-/***/ }),
-
-/***/ "./test/fixtures/dialogues/core/hello-world.dialogue.json":
-/*!****************************************************************!*\
-  !*** ./test/fixtures/dialogues/core/hello-world.dialogue.json ***!
-  \****************************************************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = JSON.parse('{"id":"hello-world","items":[{"text":"Hello world!"}]}');
 
 /***/ })
 
@@ -47897,76 +42245,102 @@ module.exports = JSON.parse('{"id":"hello-world","items":[{"text":"Hello world!"
 /******/ 		};
 /******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/publicPath */
+/******/ 	(() => {
+/******/ 		var scriptUrl;
+/******/ 		if (__webpack_require__.g.importScripts) scriptUrl = __webpack_require__.g.location + "";
+/******/ 		var document = __webpack_require__.g.document;
+/******/ 		if (!scriptUrl && document) {
+/******/ 			if (document.currentScript)
+/******/ 				scriptUrl = document.currentScript.src;
+/******/ 			if (!scriptUrl) {
+/******/ 				var scripts = document.getElementsByTagName("script");
+/******/ 				if(scripts.length) scriptUrl = scripts[scripts.length - 1].src
+/******/ 			}
+/******/ 		}
+/******/ 		// When supporting browsers where an automatic publicPath is not supported you must specify an output.publicPath manually via configuration
+/******/ 		// or pass an empty string ("") and set the __webpack_public_path__ variable from your code to use your own logic.
+/******/ 		if (!scriptUrl) throw new Error("Automatic publicPath is not supported in this browser");
+/******/ 		scriptUrl = scriptUrl.replace(/#.*$/, "").replace(/\?.*$/, "").replace(/\/[^\/]+$/, "/");
+/******/ 		__webpack_require__.p = scriptUrl;
+/******/ 	})();
+/******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-/*!************************!*\
-  !*** ./src/js/main.js ***!
-  \************************/
-const yaml = __webpack_require__(/*! js-yaml */ "./node_modules/js-yaml/index.js");
-const CfgReaderFetch = __webpack_require__(/*! ./lib/loader/cfg-reader-fetch */ "./src/js/lib/loader/cfg-reader-fetch.js");
-const CfgLoader = __webpack_require__(/*! ./lib/loader/cfg-loader */ "./src/js/lib/loader/cfg-loader.js");
+/*!***********************!*\
+  !*** ./src/js/map.js ***!
+  \***********************/
+const ServerSocketConnector = __webpack_require__(/*! ./lib/net/server-socket-connector */ "./src/js/lib/net/server-socket-connector.js");
+const ConnectionStateView = __webpack_require__(/*! ./lib/net/connection-state-view */ "./src/js/lib/net/connection-state-view.js");
 const showFatalError = __webpack_require__(/*! ./lib/loader/show-fatal-error */ "./src/js/lib/loader/show-fatal-error.js");
-const PlayerApp = __webpack_require__(/*! ./lib/app/player-app */ "./src/js/lib/app/player-app.js");
-const { initSentry } = __webpack_require__(/*! ./lib/helpers/sentry */ "./src/js/lib/helpers/sentry.js");
-__webpack_require__(/*! ./lib/live-test/live-test-manager */ "./src/js/lib/live-test/live-test-manager.js");
-__webpack_require__(/*! ./lib/live-test/dialogue-live-tester */ "./src/js/lib/live-test/dialogue-live-tester.js");
 __webpack_require__(/*! ../sass/default.scss */ "./src/sass/default.scss");
+const fetchConfig = __webpack_require__(/*! ./lib/helpers-client/fetch-config */ "./src/js/lib/helpers-client/fetch-config.js");
+const fetchTextures = __webpack_require__(/*! ./lib/helpers-client/fetch-textures */ "./src/js/lib/helpers-client/fetch-textures.js");
+const { getApiServerUrl, getSocketServerUrl } = __webpack_require__(/*! ./lib/net/server-url */ "./src/js/lib/net/server-url.js");
+const { initSentry } = __webpack_require__(/*! ./lib/helpers/sentry */ "./src/js/lib/helpers/sentry.js");
+const MapApp = __webpack_require__(/*! ./lib/app/map-app */ "./src/js/lib/app/map-app.js");
 
-const urlParams = new URLSearchParams(window.location.search);
-const statsPanel = urlParams.get('s') || null;
-const liveTest = urlParams.get('test') || null;
+(async () => {
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const statsPanel = urlParams.get('s') || null;
+    const configUrl = `${getApiServerUrl()}config`;
 
-const sentryDSN = urlParams.get('sentry-dsn') || "MISSING_ENV_VAR".SENTRY_DSN;
-if (sentryDSN) {
-  initSentry(sentryDSN);
-}
-
-const cfgLoader = new CfgLoader(CfgReaderFetch, yaml.load);
-cfgLoader.load([
-  'config/game.yml',
-  'config/players.yml',
-  'config/textures.yml',
-  'config/town.yml',
-  'config/gamepads.yml',
-  'config/storylines/touristen.yml',
-]).catch((err) => {
-  showFatalError('Error loading configuration', err);
-  console.error('Error loading configuration');
-  console.error(err);
-}).then((config) => {
-  if (urlParams.get('t')) {
-    config.game.duration = parseInt(urlParams.get('t'), 10);
-  }
-
-  const playerId = '1';
-  // In this standalone app, disable all players except the first one.
-  Object.keys(config.players).forEach((id) => {
-    if (id !== playerId) {
-      config.players[id].enabled = false;
+    const sentryDSN = urlParams.get('sentry-dsn') || "MISSING_ENV_VAR".SENTRY_DSN;
+    if (sentryDSN) {
+      initSentry(sentryDSN);
     }
-  });
-  const playerApp = new PlayerApp(config, playerId);
-  return playerApp.init();
-}).then((playerApp) => {
-  $('[data-component="PlayerApp"]').replaceWith(playerApp.$element);
-  playerApp.resize();
-  $(window).on('resize', () => {
-    playerApp.resize();
-  });
 
-  if (statsPanel) {
-    playerApp.stats.showPanel(statsPanel);
-  }
+    const config = await fetchConfig(configUrl);
+    const textures = await fetchTextures('./static/textures', config.textures, 'town-view');
 
-  if (liveTest) {
-    window.IMAGINARY.liveTestManager.run(playerApp, liveTest);
+    const mapApp = new MapApp(config, textures);
+    $('[data-component="MapApp"]').replaceWith(mapApp.$element);
+    mapApp.resize();
+    $(window).on('resize', () => {
+      mapApp.resize();
+    });
+
+    let syncReceived = false;
+    const connector = new ServerSocketConnector(getSocketServerUrl());
+    const connStateView = new ConnectionStateView(connector);
+    $('body').append(connStateView.$element);
+
+    connector.events.on('connect', () => {
+      syncReceived = true;
+    });
+    connector.events.on('sync', (message) => {
+      syncReceived = true;
+      mapApp.stats.ping();
+      Object.entries(message.players).forEach(([id, player]) => {
+        if (player.position) {
+          mapApp.pcs[id].setPosition(player.position.x, player.position.y);
+        }
+        if (player.speed) {
+          mapApp.pcs[id].setSpeed(player.speed.x, player.speed.y);
+        }
+      });
+    });
+    mapApp.pixiApp.ticker.add(() => {
+      if (syncReceived) {
+        connector.sync();
+        syncReceived = false;
+      }
+    });
+
+    if (statsPanel) {
+      mapApp.stats.showPanel(statsPanel);
+    }
+  } catch (err) {
+    showFatalError(err.message, err);
+    console.error(err);
   }
-});
+})();
 
 })();
 
 /******/ })()
 ;
-//# sourceMappingURL=default.10b5956831ec4d28dafc.js.map
+//# sourceMappingURL=map.5598d0010bd3541f63ff.js.map

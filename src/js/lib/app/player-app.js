@@ -1,5 +1,4 @@
 /* globals PIXI */
-const EventEmitter = require('events');
 const Stats = require('../helpers-web/stats.js');
 const TownView = require('../views/town-view');
 require('../helpers-web/fill-with-aspect');
@@ -11,30 +10,42 @@ const MultiplexInputMgr = require('../input/multiplex-input-mgr');
 const PlayerAppInputRouter = require('../input/player-app-input-router');
 const Character = require('../model/character');
 const FlagStore = require('../dialogues/flag-store');
+const StorylineManager = require('../model/storyline-manager');
 const QuestTracker = require('../model/quest-tracker');
 const QuestOverlay = require('../ui/questOverlay');
 const DialogueOverlay = require('../dialogues/dialogue-overlay');
 const DialogueSequencer = require('../dialogues/dialogue-sequencer');
-const Dialogue = require('../dialogues/dialogue');
 const Countdown = require('../helpers-web/countdown');
 const DecisionScreen = require('../ui/decisionScreen');
 const ScoringOverlay = require('../ui/scoringOverlay');
 const { I18nTextAdapter } = require('../helpers/i18n');
 const readEnding = require('../dialogues/ending-reader');
 
-
 class PlayerApp {
-  constructor(config, playerId) {
+  constructor(config, textures, playerId) {
     this.config = config;
+    this.textures = textures;
     this.lang = config.game.defaultLanguage;
     this.playerId = playerId;
-    this.pc = new Character(playerId, this.config.players[playerId]);
-    this.otherPcs = Object.fromEntries(Object.entries(this.config.players)
-      .filter(([id, player]) => (player.enabled === undefined || player.enabled) && id !== playerId)
-      .map(([id]) => [id, new Character(id, this.config.players[id])]));
-    this.canControlPc = false;
-    this.npcs = Object.entries(config.storylines.touristen.npcs).map(([id, props]) => new Character(id, props));
 
+    // Game logic
+    this.flags = new FlagStore();
+    this.storylineManager = new StorylineManager(this.config);
+    this.storylineManager.events.on('storylineChanged',
+      this.handleStorylineChanged.bind(this));
+
+    this.questTracker = new QuestTracker(config, this.storylineManager, this.flags);
+
+    this.pc = new Character(playerId, this.config.players[playerId]);
+    this.canControlPc = false;
+    this.remotePcs = {};
+
+    this.pcView = null;
+    this.showHitbox = false;
+    this.remotePcViews = {};
+    this.npcViews = {};
+
+    // HTML elements
     this.$element = $('<div></div>')
       .addClass('player-app');
 
@@ -53,7 +64,7 @@ class PlayerApp {
 
     this.decisionLabelI18n = new I18nTextAdapter((text) => {
       this.$decisionLabel.html(text);
-    }, this.lang, this.config.storylines.touristen.decision);
+    }, this.lang);
 
     this.endingScreen = null;
 
@@ -62,9 +73,6 @@ class PlayerApp {
     this.countdown.events.on('end', () => {
       this.handleStorylineEnd();
     });
-
-    this.flags = new FlagStore();
-    this.questTracker = new QuestTracker(config, this.flags);
 
     this.questOverlay = new QuestOverlay(this.config, this.lang, this.questTracker);
     this.$element.append(this.questOverlay.$element);
@@ -75,6 +83,9 @@ class PlayerApp {
 
     this.scoringOverlay = new ScoringOverlay(this.config);
     this.$element.append(this.scoringOverlay.$element);
+
+    this.stats = new Stats();
+    this.$element.append(this.stats.dom);
 
     // Temporary scoring manager
     const seenFlags = {};
@@ -92,10 +103,7 @@ class PlayerApp {
       }
     });
 
-    this.showHitbox = false;
-  }
-
-  async init() {
+    // PIXI
     this.pixiApp = new PIXI.Application({
       // todo: get these from config or constants
       width: PlayerApp.APP_WIDTH,
@@ -104,36 +112,26 @@ class PlayerApp {
     });
     this.$pixiWrapper.append(this.pixiApp.view);
 
-    await this.loadTextures();
-
     this.camera = new PIXI.Container();
     this.townView = new TownView(this.config, this.textures);
     this.camera.addChild(this.townView.display);
     this.pixiApp.stage.addChild(this.camera);
-    this.pcView = new PCView(this.config, this.textures, this.pc, this.townView);
-    this.otherPcViews = Object.fromEntries(
-      Object.entries(this.otherPcs)
-        .map(([id, pc]) => [id, new PCView(this.config, this.textures, pc, this.townView)])
-    );
-    this.npcViews = Object.values(this.npcs).map(npc => new CharacterView(this.config, this.textures, npc, this.townView));
 
-    this.townView.mainLayer.addChild(this.pcView.display);
-    this.townView.bgLayer.addChild(this.pcView.hitboxDisplay);
-    this.townView.mainLayer.addChild(...this.npcViews.map(npcView => npcView.display));
-    if (Object.values(this.otherPcViews).length > 0) {
-      this.townView.mainLayer.addChild(...Object.values(this.otherPcViews)
-        .map(pcView => pcView.display));
-    }
-
-    this.stats = new Stats();
-    this.$element.append(this.stats.dom);
-
+    // Input
     this.keyboardInputMgr = new KeyboardInputMgr();
     this.keyboardInputMgr.attachListeners();
-    this.keyboardInputMgr.addToggle('KeyE', () => { this.countdown.forceEnd(); });
-    this.keyboardInputMgr.addToggle('KeyD', () => { this.stats.togglePanel(); });
-    this.keyboardInputMgr.addToggle('KeyH', () => { this.toggleHitboxDisplay(); });
-    this.keyboardInputMgr.addToggle('KeyX', () => { console.log(`x: ${this.pc.position.x}, y: ${this.pc.position.y}`); });
+    this.keyboardInputMgr.addToggle('KeyE', () => {
+      this.countdown.forceEnd();
+    });
+    this.keyboardInputMgr.addToggle('KeyD', () => {
+      this.stats.togglePanel();
+    });
+    this.keyboardInputMgr.addToggle('KeyH', () => {
+      this.toggleHitboxDisplay();
+    });
+    this.keyboardInputMgr.addToggle('KeyX', () => {
+      console.log(`x: ${this.pc.position.x}, y: ${this.pc.position.y}`);
+    });
 
     const gamepadMapperConfig =
       this.config?.players?.[this.playerId]?.['gamepadMapping'] ?? {};
@@ -153,39 +151,47 @@ class PlayerApp {
     ];
 
     const inputMgr = this.multiplexInputMgr;
-    inputMgr.events.on('lang', () => { this.toggleLanguage(); });
+    inputMgr.events.on('lang', () => {
+      this.toggleLanguage();
+    });
 
     this.inputRouter = new PlayerAppInputRouter(inputMgr);
     this.inputRouter.routeToPcMovement(this);
 
+    // Game loop
     this.pixiApp.ticker.add((time) => {
       this.stats.frameBegin();
       inputMgrs.forEach((inputMgr) => inputMgr.update());
-      if (this.canControlPc) {
+      if (this.canControlPc && this.pc) {
         const { x, y } = inputMgr.getDirection();
         this.pc.setSpeed(x * 10, y * 10);
       }
-      this.pcView.animate(time);
-      Object.entries(this.otherPcViews).forEach(([, pcView]) => {
+
+      Object.entries(this.remotePcViews).forEach(([, pcView]) => {
         pcView.display.position = pcView.character.position;
         pcView.display.zIndex = pcView.character.position.y;
         pcView.animate(time);
       });
       this.townView.mainLayer.sortChildren();
 
-      // Set the town view's pivot so the PC is always centered on the screen,
-      // but don't let the pivot go off the edge of the town
-      this.camera.pivot.set(
-        Math.max(0, Math.min(this.pcView.display.x + this.pcView.display.width / 2 - PlayerApp.APP_WIDTH / 2 / this.camera.scale.x, this.townView.townSize.width - PlayerApp.APP_WIDTH / this.camera.scale.x)),
-        Math.max(0, Math.min(this.pcView.display.y - this.pcView.display.height * 0.8 - PlayerApp.APP_HEIGHT / 2 / this.camera.scale.y, this.townView.townSize.height - PlayerApp.APP_HEIGHT / this.camera.scale.y)),
-      );
-      window.camera = this.camera;
-      window.townView = this.townView;
+      if (this.pcView) {
+        this.pcView.animate(time);
+        // Set the town view's pivot so the PC is always centered on the screen,
+        // but don't let the pivot go off the edge of the town
+        this.camera.pivot.set(
+          Math.max(0,
+            Math.min(this.pcView.display.x + this.pcView.display.width / 2 - PlayerApp.APP_WIDTH / 2
+              / this.camera.scale.x,
+              this.townView.townSize.width - PlayerApp.APP_WIDTH / this.camera.scale.x)),
+          Math.max(0,
+            Math.min(this.pcView.display.y - this.pcView.display.height * 0.8 - PlayerApp.APP_HEIGHT
+              / 2 / this.camera.scale.y,
+              this.townView.townSize.height - PlayerApp.APP_HEIGHT / this.camera.scale.y)),
+        );
+      }
       this.stats.frameEnd();
     });
 
-    this.countdown.start();
-    this.updateNpcMoods();
     this.questTracker.events.on('questActive', (questId) => {
       this.updateNpcMoods();
     });
@@ -193,16 +199,14 @@ class PlayerApp {
       this.updateNpcMoods();
     });
 
-    return this;
-  }
-
-  async loadTextures() {
-    PIXI.Assets.init({
-      basePath: './static/textures',
-      manifest: this.config.textures,
-    });
-
-    this.textures = await PIXI.Assets.loadBundle('town-view');
+    // Temporary
+    this.addPcView();
+    Object.entries(this.config.players)
+      .filter(([id, player]) => (player.enabled === undefined || player.enabled) && id !== playerId)
+      .forEach(([id, player]) => {
+        this.addRemotePcView(id);
+      });
+    this.storylineManager.setCurrentStoryline('touristen');
   }
 
   setLanguage(lang) {
@@ -229,6 +233,60 @@ class PlayerApp {
     this.$element.css('font-size', `${(this.$element.width() * PlayerApp.FONT_RATIO).toFixed(3)}px`);
   }
 
+  addPcView() {
+    this.removePcView();
+
+    this.pcView = new PCView(this.config, this.textures, this.pc, this.townView);
+    this.townView.mainLayer.addChild(this.pcView.display);
+    this.townView.bgLayer.addChild(this.pcView.hitboxDisplay);
+  }
+
+  removePcView() {
+    if (this.pcView) {
+      this.townView.mainLayer.removeChild(this.pcView.display);
+      this.townView.bgLayer.removeChild(this.pcView.hitboxDisplay);
+      this.pcView = null;
+    }
+  }
+
+  addRemotePcView(id) {
+    if (this.config.players[id]) {
+      const pc = new Character(id, this.config.players[id]);
+      this.remotePcs[id] = pc;
+      const view = new PCView(this.config, this.textures, pc, this.townView);
+      this.remotePcViews[id] = view;
+      this.townView.mainLayer.addChild(view.display);
+    }
+  }
+
+  removeRemotePcView(id) {
+    if (this.remotePcViews[id]) {
+      this.townView.mainLayer.removeChild(this.remotePcViews[id].display);
+      delete this.remotePcs[id];
+      delete this.remotePcViews[id];
+    }
+  }
+
+  addNpc(npc) {
+    const view = new CharacterView(this.config, this.textures, npc, this.townView);
+    this.npcViews[npc.id] = view;
+    this.townView.mainLayer.addChild(view.display);
+  }
+
+  removeNpc(id) {
+    if (this.npcViews[id]) {
+      this.townView.mainLayer.removeChild(this.npcViews[id].display);
+      delete this.npcViews[id];
+    }
+  }
+
+  clearNpcs() {
+    Object.values(this.npcViews).forEach((npcView) => {
+      this.townView.mainLayer.removeChild(npcView.display);
+    });
+    this.npcViews = { };
+  }
+
   enablePcControl() {
     this.canControlPc = true;
   }
@@ -236,25 +294,6 @@ class PlayerApp {
   disablePcControl() {
     this.canControlPc = false;
     this.pc.setSpeed(0, 0);
-  }
-
-  getDialogue(dialogueId) {
-    const items = this.config.storylines.touristen.dialogues[dialogueId];
-    if (!items) throw new Error(`No dialogue found with id ${dialogueId}`);
-    try {
-      return Dialogue.fromJson({
-        id: dialogueId,
-        items,
-      });
-    } catch (e) {
-      if(e.errors) {
-        console.error(`Error parsing dialogue with id ${dialogueId}:`);
-        e.errors.forEach((error) => {
-          console.error(error);
-        });
-      }
-      throw e;
-    }
   }
 
   getDialogueContext() {
@@ -274,7 +313,7 @@ class PlayerApp {
   }
 
   getNpcsInRect(rect) {
-    return this.npcViews.filter(npcView => npcView.inRect(rect))
+    return Object.values(this.npcViews).filter(npcView => npcView.inRect(rect))
       .map(npcView => npcView.character);
   }
 
@@ -294,7 +333,7 @@ class PlayerApp {
       }
     });
     if (closestNpc) {
-      this.playDialogue(this.getDialogue(closestNpc.dialogue || closestNpc.id), closestNpc);
+      this.playDialogue(this.storylineManager.getDialogue(closestNpc.dialogue || closestNpc.id), closestNpc);
     }
     if (this.showHitbox) {
       this.pcView.showActionHitbox(hitbox);
@@ -303,7 +342,7 @@ class PlayerApp {
 
   updateNpcMoods() {
     const npcsWithQuests = this.questTracker.getNpcsWithQuests();
-    this.npcViews.forEach((npcView) => {
+    Object.values(this.npcViews).forEach((npcView) => {
       if (Object.keys(npcsWithQuests).includes(npcView.character.id)) {
         npcView.showMoodBalloon(npcsWithQuests[npcView.character.id]);
       } else {
@@ -316,8 +355,18 @@ class PlayerApp {
     this.showHitbox = !this.showHitbox;
   }
 
+  handleStorylineChanged() {
+    this.decisionLabelI18n.setText(this.storylineManager.getDecision());
+    this.clearNpcs();
+    Object.entries(this.storylineManager.getNpcs()).forEach(([id, props]) => {
+      this.addNpc(new Character(id, props));
+    });
+    this.updateNpcMoods();
+    this.countdown.start();
+  }
+
   handleStorylineEnd() {
-    const [ endingText, classes ] = readEnding(this.getDialogue('_ending'), this.getDialogueContext());
+    const [ endingText, classes ] = readEnding(this.storylineManager.getDialogue('_ending'), this.getDialogueContext());
 
     this.inputRouter.unroute();
     this.endingScreen = new DecisionScreen(this.config, this.lang);
