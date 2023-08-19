@@ -49,8 +49,8 @@ class ConnectionStateView {
     if (this.relaunching) {
       return;
     }
-    this.setErrorMessage('Retrying connection');
-    this.setErrorStatus('');
+    this.setErrorMessage('Connection closed');
+    this.setErrorStatus('Will retry in a few seconds.');
     this.show();
   }
 

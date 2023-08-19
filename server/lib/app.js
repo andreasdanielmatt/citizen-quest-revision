@@ -73,7 +73,8 @@ function initApp(config) {
 
   const wss = new ws.Server({ noServer: true, clientTracking: true });
 
-  wss.on('connection', (socket, request) => {
+  wss.on('connection', (socket) => {
+    // eslint-disable-next-line no-underscore-dangle
     const ip = socket._socket.remoteAddress;
     console.log(`Client connected from ${ip}`);
     console.log(`Connected (${wss.clients.size} clients)`);

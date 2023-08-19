@@ -33021,6 +33021,150 @@ exports["default"] = def;
 
 /***/ }),
 
+/***/ "./node_modules/deepmerge/dist/cjs.js":
+/*!********************************************!*\
+  !*** ./node_modules/deepmerge/dist/cjs.js ***!
+  \********************************************/
+/***/ ((module) => {
+
+"use strict";
+
+
+var isMergeableObject = function isMergeableObject(value) {
+	return isNonNullObject(value)
+		&& !isSpecial(value)
+};
+
+function isNonNullObject(value) {
+	return !!value && typeof value === 'object'
+}
+
+function isSpecial(value) {
+	var stringValue = Object.prototype.toString.call(value);
+
+	return stringValue === '[object RegExp]'
+		|| stringValue === '[object Date]'
+		|| isReactElement(value)
+}
+
+// see https://github.com/facebook/react/blob/b5ac963fb791d1298e7f396236383bc955f916c1/src/isomorphic/classic/element/ReactElement.js#L21-L25
+var canUseSymbol = typeof Symbol === 'function' && Symbol.for;
+var REACT_ELEMENT_TYPE = canUseSymbol ? Symbol.for('react.element') : 0xeac7;
+
+function isReactElement(value) {
+	return value.$$typeof === REACT_ELEMENT_TYPE
+}
+
+function emptyTarget(val) {
+	return Array.isArray(val) ? [] : {}
+}
+
+function cloneUnlessOtherwiseSpecified(value, options) {
+	return (options.clone !== false && options.isMergeableObject(value))
+		? deepmerge(emptyTarget(value), value, options)
+		: value
+}
+
+function defaultArrayMerge(target, source, options) {
+	return target.concat(source).map(function(element) {
+		return cloneUnlessOtherwiseSpecified(element, options)
+	})
+}
+
+function getMergeFunction(key, options) {
+	if (!options.customMerge) {
+		return deepmerge
+	}
+	var customMerge = options.customMerge(key);
+	return typeof customMerge === 'function' ? customMerge : deepmerge
+}
+
+function getEnumerableOwnPropertySymbols(target) {
+	return Object.getOwnPropertySymbols
+		? Object.getOwnPropertySymbols(target).filter(function(symbol) {
+			return Object.propertyIsEnumerable.call(target, symbol)
+		})
+		: []
+}
+
+function getKeys(target) {
+	return Object.keys(target).concat(getEnumerableOwnPropertySymbols(target))
+}
+
+function propertyIsOnObject(object, property) {
+	try {
+		return property in object
+	} catch(_) {
+		return false
+	}
+}
+
+// Protects from prototype poisoning and unexpected merging up the prototype chain.
+function propertyIsUnsafe(target, key) {
+	return propertyIsOnObject(target, key) // Properties are safe to merge if they don't exist in the target yet,
+		&& !(Object.hasOwnProperty.call(target, key) // unsafe if they exist up the prototype chain,
+			&& Object.propertyIsEnumerable.call(target, key)) // and also unsafe if they're nonenumerable.
+}
+
+function mergeObject(target, source, options) {
+	var destination = {};
+	if (options.isMergeableObject(target)) {
+		getKeys(target).forEach(function(key) {
+			destination[key] = cloneUnlessOtherwiseSpecified(target[key], options);
+		});
+	}
+	getKeys(source).forEach(function(key) {
+		if (propertyIsUnsafe(target, key)) {
+			return
+		}
+
+		if (propertyIsOnObject(target, key) && options.isMergeableObject(source[key])) {
+			destination[key] = getMergeFunction(key, options)(target[key], source[key], options);
+		} else {
+			destination[key] = cloneUnlessOtherwiseSpecified(source[key], options);
+		}
+	});
+	return destination
+}
+
+function deepmerge(target, source, options) {
+	options = options || {};
+	options.arrayMerge = options.arrayMerge || defaultArrayMerge;
+	options.isMergeableObject = options.isMergeableObject || isMergeableObject;
+	// cloneUnlessOtherwiseSpecified is added to `options` so that custom arrayMerge()
+	// implementations can use it. The caller may not replace it.
+	options.cloneUnlessOtherwiseSpecified = cloneUnlessOtherwiseSpecified;
+
+	var sourceIsArray = Array.isArray(source);
+	var targetIsArray = Array.isArray(target);
+	var sourceAndTargetTypesMatch = sourceIsArray === targetIsArray;
+
+	if (!sourceAndTargetTypesMatch) {
+		return cloneUnlessOtherwiseSpecified(source, options)
+	} else if (sourceIsArray) {
+		return options.arrayMerge(target, source, options)
+	} else {
+		return mergeObject(target, source, options)
+	}
+}
+
+deepmerge.all = function deepmergeAll(array, options) {
+	if (!Array.isArray(array)) {
+		throw new Error('first argument should be an array')
+	}
+
+	return array.reduce(function(prev, next) {
+		return deepmerge(prev, next, options)
+	}, {})
+};
+
+var deepmerge_1 = deepmerge;
+
+module.exports = deepmerge_1;
+
+
+/***/ }),
+
 /***/ "./node_modules/events/events.js":
 /*!***************************************!*\
   !*** ./node_modules/events/events.js ***!
@@ -39637,135 +39781,278 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 /***/ }),
 
-/***/ "./src/js/lib/app/map-app.js":
-/*!***********************************!*\
-  !*** ./src/js/lib/app/map-app.js ***!
-  \***********************************/
+/***/ "./src/js/lib/app/player-app.js":
+/*!**************************************!*\
+  !*** ./src/js/lib/app/player-app.js ***!
+  \**************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 /* globals PIXI */
-
-__webpack_require__(/*! ../helpers-web/fill-with-aspect */ "./src/js/lib/helpers-web/fill-with-aspect.js");
-const Stats = __webpack_require__(/*! ../helpers-web/stats */ "./src/js/lib/helpers-web/stats.js");
-const StorylineManager = __webpack_require__(/*! ../model/storyline-manager */ "./src/js/lib/model/storyline-manager.js");
-const FlagStore = __webpack_require__(/*! ../dialogues/flag-store */ "./src/js/lib/dialogues/flag-store.js");
-const QuestTracker = __webpack_require__(/*! ../model/quest-tracker */ "./src/js/lib/model/quest-tracker.js");
+const Stats = __webpack_require__(/*! ../helpers-web/stats.js */ "./src/js/lib/helpers-web/stats.js");
 const TownView = __webpack_require__(/*! ../views/town-view */ "./src/js/lib/views/town-view.js");
+__webpack_require__(/*! ../helpers-web/fill-with-aspect */ "./src/js/lib/helpers-web/fill-with-aspect.js");
 const PCView = __webpack_require__(/*! ../views/pc-view */ "./src/js/lib/views/pc-view.js");
 const CharacterView = __webpack_require__(/*! ../views/character-view */ "./src/js/lib/views/character-view.js");
-const Character = __webpack_require__(/*! ../model/character */ "./src/js/lib/model/character.js");
 const KeyboardInputMgr = __webpack_require__(/*! ../input/keyboard-input-mgr */ "./src/js/lib/input/keyboard-input-mgr.js");
-const MapMarker = __webpack_require__(/*! ../views/map-marker */ "./src/js/lib/views/map-marker.js");
+const GamepadInputMgr = __webpack_require__(/*! ../input/gamepad-input-mgr */ "./src/js/lib/input/gamepad-input-mgr.js");
+const MultiplexInputMgr = __webpack_require__(/*! ../input/multiplex-input-mgr */ "./src/js/lib/input/multiplex-input-mgr.js");
+const PlayerAppInputRouter = __webpack_require__(/*! ../input/player-app-input-router */ "./src/js/lib/input/player-app-input-router.js");
+const Character = __webpack_require__(/*! ../model/character */ "./src/js/lib/model/character.js");
+const FlagStore = __webpack_require__(/*! ../dialogues/flag-store */ "./src/js/lib/dialogues/flag-store.js");
+const StorylineManager = __webpack_require__(/*! ../model/storyline-manager */ "./src/js/lib/model/storyline-manager.js");
+const QuestTracker = __webpack_require__(/*! ../model/quest-tracker */ "./src/js/lib/model/quest-tracker.js");
+const QuestOverlay = __webpack_require__(/*! ../ui/questOverlay */ "./src/js/lib/ui/questOverlay.js");
+const DialogueOverlay = __webpack_require__(/*! ../dialogues/dialogue-overlay */ "./src/js/lib/dialogues/dialogue-overlay.js");
+const DialogueSequencer = __webpack_require__(/*! ../dialogues/dialogue-sequencer */ "./src/js/lib/dialogues/dialogue-sequencer.js");
+const Countdown = __webpack_require__(/*! ../helpers-web/countdown */ "./src/js/lib/helpers-web/countdown.js");
+const DecisionScreen = __webpack_require__(/*! ../ui/decisionScreen */ "./src/js/lib/ui/decisionScreen.js");
+const ScoringOverlay = __webpack_require__(/*! ../ui/scoringOverlay */ "./src/js/lib/ui/scoringOverlay.js");
+const { I18nTextAdapter } = __webpack_require__(/*! ../helpers/i18n */ "./src/js/lib/helpers/i18n.js");
+const readEnding = __webpack_require__(/*! ../dialogues/ending-reader */ "./src/js/lib/dialogues/ending-reader.js");
 
-class MapApp {
-  constructor(config, textures) {
+class PlayerApp {
+  constructor(config, textures, playerId) {
     this.config = config;
     this.textures = textures;
+    this.lang = config.game.defaultLanguage;
+    this.playerId = playerId;
 
     // Game logic
     this.flags = new FlagStore();
-    this.storylineManager = new StorylineManager(config);
+    this.storylineManager = new StorylineManager(this.config);
     this.storylineManager.events.on('storylineChanged',
       this.handleStorylineChanged.bind(this));
-    window.setStoryline = this.storylineManager.setCurrentStoryline.bind(this.storylineManager);
 
     this.questTracker = new QuestTracker(config, this.storylineManager, this.flags);
-    this.questMarkers = {};
 
-    this.questTracker.events.on('questActive', () => {
-      this.updateQuestMarkers();
-    });
-    this.questTracker.events.on('questDone', () => {
-      this.updateQuestMarkers();
-    });
+    this.pc = new Character(playerId, this.config.players[playerId]);
+    this.canControlPc = false;
+    this.remotePcs = {};
 
-    this.pcs = {};
-    this.pcViews = {};
+    this.pcView = null;
+    this.showHitbox = false;
+    this.remotePcViews = {};
     this.npcViews = {};
 
     // HTML elements
     this.$element = $('<div></div>')
-      .addClass('map-app');
+      .addClass('player-app');
 
     this.$pixiWrapper = $('<div></div>')
       .addClass('pixi-wrapper')
       .appendTo(this.$element);
 
+    this.$storylineBar = $('<div></div>')
+      .addClass('storyline-bar')
+      .appendTo(this.$element)
+      .hide();
+
+    this.$decisionLabel = $('<div></div>')
+      .addClass('decision-label')
+      .appendTo(this.$storylineBar);
+
+    this.decisionLabelI18n = new I18nTextAdapter((text) => {
+      this.$decisionLabel.html(text);
+    }, this.lang);
+
+    this.endingScreen = null;
+
+    this.countdown = new Countdown(config.game.duration);
+    this.countdown.$element.appendTo(this.$element);
+    this.countdown.events.on('end', () => {
+      this.handleStorylineEnd();
+    });
+
+    this.questOverlay = new QuestOverlay(this.config, this.lang, this.questTracker);
+    this.$element.append(this.questOverlay.$element);
+
+    this.dialogueOverlay = new DialogueOverlay(this.config, this.lang);
+    this.dialogueSequencer = new DialogueSequencer(this.dialogueOverlay);
+    this.$element.append(this.dialogueOverlay.$element);
+
+    this.scoringOverlay = new ScoringOverlay(this.config);
+    this.$element.append(this.scoringOverlay.$element);
+
+    this.stats = new Stats();
+    this.$element.append(this.stats.dom);
+
+    // Temporary scoring manager
+    const seenFlags = {};
+    this.flags.events.on('flag', (flagId) => {
+      if (seenFlags[flagId]) {
+        return;
+      }
+      seenFlags[flagId] = true;
+      if (flagId.startsWith('pnt.')) {
+        const flagParts = flagId.split('.');
+        const category = flagParts[1];
+        if (category) {
+          this.scoringOverlay.show(category);
+        }
+      }
+    });
+
     // PIXI
     this.pixiApp = new PIXI.Application({
-      width: MapApp.APP_WIDTH,
-      height: MapApp.APP_HEIGHT,
+      // todo: get these from config or constants
+      width: PlayerApp.APP_WIDTH,
+      height: PlayerApp.APP_HEIGHT,
       backgroundColor: 0xffffff,
     });
     this.$pixiWrapper.append(this.pixiApp.view);
 
     this.camera = new PIXI.Container();
-    this.pixiApp.stage.addChild(this.camera);
     this.townView = new TownView(this.config, this.textures);
     this.camera.addChild(this.townView.display);
-
-    this.camera.width = MapApp.APP_WIDTH;
-    this.camera.height = MapApp.APP_HEIGHT;
-
-    // HTML Overlays
-    this.stats = new Stats();
-    this.$element.append(this.stats.dom);
+    this.pixiApp.stage.addChild(this.camera);
 
     // Input
     this.keyboardInputMgr = new KeyboardInputMgr();
     this.keyboardInputMgr.attachListeners();
-    this.keyboardInputMgr.addToggle('KeyD', () => { this.stats.togglePanel(); });
+    this.keyboardInputMgr.addToggle('KeyE', () => {
+      this.countdown.forceEnd();
+    });
+    this.keyboardInputMgr.addToggle('KeyD', () => {
+      this.stats.togglePanel();
+    });
+    this.keyboardInputMgr.addToggle('KeyH', () => {
+      this.toggleHitboxDisplay();
+    });
+    this.keyboardInputMgr.addToggle('KeyX', () => {
+      console.log(`x: ${this.pc.position.x}, y: ${this.pc.position.y}`);
+    });
+
+    const gamepadMapperConfig =
+      this.config?.players?.[this.playerId]?.['gamepadMapping'] ?? {};
+    this.gamepadInputMgr = new GamepadInputMgr(gamepadMapperConfig);
+    this.gamepadInputMgr.attachListeners();
+
+    this.multiplexInputMgr = new MultiplexInputMgr(
+      this.keyboardInputMgr,
+      this.gamepadInputMgr
+    );
+    this.multiplexInputMgr.attachListeners();
+
+    const inputMgrs = [
+      this.keyboardInputMgr,
+      this.gamepadInputMgr,
+      this.multiplexInputMgr, // the multiplexer must be the last one
+    ];
+
+    const inputMgr = this.multiplexInputMgr;
+    inputMgr.events.on('lang', () => {
+      this.toggleLanguage();
+    });
+
+    this.inputRouter = new PlayerAppInputRouter(inputMgr);
+    this.inputRouter.routeToPcMovement(this);
 
     // Game loop
     this.pixiApp.ticker.add((time) => {
       this.stats.frameBegin();
+      inputMgrs.forEach((inputMgr) => inputMgr.update());
+      if (this.canControlPc && this.pc) {
+        const { x, y } = inputMgr.getDirection();
+        this.pc.setSpeed(x * 10, y * 10);
+      }
 
-      Object.entries(this.pcViews).forEach(([, pcView]) => {
+      Object.entries(this.remotePcViews).forEach(([, pcView]) => {
         pcView.display.position = pcView.character.position;
         pcView.display.zIndex = pcView.character.position.y;
         pcView.animate(time);
       });
       this.townView.mainLayer.sortChildren();
 
+      if (this.pcView) {
+        this.pcView.animate(time);
+        // Set the town view's pivot so the PC is always centered on the screen,
+        // but don't let the pivot go off the edge of the town
+        this.camera.pivot.set(
+          Math.max(0,
+            Math.min(this.pcView.display.x + this.pcView.display.width / 2 - PlayerApp.APP_WIDTH / 2
+              / this.camera.scale.x,
+              this.townView.townSize.width - PlayerApp.APP_WIDTH / this.camera.scale.x)),
+          Math.max(0,
+            Math.min(this.pcView.display.y - this.pcView.display.height * 0.8 - PlayerApp.APP_HEIGHT
+              / 2 / this.camera.scale.y,
+              this.townView.townSize.height - PlayerApp.APP_HEIGHT / this.camera.scale.y)),
+        );
+      }
       this.stats.frameEnd();
     });
 
+    this.questTracker.events.on('questActive', (questId) => {
+      this.updateNpcMoods();
+    });
+    this.questTracker.events.on('questDone', (questId) => {
+      this.updateNpcMoods();
+    });
+
     // Temporary
+    this.addPcView();
+    Object.entries(this.config.players)
+      .filter(([id, player]) => (player.enabled === undefined || player.enabled) && id !== playerId)
+      .forEach(([id, player]) => {
+        this.addRemotePcView(id);
+      });
     this.storylineManager.setCurrentStoryline('touristen');
-    this.addPc('1');
-    this.addPc('2');
-    this.addPc('3');
+  }
+
+  setLanguage(lang) {
+    this.lang = lang;
+    this.dialogueOverlay.setLang(this.lang);
+    this.questOverlay.setLang(this.lang);
+    this.decisionLabelI18n.setLang(this.lang);
+    if (this.endingScreen) {
+      this.endingScreen.setLang(this.lang);
+    }
+  }
+
+  toggleLanguage() {
+    const langIndex = this.config.game.languages.indexOf(this.lang);
+    if (langIndex === this.config.game.languages.length - 1) {
+      this.setLanguage(this.config.game.languages[0]);
+    } else {
+      this.setLanguage(this.config.game.languages[langIndex + 1]);
+    }
   }
 
   resize() {
-    this.$element.fillWithAspect(MapApp.APP_WIDTH / MapApp.APP_HEIGHT);
-    this.$element.css('font-size', `${(this.$element.width() * MapApp.FONT_RATIO).toFixed(3)}px`);
+    this.$element.fillWithAspect(PlayerApp.APP_WIDTH / PlayerApp.APP_HEIGHT);
+    this.$element.css('font-size', `${(this.$element.width() * PlayerApp.FONT_RATIO).toFixed(3)}px`);
   }
 
-  handleStorylineChanged() {
-    this.clearNpcs();
-    Object.entries(this.storylineManager.getNpcs()).forEach(([id, props]) => {
-      this.addNpc(new Character(id, props));
-    });
-    this.updateQuestMarkers();
+  addPcView() {
+    this.removePcView();
+
+    this.pcView = new PCView(this.config, this.textures, this.pc, this.townView);
+    this.townView.mainLayer.addChild(this.pcView.display);
+    this.townView.bgLayer.addChild(this.pcView.hitboxDisplay);
   }
 
-  addPc(id) {
-    const pc = new Character(id, this.config.players[id]);
-    this.pcs[id] = pc;
-
-    const view = new PCView(this.config, this.textures, pc, this.townView);
-    this.pcViews[id] = view;
-    this.townView.mainLayer.addChild(view.display);
-
-    this.addMarker(view, `player-${id}`);
+  removePcView() {
+    if (this.pcView) {
+      this.townView.mainLayer.removeChild(this.pcView.display);
+      this.townView.bgLayer.removeChild(this.pcView.hitboxDisplay);
+      this.pcView = null;
+    }
   }
 
-  removePc(id) {
-    if (this.pcViews[id]) {
-      this.townView.mainLayer.removeChild(this.pcViews[id].display);
-      delete this.pcs[id];
-      delete this.pcViews[id];
+  addRemotePcView(id) {
+    if (this.config.players[id]) {
+      const pc = new Character(id, this.config.players[id]);
+      this.remotePcs[id] = pc;
+      const view = new PCView(this.config, this.textures, pc, this.townView);
+      this.remotePcViews[id] = view;
+      this.townView.mainLayer.addChild(view.display);
+    }
+  }
+
+  removeRemotePcView(id) {
+    if (this.remotePcViews[id]) {
+      this.townView.mainLayer.removeChild(this.remotePcViews[id].display);
+      delete this.remotePcs[id];
+      delete this.remotePcViews[id];
     }
   }
 
@@ -39786,61 +40073,646 @@ class MapApp {
     Object.values(this.npcViews).forEach((npcView) => {
       this.townView.mainLayer.removeChild(npcView.display);
     });
-    this.npcViews = [];
+    this.npcViews = { };
   }
 
-  addMarker(character, icon) {
-    const marker = new MapMarker(
-      this.textures['map-markers'].textures['pin-marker'],
-      this.textures.icons.textures[`icon-${icon}`], { x: 0.5, y: 1 }
-    );
-    marker.setScale(this.townView.display.width / MapApp.APP_WIDTH);
-    character.addAttachment('map-marker', marker);
-    character.display.addChild(marker.display);
-    marker.setPosition(0, -character.display.height);
-    marker.popper.show();
+  enablePcControl() {
+    this.canControlPc = true;
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  removeMarker(character, onComplete = () => {}) {
-    const marker = character.getAttachment('map-marker');
-    if (marker) {
-      marker.hide(() => {
-        character.removeAttachment('map-marker');
-        onComplete();
-      });
-    } else {
-      onComplete();
+  disablePcControl() {
+    this.canControlPc = false;
+    this.pc.setSpeed(0, 0);
+  }
+
+  getDialogueContext() {
+    return {
+      flags: this.flags,
+        random: max => Math.floor(Math.random() * max),
+    };
+  }
+
+  playDialogue(dialogue, npc = null) {
+    this.inputRouter.routeToDialogueOverlay(this.dialogueOverlay, this.dialogueSequencer);
+    const title = npc ? npc.name : null;
+    this.dialogueSequencer.play(dialogue, this.getDialogueContext(), { top: title });
+    this.dialogueSequencer.events.once('end', () => {
+      this.inputRouter.routeToPcMovement(this);
+    });
+  }
+
+  getNpcsInRect(rect) {
+    return Object.values(this.npcViews).filter(npcView => npcView.inRect(rect))
+      .map(npcView => npcView.character);
+  }
+
+  pcAction() {
+    const hitbox = this.pcView.getActionHitbox();
+    const npcs = this.getNpcsInRect(hitbox);
+    let closestNpc = null;
+    let closestDistance = null;
+    npcs.forEach((npc) => {
+      const distance = Math.max(
+        Math.abs(this.pc.position.x - npc.position.x),
+        Math.abs(this.pc.position.y - npc.position.y)
+      );
+      if (closestDistance === null || distance < closestDistance) {
+        closestNpc = npc;
+        closestDistance = distance;
+      }
+    });
+    if (closestNpc) {
+      this.playDialogue(this.storylineManager.getDialogue(closestNpc.dialogue || closestNpc.id), closestNpc);
+    }
+    if (this.showHitbox) {
+      this.pcView.showActionHitbox(hitbox);
     }
   }
 
-  updateQuestMarkers() {
+  updateNpcMoods() {
     const npcsWithQuests = this.questTracker.getNpcsWithQuests();
     Object.values(this.npcViews).forEach((npcView) => {
-      const npcId = npcView.character.id;
-      if (Object.keys(npcsWithQuests).includes(npcId)) {
-        const questIcon = npcsWithQuests[npcView.character.id];
-        if (this.questMarkers[npcId] === undefined) {
-          this.addMarker(npcView, questIcon);
-        } else if (this.questMarkers[npcId] !== questIcon) {
-          this.removeMarker(npcView, () => {
-            this.addMarker(npcView, questIcon);
-          });
-        }
-        this.questMarkers[npcId] = questIcon;
-      } else if (this.questMarkers[npcId]) {
-        delete this.questMarkers[npcId];
-        this.removeMarker(npcView);
+      if (Object.keys(npcsWithQuests).includes(npcView.character.id)) {
+        npcView.showMoodBalloon(npcsWithQuests[npcView.character.id]);
+      } else {
+        npcView.hideMoodBalloon();
       }
     });
   }
+
+  toggleHitboxDisplay() {
+    this.showHitbox = !this.showHitbox;
+  }
+
+  handleStorylineChanged() {
+    this.decisionLabelI18n.setText(this.storylineManager.getDecision());
+    this.clearNpcs();
+    Object.entries(this.storylineManager.getNpcs()).forEach(([id, props]) => {
+      this.addNpc(new Character(id, props));
+    });
+    this.updateNpcMoods();
+    this.countdown.start();
+  }
+
+  handleStorylineEnd() {
+    const [ endingText, classes ] = readEnding(this.storylineManager.getDialogue('_ending'), this.getDialogueContext());
+
+    this.inputRouter.unroute();
+    this.endingScreen = new DecisionScreen(this.config, this.lang);
+    this.$element.append(this.endingScreen.$element);
+    this.endingScreen.showDecision(endingText, classes);
+  }
 }
 
-MapApp.APP_WIDTH = 1920;
-MapApp.APP_HEIGHT = 1080;
-MapApp.FONT_RATIO = 0.0175; // 1.75% of the width of the app
+PlayerApp.APP_WIDTH = 1024;
+PlayerApp.APP_HEIGHT = 768;
+PlayerApp.FONT_RATIO = 0.0175; // 1.75% of the width of the app
 
-module.exports = MapApp;
+module.exports = PlayerApp;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/dialogues/dialogue-balloon.js":
+/*!**************************************************!*\
+  !*** ./src/js/lib/dialogues/dialogue-balloon.js ***!
+  \**************************************************/
+/***/ ((module) => {
+
+class DialogueBalloon {
+  constructor(classes) {
+    this.$element = $('<div></div>')
+      .addClass('balloon')
+      .addClass(classes);
+    this.$styling = $('<div></div>')
+      .appendTo(this.$element);
+    this.$title = $('<div></div>')
+      .addClass('title')
+      .appendTo(this.$styling);
+  }
+
+  show() {
+    this.cancelHide();
+    this.$element.addClass('visible');
+  }
+
+  setTitle(title = null) {
+    if (title === null) {
+      this.$title.hide();
+    } else {
+      this.$title.html(title);
+    }
+  }
+
+  setClasses(classes) {
+    this.removeClasses();
+    this.$styling.addClass(classes);
+  }
+
+  removeClasses() {
+    this.$styling.removeClass();
+  }
+
+  hide() {
+    this.$element.addClass('fading');
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+    }
+    this.timeout = setTimeout(() => {
+      this.$element.removeClass('fading');
+      this.$element.removeClass('visible');
+      this.$element.removeClass('press-to-continue');
+    }, 250);
+  }
+
+  cancelHide() {
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+    }
+    this.$element.removeClass('fading');
+  }
+
+  showPressToContinue() {
+    this.$element.addClass('press-to-continue');
+  }
+
+  hidePressToContinue() {
+    this.$element.removeClass('press-to-continue');
+  }
+
+  empty() {
+    this.$element.empty();
+  }
+
+  append(element) {
+    this.$element.append(element);
+  }
+}
+
+module.exports = DialogueBalloon;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/dialogues/dialogue-iterator.js":
+/*!***************************************************!*\
+  !*** ./src/js/lib/dialogues/dialogue-iterator.js ***!
+  \***************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const LogicParser = __webpack_require__(/*! ./logic-parser */ "./src/js/lib/dialogues/logic-parser.js");
+const DialogueSchema = __webpack_require__(/*! ../../../../specs/dialogue.schema.json */ "./specs/dialogue.schema.json");
+
+/**
+ * An interface for the context object passed to the dialogue iterator.
+ * @interface
+ */
+// eslint-disable-next-line no-unused-vars
+class DialogueIteratorContextInterface {
+  /**
+   * Returns a random number between 0 and max.
+   * @param {number} max
+   */
+  // eslint-disable-next-line no-unused-vars,class-methods-use-this
+  random(max) {
+    throw new Error('Not implemented');
+  }
+
+  /**
+   * @property {FlagStore} flags
+   */
+}
+
+/**
+ * Iterates through a dialogue tree.
+ */
+class DialogueIterator {
+  /**
+   * Creates a new iterator for the given dialogue.
+   *
+   * @param {Dialogue} dialogue
+   * @param {DialogueIteratorContextInterface} context
+   */
+  constructor(dialogue, context) {
+    this.dialogue = dialogue;
+    this.context = context;
+    this.conditionParser = new LogicParser(context);
+    this.reset();
+  }
+
+  /**
+   * Resets the iterator to the beginning of the dialogue.
+   */
+  reset() {
+    this.activeNode = this.dialogue.root;
+  }
+
+  /**
+   * Returns true if the iterator has reached the end of the dialogue.
+   * @returns {boolean}
+   */
+  isEnd() {
+    return this.activeNode === null;
+  }
+
+  /**
+   * Returns the current active node.
+   * @returns {*|null}
+   */
+  getActiveNode() {
+    return this.activeNode;
+  }
+
+  /**
+   * Returns responses in the current active node that have all their conditions met.
+   *
+   * @returns {Array|null}
+   */
+  getEnabledResponses() {
+    if (this.activeNode === null) {
+      return null;
+    }
+
+    if (!this.activeNode.responses) {
+      return null;
+    }
+
+    return this.activeNode.responses
+      .filter(response => !response.cond || !!this.conditionParser.evaluate(response.cond));
+  }
+
+  /**
+   * Returns the response with the given ID in the active node.
+   *
+   * @param {string} responseId
+   * @returns {Object|null}
+   */
+  getResponse(responseId) {
+    if (this.activeNode === null) {
+      return null;
+    }
+
+    if (!this.activeNode.responses) {
+      return null;
+    }
+
+    return this.activeNode.responsesById[responseId];
+  }
+
+  /**
+   * Advances the iterator to the next node.
+   *
+   * @throws Error if the active node type is unknown.
+   */
+  next() {
+    if (this.activeNode === null) {
+      return;
+    }
+
+    const enabledResponses = this.getEnabledResponses();
+    if (enabledResponses && enabledResponses.length > 0) {
+      throw new Error(`Can't use next() on a node of type 'statement' with responses (${this.activeNode.id}:${this.dialogue.root.id})`);
+    }
+
+    this.setFlags(this.activeNode.set);
+
+    let transitioned = false;
+    switch (this.activeNode.type) {
+      case 'statement':
+        transitioned = this.nextOnStatement();
+        break;
+      case 'root':
+      case 'first':
+        transitioned = this.nextOnFirst();
+        break;
+      case 'sequence':
+        transitioned = this.nextOnSequence();
+        break;
+      case 'random':
+        transitioned = this.nextOnRandom();
+        break;
+      default:
+        throw new Error(`Unknown node type: ${this.activeNode.type} (${this.activeNode.id}:${this.dialogue.root.id})`);
+    }
+    if (transitioned === false) {
+      transitioned = this.nextThroughParent();
+    }
+    if (transitioned === false) {
+      this.activeNode = null;
+    }
+  }
+
+  nextWithResponse(responseId) {
+    if (this.activeNode === null) {
+      return;
+    }
+
+    if (this.activeNode.responses === undefined) {
+      throw new Error(`Can't use nextWithResponse on a node without responses (${this.activeNode.type}:${this.dialogue.root.id})`);
+    }
+
+    const response = this.activeNode.responsesById[responseId];
+    if (!response) {
+      throw new Error(`Unknown response id: ${responseId} (${this.activeNode.id}:${this.dialogue.root.id})`);
+    }
+
+    this.setFlags(this.activeNode.set);
+    this.setFlags(response.set);
+    if (response.then) {
+      this.goTo(response.then);
+      return;
+    }
+
+    if (!this.nextOnStatement()) {
+      this.activeNode = null;
+    }
+  }
+
+  /**
+   * Jumps to a node identified by its id.
+   *
+   * @private
+   * @throws Error if the node id is not found.
+   * @param {string} nodeId
+   */
+  goTo(nodeId) {
+    const nextNode = this.dialogue.getNode(nodeId);
+    if (nextNode === undefined) {
+      throw new Error(`Can't find node id: ${nodeId} (active node = ${this.activeNode}:${this.dialogue.root.id})`);
+    }
+    this.activeNode = nextNode;
+  }
+
+  getEnabledItems(items) {
+    if (!items) return [];
+    return items.filter((item) => {
+      try {
+        return (item.cond === undefined || items.cond === null || item.cond.trim() === ''
+          || this.conditionParser.evaluate(item.cond));
+      } catch (e) {
+        throw new Error(`Error parsing condition: ${item.cond} (${this.activeNode.id}:${this.dialogue.root.id}): ${e.message}`);
+      }
+    });
+  }
+
+  setFlags(assignments) {
+    if (!assignments) return;
+    assignments.forEach((assignment) => {
+      this.processAssignment(assignment);
+    });
+  }
+
+  processAssignment(assignment) {
+    // Parse through a regex
+    // flag ((operator) intLiteral)?
+    const match = assignment.match(/([a-zA-Z_][.a-zA-Z0-9_]*)(\s*([+-]?=)\s*([0-9]{1,3}))?/);
+    if (!match) {
+      throw new Error(`Invalid assignment: ${assignment} (${this.activeNode.id}:${this.dialogue.root.id})`);
+    }
+    const [, flag, , operator, intLiteral] = match;
+    if (operator === undefined) {
+      this.context.flags.touch(flag);
+    }
+    if (operator === '=') {
+      this.context.flags.set(flag, parseInt(intLiteral, 10));
+    }
+    if (operator === '+=') {
+      this.context.flags.inc(flag, parseInt(intLiteral, 10));
+    }
+    if (operator === '-=') {
+      this.context.flags.dec(flag, parseInt(intLiteral, 10));
+    }
+  }
+
+  /**
+   * Jumps to the next node when the active node is of type 'first'
+   *
+   * @private
+   * @returns {boolean} true if the transition to the next node was successful.
+   */
+  nextOnFirst() {
+    const matchingItems = this.getEnabledItems(this.activeNode.items);
+    this.activeNode = matchingItems.length > 0 ? matchingItems[0] : null;
+    return true;
+  }
+
+  /**
+   * Jumps to the next node when the active node is of type 'sequence'
+   *
+   * @private
+   * @returns {boolean} true if the transition to the next node was successful.
+   */
+  nextOnSequence() {
+    const matchingItems = this.getEnabledItems(this.activeNode.items);
+    if (matchingItems.length > 0) {
+      [this.activeNode] = matchingItems;
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Jumps to the next node when the active node is of type 'random'
+   *
+   * @private
+   * @returns {boolean} true if the transition to the next node was successful.
+   */
+  nextOnRandom() {
+    const matchingItems = this.getEnabledItems(this.activeNode.items);
+    if (matchingItems.length > 0) {
+      const index = this.context.random(matchingItems.length);
+      this.activeNode = matchingItems[index];
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Jumps to the next node when the active node is of type 'statement'
+   *
+   * @private
+   * @returns {boolean} true if the transition to the next node was successful.
+   */
+  nextOnStatement() {
+    if (this.activeNode.then) {
+      this.goTo(this.activeNode.then);
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Jumps to the next node by traversing the parent nodes.
+   *
+   * @private
+   * @returns {boolean} true if the transition to the next node was successful.
+   */
+  nextThroughParent() {
+    let currentParent = this.activeNode.parent;
+    let currentChild = this.activeNode;
+    while (currentParent) {
+      if (currentParent.type === 'sequence') {
+        const matchingItems = this.getEnabledItems(currentParent.items);
+        const index = matchingItems.indexOf(currentChild);
+        if (index < matchingItems.length - 1) {
+          this.activeNode = matchingItems[index + 1];
+          return true;
+        }
+      }
+      if (currentParent.then) {
+        this.goTo(currentParent.then);
+        return true;
+      }
+      currentChild = currentParent;
+      currentParent = currentParent.parent;
+    }
+    return false;
+  }
+}
+
+module.exports = DialogueIterator;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/dialogues/dialogue-overlay.js":
+/*!**************************************************!*\
+  !*** ./src/js/lib/dialogues/dialogue-overlay.js ***!
+  \**************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
+const DialogueBalloon = __webpack_require__(/*! ./dialogue-balloon */ "./src/js/lib/dialogues/dialogue-balloon.js");
+const SpeechText = __webpack_require__(/*! ./speech-text */ "./src/js/lib/dialogues/speech-text.js");
+const { I18nTextAdapter } = __webpack_require__(/*! ../helpers/i18n */ "./src/js/lib/helpers/i18n.js");
+
+class DialogueOverlay {
+  constructor(config, lang) {
+    this.config = config;
+    this.events = new EventEmitter();
+    this.lang = lang;
+
+    this.$element = $('<div></div>')
+      .addClass('dialogue-overlay');
+
+    this.balloonTop = new DialogueBalloon(['balloon-speech', 'top']);
+    this.$element.append(this.balloonTop.$element);
+    this.topTitleI18n = new I18nTextAdapter((text) => {
+      this.balloonTop.setTitle(text);
+    }, this.lang);
+
+    this.balloonBottom = new DialogueBalloon(['bottom']);
+    this.$element.append(this.balloonBottom.$element);
+
+    this.speechTop = new SpeechText();
+    this.balloonTop.append(this.speechTop.$element);
+    this.speechTop.events.on('complete', () => {
+      this.events.emit('speechComplete');
+    });
+    this.speechTopI18n = new I18nTextAdapter((text) => {
+      const { revealComplete } = this.speechTop;
+      this.speechTop.showText([{ string: text }]);
+      if (revealComplete) {
+        this.speechTop.revealAll();
+      }
+    }, this.lang);
+
+    this.responseOptions = [];
+    this.selectedOption = 0;
+  }
+
+  setTopTitle(title) {
+    this.topTitleI18n.setText(title);
+  }
+
+  showSpeech(text, classes = null) {
+    this.balloonTop.show();
+    this.hidePressToContinue();
+    this.speechTop.clear();
+    this.speechTopI18n.setText(text, true);
+    this.balloonTop.removeClasses();
+    if (classes) {
+      this.balloonTop.setClasses(classes);
+    }
+  }
+
+  speedUpSpeech() {
+    this.speechTop.speedUp();
+  }
+
+  showResponseOptions(options) {
+    this.balloonBottom.empty();
+    this.balloonBottom.show();
+    this.selectedOption = 0;
+    this.responseOptions = Object.entries(options).map(([id, [text, classes]], i) => {
+      const label = $('<span></span>').addClass('text');
+      const element = $('<div></div>')
+        .addClass('response-option')
+        .addClass(classes)
+        .toggleClass('selected', i === this.selectedOption)
+        .append(label)
+        .appendTo(this.balloonBottom.$element);
+
+      const i18n = new I18nTextAdapter((newText) => {
+        label.text(newText);
+      }, this.lang, text);
+
+      return {
+        id,
+        element,
+        i18n,
+      };
+    });
+  }
+
+  setLang(lang) {
+    this.lang = lang;
+    this.topTitleI18n.setLang(lang);
+    this.speechTopI18n.setLang(lang);
+    this.responseOptions.forEach(option => option.i18n.setLang(lang));
+  }
+
+  hideSpeech() {
+    this.balloonTop.hide();
+  }
+
+  hideResponseOptions() {
+    this.balloonBottom.hide();
+  }
+
+  hide() {
+    this.hideSpeech();
+    this.hideResponseOptions();
+  }
+
+  selectResponseOption(index) {
+    this.selectedOption = Math.max(Math.min(index, this.responseOptions.length - 1), 0);
+    this.responseOptions.forEach((option, i) => option.element
+      .toggleClass('selected', i === this.selectedOption));
+  }
+
+  selectNextResponseOption() {
+    this.selectResponseOption(this.selectedOption + 1);
+  }
+
+  selectPreviousResponseOption() {
+    this.selectResponseOption(this.selectedOption - 1);
+  }
+
+  getSelectedResponseId() {
+    return this.responseOptions[this.selectedOption].id;
+  }
+
+  showPressToContinue() {
+    this.balloonTop.showPressToContinue();
+  }
+
+  hidePressToContinue() {
+    this.balloonTop.hidePressToContinue();
+  }
+}
+
+module.exports = DialogueOverlay;
 
 
 /***/ }),
@@ -39868,6 +40740,202 @@ function validateDialogueDefinition(dialogueDefinition) {
 }
 
 module.exports = { validateDialogueDefinition };
+
+
+/***/ }),
+
+/***/ "./src/js/lib/dialogues/dialogue-sequencer-states.js":
+/*!***********************************************************!*\
+  !*** ./src/js/lib/dialogues/dialogue-sequencer-states.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "DialogueSequencerResponseState": () => (/* binding */ DialogueSequencerResponseState),
+/* harmony export */   "DialogueSequencerState": () => (/* binding */ DialogueSequencerState),
+/* harmony export */   "DialogueSequencerTextState": () => (/* binding */ DialogueSequencerTextState),
+/* harmony export */   "DialogueSequencerThenTextState": () => (/* binding */ DialogueSequencerThenTextState)
+/* harmony export */ });
+class DialogueSequencerState {
+  constructor(dialogueSequencer) {
+    this.dialogueSequencer = dialogueSequencer;
+    this.dialogueOverlay = dialogueSequencer.dialogueOverlay;
+    this.dialogueIterator = dialogueSequencer.dialogueIterator;
+    this.activeNode = this.dialogueIterator.getActiveNode();
+  }
+
+  onBegin() {
+
+  }
+
+  onAction() {
+
+  }
+}
+
+class DialogueSequencerThenTextState extends DialogueSequencerState {
+  constructor(dialogueSequencer, responseId) {
+    super(dialogueSequencer);
+    this.responseId = responseId;
+  }
+
+  onBegin() {
+    this.speechDone = false;
+    const response = this.dialogueIterator.getResponse(this.responseId);
+    this.dialogueOverlay.showSpeech(response.thenText, response.thenClass || null);
+    this.dialogueOverlay.events.once('speechComplete', () => {
+      this.speechDone = true;
+      this.dialogueOverlay.showPressToContinue();
+    });
+  }
+
+  onAction() {
+    if (this.speechDone) {
+      this.dialogueOverlay.hideSpeech();
+      this.dialogueSequencer.endUi(this.responseId);
+    } else {
+      this.dialogueOverlay.speedUpSpeech();
+    }
+  }
+}
+
+class DialogueSequencerResponseState extends DialogueSequencerState {
+  constructor(dialogueSequencer) {
+    super(dialogueSequencer);
+    this.responses = this.dialogueIterator.getEnabledResponses();
+  }
+
+  onBegin() {
+    this.dialogueOverlay.showResponseOptions(
+      Object.fromEntries(this.responses.map(
+        response => [response.id, [response.text, response.class || null]]
+      ))
+    );
+  }
+
+  onAction() {
+    this.dialogueOverlay.hideResponseOptions();
+    this.dialogueOverlay.hideSpeech();
+    const responseId = this.dialogueOverlay.getSelectedResponseId();
+    const selectedResponse = this.dialogueIterator.getResponse(responseId);
+    if (selectedResponse.thenText) {
+      this.dialogueSequencer.setUiState(
+        new DialogueSequencerThenTextState(this.dialogueSequencer, responseId)
+      );
+    } else {
+      this.dialogueSequencer.endUi(responseId);
+    }
+  }
+}
+
+class DialogueSequencerTextState extends DialogueSequencerState {
+
+  onBegin() {
+    this.speechDone = false;
+    this.dialogueOverlay.showSpeech(this.activeNode.text, this.activeNode.class || null);
+    this.dialogueOverlay.events.once('speechComplete', () => {
+      this.speechDone = true;
+      const responses = this.dialogueIterator.getEnabledResponses();
+      if (responses && responses.length > 0) {
+        this.dialogueSequencer.setUiState(
+          new DialogueSequencerResponseState(this.dialogueSequencer)
+        );
+      } else {
+        this.dialogueOverlay.showPressToContinue();
+      }
+    });
+  }
+
+  onAction() {
+    if (this.speechDone) {
+      this.dialogueOverlay.hideSpeech();
+      this.dialogueSequencer.endUi();
+    } else {
+      this.dialogueOverlay.speedUpSpeech();
+    }
+  }
+}
+
+
+/***/ }),
+
+/***/ "./src/js/lib/dialogues/dialogue-sequencer.js":
+/*!****************************************************!*\
+  !*** ./src/js/lib/dialogues/dialogue-sequencer.js ***!
+  \****************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
+const DialogueIterator = __webpack_require__(/*! ./dialogue-iterator */ "./src/js/lib/dialogues/dialogue-iterator.js");
+const { DialogueSequencerTextState } = __webpack_require__(/*! ./dialogue-sequencer-states */ "./src/js/lib/dialogues/dialogue-sequencer-states.js");
+
+class DialogueSequencer {
+  constructor(dialogueOverlay) {
+    this.dialogueOverlay = dialogueOverlay;
+    this.dialogue = null;
+    this.dialogueIterator = null;
+    this.uiState = null;
+
+    this.events = new EventEmitter();
+  }
+
+  setUiState(state) {
+    this.uiState = state;
+    this.uiState.onBegin();
+  }
+
+  endUi(responseId = null) {
+    this.uiState = null;
+    if (responseId !== null) {
+      this.dialogueIterator.nextWithResponse(responseId);
+    } else {
+      this.dialogueIterator.next();
+    }
+    this.runUntilInteractivity();
+  }
+
+  play(dialogue, context, options) {
+    this.dialogue = dialogue;
+    this.dialogueOverlay.setTopTitle(options.top || null);
+    this.dialogueIterator = new DialogueIterator(dialogue, context);
+    this.runUntilInteractivity();
+  }
+
+  runUntilInteractivity() {
+    const { dialogueIterator } = this;
+
+    if (!this.handledByUI(dialogueIterator.getActiveNode())) {
+      do {
+        dialogueIterator.next();
+      } while (!dialogueIterator.isEnd() && !this.handledByUI(dialogueIterator.getActiveNode()));
+    }
+
+    if (this.handledByUI(dialogueIterator.getActiveNode())) {
+      this.setUiState(new DialogueSequencerTextState(this));
+    } else {
+      this.onDialogueEnd();
+    }
+  }
+
+  onDialogueEnd() {
+    this.dialogueOverlay.hide();
+    this.events.emit('end');
+  }
+
+  action() {
+    if (this.uiState) {
+      this.uiState.onAction();
+    }
+  }
+
+  handledByUI(node) {
+    return node && node.type === 'statement';
+  }
+}
+
+module.exports = DialogueSequencer;
 
 
 /***/ }),
@@ -39943,6 +41011,50 @@ class Dialogue {
 }
 
 module.exports = Dialogue;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/dialogues/ending-reader.js":
+/*!***********************************************!*\
+  !*** ./src/js/lib/dialogues/ending-reader.js ***!
+  \***********************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const DialogueIterator = __webpack_require__(/*! ./dialogue-iterator */ "./src/js/lib/dialogues/dialogue-iterator.js");
+const { mergeTexts } = __webpack_require__(/*! ../helpers/i18n */ "./src/js/lib/helpers/i18n.js");
+
+function readEnding(dialogue, context) {
+  const output = [];
+  const classes = [];
+  const iterator = new DialogueIterator(dialogue, context);
+  while (!iterator.isEnd()) {
+    const activeNode = iterator.getActiveNode();
+    if (activeNode.responses !== undefined && activeNode.responses.length > 0) {
+      throw new Error('An ending dialogue must only contain statements with no responses');
+    }
+    if (activeNode.text) {
+      output.push(activeNode.text);
+    }
+    if (activeNode.class) {
+      if (Array.isArray(activeNode.class)) {
+        classes.push(...activeNode.class);
+      } else if (typeof activeNode.class === 'string') {
+        classes.push(activeNode.class);
+      }
+    }
+    iterator.next();
+  }
+
+  return [
+    mergeTexts(output, {
+      separator: '\n',
+    }),
+    classes,
+  ];
+}
+
+module.exports = readEnding;
 
 
 /***/ }),
@@ -40119,6 +41231,186 @@ module.exports = LogicParser;
 
 /***/ }),
 
+/***/ "./src/js/lib/dialogues/speech-text.js":
+/*!*********************************************!*\
+  !*** ./src/js/lib/dialogues/speech-text.js ***!
+  \*********************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+/**
+ * Copyright (c) 2023 by Drew Conley (https://codepen.io/punkydrewster713/pen/zYKdywP)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+ * and associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+ * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * Modified by Eric Londaits for IMAGINARY gGmbH.
+ * Copyright (c) 2023 IMAGINARY gGmbH
+ */
+const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
+
+class SpeechText {
+  constructor() {
+    this.$element = $('<div></div>')
+      .addClass('speech-text');
+
+    this.isSpace = /\s/;
+    this.timedReveal = this.timedReveal.bind(this);
+    this.revealCharacterTimeout = null;
+    this.events = new EventEmitter();
+    this.speedFactor = 1;
+    this.revealComplete = false;
+  }
+
+  /**
+   * Private method to reveal a character
+   *
+   * @private
+   * @param {Object} character
+   * @param {HTMLElement} character.span
+   * @param {Array} character.classes
+   */
+  revealCharacter(character) {
+    character.span.classList.add('revealed');
+    character.classes.forEach((c) => {
+      character.span.classList.add(c);
+    });
+  }
+
+  /**
+   * Private method to reveal a list of characters with a delay between each
+   *
+   * @private
+   * @param {Array} Array of characters with the following properties:
+   * - span {HTMLElement} The span $element to be revealed
+   * - isSpace {Boolean} Whether or not the character is a space
+   * - delayAfter {Number} Delay after the character is revealed
+   * - classes {Array} Array of classes to be added to the character
+   * - stop {Boolean} Whether or not to stop after the character
+   */
+  timedReveal(list) {
+    const next = list.splice(0, 1)[0];
+    this.revealCharacter(next);
+    const delay = next.isSpace && !next.pause ? 0 : next.delayAfter;
+
+    if (list.length > 0) {
+      this.revealCharacterTimeout = setTimeout(() => {
+        this.timedReveal(list);
+      }, delay * this.speedFactor);
+    } else {
+      this.onComplete();
+    }
+  }
+
+  /**
+   * Set the text to be displayed
+   *
+   * @param lines {Array} Array of objects with the following properties:
+   * - speed {Number} (optional) Speed of the text in milliseconds
+   * - string {String} Text to be displayed
+   * - classes {Array} (optional) Array of classes to be added to the text
+   * - stop {Boolean} (optional) Whether or not to stop after the line
+   */
+  showText(lines) {
+    this.clear();
+
+    this.characters = [];
+    lines.forEach((line, index) => {
+      if (index < lines.length - 1) {
+        line.string += ' '; // Add a space between lines
+      }
+      line.string.split('').forEach((character) => {
+        const span = document.createElement('span');
+        span.textContent = character;
+        if (character === '\n') {
+          this.$element.append($('<div>').addClass('break'));
+        } else {
+          this.$element.append(span);
+          this.characters.push({
+            span,
+            isSpace: this.isSpace.test(character) && !line.pause,
+            delayAfter: line.speed || SpeechText.Speeds.normal,
+            classes: line.classes || [],
+          });
+        }
+      });
+    });
+
+    this.resume();
+  }
+
+  /**
+   * Stop the reveal of the text
+   */
+  stop() {
+    clearTimeout(this.revealCharacterTimeout);
+    this.speedFactor = 1;
+  }
+
+  /**
+   * Resume the reveal of the text
+   */
+  resume() {
+    clearTimeout(this.revealCharacterTimeout);
+    this.revealCharacterTimeout = setTimeout(() => {
+      this.timedReveal(this.characters);
+    }, 600);
+  }
+
+  /**
+   * Clear the text
+   */
+  clear() {
+    this.stop();
+    this.$element.empty();
+    this.revealComplete = false;
+  }
+
+  /**
+   * Reveal all characters immediately
+   */
+  revealAll() {
+    this.stop();
+    this.characters.forEach((c) => {
+      this.revealCharacter(c);
+    });
+    this.onComplete();
+  }
+
+  speedUp() {
+    this.speedFactor = 0.2;
+  }
+
+  onComplete() {
+    this.revealComplete = true;
+    this.events.emit('complete');
+  }
+}
+
+SpeechText.Speeds = {
+  pause: 500,
+  slow: 120,
+  normal: 60,
+  fast: 40,
+  superFast: 10,
+};
+
+module.exports = SpeechText;
+
+
+/***/ }),
+
 /***/ "./src/js/lib/helpers-client/fetch-config.js":
 /*!***************************************************!*\
   !*** ./src/js/lib/helpers-client/fetch-config.js ***!
@@ -40220,108 +41512,55 @@ module.exports = Fader;
 
 /***/ }),
 
-/***/ "./src/js/lib/helpers-pixi/tween.js":
-/*!******************************************!*\
-  !*** ./src/js/lib/helpers-pixi/tween.js ***!
-  \******************************************/
-/***/ ((module) => {
+/***/ "./src/js/lib/helpers-web/countdown.js":
+/*!*********************************************!*\
+  !*** ./src/js/lib/helpers-web/countdown.js ***!
+  \*********************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-/* globals PIXI, TWEEN */
+const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
 
-class PixiTween {
-  constructor(userOptions) {
-    const defaultOptions = {
-      from: 0,
-      to: 1,
-      duration: 1000,
-      delay: 0,
-      easing: TWEEN.Easing.Sinusoidal.InOut,
-      onUpdate: () => {},
-      onComplete: null,
-    };
-
-    this.options = Object.assign({}, defaultOptions, userOptions);
-
-    this.tweenTicker = this.tweenTicker.bind(this);
-    this.elapsed = 0;
-
-    this.tween = new TWEEN.Tween({ value: this.options.from })
-      .to({ value: this.options.to }, this.options.duration)
-      .easing(this.options.easing)
-      .onUpdate(this.options.onUpdate)
-      .start(this.options.delay);
-
-    PIXI.Ticker.shared.add(this.tweenTicker);
-    this.tween.onComplete(this.onComplete.bind(this));
+class Countdown {
+  constructor(seconds) {
+    this.seconds = seconds;
+    this.events = new EventEmitter();
+    this.$element = $('<div></div>')
+      .addClass('countdown');
+    this.update();
   }
 
-  stop() {
-    this.tween.stop();
-    this.onComplete();
-  }
-
-  onComplete() {
-    PIXI.Ticker.shared.remove(this.tweenTicker);
-    if (this.options.onComplete) {
-      this.options.onComplete();
+  start() {
+    if (this.seconds > 0) {
+      this.interval = setInterval(() => {
+        this.seconds -= 1;
+        this.update();
+        if (this.seconds <= 0) {
+          this.onEnd();
+        }
+      }, 1000);
     }
   }
 
-  tweenTicker(time) {
-    this.elapsed += Math.ceil(time / PIXI.settings.TARGET_FPMS);
-    this.tween.update(this.elapsed);
+  forceEnd() {
+    this.seconds = 0;
+    this.update();
+    this.onEnd();
+  }
+
+  onEnd() {
+    clearInterval(this.interval);
+    this.events.emit('end');
+  }
+
+  update() {
+    const timeLeft = Math.max(this.seconds, 0);
+    const secondsLeft = timeLeft % 60;
+    const minutes = Math.floor(timeLeft / 60);
+    this.$element.html(`${minutes}:${secondsLeft < 10 ? '0' : ''}${secondsLeft}`);
   }
 }
 
-PixiTween.popOut = (displayObject, onComplete = null) => new PixiTween({
-  from: Math.max(displayObject.scale.x, 0),
-  tween: TWEEN.Easing.Elastic.Out,
-  onUpdate: (o) => {
-    displayObject.scale = { x: o.value, y: o.value };
-  },
-  onComplete,
-});
-
-PixiTween.popIn = (displayObject, onComplete = null) => new PixiTween({
-  from: Math.min(displayObject.scale.x, 1),
-  to: 0,
-  tween: TWEEN.Easing.Elastic.Out,
-  onUpdate: (o) => {
-    displayObject.scale = { x: o.value, y: o.value };
-  },
-  onComplete,
-});
-
-PixiTween.Popper = (displayObject) => {
-  let tween = null;
-  return {
-    show: (onComplete = null) => {
-      if (tween) {
-        tween.stop();
-      }
-      displayObject.visible = true;
-      tween = PixiTween.popOut(displayObject, onComplete);
-    },
-    hide: (onComplete = null) => {
-      if (tween) {
-        tween.stop();
-      }
-      tween = PixiTween.popIn(displayObject, () => {
-        displayObject.visible = false;
-        if (onComplete) {
-          onComplete();
-        }
-      });
-    },
-    stop: () => {
-      if (tween) {
-        tween.stop();
-      }
-    },
-  };
-};
-
-module.exports = PixiTween;
+module.exports = Countdown;
 
 
 /***/ }),
@@ -40552,6 +41791,112 @@ module.exports = Stats;
 
 /***/ }),
 
+/***/ "./src/js/lib/helpers/i18n.js":
+/*!************************************!*\
+  !*** ./src/js/lib/helpers/i18n.js ***!
+  \************************************/
+/***/ ((module) => {
+
+function getText(text, lang = null) {
+  if (lang !== null && typeof text === 'object') {
+    return text[lang];
+  }
+  return text;
+}
+
+/**
+ * Given an array of texts (objects with language keys), merge them into a single object with the
+ * same keys. If any text is a simple string instead of an object, it is merged into all languages.
+ * If all texts are strings, a single string is returned.
+ *
+ * @param {Array} texts
+ * @param {Object} userOptions
+ *   - {string} separator - If set, the texts are joined with this separator
+ *   - {string} prefix - If set, the texts are prefixed with this string
+ *   - {string} suffix - If set, the texts are suffixed with this string
+ * @returns {string|Object}
+ */
+function mergeTexts(texts, userOptions = {}) {
+  const result = {};
+  const defaultOptions = {
+    separator: '',
+    prefix: '',
+    suffix: '',
+  };
+  const options = Object.assign({}, defaultOptions, userOptions);
+  let allStrings = true;
+  texts.forEach((text) => {
+    if (typeof text === 'object') {
+      allStrings = false;
+      Object.keys(text).forEach((lang) => {
+        result[lang] = '';
+      });
+    }
+  });
+
+  if (allStrings) {
+    return texts.map(t => `${options.prefix}${t}${options.suffix}`).join(options.separator);
+  }
+
+  texts.forEach((text, i) => {
+    let part;
+    Object.keys(result).forEach((lang) => {
+      if (typeof text === 'string') {
+        part = text;
+      } else if (text[lang] !== undefined) {
+        part = text[lang];
+      } else {
+        part = '';
+      }
+      result[lang] += `${options.prefix}${part}${options.suffix}`;
+      if (i < texts.length - 1) {
+        result[lang] += options.separator;
+      }
+    });
+  });
+
+  return result;
+}
+
+class I18nTextAdapter {
+  constructor(setTextCallback, lang, text = null) {
+    this.setTextCallback = setTextCallback;
+    this.currentLang = lang;
+    this.currentText = text;
+
+    this.update();
+  }
+
+  update() {
+    if (this.currentText !== null) {
+      this.setTextCallback(getText(this.currentText, this.currentLang));
+    }
+  }
+
+  setText(text, forceUpdate = false) {
+    if (forceUpdate || JSON.stringify(text) !== JSON.stringify(this.currentText)) {
+      this.currentText = text;
+      this.update();
+    }
+  }
+
+  setLang(lang) {
+    if (lang !== this.currentLang) {
+      this.currentLang = lang;
+      this.update();
+    }
+  }
+}
+
+module.exports = {
+  getText,
+  mergeTexts,
+  I18nTextAdapter,
+};
+
+
+/***/ }),
+
 /***/ "./src/js/lib/helpers/sentry.js":
 /*!**************************************!*\
   !*** ./src/js/lib/helpers/sentry.js ***!
@@ -40578,6 +41923,221 @@ function initSentry(sentryDSN) {
 }
 
 module.exports = { initSentry };
+
+
+/***/ }),
+
+/***/ "./src/js/lib/input/gamepad-input-mgr.js":
+/*!***********************************************!*\
+  !*** ./src/js/lib/input/gamepad-input-mgr.js ***!
+  \***********************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const deepmerge = __webpack_require__(/*! deepmerge */ "./node_modules/deepmerge/dist/cjs.js");
+
+const InputMgr = __webpack_require__(/*! ./input-mgr */ "./src/js/lib/input/input-mgr.js");
+
+/**
+ * @typedef {horizontal: number, vertical: number, invertHorizontal: boolean, invertVertical: boolean} GamepadMapperAxesConfig
+ */
+
+/**
+ * @typedef {{axes?:GamepadMapperAxesConfig,buttons?:{InputMgrEventNames:number}}} GamepadMapperConfig
+ */
+
+/**
+ * Gamepad configuration for standard gamepads.
+ *
+ * @type {GamepadMapperConfig}
+ */
+const standardMapperConfig = {
+  axes: {
+    horizontal: 0,
+    vertical: 1,
+    invertHorizontal: false,
+    invertVertical: false,
+  },
+  buttons: {
+    up: 12,
+    down: 13,
+    left: 14,
+    right: 15,
+    action: 1,
+    lang: 9,
+  },
+};
+
+/**
+ * Handles gamepad and joystick input from the first available device.
+ *
+ * @augments InputMgr
+ */
+class GamepadInputMgr extends InputMgr {
+  /**
+   * @param {GamepadMapperConfig} [mapperConfig]
+   */
+  constructor(mapperConfig = {}) {
+    super();
+    console.log(
+      mapperConfig,
+      deepmerge(standardMapperConfig, mapperConfig ?? {}),
+    );
+    this.mapper = new GamepadMapper(
+      deepmerge(standardMapperConfig, mapperConfig ?? {}),
+    );
+    this.gamepadIndex = -1;
+    this.handleGamepadDisConnected = () => {
+      const gamepad = navigator.getGamepads().find((g) => g !== null);
+      if (typeof gamepad !== 'undefined') {
+        console.log(`Using gamepad ${gamepad.index}: ${gamepad.id}`);
+        this.gamepadIndex = gamepad.index;
+      } else {
+        console.log('No gamepad connected');
+        this.gamepadIndex = -1;
+      }
+    };
+  }
+
+  attachListeners() {
+    if (this.isListening()) return;
+
+    // Connect to the first of the already connected gamepads, if any.
+    this.handleGamepadDisConnected();
+
+    // Attach listeners to handle future connects and disconnects.
+    window.addEventListener('gamepadconnected', this.handleGamepadDisConnected);
+    window.addEventListener(
+      'gamepaddisconnected',
+      this.handleGamepadDisConnected
+    );
+    super.attachListeners();
+    /**
+     * TODO: Deal with SecurityError from missing gamepad permission.
+     * TODO: Deal [missing secure context](https://github.com/w3c/gamepad/pull/120).
+     * TODO: Handle browsers that don't support gamepads.
+     * TODO: Emit warning when Gamepad API can not be used due the above reasons.
+     */
+  }
+
+  detachListeners() {
+    if (!this.isListening()) return;
+    window.removeEventListener(
+      'gamepaddisconnected',
+      this.handleGamepadDisConnected
+    );
+    this.hasListenersAttached = false;
+    this.gamepadIndex = -1;
+    super.detachListeners();
+  }
+
+  updateState() {
+    const gamepad = navigator.getGamepads()[this.gamepadIndex] ?? null;
+    if (gamepad !== null && gamepad.connected) {
+      const newState = this.mapper.grab(gamepad);
+      Object.assign(this.state, newState);
+    }
+  }
+}
+
+/**
+ * Maps gamepad and joystick input to events.
+ *
+ * Different gamepads and joysticks have different mappings of buttons and axes.
+ * This class maps the input to the standard representation corresponding to the events emitted by
+ * {@link GamepadInputMgr.events}.
+ */
+class GamepadMapper {
+  /**
+   * Initilize the mapper with a configuration.
+   *
+   * @param {GamepadMapperConfig} config The configuration for mapping button pressed
+   *    and movement along axis to event names. If the same event name is mapped to an axis and a button, the axis takes
+   *    precedence.
+   */
+  constructor(config) {
+    this.config = config;
+
+    /**
+     * List of pairs of event name and corresponding function to grab the actual value from the gamepad while applying
+     * the mapping.
+     *
+     * @private {[[string,(gamepad:Gamepad) => boolean]]}
+     */
+    this.grabbers = InputMgr.eventNames.map((e) => [
+      e,
+      GamepadMapper.createGrabberForConfigKey(config, e),
+    ]);
+  }
+
+  /**
+   * Create function for grabbing the actual value from the gamepad while applying
+   * the mapping based on the internal config and the given event name.
+   *
+   * @param {GamepadMapperConfig} config The gamepad mapper configuration.
+   * @param {string} key The event name.
+   * @returns {(gamepad:Gamepad) => boolean}
+   */
+  static createGrabberForConfigKey(config, key) {
+    // compute a singed axis index for each direction
+    const horizontalFactor = config.axes.invertHorizontal ? -1 : 1;
+    const verticalFactor = config.axes.invertVertical ? -1 : 1;
+    const axesDirectionMap = {
+      up: +config.axes['vertical'] * verticalFactor,
+      down: -config.axes['vertical'] * verticalFactor,
+      left: +config.axes['horizontal'] * horizontalFactor,
+      right: -config.axes['horizontal'] * horizontalFactor,
+    };
+    const fromAxis =
+      typeof axesDirectionMap[key] !== 'undefined'
+        ? GamepadMapper.createGrabberForAxis(axesDirectionMap[key])
+        : () => false;
+    const fromButton =
+      typeof config?.buttons?.[key] !== 'undefined'
+        ? GamepadMapper.createGrabberForButton(config.buttons[key])
+        : () => false;
+    return (gamepad) => fromAxis(gamepad) || fromButton(gamepad);
+  }
+
+  /**
+   * Create function for grabbing the value from a gamepad axis.
+   *
+   * TODO: Add support for a customizable axis threshold.
+   *
+   * @param {number} signedIndex The index of the axis. Negative values are interpreted as the negative axis (including +0 and -0).
+   * @returns {(gamepad:Gamepad) => boolean}
+   */
+  static createGrabberForAxis(signedIndex) {
+    const index = Math.abs(signedIndex);
+    const threshold = 0.5;
+    // the division is intentional to distinguish between positive and negative zero (IEEE 754)
+    const sign = Math.sign(1.0 / signedIndex);
+    return (gamepad) => sign * (gamepad.axes[index] ?? 0.0) >= threshold;
+  }
+
+  /**
+   * Create function for grabbing the value from a gamepad button.
+   *
+   * @param {number} index The index of the button.
+   * @returns {(gamepad:Gamepad) => boolean}
+   */
+  static createGrabberForButton(index) {
+    return (gamepad) => gamepad.buttons[index]?.pressed ?? false;
+  }
+
+  /**
+   *  Grab the input from the gamepad for all event names.
+   *
+   * @param {Gamepad} gamepad The gamepad to grab the input from. Must not be null.
+   * @returns {InputMgrState}
+   */
+  grab(gamepad) {
+    return /** @type {InputMgrState} */ Object.fromEntries(
+      this.grabbers.map(([key, grabber]) => [key, grabber(gamepad)])
+    );
+  }
+}
+
+module.exports = GamepadInputMgr;
 
 
 /***/ }),
@@ -40845,6 +42405,179 @@ class KeyboardInputMgr extends InputMgr {
 }
 
 module.exports = KeyboardInputMgr;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/input/multiplex-input-mgr.js":
+/*!*************************************************!*\
+  !*** ./src/js/lib/input/multiplex-input-mgr.js ***!
+  \*************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const InputMgr = __webpack_require__(/*! ./input-mgr */ "./src/js/lib/input/input-mgr.js");
+
+/**
+ * Combines input from multiple input managers into one.
+ *
+ * The lifecycle management and updating of the wrapped input managers is up to the user of this class.
+ *
+ * @augments InputMgr
+ */
+class MultiplexInputMgr extends InputMgr {
+  constructor(...inputMgrs) {
+    super();
+    this.inputMgrs = [];
+    inputMgrs.forEach((inputMgr) => this.addInputMgr(inputMgr));
+  }
+
+  /**
+   * Add an input manager to the multiplexer.
+   *
+   * @param {InputMgr} inputMgr
+   */
+  addInputMgr(inputMgr) {
+    this.inputMgrs.push(inputMgr);
+  }
+
+  /**
+   * Remove an input manager from the multiplexer.
+   *
+   * @param {InputMgr} inputMgr
+   */
+  removeInputMgr(inputMgr) {
+    const inputMgrIndex = this.inputMgrs.indexOf(inputMgr);
+    if (inputMgrIndex >= 0) {
+      this.inputMgrs.splice(inputMgrIndex, 1);
+    }
+  }
+
+  updateState() {
+    const newState = this.inputMgrs
+      .map((inputMgr) => inputMgr.getState())
+      .reduce((acc, state) => {
+        InputMgr.eventNames.forEach((eventName) => {
+          acc[eventName] ||= state[eventName];
+        });
+        return acc;
+      }, InputMgr.getInitialState());
+    Object.assign(this.state, newState);
+  }
+}
+
+module.exports = MultiplexInputMgr;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/input/player-app-input-connections.js":
+/*!**********************************************************!*\
+  !*** ./src/js/lib/input/player-app-input-connections.js ***!
+  \**********************************************************/
+/***/ ((module) => {
+
+class DialogueOverlayConnection {
+  constructor(inputManager, dialogueOverlay, dialogueSequencer) {
+    this.inputManager = inputManager;
+    this.dialogueOverlay = dialogueOverlay;
+    this.dialogueSequencer = dialogueSequencer;
+
+    this.handleUp = this.handleUp.bind(this);
+    this.handleDown = this.handleDown.bind(this);
+    this.handleAction = this.handleAction.bind(this);
+  }
+
+  route() {
+    this.inputManager.events.on('down', this.handleDown);
+    this.inputManager.events.on('up', this.handleUp);
+    this.inputManager.events.on('action', this.handleAction);
+  }
+
+  unroute() {
+    this.inputManager.events.off('down', this.handleDown);
+    this.inputManager.events.off('up', this.handleUp);
+    this.inputManager.events.off('action', this.handleAction);
+  }
+
+  handleDown() {
+    this.dialogueOverlay.selectNextResponseOption();
+  }
+
+  handleUp() {
+    this.dialogueOverlay.selectPreviousResponseOption();
+  }
+
+  handleAction() {
+    this.dialogueSequencer.action();
+  }
+}
+
+class PcMovementConnection {
+  constructor(inputManager, playerApp) {
+    this.inputManager = inputManager;
+    this.playerApp = playerApp;
+    this.handleAction = this.handleAction.bind(this);
+  }
+
+  route() {
+    this.playerApp.enablePcControl();
+    this.inputManager.events.on('action', this.handleAction);
+  }
+
+  unroute() {
+    this.playerApp.disablePcControl();
+    this.inputManager.events.off('action', this.handleAction);
+  }
+
+  handleAction() {
+    this.playerApp.pcAction();
+  }
+}
+
+module.exports = {
+  DialogueOverlayConnection,
+  PcMovementConnection,
+};
+
+
+/***/ }),
+
+/***/ "./src/js/lib/input/player-app-input-router.js":
+/*!*****************************************************!*\
+  !*** ./src/js/lib/input/player-app-input-router.js ***!
+  \*****************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const { DialogueOverlayConnection, PcMovementConnection } = __webpack_require__(/*! ./player-app-input-connections */ "./src/js/lib/input/player-app-input-connections.js");
+
+class PlayerAppInputRouter {
+  constructor(inputManager) {
+    this.inputManager = inputManager;
+    this.currentConnection = null;
+  }
+
+  setConnection(connection) {
+    this.unroute();
+    this.currentConnection = connection;
+    this.currentConnection.route();
+  }
+
+  unroute() {
+    if (this.currentConnection) {
+      this.currentConnection.unroute();
+    }
+  }
+
+  routeToPcMovement(playerApp) {
+    this.setConnection(new PcMovementConnection(this.inputManager, playerApp));
+  }
+
+  routeToDialogueOverlay(dialogueOverlay, dialogueSequencer) {
+    this.setConnection(new DialogueOverlayConnection(this.inputManager, dialogueOverlay, dialogueSequencer));
+  }
+}
+
+module.exports = PlayerAppInputRouter;
 
 
 /***/ }),
@@ -41225,8 +42958,8 @@ class ConnectionStateView {
     if (this.relaunching) {
       return;
     }
-    this.setErrorMessage('Retrying connection');
-    this.setErrorStatus('');
+    this.setErrorMessage('Connection closed');
+    this.setErrorStatus('Will retry in a few seconds.');
     this.show();
   }
 
@@ -41283,141 +43016,114 @@ module.exports = ConnectionStateView;
 /* eslint-disable no-console */
 const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
 
+const CONNECT_TIMEOUT = 1000 * 30;
 const PING_TIME = 1000 * 10;
 const PONG_WAIT_TIME = 1000 * 10;
+const CLOSE_TIMEOUT = 1000 * 15;
 const RECONNECT_TIME = 1000 * 5;
 
-class ServerSocketConnector {
-  constructor(uri) {
-    this.uri = uri;
-    this.ws = null;
-    this.connected = false;
-    this.autoReconnect = true;
-    this.serverId = null;
-    // Must track isClosing because the socket might enter CLOSING state and not close immediately
-    this.isClosing = false;
-    this.events = new EventEmitter();
+class ServeSocketConnectorState {
+  constructor(connector) {
+    this.connector = connector;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  onEnter() { }
+
+  // eslint-disable-next-line class-methods-use-this
+  onExit() { }
+
+  onMessage(event) {
+    const className = this.constructor.name;
+    console.error(`Unhandled message in ${className}:`, event.data);
+  }
+}
+
+class ClosingState extends ServeSocketConnectorState {
+  constructor(connector) {
+    super(connector);
+
+    this.timeout = null;
+  }
+
+  onEnter() {
+    // The attempt to close the socket cleanly timed out, so we're going to force it closed.
+    this.timeout = setTimeout(() => {
+      console.log('Closing timed out, forcing close.');
+      this.connector.onClose();
+    }, CLOSE_TIMEOUT);
+  }
+
+  onExit() {
+    clearTimeout(this.timeout);
+  }
+}
+
+class ReconnectDelayState extends ServeSocketConnectorState {
+  constructor(connector) {
+    super(connector);
+
+    this.timeout = null;
+  }
+
+  onEnter() {
+    this.connector.events.emit('connectWait');
+    console.log(`Reconnecting in ${RECONNECT_TIME / 1000} seconds...`);
+    this.timeout = setTimeout(() => {
+      this.connector.connect();
+    }, RECONNECT_TIME);
+  }
+
+  onExit() {
+    clearTimeout(this.reconnectTimeout);
+  }
+}
+
+class ConnectingState extends ServeSocketConnectorState {
+  constructor(connector) {
+    super(connector);
+
+    this.connectTimeout = null;
+  }
+
+  onEnter() {
+    this.connectTimeout = setTimeout(() => {
+      console.log('Connecting timed out, reconnecting...');
+      this.connector.connect();
+    }, CONNECT_TIMEOUT);
+  }
+
+  onExit() {
+    clearTimeout(this.connectTimeout);
+  }
+}
+
+class OpenState extends ServeSocketConnectorState {
+  constructor(connector) {
+    super(connector);
+
     this.pingTimeout = null;
     this.pongTimeout = null;
-    this.reconnectTimeout = null;
     this.serverInfoTimeout = null;
-    this.connect();
   }
 
-  connect() {
-    this.cancelPing();
-    this.cancelReconnect();
-
-    this.events.emit('connecting');
-    console.log(`Connecting to ${this.uri}...`);
-    this.ws = new WebSocket(this.uri);
-    this.ws.onopen = this.handleOpen.bind(this);
-    this.ws.onclose = this.handleClose.bind(this);
-    this.ws.onmessage = this.handleMessage.bind(this);
-    // ws.onerror is not handled because the event gives no data about the
-    // error, and on a connection failure onclose will be called.
-
-    this.connected = false;
-  }
-
-  disconnect() {
-    console.log('Disconnecting...');
-    this.events.emit('disconnecting');
-    this.autoReconnect = false;
-    this.cancelPing();
-    this.cancelReconnect();
-    this.close();
-  }
-
-  close() {
-    if (!this.isClosing) {
-      this.isClosing = true;
-      this.events.emit('closing');
-    }
-    this.ws.close();
-  }
-
-  cancelReconnect() {
-    if (this.reconnectTimeout !== null) {
-      clearTimeout(this.reconnectTimeout);
-      this.reconnectTimeout = null;
-    }
-  }
-
-  reconnect() {
-    this.cancelReconnect();
-    this.reconnectTimeout = setTimeout(() => {
-      this.reconnectTimeout = null;
-      this.connect();
-    }, RECONNECT_TIME);
-    this.events.emit('connectWait');
-    console.log(`Will attempt to reconnect in ${RECONNECT_TIME / 1000} seconds...`);
-  }
-
-  handleOpen() {
-    this.cancelReconnect();
-    this.cancelPongTimeout();
-
-    this.connected = true;
-    this.isClosing = false;
-    console.log('Connected.');
-    this.events.emit('connect');
+  onEnter() {
     this.schedulePing();
+    this.scheduleServerInfoTimeout();
   }
 
-  handleClose(ev) {
-    this.connected = false;
-    this.isClosing = false;
+  onExit() {
+    clearTimeout(this.pingTimeout);
+    clearTimeout(this.pongTimeout);
+    clearTimeout(this.serverInfoTimeout);
+  }
+
+  schedulePing() {
     this.cancelPing();
-    this.cancelPongTimeout();
-    // ev.code is defined here https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent
-    // but according to people the only code one normally gets is 1006 (Abnormal Closure)
-    console.error(
-      `Disconnected with code ${ev.code}`,
-      ev.code === 1006 ? ': Abnormal closure' : '',
-      ev.reason ? `(reason: ${ev.reason})` : ''
-    );
-    this.events.emit('disconnect');
-    if (this.autoReconnect) {
-      this.reconnect();
-    }
-  }
-
-  handleMessage(ev) {
-    const message = JSON.parse(ev.data);
-    if (message.type === 'sync') {
-      this.handleSync(message);
-    } else if (message.type === 'pong') {
-      this.handlePong();
-    } else if (message.type === 'serverInfo') {
-      this.handleServerInfo(message);
-    }
-  }
-
-  handleSync(message) {
-    this.events.emit('sync', message);
-  }
-
-  handlePong() {
-    this.cancelPongTimeout();
-    this.schedulePing();
-  }
-
-  handleServerInfo(message) {
-    this.cancelServerInfoTimeout();
-    if (this.serverId === null) {
-      this.serverId = message.serverID;
-    } else if (this.serverId !== message.serverID) {
-      console.warn(`Received serverInfo with different serverID (${message.serverID})`);
-      this.events.emit('server-relaunched');
-      this.autoReconnect = false;
-      this.close();
-    }
-  }
-
-  send(data) {
-    const message = typeof data === 'string' ? { type: data } : data;
-    this.ws.send(JSON.stringify(message));
+    this.pingTimeout = setTimeout(() => {
+      this.pingTimeout = null;
+      this.ping();
+    }, PING_TIME);
   }
 
   cancelPing() {
@@ -41427,12 +43133,19 @@ class ServerSocketConnector {
     }
   }
 
-  schedulePing() {
-    this.cancelPing();
-    this.pingTimeout = setTimeout(() => {
-      this.pingTimeout = null;
-      this.ping();
-    }, PING_TIME);
+  ping() {
+    this.connector.send('ping');
+    this.startPongTimeout();
+  }
+
+  startPongTimeout() {
+    this.cancelPongTimeout();
+    this.pongTimeout = setTimeout(() => {
+      this.pongTimeout = null;
+      console.warn(`PONG not received after ${PONG_WAIT_TIME / 1000} seconds`);
+      console.warn('Resetting connection.');
+      this.connector.close();
+    }, PONG_WAIT_TIME);
   }
 
   cancelPongTimeout() {
@@ -41447,8 +43160,8 @@ class ServerSocketConnector {
     this.serverInfoTimeout = setTimeout(() => {
       this.serverInfoTimeout = null;
       console.warn(`No serverInfo received after ${PONG_WAIT_TIME / 1000} seconds`);
-      console.warn('Closing connection');
-      this.close();
+      console.warn('Resetting connection');
+      this.connector.close();
     }, PONG_WAIT_TIME);
   }
 
@@ -41459,25 +43172,101 @@ class ServerSocketConnector {
     }
   }
 
-  startPongTimeout() {
+  onMessage(event) {
+    const message = JSON.parse(event.data);
+    if (message.type === 'sync') {
+      this.handleSync(message);
+    } else if (message.type === 'pong') {
+      this.handlePong();
+    } else if (message.type === 'serverInfo') {
+      this.handleServerInfo(message);
+    }
+  }
+
+  handleSync(message) {
+    this.connector.onSync(message);
+  }
+
+  handlePong() {
     this.cancelPongTimeout();
-    this.pongTimeout = setTimeout(() => {
-      this.pongTimeout = null;
-      console.warn(`PONG not received after ${PONG_WAIT_TIME / 1000} seconds`);
-      console.warn('Closing connection');
-      if (!this.isClosing) {
-        this.isClosing = true;
-        this.events.emit('closing');
+    this.schedulePing();
+  }
+
+  handleServerInfo(message) {
+    this.cancelServerInfoTimeout();
+    this.connector.onServerId(message.serverID);
+  }
+}
+
+class ServerSocketConnector {
+  constructor(uri) {
+    this.uri = uri;
+    this.ws = null;
+    this.events = new EventEmitter();
+    this.state = null;
+
+    this.autoReconnect = true;
+    this.serverId = null;
+
+    // Add a handler for the page being closed or refreshed
+    const terminationEvent = 'onpagehide' in window.self ? 'pagehide' : 'unload';
+    window.addEventListener(terminationEvent, (event) => {
+      if (event.persisted === false && this.ws) {
+        this.destroySocket();
       }
-      this.ws.close();
-    }, PONG_WAIT_TIME);
+    });
+
+    this.connect();
   }
 
-  ping() {
-    this.send('ping');
-    this.startPongTimeout();
+  setState(state) {
+    if (this.state) {
+      this.state.onExit();
+    }
+    this.state = state;
+    if (this.state) {
+      this.state.onEnter();
+    }
   }
 
+  destroySocket() {
+    this.setState(null);
+
+    if (this.ws) {
+      this.ws.onopen = null;
+      this.ws.onclose = null;
+      this.ws.onmessage = null;
+      this.ws.onerror = null;
+      if (this.ws.readyState === WebSocket.OPEN) {
+        this.ws.close();
+      }
+      this.ws = null;
+    }
+  }
+
+  connect() {
+    this.destroySocket();
+
+    console.log(`Connecting to ${this.uri}...`);
+    this.events.emit('connecting');
+    this.ws = new WebSocket(this.uri);
+    this.ws.onopen = this.handleOpen.bind(this);
+    this.ws.onclose = this.handleClose.bind(this);
+    this.ws.onmessage = this.handleMessage.bind(this);
+    this.ws.onerror = this.handleError.bind(this);
+
+    this.setState(new ConnectingState(this));
+  }
+
+  send(data) {
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+      return;
+    }
+    const message = typeof data === 'string' ? { type: data } : data;
+    this.ws.send(JSON.stringify(message));
+  }
+
+  // To do: Move this outside of this class
   sync(player = null) {
     const message = {
       type: 'sync',
@@ -41491,6 +43280,70 @@ class ServerSocketConnector {
       ]]);
     }
     this.send(message);
+  }
+
+  close() {
+    if (this.ws) {
+      console.log('Closing connection...');
+      this.events.emit('closing');
+      this.ws.close();
+    }
+    this.setState(new ClosingState(this));
+  }
+
+  onClose() {
+    if (this.autoReconnect) {
+      this.setState(new ReconnectDelayState(this));
+    } else {
+      this.destroySocket();
+    }
+  }
+
+  onServerId(serverId) {
+    if (this.serverId === null) {
+      this.serverId = serverId;
+    } else if (this.serverId !== serverId) {
+      console.warn(`The server has a new serverID (${serverId}). The client must be reloaded.`);
+      this.events.emit('server-relaunched');
+      this.destroySocket();
+    }
+  }
+
+  onSync(message) {
+    this.events.emit('sync', message);
+  }
+
+  handleOpen() {
+    console.log('Connected.');
+    this.events.emit('connect');
+    this.setState(new OpenState(this));
+  }
+
+  handleClose(event) {
+    // event.code is defined here https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent
+    // but according to people the only code one normally gets is 1006 (Abnormal Closure)
+    console.warn(
+      `Disconnected with code ${event.code}`,
+      event.code === 1006 ? ': Abnormal closure' : '',
+      event.reason ? `(reason: ${event.reason})` : ''
+    );
+    this.events.emit('disconnect');
+    this.onClose();
+  }
+
+  handleMessage(event) {
+    if (this.state) {
+      this.state.onMessage(event);
+    } else {
+      console.error('Received message while in an unknown state:', event.data);
+    }
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  handleError(event) {
+    // No behaviour beyond logging because as far as we tested, the event does not provide any
+    // useful information and the close event should also be raised.
+    console.warn('WebSocket error:', event);
   }
 }
 
@@ -41539,6 +43392,225 @@ module.exports = {
   getApiServerUrl,
   getSocketServerUrl,
 };
+
+
+/***/ }),
+
+/***/ "./src/js/lib/ui/decisionScreen.js":
+/*!*****************************************!*\
+  !*** ./src/js/lib/ui/decisionScreen.js ***!
+  \*****************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
+const SpeechText = __webpack_require__(/*! ../dialogues/speech-text */ "./src/js/lib/dialogues/speech-text.js");
+const { I18nTextAdapter } = __webpack_require__(/*! ../helpers/i18n */ "./src/js/lib/helpers/i18n.js");
+
+class DecisionScreen {
+  constructor(config, lang) {
+    this.config = config;
+    this.events = new EventEmitter();
+    this.lang = lang;
+
+    this.$element = $('<div></div>')
+      .addClass('decision-screen-wrapper');
+
+    this.$styleWrapper = $('<div></div>')
+      .appendTo(this.$element);
+
+    this.$screen = $('<div></div>')
+      .addClass('decision-screen')
+      .appendTo(this.$styleWrapper);
+
+    this.$title = $('<h1></h1>')
+      .addClass('decision-screen-title')
+      .text('Eine Entscheidung wurde getroffen…')
+      .appendTo(this.$screen);
+
+    this.$icon = $('<div></div>')
+      .addClass('decision-screen-icon')
+      .appendTo(this.$screen);
+
+    this.$text = $('<div></div>')
+      .addClass('decision-screen-text')
+      .appendTo(this.$screen);
+
+    this.speech = new SpeechText();
+    this.$text.append(this.speech.$element);
+
+    this.titleI18n = new I18nTextAdapter((text) => {
+      this.$title.text(text);
+    }, this.lang);
+
+    this.titleI18n.setText({
+      de: 'Eine Entscheidung wurde getroffen…',
+      en: 'A decision has been made…',
+    });
+
+    this.speechI18n = new I18nTextAdapter((text) => {
+      const { revealComplete } = this.speech;
+      this.speech.showText([{ string: text }]);
+      if (revealComplete) {
+        this.speech.revealAll();
+      }
+    }, this.lang);
+  }
+
+  showDecision(endingText, classes) {
+    this.$styleWrapper.removeClass();
+    this.$styleWrapper.addClass(classes);
+    this.$element.addClass('visible');
+    setTimeout(() => {
+      this.speechI18n.setText(endingText, true);
+    }, 2000);
+  }
+
+  setLang(lang) {
+    this.lang = lang;
+    this.titleI18n.setLang(lang);
+    this.speechI18n.setLang(lang);
+  }
+}
+
+module.exports = DecisionScreen;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/ui/questOverlay.js":
+/*!***************************************!*\
+  !*** ./src/js/lib/ui/questOverlay.js ***!
+  \***************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const { I18nTextAdapter } = __webpack_require__(/*! ../helpers/i18n */ "./src/js/lib/helpers/i18n.js");
+
+class QuestOverlay {
+  constructor(config, lang, questTracker) {
+    this.config = config;
+    this.lang = lang;
+    this.questTracker = questTracker;
+    this.lastUpdate = 0;
+
+    this.$element = $('<div></div>')
+      .addClass('quest-overlay', 'visible');
+
+    this.$prompt = $('<div></div>')
+      .addClass('prompt')
+      .appendTo(this.$element);
+
+    this.promptI18n = new I18nTextAdapter((newText) => {
+      this.$prompt.text(newText);
+    }, this.lang);
+
+    this.$counter = $('<div></div>')
+      .addClass('counter')
+      .appendTo(this.$element);
+
+    this.questTracker.events.on('questActive', this.handleQuestActive.bind(this));
+    this.questTracker.events.on('questInactive', this.handleQuestInactive.bind(this));
+    this.questTracker.events.on('questDone', this.handleQuestDone.bind(this));
+    this.questTracker.events.on('stageChanged', this.handleStageChange.bind(this));
+    this.questTracker.events.on('stageCountChanged', this.handleStageCountChanged.bind(this));
+  }
+
+  setLang(lang) {
+    this.lang = lang;
+    this.promptI18n.setLang(lang);
+  }
+
+  show() {
+    this.$element.addClass('visible');
+  }
+
+  hide() {
+    this.$element.removeClass('visible');
+  }
+
+  setPrompt(text) {
+    this.hide();
+    if (text !== null) {
+      setTimeout(() => {
+        this.promptI18n.setText(text);
+        this.show();
+      }, 500);
+    }
+  }
+
+  clearCounter() {
+    this.$counter.empty();
+    this.$counter.hide();
+  }
+
+  createCounter(max) {
+    this.$counter.show();
+    for (let i = 0; i < max; i += 1) {
+      $('<span></span>')
+        .addClass('counter-item')
+        .appendTo(this.$counter);
+    }
+  }
+
+  updateCounter(value) {
+    this.$counter.children().each((index, element) => {
+      $(element).toggleClass('active', index < value);
+    });
+  }
+
+  handleQuestActive(questId) {
+  }
+
+  handleQuestInactive(questId) {
+    this.hide();
+  }
+
+  handleQuestDone(questId) {
+  }
+
+  handleStageChange() {
+    setTimeout(() => {
+      this.setPrompt(this.questTracker.getActivePrompt());
+      this.clearCounter();
+      const max = this.questTracker.getActiveStageCounterMax();
+      if (max) {
+        this.createCounter(max);
+      }
+    }, Math.max(0, 1000 - (Date.now() - this.lastUpdate)));
+  }
+
+  handleStageCountChanged(activeQuestId, count) {
+    this.updateCounter(count);
+    this.lastUpdate = Date.now();
+  }
+}
+
+module.exports = QuestOverlay;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/ui/scoringOverlay.js":
+/*!*****************************************!*\
+  !*** ./src/js/lib/ui/scoringOverlay.js ***!
+  \*****************************************/
+/***/ ((module) => {
+
+class ScoringOverlay {
+  constructor(config) {
+    this.config = config;
+    this.$element = $('<div></div>')
+      .addClass('scoring-overlay');
+  }
+
+  show(achievement) {
+    $('<div></div>')
+      .addClass('achievement')
+      .addClass(`achievement-${achievement}`)
+      .appendTo(this.$element);
+  }
+}
+
+module.exports = ScoringOverlay;
 
 
 /***/ }),
@@ -41616,53 +43688,6 @@ class CharacterView {
 CharacterView.SPRITE_ANIMATION_SPEED = 0.3;
 
 module.exports = CharacterView;
-
-
-/***/ }),
-
-/***/ "./src/js/lib/views/map-marker.js":
-/*!****************************************!*\
-  !*** ./src/js/lib/views/map-marker.js ***!
-  \****************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-/* globals PIXI */
-const { Popper } = __webpack_require__(/*! ../helpers-pixi/tween */ "./src/js/lib/helpers-pixi/tween.js");
-
-class MapMarker {
-  constructor(texture, contentTexture, anchor = null) {
-    this.display = new PIXI.Container();
-    this.markerDisplay = new PIXI.Sprite(texture);
-    this.display.addChild(this.markerDisplay);
-    this.contentDisplay = new PIXI.Sprite(contentTexture);
-    this.markerDisplay.addChild(this.contentDisplay);
-    this.contentDisplay.anchor.set(0.5, 0.5);
-    this.contentDisplay.position
-      .set(0, -this.markerDisplay.height + this.contentDisplay.height / 2 - 1.5);
-    this.markerDisplay.anchor.set(anchor ? anchor.x : 0, anchor ? anchor.y : 0);
-    this.markerDisplay.visible = false;
-    this.markerDisplay.scale = 0;
-    this.popper = Popper(this.markerDisplay);
-  }
-
-  setScale(scale) {
-    this.display.scale.set(scale, scale);
-  }
-
-  setPosition(x, y) {
-    this.display.position.set(x, y);
-  }
-
-  show(onComplete = null) {
-    this.popper.show(onComplete);
-  }
-
-  hide(onComplete = null) {
-    this.popper.hide(onComplete);
-  }
-}
-
-module.exports = MapMarker;
 
 
 /***/ }),
@@ -42269,22 +44294,23 @@ module.exports = JSON.parse('{"$id":"https://github.com/IMAGINARY/future-democra
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-/*!***********************!*\
-  !*** ./src/js/map.js ***!
-  \***********************/
+/*!**************************!*\
+  !*** ./src/js/player.js ***!
+  \**************************/
 const ServerSocketConnector = __webpack_require__(/*! ./lib/net/server-socket-connector */ "./src/js/lib/net/server-socket-connector.js");
 const ConnectionStateView = __webpack_require__(/*! ./lib/net/connection-state-view */ "./src/js/lib/net/connection-state-view.js");
 const showFatalError = __webpack_require__(/*! ./lib/loader/show-fatal-error */ "./src/js/lib/loader/show-fatal-error.js");
 __webpack_require__(/*! ../sass/default.scss */ "./src/sass/default.scss");
-const fetchConfig = __webpack_require__(/*! ./lib/helpers-client/fetch-config */ "./src/js/lib/helpers-client/fetch-config.js");
-const fetchTextures = __webpack_require__(/*! ./lib/helpers-client/fetch-textures */ "./src/js/lib/helpers-client/fetch-textures.js");
 const { getApiServerUrl, getSocketServerUrl } = __webpack_require__(/*! ./lib/net/server-url */ "./src/js/lib/net/server-url.js");
 const { initSentry } = __webpack_require__(/*! ./lib/helpers/sentry */ "./src/js/lib/helpers/sentry.js");
-const MapApp = __webpack_require__(/*! ./lib/app/map-app */ "./src/js/lib/app/map-app.js");
+const PlayerApp = __webpack_require__(/*! ./lib/app/player-app */ "./src/js/lib/app/player-app.js");
+const fetchConfig = __webpack_require__(/*! ./lib/helpers-client/fetch-config */ "./src/js/lib/helpers-client/fetch-config.js");
+const fetchTextures = __webpack_require__(/*! ./lib/helpers-client/fetch-textures */ "./src/js/lib/helpers-client/fetch-textures.js");
 
 (async () => {
   try {
     const urlParams = new URLSearchParams(window.location.search);
+    const playerId = urlParams.get('p') || '1';
     const statsPanel = urlParams.get('s') || null;
     const configUrl = `${getApiServerUrl()}config`;
 
@@ -42295,12 +44321,12 @@ const MapApp = __webpack_require__(/*! ./lib/app/map-app */ "./src/js/lib/app/ma
 
     const config = await fetchConfig(configUrl);
     const textures = await fetchTextures('./static/textures', config.textures, 'town-view');
+    const playerApp = new PlayerApp(config, textures, playerId);
 
-    const mapApp = new MapApp(config, textures);
-    $('[data-component="MapApp"]').replaceWith(mapApp.$element);
-    mapApp.resize();
+    $('[data-component="PlayerApp"]').replaceWith(playerApp.$element);
+    playerApp.resize();
     $(window).on('resize', () => {
-      mapApp.resize();
+      playerApp.resize();
     });
 
     let syncReceived = false;
@@ -42313,25 +44339,27 @@ const MapApp = __webpack_require__(/*! ./lib/app/map-app */ "./src/js/lib/app/ma
     });
     connector.events.on('sync', (message) => {
       syncReceived = true;
-      mapApp.stats.ping();
+      playerApp.stats.ping();
       Object.entries(message.players).forEach(([id, player]) => {
-        if (player.position) {
-          mapApp.pcs[id].setPosition(player.position.x, player.position.y);
-        }
-        if (player.speed) {
-          mapApp.pcs[id].setSpeed(player.speed.x, player.speed.y);
+        if (id !== playerId && playerApp.remotePcs[id]) {
+          if (player.position) {
+            playerApp.remotePcs[id].setPosition(player.position.x, player.position.y);
+          }
+          if (player.speed) {
+            playerApp.remotePcs[id].setSpeed(player.speed.x, player.speed.y);
+          }
         }
       });
     });
-    mapApp.pixiApp.ticker.add(() => {
+    playerApp.pixiApp.ticker.add(() => {
       if (syncReceived) {
-        connector.sync();
+        connector.sync(playerApp.pc);
         syncReceived = false;
       }
     });
 
     if (statsPanel) {
-      mapApp.stats.showPanel(statsPanel);
+      playerApp.stats.showPanel(statsPanel);
     }
   } catch (err) {
     showFatalError(err.message, err);
@@ -42343,4 +44371,4 @@ const MapApp = __webpack_require__(/*! ./lib/app/map-app */ "./src/js/lib/app/ma
 
 /******/ })()
 ;
-//# sourceMappingURL=map.e2a2f85e5c5dfd4f4364.js.map
+//# sourceMappingURL=player.05302bb1dd5437aeb6d1.js.map
