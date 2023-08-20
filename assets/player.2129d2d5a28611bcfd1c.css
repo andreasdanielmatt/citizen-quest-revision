@@ -356,6 +356,7 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  pointer-events: none;
 }
 .decision-screen-wrapper .decision-screen {
   transform: translate(100%, -100%) rotate(58deg);
@@ -598,4 +599,4 @@ html.with-fatal-error body {
   margin-bottom: 1.2em;
 }
 
-/*# sourceMappingURL=player.c7461d3b0cb5b1076bc7.css.map*/
+/*# sourceMappingURL=player.2129d2d5a28611bcfd1c.css.map*/
