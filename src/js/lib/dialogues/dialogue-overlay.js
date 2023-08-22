@@ -98,6 +98,7 @@ class DialogueOverlay {
   }
 
   hide() {
+    this.speechTop.clear();
     this.hideSpeech();
     this.hideResponseOptions();
   }

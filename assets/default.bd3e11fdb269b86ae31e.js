@@ -43964,6 +43964,196 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 /***/ }),
 
+/***/ "./src/js/lib/app/local-game-server-controller.js":
+/*!********************************************************!*\
+  !*** ./src/js/lib/app/local-game-server-controller.js ***!
+  \********************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const { PlayerAppStates } = __webpack_require__(/*! ./player-app-states */ "./src/js/lib/app/player-app-states.js");
+
+class LocalGameServerController {
+  constructor(playerApp) {
+    this.playerApp = playerApp;
+  }
+
+  playerStart() {
+    this.playerApp.addPc();
+    this.playerApp.setState(PlayerAppStates.PLAYING);
+  }
+
+  roundEnd() {
+    this.playerApp.setState(PlayerAppStates.ENDING);
+  }
+
+  playerReady() {
+    if (this.playerApp.getState() === PlayerAppStates.ENDING) {
+      this.playerApp.setState(PlayerAppStates.IDLE);
+    }
+  }
+}
+
+module.exports = LocalGameServerController;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/app/player-app-states.js":
+/*!*********************************************!*\
+  !*** ./src/js/lib/app/player-app-states.js ***!
+  \*********************************************/
+/***/ ((module) => {
+
+const PlayerAppStates = {
+  IDLE: 'idle',
+  INTRO: 'intro',
+  PLAYING: 'playing',
+  ENDING: 'ending',
+};
+
+class PlayerAppState {
+  constructor(playerApp) {
+    this.playerApp = playerApp;
+    this.state = null;
+  }
+
+  // eslint-disable-next-line class-methods-use-this,no-unused-vars
+  onEnter(fromState) { }
+
+  // eslint-disable-next-line class-methods-use-this,no-unused-vars
+  onExit(toState) { }
+
+  // eslint-disable-next-line class-methods-use-this
+  onAction() { }
+}
+
+class PlayerAppIdleState extends PlayerAppState {
+  constructor(playerApp) {
+    super(playerApp);
+    this.state = PlayerAppStates.IDLE;
+  }
+
+  onEnter() {
+    this.playerApp.titleOverlay.show();
+    this.playerApp.cameraFollowDrone();
+    this.playerApp.inputRouter.routeToMenus(this.playerApp);
+  }
+
+  onAction() {
+    this.playerApp.playerStart();
+  }
+
+  onExit() {
+    this.playerApp.titleOverlay.hide();
+  }
+}
+
+class PlayerAppIntroState extends PlayerAppState {
+  constructor(playerApp) {
+    super(playerApp);
+    this.state = PlayerAppStates.INTRO;
+  }
+
+  onEnter() {
+    this.playerApp.cameraFollowPc();
+    this.playerApp.inputRouter.routeToMenus(this.playerApp);
+  }
+}
+
+class PlayerAppPlayingState extends PlayerAppState {
+  constructor(playerApp) {
+    super(playerApp);
+    this.state = PlayerAppStates.PLAYING;
+  }
+
+  onEnter() {
+    this.playerApp.cameraFollowPc();
+    this.playerApp.inputRouter.routeToPcMovement(this.playerApp);
+    this.playerApp.countdown.show();
+    this.playerApp.countdown.start();
+    this.playerApp.showNpcMoods();
+  }
+
+  onExit() {
+    this.playerApp.dialogueSequencer.terminate();
+    this.playerApp.questOverlay.hide();
+    this.playerApp.countdown.hide();
+    this.playerApp.hideNpcMoods();
+  }
+}
+
+class PlayerAppEndingState extends PlayerAppState {
+  constructor(playerApp) {
+    super(playerApp);
+    this.state = PlayerAppStates.ENDING;
+  }
+
+  showWaitingToBeginScreen() {
+    this.playerApp.showTextScreen(
+      this.playerApp.config.i18n.ui.waitingToBegin,
+    );
+  }
+
+  showWaitingToEndScreen() {
+    this.playerApp.showTextScreen(
+      this.playerApp.config.i18n.ui.waitingToEnd,
+    );
+  }
+
+  onEnter(fromState) {
+    this.playerApp.cameraFollowPc();
+    if (fromState !== PlayerAppStates.IDLE) {
+      this.playerApp.inputRouter.routeToMenus(this.playerApp);
+      this.playerApp.handleStorylineEnd();
+    } else {
+      this.playerApp.inputRouter.unroute();
+      this.showWaitingToBeginScreen();
+      this.playerApp.gameServerController.playerReady();
+    }
+  }
+
+  onExit() {
+    super.onExit();
+    this.playerApp.hideEndingScreen();
+    this.playerApp.hideTextScreen();
+  }
+
+  onAction() {
+    if (this.playerApp.endingScreen && this.playerApp.endingScreen.revealStarted) {
+      if (!this.playerApp.endingScreen.isTextRevealed()) {
+        this.playerApp.endingScreen.revealText();
+      } else {
+        this.playerApp.hideEndingScreen();
+        this.showWaitingToEndScreen();
+        this.playerApp.gameServerController.playerReady();
+      }
+    }
+  }
+}
+
+function getHandler(playerApp, state) {
+  switch (state) {
+    case PlayerAppStates.IDLE:
+      return new PlayerAppIdleState(playerApp);
+    case PlayerAppStates.INTRO:
+      return new PlayerAppIntroState(playerApp);
+    case PlayerAppStates.PLAYING:
+      return new PlayerAppPlayingState(playerApp);
+    case PlayerAppStates.ENDING:
+      return new PlayerAppEndingState(playerApp);
+    default:
+      throw new Error(`Invalid state ${state}`);
+  }
+}
+
+module.exports = {
+  getHandler,
+  PlayerAppStates,
+};
+
+
+/***/ }),
+
 /***/ "./src/js/lib/app/player-app.js":
 /*!**************************************!*\
   !*** ./src/js/lib/app/player-app.js ***!
@@ -43975,6 +44165,7 @@ const Stats = __webpack_require__(/*! ../helpers-web/stats.js */ "./src/js/lib/h
 const TownView = __webpack_require__(/*! ../views/town-view */ "./src/js/lib/views/town-view.js");
 __webpack_require__(/*! ../helpers-web/fill-with-aspect */ "./src/js/lib/helpers-web/fill-with-aspect.js");
 const PCView = __webpack_require__(/*! ../views/pc-view */ "./src/js/lib/views/pc-view.js");
+const DemoDrone = __webpack_require__(/*! ../views/demo-drone */ "./src/js/lib/views/demo-drone.js");
 const CharacterView = __webpack_require__(/*! ../views/character-view */ "./src/js/lib/views/character-view.js");
 const KeyboardInputMgr = __webpack_require__(/*! ../input/keyboard-input-mgr */ "./src/js/lib/input/keyboard-input-mgr.js");
 const GamepadInputMgr = __webpack_require__(/*! ../input/gamepad-input-mgr */ "./src/js/lib/input/gamepad-input-mgr.js");
@@ -43984,17 +44175,20 @@ const Character = __webpack_require__(/*! ../model/character */ "./src/js/lib/mo
 const FlagStore = __webpack_require__(/*! ../dialogues/flag-store */ "./src/js/lib/dialogues/flag-store.js");
 const StorylineManager = __webpack_require__(/*! ../model/storyline-manager */ "./src/js/lib/model/storyline-manager.js");
 const QuestTracker = __webpack_require__(/*! ../model/quest-tracker */ "./src/js/lib/model/quest-tracker.js");
-const QuestOverlay = __webpack_require__(/*! ../ui/questOverlay */ "./src/js/lib/ui/questOverlay.js");
+const QuestOverlay = __webpack_require__(/*! ../ui/quest-overlay */ "./src/js/lib/ui/quest-overlay.js");
 const DialogueOverlay = __webpack_require__(/*! ../dialogues/dialogue-overlay */ "./src/js/lib/dialogues/dialogue-overlay.js");
 const DialogueSequencer = __webpack_require__(/*! ../dialogues/dialogue-sequencer */ "./src/js/lib/dialogues/dialogue-sequencer.js");
 const Countdown = __webpack_require__(/*! ../helpers-web/countdown */ "./src/js/lib/helpers-web/countdown.js");
-const DecisionScreen = __webpack_require__(/*! ../ui/decisionScreen */ "./src/js/lib/ui/decisionScreen.js");
-const ScoringOverlay = __webpack_require__(/*! ../ui/scoringOverlay */ "./src/js/lib/ui/scoringOverlay.js");
+const DecisionScreen = __webpack_require__(/*! ../ui/decision-screen */ "./src/js/lib/ui/decision-screen.js");
+const ScoringOverlay = __webpack_require__(/*! ../ui/scoring-overlay */ "./src/js/lib/ui/scoring-overlay.js");
 const { I18nTextAdapter } = __webpack_require__(/*! ../helpers/i18n */ "./src/js/lib/helpers/i18n.js");
 const readEnding = __webpack_require__(/*! ../dialogues/ending-reader */ "./src/js/lib/dialogues/ending-reader.js");
+const { PlayerAppStates, getHandler } = __webpack_require__(/*! ./player-app-states */ "./src/js/lib/app/player-app-states.js");
+const TitleOverlay = __webpack_require__(/*! ../ui/title-overlay */ "./src/js/lib/ui/title-overlay.js");
+const TextScreen = __webpack_require__(/*! ../ui/text-screen */ "./src/js/lib/ui/text-screen.js");
 
 class PlayerApp {
-  constructor(config, textures, playerId) {
+  constructor(config, textures, playerId, stateController) {
     this.config = config;
     this.textures = textures;
     this.lang = config.game.defaultLanguage;
@@ -44008,7 +44202,7 @@ class PlayerApp {
 
     this.questTracker = new QuestTracker(config, this.storylineManager, this.flags);
 
-    this.pc = new Character(playerId, this.config.players[playerId]);
+    this.pc = null;
     this.canControlPc = false;
     this.remotePcs = {};
 
@@ -44016,10 +44210,17 @@ class PlayerApp {
     this.showHitbox = false;
     this.remotePcViews = {};
     this.npcViews = {};
+    this.npcMoodsVisible = false;
+
+    this.demoDrone = new DemoDrone();
+
+    this.stateHandler = null;
+    this.gameServerController = null;
 
     // HTML elements
     this.$element = $('<div></div>')
-      .addClass('player-app');
+      .addClass('player-app')
+      .addClass(`player-${playerId}`);
 
     this.$pixiWrapper = $('<div></div>')
       .addClass('pixi-wrapper')
@@ -44042,12 +44243,16 @@ class PlayerApp {
 
     this.countdown = new Countdown(config.game.duration);
     this.countdown.$element.appendTo(this.$element);
+    this.countdown.hide();
     this.countdown.events.on('end', () => {
-      this.handleStorylineEnd();
+      this.gameServerController.roundEnd();
     });
 
     this.questOverlay = new QuestOverlay(this.config, this.lang, this.questTracker);
     this.$element.append(this.questOverlay.$element);
+
+    this.textScreen = new TextScreen(this.config, this.lang);
+    this.$element.append(this.textScreen.$element);
 
     this.dialogueOverlay = new DialogueOverlay(this.config, this.lang);
     this.dialogueSequencer = new DialogueSequencer(this.dialogueOverlay);
@@ -44055,6 +44260,10 @@ class PlayerApp {
 
     this.scoringOverlay = new ScoringOverlay(this.config);
     this.$element.append(this.scoringOverlay.$element);
+
+    this.titleOverlay = new TitleOverlay(this.config, this.lang);
+    this.$element.append(this.titleOverlay.$element);
+    this.titleOverlay.show();
 
     this.stats = new Stats();
     this.$element.append(this.stats.dom);
@@ -44088,12 +44297,16 @@ class PlayerApp {
     this.townView = new TownView(this.config, this.textures);
     this.camera.addChild(this.townView.display);
     this.pixiApp.stage.addChild(this.camera);
+    this.demoDrone.setPosition(this.townView.townSize.width / 2, this.townView.townSize.height / 2);
+
+    this.cameraTarget = null;
+    this.cameraOffset = new PIXI.Point(0, 0);
 
     // Input
     this.keyboardInputMgr = new KeyboardInputMgr();
     this.keyboardInputMgr.attachListeners();
     this.keyboardInputMgr.addToggle('KeyE', () => {
-      this.countdown.forceEnd();
+      this.gameServerController.roundEnd();
     });
     this.keyboardInputMgr.addToggle('KeyD', () => {
       this.stats.togglePanel();
@@ -44102,7 +44315,11 @@ class PlayerApp {
       this.toggleHitboxDisplay();
     });
     this.keyboardInputMgr.addToggle('KeyX', () => {
-      console.log(`x: ${this.pc.position.x}, y: ${this.pc.position.y}`);
+      if (this.pc) {
+        console.log(`x: ${this.pc.position.x}, y: ${this.pc.position.y}`);
+      } else {
+        console.log('No PC');
+      }
     });
 
     const gamepadMapperConfig =
@@ -44128,7 +44345,6 @@ class PlayerApp {
     });
 
     this.inputRouter = new PlayerAppInputRouter(inputMgr);
-    this.inputRouter.routeToPcMovement(this);
 
     // Game loop
     this.pixiApp.ticker.add((time) => {
@@ -44148,15 +44364,21 @@ class PlayerApp {
 
       if (this.pcView) {
         this.pcView.animate(time);
-        // Set the town view's pivot so the PC is always centered on the screen,
-        // but don't let the pivot go off the edge of the town
+      }
+
+      if (this.demoDrone) {
+        this.demoDrone.animate(time);
+      }
+
+      if (this.cameraTarget) {
+        // Cap the camera position to the town size
         this.camera.pivot.set(
           Math.max(0,
-            Math.min(this.pcView.display.x + this.pcView.display.width / 2 - PlayerApp.APP_WIDTH / 2
+            Math.min(this.cameraTarget.x + this.cameraOffset.x - PlayerApp.APP_WIDTH / 2
               / this.camera.scale.x,
               this.townView.townSize.width - PlayerApp.APP_WIDTH / this.camera.scale.x)),
           Math.max(0,
-            Math.min(this.pcView.display.y - this.pcView.display.height * 0.8 - PlayerApp.APP_HEIGHT
+            Math.min(this.cameraTarget.y + this.cameraOffset.y - PlayerApp.APP_HEIGHT
               / 2 / this.camera.scale.y,
               this.townView.townSize.height - PlayerApp.APP_HEIGHT / this.camera.scale.y)),
         );
@@ -44172,18 +44394,50 @@ class PlayerApp {
     });
 
     // Temporary
-    this.addPcView();
-    Object.entries(this.config.players)
-      .filter(([id, player]) => (player.enabled === undefined || player.enabled) && id !== playerId)
-      .forEach(([id, player]) => {
-        this.addRemotePcView(id);
-      });
+    // this.addPcView();
+    // Object.entries(this.config.players)
+    //   .filter(([id, player]) => (player.enabled === undefined || player.enabled) && id !== playerId)
+    //   .forEach(([id, player]) => {
+    //     this.addRemotePcView(id);
+    //   });
     this.storylineManager.setCurrentStoryline('touristen');
+  }
+
+  setGameServerController(gameServerController) {
+    this.gameServerController = gameServerController;
+  }
+
+  getState() {
+    return (this.stateHandler && this.stateHandler.state) || null;
+  }
+
+  setState(state) {
+    // Check if the state is in PlayerApp.States
+    if (Object.values(PlayerAppStates).indexOf(state) === -1) {
+      throw new Error(`Error: Attempting to set invalid state ${state}`);
+    }
+
+    if (this.stateHandler && this.stateHandler.state === state) {
+      return;
+    }
+
+    const fromState = this.getState();
+    const newHandler = getHandler(this, state);
+
+    if (this.stateHandler) {
+      this.stateHandler.onExit(state);
+    }
+    this.stateHandler = newHandler;
+    if (this.stateHandler) {
+      this.stateHandler.onEnter(fromState);
+    }
   }
 
   setLanguage(lang) {
     this.lang = lang;
+    this.titleOverlay.setLang(this.lang);
     this.dialogueOverlay.setLang(this.lang);
+    this.textScreen.setLang(this.lang);
     this.questOverlay.setLang(this.lang);
     this.decisionLabelI18n.setLang(this.lang);
     if (this.endingScreen) {
@@ -44205,19 +44459,39 @@ class PlayerApp {
     this.$element.css('font-size', `${(this.$element.width() * PlayerApp.FONT_RATIO).toFixed(3)}px`);
   }
 
-  addPcView() {
-    this.removePcView();
+  setCameraTarget(displayObject, offset = { x: 0, y: 0 }) {
+    this.cameraTarget = displayObject;
+    this.cameraOffset = offset;
+  }
 
+  cameraFollowPc() {
+    if (this.pcView) {
+      this.demoDrone.active = false;
+    }
+  }
+
+  cameraFollowDrone() {
+    if (this.demoDrone) {
+      this.setCameraTarget(this.demoDrone);
+      this.demoDrone.active = true;
+    }
+  }
+
+  addPc() {
+    this.removePc();
+    this.pc = new Character(this.playerId, this.config.players[this.playerId]);
     this.pcView = new PCView(this.config, this.textures, this.pc, this.townView);
     this.townView.mainLayer.addChild(this.pcView.display);
     this.townView.bgLayer.addChild(this.pcView.hitboxDisplay);
+    this.setCameraTarget(this.pcView.display, new PIXI.Point(this.pcView.display.width / 2, -this.pcView.display.height * 0.8));
   }
 
-  removePcView() {
+  removePc() {
     if (this.pcView) {
       this.townView.mainLayer.removeChild(this.pcView.display);
       this.townView.bgLayer.removeChild(this.pcView.hitboxDisplay);
       this.pcView = null;
+      this.pc = null;
     }
   }
 
@@ -44265,7 +44539,9 @@ class PlayerApp {
 
   disablePcControl() {
     this.canControlPc = false;
-    this.pc.setSpeed(0, 0);
+    if (this.pc) {
+      this.pc.setSpeed(0, 0);
+    }
   }
 
   getDialogueContext() {
@@ -44290,6 +44566,9 @@ class PlayerApp {
   }
 
   pcAction() {
+    if (this.pcView === null) {
+      return;
+    }
     const hitbox = this.pcView.getActionHitbox();
     const npcs = this.getNpcsInRect(hitbox);
     let closestNpc = null;
@@ -44312,15 +44591,35 @@ class PlayerApp {
     }
   }
 
+  menuAction() {
+    this.stateHandler.onAction();
+  }
+
+  playerStart() {
+    if (this.gameServerController) {
+      this.gameServerController.playerStart();
+    }
+  }
+
   updateNpcMoods() {
     const npcsWithQuests = this.questTracker.getNpcsWithQuests();
     Object.values(this.npcViews).forEach((npcView) => {
-      if (Object.keys(npcsWithQuests).includes(npcView.character.id)) {
+      if (this.npcMoodsVisible && Object.keys(npcsWithQuests).includes(npcView.character.id)) {
         npcView.showMoodBalloon(npcsWithQuests[npcView.character.id]);
       } else {
         npcView.hideMoodBalloon();
       }
     });
+  }
+
+  hideNpcMoods() {
+    this.npcMoodsVisible = false;
+    this.updateNpcMoods();
+  }
+
+  showNpcMoods() {
+    this.npcMoodsVisible = true;
+    this.updateNpcMoods();
   }
 
   toggleHitboxDisplay() {
@@ -44334,16 +44633,39 @@ class PlayerApp {
       this.addNpc(new Character(id, props));
     });
     this.updateNpcMoods();
-    this.countdown.start();
+    if (this.demoDrone) {
+      this.demoDrone.setTargets(Object.values(this.npcViews).map(
+        npcView => ({
+          x: npcView.display.x,
+          y: npcView.display.y - npcView.display.height,
+        })
+      ));
+    }
   }
 
   handleStorylineEnd() {
     const [ endingText, classes ] = readEnding(this.storylineManager.getDialogue('_ending'), this.getDialogueContext());
 
-    this.inputRouter.unroute();
     this.endingScreen = new DecisionScreen(this.config, this.lang);
     this.$element.append(this.endingScreen.$element);
     this.endingScreen.showDecision(endingText, classes);
+  }
+
+  hideEndingScreen() {
+    if (this.endingScreen) {
+      this.endingScreen.$element.remove();
+      this.endingScreen = null;
+    }
+  }
+
+  showTextScreen(text) {
+    this.textScreen.setText(text);
+    this.textScreen.show();
+  }
+
+  hideTextScreen() {
+    this.textScreen.hide();
+    this.textScreen.setText('');
   }
 }
 
@@ -44864,6 +45186,7 @@ class DialogueOverlay {
   }
 
   hide() {
+    this.speechTop.clear();
     this.hideSpeech();
     this.hideResponseOptions();
   }
@@ -44946,7 +45269,7 @@ class DialogueSequencerState {
     this.dialogueSequencer = dialogueSequencer;
     this.dialogueOverlay = dialogueSequencer.dialogueOverlay;
     this.dialogueIterator = dialogueSequencer.dialogueIterator;
-    this.activeNode = this.dialogueIterator.getActiveNode();
+    this.activeNode = this.dialogueIterator ? this.dialogueIterator.getActiveNode() : null;
   }
 
   onBegin() {
@@ -44956,22 +45279,29 @@ class DialogueSequencerState {
   onAction() {
 
   }
+
+  onEnd() {
+
+  }
 }
 
 class DialogueSequencerThenTextState extends DialogueSequencerState {
   constructor(dialogueSequencer, responseId) {
     super(dialogueSequencer);
     this.responseId = responseId;
+    this.handleSpeechComplete = this.handleSpeechComplete.bind(this);
   }
 
   onBegin() {
     this.speechDone = false;
     const response = this.dialogueIterator.getResponse(this.responseId);
     this.dialogueOverlay.showSpeech(response.thenText, response.thenClass || null);
-    this.dialogueOverlay.events.once('speechComplete', () => {
-      this.speechDone = true;
-      this.dialogueOverlay.showPressToContinue();
-    });
+    this.dialogueOverlay.events.once('speechComplete', this.handleSpeechComplete);
+  }
+
+  handleSpeechComplete() {
+    this.speechDone = true;
+    this.dialogueOverlay.showPressToContinue();
   }
 
   onAction() {
@@ -44981,6 +45311,10 @@ class DialogueSequencerThenTextState extends DialogueSequencerState {
     } else {
       this.dialogueOverlay.speedUpSpeech();
     }
+  }
+
+  onEnd() {
+    this.dialogueOverlay.events.off('speechComplete', this.handleSpeechComplete);
   }
 }
 
@@ -45015,20 +45349,27 @@ class DialogueSequencerResponseState extends DialogueSequencerState {
 
 class DialogueSequencerTextState extends DialogueSequencerState {
 
+  constructor(dialogueSequencer) {
+    super(dialogueSequencer);
+    this.handleSpeechComplete = this.handleSpeechComplete.bind(this);
+  }
+
+  handleSpeechComplete() {
+    this.speechDone = true;
+    const responses = this.dialogueIterator.getEnabledResponses();
+    if (responses && responses.length > 0) {
+      this.dialogueSequencer.setUiState(
+        new DialogueSequencerResponseState(this.dialogueSequencer)
+      );
+    } else {
+      this.dialogueOverlay.showPressToContinue();
+    }
+  }
+
   onBegin() {
     this.speechDone = false;
     this.dialogueOverlay.showSpeech(this.activeNode.text, this.activeNode.class || null);
-    this.dialogueOverlay.events.once('speechComplete', () => {
-      this.speechDone = true;
-      const responses = this.dialogueIterator.getEnabledResponses();
-      if (responses && responses.length > 0) {
-        this.dialogueSequencer.setUiState(
-          new DialogueSequencerResponseState(this.dialogueSequencer)
-        );
-      } else {
-        this.dialogueOverlay.showPressToContinue();
-      }
-    });
+    this.dialogueOverlay.events.once('speechComplete', this.handleSpeechComplete);
   }
 
   onAction() {
@@ -45038,6 +45379,10 @@ class DialogueSequencerTextState extends DialogueSequencerState {
     } else {
       this.dialogueOverlay.speedUpSpeech();
     }
+  }
+
+  onEnd() {
+    this.dialogueOverlay.events.off('speechComplete', this.handleSpeechComplete);
   }
 }
 
@@ -45065,8 +45410,13 @@ class DialogueSequencer {
   }
 
   setUiState(state) {
+    if (this.uiState) {
+      this.uiState.onEnd();
+    }
     this.uiState = state;
-    this.uiState.onBegin();
+    if (this.uiState) {
+      this.uiState.onBegin();
+    }
   }
 
   endUi(responseId = null) {
@@ -45103,8 +45453,8 @@ class DialogueSequencer {
   }
 
   onDialogueEnd() {
-    this.dialogueOverlay.hide();
     this.events.emit('end');
+    this.terminate();
   }
 
   action() {
@@ -45113,8 +45463,16 @@ class DialogueSequencer {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   handledByUI(node) {
     return node && node.type === 'statement';
+  }
+
+  terminate() {
+    this.setUiState(null);
+    this.dialogueOverlay.hide();
+    this.dialogueIterator = null;
+    this.dialogue = null;
   }
 }
 
@@ -45683,18 +46041,29 @@ const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/ev
 class Countdown {
   constructor(seconds) {
     this.seconds = seconds;
+    this.remainingSeconds = 0;
     this.events = new EventEmitter();
     this.$element = $('<div></div>')
       .addClass('countdown');
     this.update();
   }
 
+  setSeconds(seconds) {
+    this.seconds = seconds;
+  }
+
+  setRemainingSeconds(seconds) {
+    this.remainingSeconds = seconds;
+  }
+
   start() {
-    if (this.seconds > 0) {
+    this.remainingSeconds = this.seconds;
+    this.update();
+    if (this.remainingSeconds > 0) {
       this.interval = setInterval(() => {
-        this.seconds -= 1;
+        this.remainingSeconds -= 1;
         this.update();
-        if (this.seconds <= 0) {
+        if (this.remainingSeconds <= 0) {
           this.onEnd();
         }
       }, 1000);
@@ -45702,7 +46071,7 @@ class Countdown {
   }
 
   forceEnd() {
-    this.seconds = 0;
+    this.remainingSeconds = 0;
     this.update();
     this.onEnd();
   }
@@ -45713,10 +46082,18 @@ class Countdown {
   }
 
   update() {
-    const timeLeft = Math.max(this.seconds, 0);
+    const timeLeft = Math.max(this.remainingSeconds, 0);
     const secondsLeft = timeLeft % 60;
     const minutes = Math.floor(timeLeft / 60);
     this.$element.html(`${minutes}:${secondsLeft < 10 ? '0' : ''}${secondsLeft}`);
+  }
+
+  hide() {
+    this.$element.hide();
+  }
+
+  show() {
+    this.$element.show();
   }
 }
 
@@ -46087,6 +46464,25 @@ module.exports = { initSentry };
 
 /***/ }),
 
+/***/ "./src/js/lib/helpers/shuffle.js":
+/*!***************************************!*\
+  !*** ./src/js/lib/helpers/shuffle.js ***!
+  \***************************************/
+/***/ ((module) => {
+
+function shuffleArray(array) {
+  // Fisher–Yates shuffle
+  for (let i = array.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+module.exports = { shuffleArray };
+
+
+/***/ }),
+
 /***/ "./src/js/lib/input/gamepad-input-mgr.js":
 /*!***********************************************!*\
   !*** ./src/js/lib/input/gamepad-input-mgr.js ***!
@@ -46407,7 +46803,7 @@ class InputMgr {
   }
 
   /**
-   * Transform the input state into directional information.
+   * Transform the input stateHandler into directional information.
    *
    * @returns {InputMgrDirection}
    */
@@ -46421,7 +46817,7 @@ class InputMgr {
   }
 
   /**
-   * Get the initial state of the input manager, i.e. all buttons are released.
+   * Get the initial stateHandler of the input manager, i.e. all buttons are released.
    *
    * @returns {InputMgrState}
    */
@@ -46432,7 +46828,7 @@ class InputMgr {
   }
 
   /**
-   * Get the current state of the input manager.
+   * Get the current stateHandler of the input manager.
    *
    * @returns {InputMgrState}
    */
@@ -46441,7 +46837,7 @@ class InputMgr {
   }
 
   /**
-   * Update the internal state of the input manager.
+   * Update the internal stateHandler of the input manager.
    *
    * This method is called by {@link InputMgr#update} and needs to be implemented by subclasses.
    *
@@ -46509,7 +46905,7 @@ class KeyboardInputMgr extends InputMgr {
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
     /**
-     * The internal state is used to track keydown events and is pushed to the superclass state as a whole via
+     * The internal stateHandler is used to track keydown events and is pushed to the superclass stateHandler as a whole via
      * {@link updateState()}.
      */
     this.internalState = { ...this.state };
@@ -46694,9 +47090,30 @@ class PcMovementConnection {
   }
 }
 
+class MenuConnection {
+  constructor(inputManager, playerApp) {
+    this.inputManager = inputManager;
+    this.playerApp = playerApp;
+    this.handleAction = this.handleAction.bind(this);
+  }
+
+  route() {
+    this.inputManager.events.on('action', this.handleAction);
+  }
+
+  unroute() {
+    this.inputManager.events.off('action', this.handleAction);
+  }
+
+  handleAction() {
+    this.playerApp.menuAction();
+  }
+}
+
 module.exports = {
   DialogueOverlayConnection,
   PcMovementConnection,
+  MenuConnection,
 };
 
 
@@ -46708,7 +47125,11 @@ module.exports = {
   \*****************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { DialogueOverlayConnection, PcMovementConnection } = __webpack_require__(/*! ./player-app-input-connections */ "./src/js/lib/input/player-app-input-connections.js");
+const {
+  DialogueOverlayConnection,
+  PcMovementConnection,
+  MenuConnection,
+} = __webpack_require__(/*! ./player-app-input-connections */ "./src/js/lib/input/player-app-input-connections.js");
 
 class PlayerAppInputRouter {
   constructor(inputManager) {
@@ -46734,6 +47155,10 @@ class PlayerAppInputRouter {
 
   routeToDialogueOverlay(dialogueOverlay, dialogueSequencer) {
     this.setConnection(new DialogueOverlayConnection(this.inputManager, dialogueOverlay, dialogueSequencer));
+  }
+
+  routeToMenus(playerApp) {
+    this.setConnection(new MenuConnection(this.inputManager, playerApp));
   }
 }
 
@@ -47202,10 +47627,10 @@ module.exports = StorylineManager;
 
 /***/ }),
 
-/***/ "./src/js/lib/ui/decisionScreen.js":
-/*!*****************************************!*\
-  !*** ./src/js/lib/ui/decisionScreen.js ***!
-  \*****************************************/
+/***/ "./src/js/lib/ui/decision-screen.js":
+/*!******************************************!*\
+  !*** ./src/js/lib/ui/decision-screen.js ***!
+  \******************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
@@ -47217,6 +47642,7 @@ class DecisionScreen {
     this.config = config;
     this.events = new EventEmitter();
     this.lang = lang;
+    this.revealStarted = false;
 
     this.$element = $('<div></div>')
       .addClass('decision-screen-wrapper');
@@ -47230,7 +47656,6 @@ class DecisionScreen {
 
     this.$title = $('<h1></h1>')
       .addClass('decision-screen-title')
-      .text('Eine Entscheidung wurde getroffen…')
       .appendTo(this.$screen);
 
     this.$icon = $('<div></div>')
@@ -47248,10 +47673,7 @@ class DecisionScreen {
       this.$title.text(text);
     }, this.lang);
 
-    this.titleI18n.setText({
-      de: 'Eine Entscheidung wurde getroffen…',
-      en: 'A decision has been made…',
-    });
+    this.titleI18n.setText(this.config.i18n.ui.decisionMade);
 
     this.speechI18n = new I18nTextAdapter((text) => {
       const { revealComplete } = this.speech;
@@ -47260,6 +47682,25 @@ class DecisionScreen {
         this.speech.revealAll();
       }
     }, this.lang);
+    this.speech.events.on('complete', () => {
+      this.showContinue();
+    });
+
+    this.$continue = $('<div></div>')
+      .addClass(['waiting-text', 'waiting-text-decision-screen'])
+      .appendTo(this.$screen)
+      .hide();
+
+    this.$continueText = $('<span></span>')
+      .addClass('text')
+      .appendTo(this.$continue);
+
+
+    this.continueI18n = new I18nTextAdapter((text) => {
+      this.$continueText.text(text);
+    },
+    this.lang,
+    this.config.i18n.ui.pressToContinue);
   }
 
   showDecision(endingText, classes) {
@@ -47267,6 +47708,7 @@ class DecisionScreen {
     this.$styleWrapper.addClass(classes);
     this.$element.addClass('visible');
     setTimeout(() => {
+      this.revealStarted = true;
       this.speechI18n.setText(endingText, true);
     }, 2000);
   }
@@ -47275,6 +47717,19 @@ class DecisionScreen {
     this.lang = lang;
     this.titleI18n.setLang(lang);
     this.speechI18n.setLang(lang);
+    this.continueI18n.setLang(lang);
+  }
+
+  isTextRevealed() {
+    return this.speech.revealComplete;
+  }
+
+  revealText() {
+    this.speech.revealAll();
+  }
+
+  showContinue() {
+    this.$continue.show();
   }
 }
 
@@ -47283,10 +47738,10 @@ module.exports = DecisionScreen;
 
 /***/ }),
 
-/***/ "./src/js/lib/ui/questOverlay.js":
-/*!***************************************!*\
-  !*** ./src/js/lib/ui/questOverlay.js ***!
-  \***************************************/
+/***/ "./src/js/lib/ui/quest-overlay.js":
+/*!****************************************!*\
+  !*** ./src/js/lib/ui/quest-overlay.js ***!
+  \****************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const { I18nTextAdapter } = __webpack_require__(/*! ../helpers/i18n */ "./src/js/lib/helpers/i18n.js");
@@ -47395,10 +47850,10 @@ module.exports = QuestOverlay;
 
 /***/ }),
 
-/***/ "./src/js/lib/ui/scoringOverlay.js":
-/*!*****************************************!*\
-  !*** ./src/js/lib/ui/scoringOverlay.js ***!
-  \*****************************************/
+/***/ "./src/js/lib/ui/scoring-overlay.js":
+/*!******************************************!*\
+  !*** ./src/js/lib/ui/scoring-overlay.js ***!
+  \******************************************/
 /***/ ((module) => {
 
 class ScoringOverlay {
@@ -47417,6 +47872,113 @@ class ScoringOverlay {
 }
 
 module.exports = ScoringOverlay;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/ui/text-screen.js":
+/*!**************************************!*\
+  !*** ./src/js/lib/ui/text-screen.js ***!
+  \**************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const { I18nTextAdapter } = __webpack_require__(/*! ../helpers/i18n */ "./src/js/lib/helpers/i18n.js");
+
+class TextScreen {
+  constructor(config, lang) {
+    this.config = config;
+    this.lang = lang;
+
+    this.$element = $('<div></div>')
+      .addClass('text-screen');
+    this.$textWrapper = $('<div></div>')
+      .addClass('text-wrapper')
+      .appendTo(this.$element);
+    this.$text = $('<div></div>')
+      .addClass('text')
+      .appendTo(this.$textWrapper);
+
+    this.textI18n = new I18nTextAdapter((text) => {
+      this.$text.text(text);
+    }, this.lang);
+  }
+
+  setText(text) {
+    this.textI18n.setText(text);
+  }
+
+  setLang(lang) {
+    this.lang = lang;
+    this.textI18n.setLang(lang);
+  }
+
+  show() {
+    this.$element.addClass('visible');
+  }
+
+  hide() {
+    this.$element.removeClass('visible');
+  }
+}
+
+module.exports = TextScreen;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/ui/title-overlay.js":
+/*!****************************************!*\
+  !*** ./src/js/lib/ui/title-overlay.js ***!
+  \****************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const { I18nTextAdapter } = __webpack_require__(/*! ../helpers/i18n */ "./src/js/lib/helpers/i18n.js");
+
+class TitleOverlay {
+  constructor(config, lang) {
+    this.config = config;
+    this.lang = lang;
+
+    this.$element = $('<div></div>')
+      .addClass('title-overlay');
+
+    this.$title = $('<h1></h1>')
+      .addClass('logo')
+      .text('Citizen Quest')
+      .appendTo(this.$element);
+
+    this.$pressStart = $('<div></div>')
+      .addClass('press-start')
+      .appendTo(this.$element);
+
+    this.$pressStartFrame = $('<div></div>')
+      .addClass('frame')
+      .appendTo(this.$pressStart);
+
+    this.$pressStartText = $('<div></div>')
+      .addClass('text')
+      .appendTo(this.$pressStartFrame);
+
+    this.promptI18n = new I18nTextAdapter((newText) => {
+      this.$pressStartText.text(newText);
+    }, this.lang, this.config.i18n.ui.pressStart);
+  }
+
+  setLang(lang) {
+    this.lang = lang;
+    this.promptI18n.setLang(lang);
+  }
+
+  show() {
+    this.$element.addClass('visible');
+  }
+
+  hide() {
+    this.$element.removeClass('visible');
+  }
+}
+
+module.exports = TitleOverlay;
 
 
 /***/ }),
@@ -47494,6 +48056,80 @@ class CharacterView {
 CharacterView.SPRITE_ANIMATION_SPEED = 0.3;
 
 module.exports = CharacterView;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/views/demo-drone.js":
+/*!****************************************!*\
+  !*** ./src/js/lib/views/demo-drone.js ***!
+  \****************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+/* globals PIXI */
+
+const { shuffleArray } = __webpack_require__(/*! ../helpers/shuffle */ "./src/js/lib/helpers/shuffle.js");
+
+class DemoDrone {
+  constructor() {
+    this.active = false;
+    this.x = 0;
+    this.y = 0;
+    this.speed = 0;
+    this.wait = 0;
+    this.targets = [];
+    this.currentTargetIndex = 0;
+  }
+
+  setPosition(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+
+  setTargets(targets) {
+    this.targets = targets;
+    shuffleArray(this.targets);
+  }
+
+  onReachedTarget() {
+    this.currentTargetIndex = (this.currentTargetIndex + 1) % this.targets.length;
+    this.speed = 0;
+    this.wait = 1000;
+  }
+
+  animate(time) {
+    if (this.active === false || this.targets.length === 0) {
+      return;
+    }
+
+    const deltaMS = time / PIXI.settings.TARGET_FPMS;
+    if (this.wait > 0) {
+      this.wait = Math.max(0, this.wait - deltaMS);
+    }
+
+    if (this.wait === 0) {
+      const target = this.targets[this.currentTargetIndex];
+      const dx = target.x - this.x;
+      const dy = target.y - this.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      if (distance > DemoDrone.MIN_SPEED * deltaMS) {
+        const targetSpeed = Math.max(DemoDrone.MIN_SPEED,
+          DemoDrone.MAX_SPEED * Math.min(1, distance / 400));
+        this.speed = this.speed + Math.sign(targetSpeed - this.speed) * 0.01;
+        this.x += (dx / distance) * this.speed * deltaMS;
+        this.y += (dy / distance) * this.speed * deltaMS;
+      } else {
+        this.onReachedTarget();
+      }
+    }
+  }
+}
+
+DemoDrone.WAIT_TIME = 5000; // in ms
+DemoDrone.MIN_SPEED = 0.1;
+DemoDrone.MAX_SPEED = 0.5; // in pixels per ms
+
+module.exports = DemoDrone;
 
 
 /***/ }),
@@ -48088,11 +48724,13 @@ const CfgReaderFetch = __webpack_require__(/*! ./lib/loader/cfg-reader-fetch */ 
 const CfgLoader = __webpack_require__(/*! ./lib/loader/cfg-loader */ "./src/js/lib/loader/cfg-loader.js");
 const showFatalError = __webpack_require__(/*! ./lib/loader/show-fatal-error */ "./src/js/lib/loader/show-fatal-error.js");
 const PlayerApp = __webpack_require__(/*! ./lib/app/player-app */ "./src/js/lib/app/player-app.js");
+const LocalGameServerController = __webpack_require__(/*! ./lib/app/local-game-server-controller */ "./src/js/lib/app/local-game-server-controller.js");
 const { initSentry } = __webpack_require__(/*! ./lib/helpers/sentry */ "./src/js/lib/helpers/sentry.js");
 __webpack_require__(/*! ./lib/live-test/live-test-manager */ "./src/js/lib/live-test/live-test-manager.js");
 __webpack_require__(/*! ./lib/live-test/dialogue-live-tester */ "./src/js/lib/live-test/dialogue-live-tester.js");
 __webpack_require__(/*! ../sass/default.scss */ "./src/sass/default.scss");
 const fetchTextures = __webpack_require__(/*! ./lib/helpers-client/fetch-textures */ "./src/js/lib/helpers-client/fetch-textures.js");
+const { PlayerAppStates } = __webpack_require__(/*! ./lib/app/player-app-states */ "./src/js/lib/app/player-app-states.js");
 
 (async () => {
   try {
@@ -48109,6 +48747,7 @@ const fetchTextures = __webpack_require__(/*! ./lib/helpers-client/fetch-texture
     const config = await cfgLoader.load([
       'config/game.yml',
       'config/players.yml',
+      'config/i18n.yml',
       'config/textures.yml',
       'config/town.yml',
       'config/gamepads.yml',
@@ -48133,6 +48772,9 @@ const fetchTextures = __webpack_require__(/*! ./lib/helpers-client/fetch-texture
     const playerApp = new PlayerApp(config, textures, playerId);
     $('[data-component="PlayerApp"]').replaceWith(playerApp.$element);
 
+    playerApp.setGameServerController(new LocalGameServerController(playerApp));
+    playerApp.setState(PlayerAppStates.IDLE);
+
     playerApp.resize();
     $(window).on('resize', () => {
       playerApp.resize();
@@ -48155,4 +48797,4 @@ const fetchTextures = __webpack_require__(/*! ./lib/helpers-client/fetch-texture
 
 /******/ })()
 ;
-//# sourceMappingURL=default.e71ace47b1b6b839bc90.js.map
+//# sourceMappingURL=default.bd3e11fdb269b86ae31e.js.map

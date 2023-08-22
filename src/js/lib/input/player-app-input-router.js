@@ -1,4 +1,8 @@
-const { DialogueOverlayConnection, PcMovementConnection } = require('./player-app-input-connections');
+const {
+  DialogueOverlayConnection,
+  PcMovementConnection,
+  MenuConnection,
+} = require('./player-app-input-connections');
 
 class PlayerAppInputRouter {
   constructor(inputManager) {
@@ -24,6 +28,10 @@ class PlayerAppInputRouter {
 
   routeToDialogueOverlay(dialogueOverlay, dialogueSequencer) {
     this.setConnection(new DialogueOverlayConnection(this.inputManager, dialogueOverlay, dialogueSequencer));
+  }
+
+  routeToMenus(playerApp) {
+    this.setConnection(new MenuConnection(this.inputManager, playerApp));
   }
 }
 

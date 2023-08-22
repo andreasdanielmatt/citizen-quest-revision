@@ -267,6 +267,28 @@ class ServerSocketConnector {
     this.send(message);
   }
 
+  addPlayer(playerID) {
+    this.send({
+      type: 'addPlayer',
+      playerID,
+    });
+  }
+
+  removePlayer(playerID) {
+    this.send({
+      type: 'removePlayer',
+      playerID,
+    });
+  }
+
+  playerReady(state, playerID) {
+    this.send({
+      type: 'playerReady',
+      state,
+      playerID,
+    });
+  }
+
   close() {
     if (this.ws) {
       console.log('Closing connection...');
@@ -320,7 +342,7 @@ class ServerSocketConnector {
     if (this.state) {
       this.state.onMessage(event);
     } else {
-      console.error('Received message while in an unknown state:', event.data);
+      console.error('Received message while in an unknown stateHandler:', event.data);
     }
   }
 

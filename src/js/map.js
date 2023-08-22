@@ -41,11 +41,20 @@ const MapApp = require('./lib/app/map-app');
       syncReceived = true;
       mapApp.stats.ping();
       Object.entries(message.players).forEach(([id, player]) => {
+        if (mapApp.pcs[id] === undefined) {
+          mapApp.addPc(id);
+        }
         if (player.position) {
           mapApp.pcs[id].setPosition(player.position.x, player.position.y);
         }
         if (player.speed) {
           mapApp.pcs[id].setSpeed(player.speed.x, player.speed.y);
+        }
+      });
+      // Remove players that were not included in the sync
+      Object.keys(mapApp.pcs).forEach((id) => {
+        if (message.players[id] === undefined) {
+          mapApp.removePc(id);
         }
       });
     });

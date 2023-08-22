@@ -26,6 +26,9 @@ channels:
           - $ref: '#/components/messages/serverInfoReq'
           - $ref: '#/components/messages/sync'
           - $ref: '#/components/messages/ping'
+          - $ref: '#/components/messages/addPlayer'
+          - $ref: '#/components/messages/removePlayer'
+          - $ref: '#/components/messages/playerReady'
     subscribe:
       description: Messages that you receive from the API
       operationId: sendMessage
@@ -37,6 +40,16 @@ channels:
 
 components:
   messages:
+    ping:
+      summary: Ping the server to check if the connection is alive.
+      payload:
+        $ref: "#/components/schemas/ping"
+      x-response:
+        $ref: "#/components/schemas/pong"
+    pong:
+      summary: Response to a ping sent by the client.
+      payload:
+        $ref: "#/components/schemas/pong"
     serverInfoReq:
       summary: Request information about the server.
       payload:
@@ -53,17 +66,31 @@ components:
         $ref: "#/components/schemas/sync"
       x-response:
         $ref: "#/components/schemas/sync"
-    ping:
-      summary: Ping the server to check if the connection is alive.
+    addPlayer:
+      summary: Add a player to the game.
       payload:
-        $ref: "#/components/schemas/ping"
-      x-response:
-        $ref: "#/components/schemas/pong"
-    pong:
-      summary: Response to a ping sent by the client.
+        $ref: "#/components/schemas/addPlayer"
+    removePlayer:
+      summary: Remove a player from the game.
       payload:
-        $ref: "#/components/schemas/pong"
+          $ref: "#/components/schemas/removePlayer"
+    playerReady:
+      summary: Tell the server that the player is ready to continue.
+      payload:
+        $ref: "#/components/schemas/playerReady"
   schemas:
+    ping:
+      type: object
+      properties:
+        type:
+          type: string
+          const: ping
+    pong:
+      type: object
+      properties:
+        type:
+          type: string
+          const: pong
     serverInfoReq:
       type: object
       properties:
@@ -84,6 +111,8 @@ components:
         type:
           type: string
           const: sync
+        state:
+          type: string
         players:
           type: object
           properties:
@@ -101,15 +130,27 @@ components:
                   type: number
                 y:
                   type: number
-    ping:
+    addPlayer:
       type: object
       properties:
         type:
           type: string
-          const: ping
-    pong:
+          const: addPlayer
+        playerId:
+          type: string
+    removePlayer:
       type: object
       properties:
         type:
           type: string
-          const: pong
+          const: removePlayer
+        playerId:
+          type: string
+    playerReady:
+      type: object
+      properties:
+        type:
+          type: string
+          const: playerReady
+        playerId:
+          type: string

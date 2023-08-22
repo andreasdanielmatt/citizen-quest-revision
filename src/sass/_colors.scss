@@ -1,2 +1,22 @@
 $c-black: #000;
 $c-white: #fff;
+
+$player-colors: (
+  1: #ffc229,
+  2: #1ae8ca,
+  3: #c997fc,
+  4: #78f2ff,
+  5: #c2f26d,
+  6: #ff6d6d
+);
+
+// Lighter variants of each color
+
+$player-colors-light: (
+    1: #ffd75a,
+    2: #6ff2e0,
+    3: #d9b1ff,
+    4: #a4faff,
+    5: #d9ff8c,
+    6: #ff8c8c
+);

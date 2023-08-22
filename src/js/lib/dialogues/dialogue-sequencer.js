@@ -13,8 +13,13 @@ class DialogueSequencer {
   }
 
   setUiState(state) {
+    if (this.uiState) {
+      this.uiState.onEnd();
+    }
     this.uiState = state;
-    this.uiState.onBegin();
+    if (this.uiState) {
+      this.uiState.onBegin();
+    }
   }
 
   endUi(responseId = null) {
@@ -51,8 +56,8 @@ class DialogueSequencer {
   }
 
   onDialogueEnd() {
-    this.dialogueOverlay.hide();
     this.events.emit('end');
+    this.terminate();
   }
 
   action() {
@@ -61,8 +66,16 @@ class DialogueSequencer {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   handledByUI(node) {
     return node && node.type === 'statement';
+  }
+
+  terminate() {
+    this.setUiState(null);
+    this.dialogueOverlay.hide();
+    this.dialogueIterator = null;
+    this.dialogue = null;
   }
 }
 

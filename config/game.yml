@@ -2,3 +2,5 @@ game:
   languages: ['de', 'en']
   defaultLanguage: en
   duration: 300
+  introTimeout: 30
+  endingTimeout: 30

@@ -97,7 +97,7 @@ class InputMgr {
   }
 
   /**
-   * Transform the input state into directional information.
+   * Transform the input stateHandler into directional information.
    *
    * @returns {InputMgrDirection}
    */
@@ -111,7 +111,7 @@ class InputMgr {
   }
 
   /**
-   * Get the initial state of the input manager, i.e. all buttons are released.
+   * Get the initial stateHandler of the input manager, i.e. all buttons are released.
    *
    * @returns {InputMgrState}
    */
@@ -122,7 +122,7 @@ class InputMgr {
   }
 
   /**
-   * Get the current state of the input manager.
+   * Get the current stateHandler of the input manager.
    *
    * @returns {InputMgrState}
    */
@@ -131,7 +131,7 @@ class InputMgr {
   }
 
   /**
-   * Update the internal state of the input manager.
+   * Update the internal stateHandler of the input manager.
    *
    * This method is called by {@link InputMgr#update} and needs to be implemented by subclasses.
    *

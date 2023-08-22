@@ -31,6 +31,7 @@ const cfgLoader = new CfgLoader(CfgReaderFile, yaml.load);
 cfgLoader.load([
   '../config/game.yml',
   '../config/players.yml',
+  '../config/i18n.yml',
   '../config/textures.yml',
   '../config/town.yml',
   '../config/gamepads.yml',

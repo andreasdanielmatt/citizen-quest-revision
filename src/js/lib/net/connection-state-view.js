@@ -50,7 +50,7 @@ class ConnectionStateView {
       return;
     }
     this.setErrorMessage('Connection closed');
-    this.setErrorStatus('Will retry in a few seconds.');
+    this.setErrorStatus('Will retry in a few remainingSeconds.');
     this.show();
   }
 

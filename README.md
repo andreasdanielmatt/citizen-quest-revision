@@ -33,7 +33,7 @@ The `map.html` client accepts the following query string parameters:
 
 The `index.html` app accepts the following query string parameters:
 - `s`: ID of the stats panel to show (fps, render, ping). Defaults to none.
-- `t`: Time limit for the game, in seconds. Defaults to 300 seconds.
+- `t`: Time limit for the game, in remainingSeconds. Defaults to 300 remainingSeconds.
 - `test`: A live test to perform (e.g. `dialogue-responses`)
 
 ## Configuration

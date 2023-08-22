@@ -3,7 +3,7 @@ export class DialogueSequencerState {
     this.dialogueSequencer = dialogueSequencer;
     this.dialogueOverlay = dialogueSequencer.dialogueOverlay;
     this.dialogueIterator = dialogueSequencer.dialogueIterator;
-    this.activeNode = this.dialogueIterator.getActiveNode();
+    this.activeNode = this.dialogueIterator ? this.dialogueIterator.getActiveNode() : null;
   }
 
   onBegin() {
@@ -13,22 +13,29 @@ export class DialogueSequencerState {
   onAction() {
 
   }
+
+  onEnd() {
+
+  }
 }
 
 export class DialogueSequencerThenTextState extends DialogueSequencerState {
   constructor(dialogueSequencer, responseId) {
     super(dialogueSequencer);
     this.responseId = responseId;
+    this.handleSpeechComplete = this.handleSpeechComplete.bind(this);
   }
 
   onBegin() {
     this.speechDone = false;
     const response = this.dialogueIterator.getResponse(this.responseId);
     this.dialogueOverlay.showSpeech(response.thenText, response.thenClass || null);
-    this.dialogueOverlay.events.once('speechComplete', () => {
-      this.speechDone = true;
-      this.dialogueOverlay.showPressToContinue();
-    });
+    this.dialogueOverlay.events.once('speechComplete', this.handleSpeechComplete);
+  }
+
+  handleSpeechComplete() {
+    this.speechDone = true;
+    this.dialogueOverlay.showPressToContinue();
   }
 
   onAction() {
@@ -38,6 +45,10 @@ export class DialogueSequencerThenTextState extends DialogueSequencerState {
     } else {
       this.dialogueOverlay.speedUpSpeech();
     }
+  }
+
+  onEnd() {
+    this.dialogueOverlay.events.off('speechComplete', this.handleSpeechComplete);
   }
 }
 
@@ -72,20 +83,27 @@ export class DialogueSequencerResponseState extends DialogueSequencerState {
 
 export class DialogueSequencerTextState extends DialogueSequencerState {
 
+  constructor(dialogueSequencer) {
+    super(dialogueSequencer);
+    this.handleSpeechComplete = this.handleSpeechComplete.bind(this);
+  }
+
+  handleSpeechComplete() {
+    this.speechDone = true;
+    const responses = this.dialogueIterator.getEnabledResponses();
+    if (responses && responses.length > 0) {
+      this.dialogueSequencer.setUiState(
+        new DialogueSequencerResponseState(this.dialogueSequencer)
+      );
+    } else {
+      this.dialogueOverlay.showPressToContinue();
+    }
+  }
+
   onBegin() {
     this.speechDone = false;
     this.dialogueOverlay.showSpeech(this.activeNode.text, this.activeNode.class || null);
-    this.dialogueOverlay.events.once('speechComplete', () => {
-      this.speechDone = true;
-      const responses = this.dialogueIterator.getEnabledResponses();
-      if (responses && responses.length > 0) {
-        this.dialogueSequencer.setUiState(
-          new DialogueSequencerResponseState(this.dialogueSequencer)
-        );
-      } else {
-        this.dialogueOverlay.showPressToContinue();
-      }
-    });
+    this.dialogueOverlay.events.once('speechComplete', this.handleSpeechComplete);
   }
 
   onAction() {
@@ -95,5 +113,9 @@ export class DialogueSequencerTextState extends DialogueSequencerState {
     } else {
       this.dialogueOverlay.speedUpSpeech();
     }
+  }
+
+  onEnd() {
+    this.dialogueOverlay.events.off('speechComplete', this.handleSpeechComplete);
   }
 }

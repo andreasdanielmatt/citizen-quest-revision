@@ -3,6 +3,7 @@ const Stats = require('../helpers-web/stats.js');
 const TownView = require('../views/town-view');
 require('../helpers-web/fill-with-aspect');
 const PCView = require('../views/pc-view');
+const DemoDrone = require('../views/demo-drone');
 const CharacterView = require('../views/character-view');
 const KeyboardInputMgr = require('../input/keyboard-input-mgr');
 const GamepadInputMgr = require('../input/gamepad-input-mgr');
@@ -12,17 +13,20 @@ const Character = require('../model/character');
 const FlagStore = require('../dialogues/flag-store');
 const StorylineManager = require('../model/storyline-manager');
 const QuestTracker = require('../model/quest-tracker');
-const QuestOverlay = require('../ui/questOverlay');
+const QuestOverlay = require('../ui/quest-overlay');
 const DialogueOverlay = require('../dialogues/dialogue-overlay');
 const DialogueSequencer = require('../dialogues/dialogue-sequencer');
 const Countdown = require('../helpers-web/countdown');
-const DecisionScreen = require('../ui/decisionScreen');
-const ScoringOverlay = require('../ui/scoringOverlay');
+const DecisionScreen = require('../ui/decision-screen');
+const ScoringOverlay = require('../ui/scoring-overlay');
 const { I18nTextAdapter } = require('../helpers/i18n');
 const readEnding = require('../dialogues/ending-reader');
+const { PlayerAppStates, getHandler } = require('./player-app-states');
+const TitleOverlay = require('../ui/title-overlay');
+const TextScreen = require('../ui/text-screen');
 
 class PlayerApp {
-  constructor(config, textures, playerId) {
+  constructor(config, textures, playerId, stateController) {
     this.config = config;
     this.textures = textures;
     this.lang = config.game.defaultLanguage;
@@ -36,7 +40,7 @@ class PlayerApp {
 
     this.questTracker = new QuestTracker(config, this.storylineManager, this.flags);
 
-    this.pc = new Character(playerId, this.config.players[playerId]);
+    this.pc = null;
     this.canControlPc = false;
     this.remotePcs = {};
 
@@ -44,10 +48,17 @@ class PlayerApp {
     this.showHitbox = false;
     this.remotePcViews = {};
     this.npcViews = {};
+    this.npcMoodsVisible = false;
+
+    this.demoDrone = new DemoDrone();
+
+    this.stateHandler = null;
+    this.gameServerController = null;
 
     // HTML elements
     this.$element = $('<div></div>')
-      .addClass('player-app');
+      .addClass('player-app')
+      .addClass(`player-${playerId}`);
 
     this.$pixiWrapper = $('<div></div>')
       .addClass('pixi-wrapper')
@@ -70,12 +81,16 @@ class PlayerApp {
 
     this.countdown = new Countdown(config.game.duration);
     this.countdown.$element.appendTo(this.$element);
+    this.countdown.hide();
     this.countdown.events.on('end', () => {
-      this.handleStorylineEnd();
+      this.gameServerController.roundEnd();
     });
 
     this.questOverlay = new QuestOverlay(this.config, this.lang, this.questTracker);
     this.$element.append(this.questOverlay.$element);
+
+    this.textScreen = new TextScreen(this.config, this.lang);
+    this.$element.append(this.textScreen.$element);
 
     this.dialogueOverlay = new DialogueOverlay(this.config, this.lang);
     this.dialogueSequencer = new DialogueSequencer(this.dialogueOverlay);
@@ -83,6 +98,10 @@ class PlayerApp {
 
     this.scoringOverlay = new ScoringOverlay(this.config);
     this.$element.append(this.scoringOverlay.$element);
+
+    this.titleOverlay = new TitleOverlay(this.config, this.lang);
+    this.$element.append(this.titleOverlay.$element);
+    this.titleOverlay.show();
 
     this.stats = new Stats();
     this.$element.append(this.stats.dom);
@@ -116,12 +135,16 @@ class PlayerApp {
     this.townView = new TownView(this.config, this.textures);
     this.camera.addChild(this.townView.display);
     this.pixiApp.stage.addChild(this.camera);
+    this.demoDrone.setPosition(this.townView.townSize.width / 2, this.townView.townSize.height / 2);
+
+    this.cameraTarget = null;
+    this.cameraOffset = new PIXI.Point(0, 0);
 
     // Input
     this.keyboardInputMgr = new KeyboardInputMgr();
     this.keyboardInputMgr.attachListeners();
     this.keyboardInputMgr.addToggle('KeyE', () => {
-      this.countdown.forceEnd();
+      this.gameServerController.roundEnd();
     });
     this.keyboardInputMgr.addToggle('KeyD', () => {
       this.stats.togglePanel();
@@ -130,7 +153,11 @@ class PlayerApp {
       this.toggleHitboxDisplay();
     });
     this.keyboardInputMgr.addToggle('KeyX', () => {
-      console.log(`x: ${this.pc.position.x}, y: ${this.pc.position.y}`);
+      if (this.pc) {
+        console.log(`x: ${this.pc.position.x}, y: ${this.pc.position.y}`);
+      } else {
+        console.log('No PC');
+      }
     });
 
     const gamepadMapperConfig =
@@ -156,7 +183,6 @@ class PlayerApp {
     });
 
     this.inputRouter = new PlayerAppInputRouter(inputMgr);
-    this.inputRouter.routeToPcMovement(this);
 
     // Game loop
     this.pixiApp.ticker.add((time) => {
@@ -176,15 +202,21 @@ class PlayerApp {
 
       if (this.pcView) {
         this.pcView.animate(time);
-        // Set the town view's pivot so the PC is always centered on the screen,
-        // but don't let the pivot go off the edge of the town
+      }
+
+      if (this.demoDrone) {
+        this.demoDrone.animate(time);
+      }
+
+      if (this.cameraTarget) {
+        // Cap the camera position to the town size
         this.camera.pivot.set(
           Math.max(0,
-            Math.min(this.pcView.display.x + this.pcView.display.width / 2 - PlayerApp.APP_WIDTH / 2
+            Math.min(this.cameraTarget.x + this.cameraOffset.x - PlayerApp.APP_WIDTH / 2
               / this.camera.scale.x,
               this.townView.townSize.width - PlayerApp.APP_WIDTH / this.camera.scale.x)),
           Math.max(0,
-            Math.min(this.pcView.display.y - this.pcView.display.height * 0.8 - PlayerApp.APP_HEIGHT
+            Math.min(this.cameraTarget.y + this.cameraOffset.y - PlayerApp.APP_HEIGHT
               / 2 / this.camera.scale.y,
               this.townView.townSize.height - PlayerApp.APP_HEIGHT / this.camera.scale.y)),
         );
@@ -200,18 +232,50 @@ class PlayerApp {
     });
 
     // Temporary
-    this.addPcView();
-    Object.entries(this.config.players)
-      .filter(([id, player]) => (player.enabled === undefined || player.enabled) && id !== playerId)
-      .forEach(([id, player]) => {
-        this.addRemotePcView(id);
-      });
+    // this.addPcView();
+    // Object.entries(this.config.players)
+    //   .filter(([id, player]) => (player.enabled === undefined || player.enabled) && id !== playerId)
+    //   .forEach(([id, player]) => {
+    //     this.addRemotePcView(id);
+    //   });
     this.storylineManager.setCurrentStoryline('touristen');
+  }
+
+  setGameServerController(gameServerController) {
+    this.gameServerController = gameServerController;
+  }
+
+  getState() {
+    return (this.stateHandler && this.stateHandler.state) || null;
+  }
+
+  setState(state) {
+    // Check if the state is in PlayerApp.States
+    if (Object.values(PlayerAppStates).indexOf(state) === -1) {
+      throw new Error(`Error: Attempting to set invalid state ${state}`);
+    }
+
+    if (this.stateHandler && this.stateHandler.state === state) {
+      return;
+    }
+
+    const fromState = this.getState();
+    const newHandler = getHandler(this, state);
+
+    if (this.stateHandler) {
+      this.stateHandler.onExit(state);
+    }
+    this.stateHandler = newHandler;
+    if (this.stateHandler) {
+      this.stateHandler.onEnter(fromState);
+    }
   }
 
   setLanguage(lang) {
     this.lang = lang;
+    this.titleOverlay.setLang(this.lang);
     this.dialogueOverlay.setLang(this.lang);
+    this.textScreen.setLang(this.lang);
     this.questOverlay.setLang(this.lang);
     this.decisionLabelI18n.setLang(this.lang);
     if (this.endingScreen) {
@@ -233,19 +297,39 @@ class PlayerApp {
     this.$element.css('font-size', `${(this.$element.width() * PlayerApp.FONT_RATIO).toFixed(3)}px`);
   }
 
-  addPcView() {
-    this.removePcView();
+  setCameraTarget(displayObject, offset = { x: 0, y: 0 }) {
+    this.cameraTarget = displayObject;
+    this.cameraOffset = offset;
+  }
 
+  cameraFollowPc() {
+    if (this.pcView) {
+      this.demoDrone.active = false;
+    }
+  }
+
+  cameraFollowDrone() {
+    if (this.demoDrone) {
+      this.setCameraTarget(this.demoDrone);
+      this.demoDrone.active = true;
+    }
+  }
+
+  addPc() {
+    this.removePc();
+    this.pc = new Character(this.playerId, this.config.players[this.playerId]);
     this.pcView = new PCView(this.config, this.textures, this.pc, this.townView);
     this.townView.mainLayer.addChild(this.pcView.display);
     this.townView.bgLayer.addChild(this.pcView.hitboxDisplay);
+    this.setCameraTarget(this.pcView.display, new PIXI.Point(this.pcView.display.width / 2, -this.pcView.display.height * 0.8));
   }
 
-  removePcView() {
+  removePc() {
     if (this.pcView) {
       this.townView.mainLayer.removeChild(this.pcView.display);
       this.townView.bgLayer.removeChild(this.pcView.hitboxDisplay);
       this.pcView = null;
+      this.pc = null;
     }
   }
 
@@ -293,7 +377,9 @@ class PlayerApp {
 
   disablePcControl() {
     this.canControlPc = false;
-    this.pc.setSpeed(0, 0);
+    if (this.pc) {
+      this.pc.setSpeed(0, 0);
+    }
   }
 
   getDialogueContext() {
@@ -318,6 +404,9 @@ class PlayerApp {
   }
 
   pcAction() {
+    if (this.pcView === null) {
+      return;
+    }
     const hitbox = this.pcView.getActionHitbox();
     const npcs = this.getNpcsInRect(hitbox);
     let closestNpc = null;
@@ -340,15 +429,35 @@ class PlayerApp {
     }
   }
 
+  menuAction() {
+    this.stateHandler.onAction();
+  }
+
+  playerStart() {
+    if (this.gameServerController) {
+      this.gameServerController.playerStart();
+    }
+  }
+
   updateNpcMoods() {
     const npcsWithQuests = this.questTracker.getNpcsWithQuests();
     Object.values(this.npcViews).forEach((npcView) => {
-      if (Object.keys(npcsWithQuests).includes(npcView.character.id)) {
+      if (this.npcMoodsVisible && Object.keys(npcsWithQuests).includes(npcView.character.id)) {
         npcView.showMoodBalloon(npcsWithQuests[npcView.character.id]);
       } else {
         npcView.hideMoodBalloon();
       }
     });
+  }
+
+  hideNpcMoods() {
+    this.npcMoodsVisible = false;
+    this.updateNpcMoods();
+  }
+
+  showNpcMoods() {
+    this.npcMoodsVisible = true;
+    this.updateNpcMoods();
   }
 
   toggleHitboxDisplay() {
@@ -362,16 +471,39 @@ class PlayerApp {
       this.addNpc(new Character(id, props));
     });
     this.updateNpcMoods();
-    this.countdown.start();
+    if (this.demoDrone) {
+      this.demoDrone.setTargets(Object.values(this.npcViews).map(
+        npcView => ({
+          x: npcView.display.x,
+          y: npcView.display.y - npcView.display.height,
+        })
+      ));
+    }
   }
 
   handleStorylineEnd() {
     const [ endingText, classes ] = readEnding(this.storylineManager.getDialogue('_ending'), this.getDialogueContext());
 
-    this.inputRouter.unroute();
     this.endingScreen = new DecisionScreen(this.config, this.lang);
     this.$element.append(this.endingScreen.$element);
     this.endingScreen.showDecision(endingText, classes);
+  }
+
+  hideEndingScreen() {
+    if (this.endingScreen) {
+      this.endingScreen.$element.remove();
+      this.endingScreen = null;
+    }
+  }
+
+  showTextScreen(text) {
+    this.textScreen.setText(text);
+    this.textScreen.show();
+  }
+
+  hideTextScreen() {
+    this.textScreen.hide();
+    this.textScreen.setText('');
   }
 }
 

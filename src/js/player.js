@@ -5,8 +5,10 @@ require('../sass/default.scss');
 const { getApiServerUrl, getSocketServerUrl } = require('./lib/net/server-url');
 const { initSentry } = require('./lib/helpers/sentry');
 const PlayerApp = require('./lib/app/player-app');
+const GameServerController = require('./lib/app/game-server-controller');
 const fetchConfig = require('./lib/helpers-client/fetch-config');
 const fetchTextures = require('./lib/helpers-client/fetch-textures');
+const { PlayerAppStates } = require('./lib/app/player-app-states');
 
 (async () => {
   try {
@@ -35,14 +37,39 @@ const fetchTextures = require('./lib/helpers-client/fetch-textures');
     const connStateView = new ConnectionStateView(connector);
     $('body').append(connStateView.$element);
 
+    playerApp.setGameServerController(new GameServerController(playerApp, connector));
+    playerApp.setState(PlayerAppStates.IDLE);
+
     connector.events.on('connect', () => {
       syncReceived = true;
     });
     connector.events.on('sync', (message) => {
       syncReceived = true;
       playerApp.stats.ping();
+      if (message.state && message.state !== playerApp.getState()) {
+        if (message.players[playerId] === undefined) {
+          playerApp.setState(PlayerAppStates.IDLE);
+        } else {
+          playerApp.setState(message.state);
+        }
+      }
+      if (message.roundCountdown) {
+        const seconds = Math.ceil(message.roundCountdown / 1000);
+        if (seconds < playerApp.countdown.remainingSeconds) {
+          playerApp.countdown.setRemainingSeconds(seconds);
+        }
+      }
       Object.entries(message.players).forEach(([id, player]) => {
-        if (id !== playerId && playerApp.remotePcs[id]) {
+        if (id === playerId) {
+          if (playerApp.pcView === null) {
+            playerApp.addPc();
+            playerApp.pc.setPosition(player.position.x, player.position.y);
+          }
+        }
+        if (id !== playerId) {
+          if (playerApp.remotePcs[id] === undefined) {
+            playerApp.addRemotePcView(id);
+          }
           if (player.position) {
             playerApp.remotePcs[id].setPosition(player.position.x, player.position.y);
           }
@@ -51,6 +78,16 @@ const fetchTextures = require('./lib/helpers-client/fetch-textures');
           }
         }
       });
+      // Remove players that were not included in the sync
+      Object.keys(playerApp.remotePcs).forEach((id) => {
+        if (message.players[id] === undefined) {
+          playerApp.removeRemotePcView(id);
+        }
+      });
+      // Remove the PC if it was not included in the sync
+      if (playerApp.pc !== null && message.players[playerId] === undefined) {
+        playerApp.removePc();
+      }
     });
     playerApp.pixiApp.ticker.add(() => {
       if (syncReceived) {

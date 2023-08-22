@@ -3,11 +3,13 @@ const CfgReaderFetch = require('./lib/loader/cfg-reader-fetch');
 const CfgLoader = require('./lib/loader/cfg-loader');
 const showFatalError = require('./lib/loader/show-fatal-error');
 const PlayerApp = require('./lib/app/player-app');
+const LocalGameServerController = require('./lib/app/local-game-server-controller');
 const { initSentry } = require('./lib/helpers/sentry');
 require('./lib/live-test/live-test-manager');
 require('./lib/live-test/dialogue-live-tester');
 require('../sass/default.scss');
 const fetchTextures = require('./lib/helpers-client/fetch-textures');
+const { PlayerAppStates } = require('./lib/app/player-app-states');
 
 (async () => {
   try {
@@ -24,6 +26,7 @@ const fetchTextures = require('./lib/helpers-client/fetch-textures');
     const config = await cfgLoader.load([
       'config/game.yml',
       'config/players.yml',
+      'config/i18n.yml',
       'config/textures.yml',
       'config/town.yml',
       'config/gamepads.yml',
@@ -47,6 +50,9 @@ const fetchTextures = require('./lib/helpers-client/fetch-textures');
     });
     const playerApp = new PlayerApp(config, textures, playerId);
     $('[data-component="PlayerApp"]').replaceWith(playerApp.$element);
+
+    playerApp.setGameServerController(new LocalGameServerController(playerApp));
+    playerApp.setState(PlayerAppStates.IDLE);
 
     playerApp.resize();
     $(window).on('resize', () => {

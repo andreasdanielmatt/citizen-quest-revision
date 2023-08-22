@@ -20,7 +20,7 @@ class KeyboardInputMgr extends InputMgr {
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
     /**
-     * The internal state is used to track keydown events and is pushed to the superclass state as a whole via
+     * The internal stateHandler is used to track keydown events and is pushed to the superclass stateHandler as a whole via
      * {@link updateState()}.
      */
     this.internalState = { ...this.state };

@@ -3,16 +3,15 @@ const express = require('express');
 const ws = require('ws');
 const cors = require('cors');
 const OpenApiValidator = require('express-openapi-validator');
-const Character = require('../../src/js/lib/model/character');
 const reportError = require('./errors');
+const GameManager = require('./game-manager');
+const { GameManagerStates } = require('./game-manager-states');
 
 function initApp(config) {
   const serverID = `${process.pid}:${Date.now()}`;
   console.log(`Initializing server (id=${serverID})`);
 
-  const players = Object.fromEntries(Object.entries(config.players)
-    .filter(([, player]) => player.enabled === undefined || player.enabled)
-    .map(([id]) => [id, new Character(id, config.players[id])]));
+  const gameManager = new GameManager(config);
 
   const app = express();
   app.use(cors());
@@ -32,16 +31,39 @@ function initApp(config) {
   function processSync(message) {
     if (message.players) {
       Object.entries(message.players).forEach(([id, props]) => {
-        if (players[id] === undefined) {
-          reportError(`Error: Received sync data for unknown player ${id}`);
-        }
-        if (props.position) {
-          players[id].setPosition(props.position.x, props.position.y);
-        }
-        if (props.speed) {
-          players[id].setSpeed(props.speed.x, props.speed.y);
+        if (gameManager.players[id] !== undefined) {
+          if (props.position) {
+            gameManager.players[id].setPosition(props.position.x, props.position.y);
+          }
+          if (props.speed) {
+            gameManager.players[id].setSpeed(props.speed.x, props.speed.y);
+          }
         }
       });
+    }
+  }
+
+  function processAddPlayer(message) {
+    if (message.playerID) {
+      gameManager.addPlayer(message.playerID);
+    } else {
+      reportError('Error: Received addPlayer message without playerID');
+    }
+  }
+
+  function processRemovePlayer(message) {
+    if (message.playerID) {
+      gameManager.removePlayer(message.playerID);
+    } else {
+      reportError('Error: Received removePlayer message without playerID');
+    }
+  }
+
+  function processPlayerReady(message) {
+    if (message.state && message.playerID) {
+      gameManager.playerReady(message.state, message.playerID);
+    } else {
+      reportError('Error: Received playerReady message without state or playerID');
     }
   }
 
@@ -53,16 +75,22 @@ function initApp(config) {
   }
 
   function sendSync(socket) {
-    socket.send(JSON.stringify({
+    const message = {
       type: 'sync',
-      players: Object.values(players).reduce((acc, player) => {
+      state: gameManager.getState(),
+      players: Object.values(gameManager.players).reduce((acc, player) => {
         acc[player.id] = {
           position: player.position,
           speed: player.speed,
         };
         return acc;
       }, {}),
-    }));
+    };
+    if (gameManager.getState() === GameManagerStates.PLAYING && gameManager.roundStartTime) {
+      message.roundCountdown = Math.max(0,
+        config.game.duration * 1000 - (Date.now() - gameManager.roundStartTime));
+    }
+    socket.send(JSON.stringify(message));
   }
 
   function sendPong(socket) {
@@ -79,6 +107,8 @@ function initApp(config) {
     console.log(`Client connected from ${ip}`);
     console.log(`Connected (${wss.clients.size} clients)`);
 
+    let playerId = null;
+
     socket.on('message', (data) => {
       const message = JSON.parse(data);
       if (typeof message === 'object' && typeof message.type === 'string') {
@@ -92,6 +122,15 @@ function initApp(config) {
             break;
           case 'info':
             sendServerInfo(socket);
+            break;
+          case 'addPlayer':
+            processAddPlayer(message);
+            break;
+          case 'removePlayer':
+            processRemovePlayer(message);
+            break;
+          case 'playerReady':
+            processPlayerReady(message);
             break;
           default:
             reportError(`Error: Received message of unknown type '${message.type}'`);
