@@ -3,6 +3,9 @@ storylines:
     decision:
       en: "Should we build a Ferris wheel to promote tourism?"
       de: "Sollten wir ein Riesenrad bauen, um den Tourismus zu fördern?"
+    prompt:
+      en: "The mayor and the Spin City™ company want to build a Ferris wheel to promote tourism. Talk to citizens and help them take part in the decision."
+      de: "Die Bürgermeisterin und das Unternehmen Drehmoment™ wollen ein Riesenrad bauen, um den Tourismus zu fördern. Sprich mit den Bürger*innen und hilf ihnen, an der Entscheidung teilzunehmen."
     npcs:
       'mayor':
         name:

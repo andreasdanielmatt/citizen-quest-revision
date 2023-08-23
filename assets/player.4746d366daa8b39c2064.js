@@ -39885,6 +39885,7 @@ class PlayerAppPlayingState extends PlayerAppState {
     this.playerApp.countdown.show();
     this.playerApp.countdown.start();
     this.playerApp.showNpcMoods();
+    this.playerApp.showStorylinePrompt();
   }
 
   onExit() {
@@ -40437,6 +40438,10 @@ class PlayerApp {
 
   toggleHitboxDisplay() {
     this.showHitbox = !this.showHitbox;
+  }
+
+  showStorylinePrompt() {
+    this.questOverlay.setPrompt(this.storylineManager.getPrompt());
   }
 
   handleStorylineChanged() {
@@ -43271,6 +43276,10 @@ class StorylineManager {
     return this.getStoryline(this.currentStorylineId);
   }
 
+  getPrompt() {
+    return this.getCurrentStoryline().prompt || null;
+  }
+
   getDecision() {
     const currentStoryline = this.getCurrentStoryline();
     return currentStoryline ? currentStoryline.decision : null;
@@ -43998,6 +44007,10 @@ class QuestOverlay {
 
   hide() {
     this.$element.removeClass('visible');
+  }
+
+  isVisible() {
+    return this.$element.hasClass('visible');
   }
 
   setPrompt(text) {
@@ -45062,4 +45075,4 @@ const { PlayerAppStates } = __webpack_require__(/*! ./lib/app/player-app-states 
 
 /******/ })()
 ;
-//# sourceMappingURL=player.944395bc643ba3e51612.js.map
+//# sourceMappingURL=player.4746d366daa8b39c2064.js.map

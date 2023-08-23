@@ -33,6 +33,10 @@ class StorylineManager {
     return this.getStoryline(this.currentStorylineId);
   }
 
+  getPrompt() {
+    return this.getCurrentStoryline().prompt || null;
+  }
+
   getDecision() {
     const currentStoryline = this.getCurrentStoryline();
     return currentStoryline ? currentStoryline.decision : null;

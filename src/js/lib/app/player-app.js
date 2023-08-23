@@ -464,6 +464,10 @@ class PlayerApp {
     this.showHitbox = !this.showHitbox;
   }
 
+  showStorylinePrompt() {
+    this.questOverlay.setPrompt(this.storylineManager.getPrompt());
+  }
+
   handleStorylineChanged() {
     this.decisionLabelI18n.setText(this.storylineManager.getDecision());
     this.clearNpcs();

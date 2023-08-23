@@ -42,6 +42,10 @@ class QuestOverlay {
     this.$element.removeClass('visible');
   }
 
+  isVisible() {
+    return this.$element.hasClass('visible');
+  }
+
   setPrompt(text) {
     this.hide();
     if (text !== null) {

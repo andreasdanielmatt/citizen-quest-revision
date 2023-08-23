@@ -66,6 +66,7 @@ class PlayerAppPlayingState extends PlayerAppState {
     this.playerApp.countdown.show();
     this.playerApp.countdown.start();
     this.playerApp.showNpcMoods();
+    this.playerApp.showStorylinePrompt();
   }
 
   onExit() {
