@@ -48473,8 +48473,8 @@ class TownView {
 
     // Temporary initialization
     this.townSize = {
-      width: 1024 * 8,
-      height: 768 * 6,
+      width: this.config.town.width,
+      height: this.config.town.height,
     };
 
     const collisionScale = 0.5;
@@ -48797,4 +48797,4 @@ const { PlayerAppStates } = __webpack_require__(/*! ./lib/app/player-app-states 
 
 /******/ })()
 ;
-//# sourceMappingURL=default.bd3e11fdb269b86ae31e.js.map
+//# sourceMappingURL=default.1c355093757bff60cbfc.js.map

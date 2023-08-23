@@ -42148,8 +42148,8 @@ class TownView {
 
     // Temporary initialization
     this.townSize = {
-      width: 1024 * 8,
-      height: 768 * 6,
+      width: this.config.town.width,
+      height: this.config.town.height,
     };
 
     const collisionScale = 0.5;
@@ -42494,4 +42494,4 @@ const MapApp = __webpack_require__(/*! ./lib/app/map-app */ "./src/js/lib/app/ma
 
 /******/ })()
 ;
-//# sourceMappingURL=map.d0b7b3528e66fa17338e.js.map
+//# sourceMappingURL=map.1fbfba6ff82f152a4dc5.js.map
