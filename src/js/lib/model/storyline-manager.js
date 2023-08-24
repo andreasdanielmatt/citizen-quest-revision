@@ -1,5 +1,6 @@
 const EventEmitter = require('events');
 const Dialogue = require('../dialogues/dialogue');
+const safeBuildDialogueFromItems = require('../dialogues/dialogue-safe-builder');
 
 class StorylineManager {
   constructor(config) {
@@ -59,22 +60,7 @@ class StorylineManager {
     const currentStoryline = this.getCurrentStoryline();
     const items = currentStoryline ? currentStoryline.dialogues[id] : null;
     if (!items) throw new Error(`No dialogue found with id ${id}`);
-    try {
-      return Dialogue.fromJson({
-        id,
-        items,
-      });
-    } catch (e) {
-      if (e.errors) {
-        const errorText = [];
-        errorText.push(`Error parsing dialogue with id ${id}:`);
-        e.errors.forEach((error) => {
-          errorText.push(`- ${error}`);
-        });
-        throw new Error(errorText.join('\n'));
-      }
-      throw e;
-    }
+    return safeBuildDialogueFromItems(id, items);
   }
 
   getNpcs() {

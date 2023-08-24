@@ -40398,7 +40398,7 @@ class PlayerApp {
       }
     });
     if (closestNpc) {
-      this.playDialogue(this.storylineManager.getDialogue(closestNpc.dialogue || closestNpc.id), closestNpc);
+      this.playDialogue(this.questTracker.getDialogue(closestNpc.id), closestNpc);
     }
     if (this.showHitbox) {
       this.pcView.showActionHitbox(hitbox);
@@ -41037,6 +41037,43 @@ class DialogueOverlay {
 }
 
 module.exports = DialogueOverlay;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/dialogues/dialogue-safe-builder.js":
+/*!*******************************************************!*\
+  !*** ./src/js/lib/dialogues/dialogue-safe-builder.js ***!
+  \*******************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const Dialogue = __webpack_require__(/*! ./dialogue */ "./src/js/lib/dialogues/dialogue.js");
+
+function safeBuildDialogueFromItems(id, items) {
+  try {
+    return Dialogue.fromJson({
+      id,
+      items,
+    });
+  } catch (e) {
+    if (e.errors) {
+      const errorText = [];
+      errorText.push(`Error parsing dialogue with id ${id}:`);
+      e.errors.forEach((error) => {
+        errorText.push(`- ${error.instancePath} : ${error.message}`);
+      });
+      console.error(errorText.join('\n'));
+    }
+    return Dialogue.fromJson({
+      id,
+      items: [{
+        text: '...'
+      }]
+    });
+  }
+}
+
+module.exports = safeBuildDialogueFromItems;
 
 
 /***/ }),
@@ -43083,6 +43120,7 @@ module.exports = Character;
 
 const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
 const LogicParser = __webpack_require__(/*! ../dialogues/logic-parser */ "./src/js/lib/dialogues/logic-parser.js");
+const safeBuildDialogueFromItems = __webpack_require__(/*! ../dialogues/dialogue-safe-builder */ "./src/js/lib/dialogues/dialogue-safe-builder.js");
 
 class QuestTracker {
   constructor(config, storylineManager, flags) {
@@ -43117,7 +43155,8 @@ class QuestTracker {
 
   getAvailableQuests() {
     return Object.keys(this.storylineManager.getAllQuests())
-      .filter(id => !this.flags.value(`quest.${id}.done`) && !this.flags.value(`quest.${id}.active`));
+      .filter(id => !this.questIsDone(id) && this.questRequirementsMet(id))
+      .slice(0, this.config.game.maxActiveQuests || 3);
   }
 
   getNpcsWithQuests() {
@@ -43127,6 +43166,16 @@ class QuestTracker {
         .filter(([id]) => availableQuests.includes(id))
         .map(([, props]) => [props.npc, props.mood])
     );
+  }
+
+  questIsDone(questId) {
+    return !!this.flags.value(`quest.${questId}.done`);
+  }
+
+  questRequirementsMet(questId) {
+    const requiredQuests = this.storylineManager.getQuest(questId).required || null;
+    return !requiredQuests
+      || [requiredQuests].flat().every(id => this.questIsDone(id));
   }
 
   setActiveQuest(questId) {
@@ -43220,6 +43269,35 @@ class QuestTracker {
     }
   }
 
+  getDialogueItems(npcId) {
+    // Concatenate, in order:
+    // - dialogue items from the current stage
+    // - dialogue items from the current quest
+    // - dialogue items from all active quests
+    // - dialogue items from the current storyline
+
+    const currentStoryline = this.storylineManager.getCurrentStoryline();
+    const currentQuest = this.storylineManager.getQuest(this.activeQuestId);
+    const currentStage = currentQuest?.stages[this.activeStage];
+    const storylineDialogue = currentStoryline?.dialogues?.[npcId]
+    const npcDialogue = currentStoryline?.npcs?.[npcId]?.dialogues
+    const stageDialogue = currentStage?.dialogues?.[npcId];
+    const questDialogue = currentQuest?.dialogues?.[npcId];
+    return [
+      ...(stageDialogue || []),
+      ...(questDialogue || []),
+      ...(this.getAvailableQuests()
+        .filter(id => this.storylineManager.getQuest(id)?.npc === npcId)
+        .map(id => this.storylineManager.getQuest(id)?.available?.dialogues || []).flat()),
+      ...(npcDialogue || []),
+      ...(storylineDialogue || []),
+    ];
+  }
+
+  getDialogue(npcId) {
+    return safeBuildDialogueFromItems(npcId, this.getDialogueItems(npcId));
+  }
+
   onQuestActive(questId) {
     this.setActiveQuest(questId);
   }
@@ -43243,6 +43321,7 @@ module.exports = QuestTracker;
 
 const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
 const Dialogue = __webpack_require__(/*! ../dialogues/dialogue */ "./src/js/lib/dialogues/dialogue.js");
+const safeBuildDialogueFromItems = __webpack_require__(/*! ../dialogues/dialogue-safe-builder */ "./src/js/lib/dialogues/dialogue-safe-builder.js");
 
 class StorylineManager {
   constructor(config) {
@@ -43302,22 +43381,7 @@ class StorylineManager {
     const currentStoryline = this.getCurrentStoryline();
     const items = currentStoryline ? currentStoryline.dialogues[id] : null;
     if (!items) throw new Error(`No dialogue found with id ${id}`);
-    try {
-      return Dialogue.fromJson({
-        id,
-        items,
-      });
-    } catch (e) {
-      if (e.errors) {
-        const errorText = [];
-        errorText.push(`Error parsing dialogue with id ${id}:`);
-        e.errors.forEach((error) => {
-          errorText.push(`- ${error}`);
-        });
-        throw new Error(errorText.join('\n'));
-      }
-      throw e;
-    }
+    return safeBuildDialogueFromItems(id, items);
   }
 
   getNpcs() {
@@ -45075,4 +45139,4 @@ const { PlayerAppStates } = __webpack_require__(/*! ./lib/app/player-app-states 
 
 /******/ })()
 ;
-//# sourceMappingURL=player.4746d366daa8b39c2064.js.map
+//# sourceMappingURL=player.e3597cc1e05a29efdf45.js.map

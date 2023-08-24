@@ -1,5 +1,6 @@
 const EventEmitter = require('events');
 const LogicParser = require('../dialogues/logic-parser');
+const safeBuildDialogueFromItems = require('../dialogues/dialogue-safe-builder');
 
 class QuestTracker {
   constructor(config, storylineManager, flags) {
@@ -34,7 +35,8 @@ class QuestTracker {
 
   getAvailableQuests() {
     return Object.keys(this.storylineManager.getAllQuests())
-      .filter(id => !this.flags.value(`quest.${id}.done`) && !this.flags.value(`quest.${id}.active`));
+      .filter(id => !this.questIsDone(id) && this.questRequirementsMet(id))
+      .slice(0, this.config.game.maxActiveQuests || 3);
   }
 
   getNpcsWithQuests() {
@@ -44,6 +46,16 @@ class QuestTracker {
         .filter(([id]) => availableQuests.includes(id))
         .map(([, props]) => [props.npc, props.mood])
     );
+  }
+
+  questIsDone(questId) {
+    return !!this.flags.value(`quest.${questId}.done`);
+  }
+
+  questRequirementsMet(questId) {
+    const requiredQuests = this.storylineManager.getQuest(questId).required || null;
+    return !requiredQuests
+      || [requiredQuests].flat().every(id => this.questIsDone(id));
   }
 
   setActiveQuest(questId) {
@@ -135,6 +147,35 @@ class QuestTracker {
       const newCount = this.logicParser.evaluate(stage.counter.expression);
       this.setStageCounter(newCount);
     }
+  }
+
+  getDialogueItems(npcId) {
+    // Concatenate, in order:
+    // - dialogue items from the current stage
+    // - dialogue items from the current quest
+    // - dialogue items from all active quests
+    // - dialogue items from the current storyline
+
+    const currentStoryline = this.storylineManager.getCurrentStoryline();
+    const currentQuest = this.storylineManager.getQuest(this.activeQuestId);
+    const currentStage = currentQuest?.stages[this.activeStage];
+    const storylineDialogue = currentStoryline?.dialogues?.[npcId]
+    const npcDialogue = currentStoryline?.npcs?.[npcId]?.dialogues
+    const stageDialogue = currentStage?.dialogues?.[npcId];
+    const questDialogue = currentQuest?.dialogues?.[npcId];
+    return [
+      ...(stageDialogue || []),
+      ...(questDialogue || []),
+      ...(this.getAvailableQuests()
+        .filter(id => this.storylineManager.getQuest(id)?.npc === npcId)
+        .map(id => this.storylineManager.getQuest(id)?.available?.dialogues || []).flat()),
+      ...(npcDialogue || []),
+      ...(storylineDialogue || []),
+    ];
+  }
+
+  getDialogue(npcId) {
+    return safeBuildDialogueFromItems(npcId, this.getDialogueItems(npcId));
   }
 
   onQuestActive(questId) {

@@ -422,7 +422,7 @@ class PlayerApp {
       }
     });
     if (closestNpc) {
-      this.playDialogue(this.storylineManager.getDialogue(closestNpc.dialogue || closestNpc.id), closestNpc);
+      this.playDialogue(this.questTracker.getDialogue(closestNpc.id), closestNpc);
     }
     if (this.showHitbox) {
       this.pcView.showActionHitbox(hitbox);

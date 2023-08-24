@@ -4,3 +4,4 @@ game:
   duration: 300
   introTimeout: 30
   endingTimeout: 30
+  maxActiveQuests: 3
