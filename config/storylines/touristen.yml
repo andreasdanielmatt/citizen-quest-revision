@@ -226,7 +226,7 @@ storylines:
         name:
           en: "Citizen"
           de: "Bürgerin"
-        spawn: { x: 2277, y: 1450 }
+        spawn: { x: 2146, y: 1480 }
         dialogues:
           - text:
               en: "Nobody asked us, and they’re placing it right next to our homes."

@@ -4,7 +4,7 @@ textures:
       assets:
         - name: 'town-bg'
 #          srcs: 'https://futurium-democracy-tmp.s3.eu-central-1.amazonaws.com/demo-town-bg.png'
-          srcs: 'city.png'
+          srcs: 'city-cb.png'
         - name: 'town-collmap'
 #          srcs: 'demo-town-collmap.png'
           srcs: 'city-collmap.png'
