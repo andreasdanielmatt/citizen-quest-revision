@@ -252,7 +252,7 @@ class ServerSocketConnector {
   }
 
   // To do: Move this outside of this class
-  sync(player = null) {
+  sync(player = null, flagStore = null) {
     const message = {
       type: 'sync',
     };
@@ -263,6 +263,17 @@ class ServerSocketConnector {
           speed: player.speed,
         },
       ]]);
+    }
+    if (flagStore !== null) {
+      message.flags = Object.fromEntries(
+        Object.entries(flagStore.all()).filter(([id]) => (
+          (id.startsWith('quest.') && id.endsWith('.done')) || id.startsWith('pnt.')
+        ))
+      );
+      if (Object.keys(message.flags).length > 0 && window.firstTime === undefined) {
+        window.firstTime = false;
+        console.log(`Sending flags: ${Object.keys(message.flags).join(', ')}`);
+      }
     }
     this.send(message);
   }

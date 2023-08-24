@@ -87,9 +87,6 @@ class MapApp {
 
     // Temporary
     this.storylineManager.setCurrentStoryline('touristen');
-    this.addPc('1');
-    this.addPc('2');
-    this.addPc('3');
   }
 
   resize() {

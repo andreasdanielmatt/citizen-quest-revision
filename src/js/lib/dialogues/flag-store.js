@@ -24,10 +24,10 @@ class FlagStore {
     }
   }
 
-  set(flag, value) {
+  set(flag, value, setter = null) {
     const oldValue = this.flags[flag] || undefined;
     this.flags[flag] = Math.min(FlagStore.MAX_VALUE, Math.max(FlagStore.MIN_VALUE, value));
-    this.events.emit('flag', flag, this.flags[flag], oldValue);
+    this.events.emit('flag', flag, this.flags[flag], oldValue, setter);
   }
 
   inc(flag, amount = 1) {

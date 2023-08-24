@@ -13,8 +13,13 @@ class PCView extends CharacterView {
     this.display.addChild(this.positionMarker);
   }
 
+  getTextureId() {
+    return `player-${this.character.id}`;
+  }
+
   createSprite() {
-    const sprite = new PIXI.AnimatedSprite(this.textures['character-basic'].animations['basic-es']);
+    const textureId = this.getTextureId();
+    const sprite = new PIXI.AnimatedSprite(this.textures[textureId].animations[`${textureId}-es`]);
     sprite.anchor.set(0.5, 1);
 
     sprite.animationSpeed = PCView.SPRITE_ANIMATION_SPEED;
@@ -71,7 +76,8 @@ class PCView extends CharacterView {
 
     if (newDirection !== this.direction || newIsWalking !== this.isWalking) {
       const action = newIsWalking ? 'w' : 's';
-      this.display.textures = this.textures['character-basic'].animations[`basic-${newDirection}${action}`];
+      const textureId = this.getTextureId();
+      this.display.textures = this.textures[textureId].animations[`${textureId}-${newDirection}${action}`];
       this.display.play();
       this.direction = newDirection;
       this.isWalking = newIsWalking;

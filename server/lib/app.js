@@ -41,6 +41,14 @@ function initApp(config) {
         }
       });
     }
+    if (message.flags && gameManager.getState() === GameManagerStates.PLAYING) {
+      Object.entries(message.flags).forEach(([id, value]) => {
+        if (!gameManager.flags.exists(id)) {
+          gameManager.flags.set(id, value);
+          console.log(`Adding flag ${id} with value ${value}`);
+        }
+      });
+    }
   }
 
   function processAddPlayer(message) {
@@ -85,6 +93,7 @@ function initApp(config) {
         };
         return acc;
       }, {}),
+      flags: gameManager.flags.flags,
     };
     if (gameManager.getState() === GameManagerStates.PLAYING && gameManager.roundStartTime) {
       message.roundCountdown = Math.max(0,

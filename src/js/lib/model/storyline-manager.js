@@ -44,11 +44,11 @@ class StorylineManager {
   }
 
   hasQuest(id) {
-    return this.getCurrentStoryline().quests[id] !== undefined;
+    return !!this.getCurrentStoryline()?.quests?.[id];
   }
 
   getQuest(id) {
-    return this.getCurrentStoryline().quests[id] || null;
+    return this.getCurrentStoryline()?.quests?.[id] || null;
   }
 
   getAllQuests() {

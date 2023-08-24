@@ -1,7 +1,20 @@
 const Dialogue = require('./dialogue');
 
+function emptyDialogue(id) {
+  return Dialogue.fromJson({
+    id,
+    items: [{
+      text: '...',
+    }],
+  });
+}
+
 function safeBuildDialogueFromItems(id, items) {
   try {
+    if (items.length === 0) {
+      console.error(`Dialogue with id ${id} has no items`);
+      return emptyDialogue(id);
+    }
     return Dialogue.fromJson({
       id,
       items,
@@ -15,12 +28,7 @@ function safeBuildDialogueFromItems(id, items) {
       });
       console.error(errorText.join('\n'));
     }
-    return Dialogue.fromJson({
-      id,
-      items: [{
-        text: '...'
-      }]
-    });
+    return emptyDialogue(id);
   }
 }
 

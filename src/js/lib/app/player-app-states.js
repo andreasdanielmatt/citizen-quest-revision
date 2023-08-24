@@ -111,6 +111,7 @@ class PlayerAppEndingState extends PlayerAppState {
     super.onExit();
     this.playerApp.hideEndingScreen();
     this.playerApp.hideTextScreen();
+    this.playerApp.clearFlags();
   }
 
   onAction() {

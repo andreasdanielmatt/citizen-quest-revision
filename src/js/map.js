@@ -57,6 +57,29 @@ const MapApp = require('./lib/app/map-app');
           mapApp.removePc(id);
         }
       });
+      if (message.flags) {
+        let flagsChanged = false;
+        const setFlags = new Set(Object.keys(message.flags));
+        // Clear all the flags from mapApp.flags not present in setFlags
+        Object.keys(mapApp.flags.flags).forEach((flag) => {
+          if (!setFlags.has(flag) && mapApp.flags.value(flag) !== 0) {
+            mapApp.flags.set(flag, 0);
+            console.log(`Clearing flag ${flag}`);
+            flagsChanged = true;
+          }
+        });
+        // Add all the flags from message.flags not present in mapApp.flags.flags
+        Object.keys(message.flags).forEach((flag) => {
+          if (!mapApp.flags.exists(flag)) {
+            mapApp.flags.set(flag, message.flags[flag]);
+            console.log(`Adding flag ${flag} with value ${message.flags[flag]}`);
+            flagsChanged = true;
+          }
+        });
+        if (flagsChanged) {
+          mapApp.updateQuestMarkers();
+        }
+      }
     });
     mapApp.pixiApp.ticker.add(() => {
       if (syncReceived) {

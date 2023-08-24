@@ -39732,9 +39732,6 @@ class MapApp {
 
     // Temporary
     this.storylineManager.setCurrentStoryline('touristen');
-    this.addPc('1');
-    this.addPc('2');
-    this.addPc('3');
   }
 
   resize() {
@@ -39853,8 +39850,21 @@ module.exports = MapApp;
 
 const Dialogue = __webpack_require__(/*! ./dialogue */ "./src/js/lib/dialogues/dialogue.js");
 
+function emptyDialogue(id) {
+  return Dialogue.fromJson({
+    id,
+    items: [{
+      text: '...',
+    }],
+  });
+}
+
 function safeBuildDialogueFromItems(id, items) {
   try {
+    if (items.length === 0) {
+      console.error(`Dialogue with id ${id} has no items`);
+      return emptyDialogue(id);
+    }
     return Dialogue.fromJson({
       id,
       items,
@@ -39868,12 +39878,7 @@ function safeBuildDialogueFromItems(id, items) {
       });
       console.error(errorText.join('\n'));
     }
-    return Dialogue.fromJson({
-      id,
-      items: [{
-        text: '...'
-      }]
-    });
+    return emptyDialogue(id);
   }
 }
 
@@ -40016,10 +40021,10 @@ class FlagStore {
     }
   }
 
-  set(flag, value) {
+  set(flag, value, setter = null) {
     const oldValue = this.flags[flag] || undefined;
     this.flags[flag] = Math.min(FlagStore.MAX_VALUE, Math.max(FlagStore.MIN_VALUE, value));
-    this.events.emit('flag', flag, this.flags[flag], oldValue);
+    this.events.emit('flag', flag, this.flags[flag], oldValue, setter);
   }
 
   inc(flag, amount = 1) {
@@ -41206,11 +41211,11 @@ class StorylineManager {
   }
 
   hasQuest(id) {
-    return this.getCurrentStoryline().quests[id] !== undefined;
+    return !!this.getCurrentStoryline()?.quests?.[id];
   }
 
   getQuest(id) {
-    return this.getCurrentStoryline().quests[id] || null;
+    return this.getCurrentStoryline()?.quests?.[id] || null;
   }
 
   getAllQuests() {
@@ -41602,7 +41607,7 @@ class ServerSocketConnector {
   }
 
   // To do: Move this outside of this class
-  sync(player = null) {
+  sync(player = null, flagStore = null) {
     const message = {
       type: 'sync',
     };
@@ -41613,6 +41618,17 @@ class ServerSocketConnector {
           speed: player.speed,
         },
       ]]);
+    }
+    if (flagStore !== null) {
+      message.flags = Object.fromEntries(
+        Object.entries(flagStore.all()).filter(([id]) => (
+          (id.startsWith('quest.') && id.endsWith('.done')) || id.startsWith('pnt.')
+        ))
+      );
+      if (Object.keys(message.flags).length > 0 && window.firstTime === undefined) {
+        window.firstTime = false;
+        console.log(`Sending flags: ${Object.keys(message.flags).join(', ')}`);
+      }
     }
     this.send(message);
   }
@@ -41986,8 +42002,13 @@ class PCView extends CharacterView {
     this.display.addChild(this.positionMarker);
   }
 
+  getTextureId() {
+    return `player-${this.character.id}`;
+  }
+
   createSprite() {
-    const sprite = new PIXI.AnimatedSprite(this.textures['character-basic'].animations['basic-es']);
+    const textureId = this.getTextureId();
+    const sprite = new PIXI.AnimatedSprite(this.textures[textureId].animations[`${textureId}-es`]);
     sprite.anchor.set(0.5, 1);
 
     sprite.animationSpeed = PCView.SPRITE_ANIMATION_SPEED;
@@ -42044,7 +42065,8 @@ class PCView extends CharacterView {
 
     if (newDirection !== this.direction || newIsWalking !== this.isWalking) {
       const action = newIsWalking ? 'w' : 's';
-      this.display.textures = this.textures['character-basic'].animations[`basic-${newDirection}${action}`];
+      const textureId = this.getTextureId();
+      this.display.textures = this.textures[textureId].animations[`${textureId}-${newDirection}${action}`];
       this.display.play();
       this.direction = newDirection;
       this.isWalking = newIsWalking;
@@ -42541,6 +42563,29 @@ const MapApp = __webpack_require__(/*! ./lib/app/map-app */ "./src/js/lib/app/ma
           mapApp.removePc(id);
         }
       });
+      if (message.flags) {
+        let flagsChanged = false;
+        const setFlags = new Set(Object.keys(message.flags));
+        // Clear all the flags from mapApp.flags not present in setFlags
+        Object.keys(mapApp.flags.flags).forEach((flag) => {
+          if (!setFlags.has(flag) && mapApp.flags.value(flag) !== 0) {
+            mapApp.flags.set(flag, 0);
+            console.log(`Clearing flag ${flag}`);
+            flagsChanged = true;
+          }
+        });
+        // Add all the flags from message.flags not present in mapApp.flags.flags
+        Object.keys(message.flags).forEach((flag) => {
+          if (!mapApp.flags.exists(flag)) {
+            mapApp.flags.set(flag, message.flags[flag]);
+            console.log(`Adding flag ${flag} with value ${message.flags[flag]}`);
+            flagsChanged = true;
+          }
+        });
+        if (flagsChanged) {
+          mapApp.updateQuestMarkers();
+        }
+      }
     });
     mapApp.pixiApp.ticker.add(() => {
       if (syncReceived) {
@@ -42562,4 +42607,4 @@ const MapApp = __webpack_require__(/*! ./lib/app/map-app */ "./src/js/lib/app/ma
 
 /******/ })()
 ;
-//# sourceMappingURL=map.d8232c8663ca5c189714.js.map
+//# sourceMappingURL=map.ce3ee0caa83611b4d571.js.map

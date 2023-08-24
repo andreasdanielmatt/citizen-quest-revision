@@ -7,6 +7,7 @@ const {
   GameManagerPlayingState,
   GameManagerEndingState, GameManagerStates,
 } = require('./game-manager-states');
+const FlagStore = require('../../src/js/lib/dialogues/flag-store');
 
 class GameManager {
   constructor(config) {
@@ -14,6 +15,7 @@ class GameManager {
     this.events = new EventEmitter();
     this.players = {};
     this.roundStartTime = null;
+    this.flags = new FlagStore();
 
     this.stateHandler = null;
     this.transitionState = null;

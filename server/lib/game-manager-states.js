@@ -90,7 +90,7 @@ class GameManagerEndingState extends GameManagerState {
   }
 
   onExit() {
-
+    this.gameManager.flags.clear();
   }
 }
 

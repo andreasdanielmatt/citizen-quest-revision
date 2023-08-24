@@ -88,10 +88,19 @@ const { PlayerAppStates } = require('./lib/app/player-app-states');
       if (playerApp.pc !== null && message.players[playerId] === undefined) {
         playerApp.removePc();
       }
+      if (message.flags) {
+        // Add all the flags from message.flags not present in playerApp.flags.flags
+        Object.keys(message.flags).forEach((flag) => {
+          if (!playerApp.flags.exists(flag)) {
+            playerApp.flags.set(flag, message.flags[flag], 'remote');
+            console.log(`Adding flag ${flag} with value ${message.flags[flag]}`);
+          }
+        });
+      }
     });
     playerApp.pixiApp.ticker.add(() => {
       if (syncReceived) {
-        connector.sync(playerApp.pc);
+        connector.sync(playerApp.pc, playerApp.flags);
         syncReceived = false;
       }
     });

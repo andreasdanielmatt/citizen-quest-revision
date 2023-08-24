@@ -1,190 +1,513 @@
 storylines:
   touristen:
     decision:
-      en: "Should we build a Ferris wheel to promote tourism?"
-      de: "Sollten wir ein Riesenrad bauen, um den Tourismus zu fördern?"
+      en: "Should the city build a Ferris wheel to promote tourism?"
+      de: "Sollte die Stadt ein Riesenrad bauen, um den Tourismus zu fördern?"
     prompt:
       en: "The mayor and the Spin City™ company want to build a Ferris wheel to promote tourism. Talk to citizens and help them take part in the decision."
       de: "Die Bürgermeisterin und das Unternehmen Drehmoment™ wollen ein Riesenrad bauen, um den Tourismus zu fördern. Sprich mit den Bürger*innen und hilf ihnen, an der Entscheidung teilzunehmen."
     npcs:
-      'mayor':
+      mayor:
         name:
           en: "City Mayor"
           de: "Bürgermeisterin"
-        spawn: { x: 3891, y: 3275 }
-#      'financeDirector':
-#        name:
-#          en: "Director of finances"
-#          de: "Leiter der Finanzverwaltung"
-#        spawn: { x: 4038, y: 3236 }
-      'parksDirector':
+        spawn: { x: 3240, y: 2974 }
+        dialogues:
+          - type: "sequence"
+            items:
+              - text:
+                  en: "We are proud of partnering with Spin City™ to build this magnificent Ferris Wheel."
+                  de: "Wir sind stolz auf die Zusammenarbeit mit Drehmoment™ beim Bau dieses großartigen Riesenrads."
+              - text:
+                  en: "It will make our city a premiere tourist destination."
+                  de: "Es wird unsere Stadt zu einem erstklassigen Touristenziel machen."
+      parksDirector:
         name:
           en: "Director of the environmental agency"
           de: "Leiterin des Umweltamts"
-        spawn: { x: 4173, y: 3236 }
-      'journalist':
+        spawn: { x: 3851, y: 2935 }
+        dialogues:
+          - text:
+              en: 'This will be the first 100% eco-friendly Ferris wheel in the world.'
+              de: 'Dies wird das erste 100% umweltfreundliche Riesenrad der Welt sein.'
+      journalist:
         name:
           en: "Journalist"
           de: "Journalist"
-        spawn: { x: 4964, y: 3540 }
-      'ferrisSalesman':
+        spawn: { x: 5050, y: 3130 }
+        dialogues:
+          - text:
+              en: 'Unfortunately, nobody buys newspapers to read about ferris wheels.'
+              de: 'Leider niemand kauft Zeitungen, um über Riesenräder zu lesen.'
+      ferrisSalesman:
         name:
           en: "Spin City™ Salesman"
           de: "Drehmoment™ Verkaufsagent"
-        spawn: {x: 4042, y: 3571}
-      'biologist':
+        spawn: {x: 3416, y: 3110 }
+        dialogues:
+          - type: sequence
+            items:
+              - text:
+                  en: 'I represent Spin City™. We are excited by the opportunity of building a fantastic Ferris wheel for this city.'
+                  de: 'Ich vertrete Drehmoment™. Wir sind begeistert von der Möglichkeit, ein fantastisches Riesenrad für diese Stadt zu bauen.'
+              - text:
+                  en: "It will improve the north part of the city, which is currently underdeveloped."
+                  de: "Es wird den nördlichen Teil der Stadt verbessern, der derzeit unterentwickelt ist."
+      biologist:
         name:
           en: "Biologist"
           de: "Biologin"
-        spawn: {x: 7029, y: 1835}
-      'tourist':
+        spawn: { x: 4698, y: 990 }
+        dialogues:
+          - text:
+              en: "The scientific point of view should be taken into consideration when making decisions."
+              de: "Der wissenschaftliche Standpunkt sollte bei Entscheidungen berücksichtigt werden."
+      tourist:
         name:
           en: "Tourist"
           de: "Tourist"
-        spawn: {x: 4249, y: 2244}
-      'robot':
+        spawn: { x: 2901, y: 2050 }
+        dialogues:
+          - type: 'random'
+            items:
+              - text:
+                  en: 'I like the idea. There’s not much to do in this city.'
+                  de: 'Ich finde die Idee gut. Es gibt nicht so viel zu tun in dieser Stadt.'
+              - text:
+                  en: 'I love the Ferris wheel in Viena. Iconic!'
+                  de: 'Ich liebe das Riesenrad in Wien! Eine Ikone!'
+      robot:
         name:
           en: "Robot"
           de: "Roboter"
-        spawn: {x: 5327, y: 3550}
-      'museumDirector':
+        spawn: { x: 5748, y: 2340 }
+        dialogues:
+          - cond: 'op.neg.birds'
+            text:
+              en: 'I hope the wheel gets rid of all the birds and bats, they’re just flying rats.'
+              de: 'Ich hoffe, dass das Riesenrad alle Vögel und Fledermäuse vertreibt, das sind doch nur fliegende Ratten.'
+            responses:
+              - text:
+                  en: 'Birds and bats are important for the ecosystem.'
+                  de: 'Vögel und Fledermäuse sind wichtig für das Ökosystem.'
+                thenText:
+                  en: '“Ecosystem” is a concept from the time before supermarkets.'
+                  de: '"Ökosystem" ist ein Begriff aus der Zeit bevor es Supermärkte gab.'
+          - cond: 'heard.rumor.accident'
+            text:
+              en: 'Anyone opposed to this project is opposed to technological progress.'
+              de: 'Wer gegen dieses Projekt ist, ist gegen den technischen Fortschritt.'
+            responses:
+              - text:
+                  en: 'The first Ferris wheel was built in 1893.'
+                  de: 'Das erste Riesenrad wurde 1893 gebaut.'
+                thenText:
+                  en: 'If you stand in the way of progress, you’ll be hit by my flying car.'
+                  de: 'Wenn du dich dem Fortschritt in den Weg stellst, wirst du von meinem fliegenden Auto überfahren.'
+          - text:
+              en: 'A Ferris wheel will put us up with London, Singapore, and Disneyland as a tourist destination.'
+              de: 'Mit einem Riesenrad können wir es als Reiseziel mit London, Singapur oder Disneyland aufnehmen!'
+            responses:
+              - text:
+                  en: 'London and Singapore are very large cities.'
+                  de: 'London und Singapur sind sehr große Städte.'
+                thenText:
+                  en: '... and without a Ferris wheel, we’ll be small forever.'
+                  de: '... und ohne ein Riesenrad werden wir für immer klein bleiben.'
+              - text:
+                  en: 'Disneyland doesn’t have a Ferris wheel.'
+                  de: 'Disneyland hat kein Riesenrad.'
+                thenText:
+                  en: 'There are twelve Disney parks in the world. Did you personally visit all of them?'
+                  de: 'Es gibt zwölf Disney_Parks auf der Welt. Hast du die alle persönlich besucht?'
+      museumDirector:
         name:
           en: "Museum Director"
           de: "Museumsdirektorin"
-        spawn: {x: 6077, y: 2565}
-      'citizenCool':
+        spawn: { x: 5213, y: 2290 }
+        dialogues:
+          - text:
+              en: "We hope that people who come to ride the Ferris wheel will also visit the museum."
+              de: "Wir hoffen, dass die Leute, die zum Riesenrad fahren, auch das Museum besuchen werden."
+      citizenCool:
         name:
           en: "Video blogger"
           de: "Videobloggerin"
-        spawn: {x: 4639, y: 3305}
-      'citizenBraid':
+        spawn: { x: 4226, y: 3130 }
+        dialogues:
+          - text:
+              en: 'Subscribe to my channel and turn on notifications!'
+              de: 'Abonniere meinen Kanal und schalte die Benachrichtigungen ein!'
+      citizenBraid:
         name:
           en: "Optimistic Citizen"
           de: "Optimistische Bürgerin"
-        spawn: {x: 1392, y: 2565}
-      'citizenCat':
+        spawn: { x: 311, y: 3130 }
+        dialogues:
+          - type: 'random'
+            items:
+              - text:
+                  en: 'Tourism will help small local businesses.'
+                  de: 'Der Tourismus wird kleinen lokalen Unternehmen helfen.'
+              - text:
+                  en: 'It can make us more unique and increase visitors.'
+                  de: 'Er kann uns einzigartiger machen und die Besucherzahlen erhöhen.'
+      citizenCat:
         name:
           en: "Curious Citizen"
           de: "Neugierige Bürgerin"
-        spawn: {x: 6177, y: 1590}
-      'citizenHipster':
+        spawn: { x: 2390, y: 2050 }
+        dialogues:
+          - text:
+              en: 'What do YOU think?'
+              de: 'Was denkst DU?'
+            responses:
+              - text:
+                  en: 'I’m in favor of building a Ferris wheel.'
+                  de: 'Ich bin für den Bau des Riesenrads.'
+              - text:
+                  en: 'I’m against building a Ferris wheel.'
+                  de: 'Ich bin gegen den Bau des Riesenrads.'
+              - text:
+                  en: 'I don’t know yet.'
+                  de: 'Ich weiß es noch nicht.'
+            then: results
+          - id: results
+            text:
+              en: "48% of the citizens are in favor. 33% are against. 19% don't know yet."
+              de: "48% der Bürger*innen sind dafür. 33% sind dagegen. 19% wissen es noch nicht."
+      citizenHipster:
         name:
           en: "Concerned Citizen"
           de: "Zweifelnder Bürger"
-        spawn: {x: 3534, y: 1610}
-      'citizenPuan':
+        spawn: { x: 3625, y: 1470 }
+        dialogues:
+          - text:
+              de: 'Das wird zu viel Verkehr, Lärm und Kriminalität in diesem ohnehin schon sehr vernachlässigten Viertel führen.'
+              en: 'This will add a lot of traffic, noise, and crime to the area, which is already very neglected.'
+      citizenPuan:
         name:
           en: "Concerned Citizen"
           de: "Zweifelnde Bürgerin"
-        spawn: {x: 5892, y: 3530}
-      'citizenCage':
+        spawn: { x: 2455, y: 1470 }
+        dialogues:
+          - text:
+              en: 'Tourism = Trash + Noise + Crime'
+              de: 'Tourismus = Müll + Lärm + Kriminalität'
+      citizenCage:
         name:
           en: "Optimistic Citizen"
           de: "Optimistischer Bürger"
-        spawn: {x: 2310, y: 3590}
-      'citizenPunk':
+        spawn: { x: 1673, y: 3130 }
+        dialogues:
+          - type: sequence
+            items:
+              - text:
+                  en: 'There are fewer jobs each day. It’s a good idea to focus on tourism. '
+                  de: 'Es gibt immer weniger Arbeitsplätze. Es ist eine gute Idee, auf den Tourismus zu setzen. '
+              - text:
+                  en: 'Tourism will help small local businesses.'
+                  de: 'Der Tourismus wird kleinen lokalen Unternehmen helfen.'
+      citizenPunk:
         name:
           en: "Citizen"
           de: "Bürgerin"
-        spawn: {x: 3129, y: 3540}
-      'citizenLila':
+        spawn: { x: 4236, y: 2050 }
+        dialogues:
+          - type: sequence
+            items:
+              - text:
+                  en: 'I’m not interested in Ferris wheels.'
+                  de: 'Ich bin nicht an Riesenrädern interessiert.'
+              - text:
+                  en: 'I would like the city to invest in a 3D virtual dinosaur show for the museum.'
+                  de: 'Ich fände es besser, wenn die Stadt in eine virtuelle 3D-Dinosaurier-Show für das Museum investiert.'
+      citizenLila:
         name:
           en: "Citizen"
           de: "Bürgerin"
-        spawn: {x: 7029, y: 2744}
-      'citizenBlue':
+        spawn: { x: 2277, y: 1450 }
+        dialogues:
+          - text:
+              en: "Nobody asked us, and they’re placing it right next to our homes."
+              de: "Niemand hat uns gefragt, und sie stellen es direkt neben unsere Häuser."
+      citizenBlue:
         name:
           en: "Concerned Citizen"
           de: "Zweifelnde Bürgerin"
-        spawn: {x: 3326, y: 1577}
-      'constructionWorker':
+        spawn: { x: 1757, y: 2290 }
+        dialogues:
+          - text:
+              en: "The north of the city is very neglected. This will only add more traffic, noise and problems."
+              de: "Um den Norden der Stadt kümmert sich niemand. Das wird noch mehr Verkehr, Lärm und Probleme bringen."
+      constructionWorker:
+        name:
+          en: "Engineer"
+          de: "Ingenieurin"
+        spawn: { x: 6228, y: 3175 }
+        dialogues:
+          - text:
+              en: 'Tourism makes everything more expensive! And there are so few available apartments already.'
+              de: 'Der Tourismus macht alles teurer! Und es gibt schon jetzt so wenig freie Wohnungen.'
+      citizenQueen:
         name:
           en: "Concerned Citizen"
           de: "Zweifelnde Bürgerin"
-        spawn: {x: 2722, y: 1559}
-      'citizenQueen':
+        spawn: { x: 5773, y: 970 }
+        dialogues:
+          - text:
+              en: 'Tourists = Crime!'
+              de: 'Touristen = Kriminalität!'
+      citizenRanger:
         name:
-          en: "Concerned Citizen"
-          de: "Zweifelnde Bürgerin"
-        spawn: {x: 5219, y: 1575}
+          en: "Ranger"
+          de: "Ranger"
+        spawn: { x: 896, y: 2290 }
+        dialogues:
+          - text:
+              en: "Our landscape will be ruined by a giant metallic structure. I feel sad."
+              de: "Unsere Landschaft wird durch eine riesige Metallkonstruktion verschandelt. Ich bin traurig."
+      citizenWheelchair:
+        name:
+          en: "Composer"
+          de: "Komponistin"
+        spawn: { x: 6128, y: 2330 }
+        dialogues:
+          - text:
+              en: "I'm trying to get the plans for the Ferris wheel."
+              de: "Ich versuche, die Pläne für das Riesenrad zu bekommen."
+      citizenChamp:
+        name:
+          en: "Citizen"
+          de: "Bürgerin"
+        spawn: { x: 2521, y: 3154 }
+        dialogues:
+          - text:
+              en: 'I’m still concerned with the Ferris wheel’s safety.'
+              de: 'Ich mache mir immer noch Sorgen um die Sicherheit des Riesenrads.'
     quests:
-      concernedCitizens:
+      unhappyCitizens:
         npc: mayor
         mood: interrogation
-        stages:
-          - cond: 'COUNT("op.neg") >= 3'
-            prompt:
-              en: "Go talk with the major"
-              de: "Gehe mit der Bürgermeisterin sprechen"
-          - prompt:
-              en: "Find 3 citizens who don't want the city to build a Ferris wheel."
-              de: "Finde 3 Bürger*innen, die nicht wollen, dass die Stadt ein Riesenrad baut."
-            counter:
-              expression: 'COUNT("op.neg")'
-              max: 3
-      fakeNews:
-        npc: citizenPunk
-        mood: exclamation
-        stages:
-          - cond: 'quest.fakeNews.checked'
-            prompt:
-              en: "Debunk the rumor by spreading the proof you received"
-              de: "Entkräfte das Gerücht, indem du den Beweis verbreitest, den du erhalten hast"
-          - prompt:
-              en: "Check if the rumor about the accident is true"
-              de: "Überprüfe, ob das Gerücht über den Unfall wahr ist"
-      environmentalImpact:
-        npc: parksDirector
-        mood: interrogation
-        stages:
-          - prompt:
-              en: "Could the Ferris wheel have a negative environmental impact? Consult an expert."
-              de: "Könnte das Riesenrad negative Auswirkungen auf die Umwelt haben? Konsultiere eine Expertin."
-    dialogues:
-      'mayor':
-        - type: first
-          items:
-            - cond: '^quest.concernedCitizens.active & ^quest.concernedCitizens.done'
-              text:
-                en: "I think everyone loves the idea of having a Ferris wheel. No? Can you find people who don't?"
-                de: "Ich denke, jeder liebt die Idee, ein Riesenrad zu haben. Nein? Kannst du Leute finden, die es nicht tun?"
+        available:
+          dialogues:
+            - text:
+                en: "Everyone loves the idea of having a Ferris wheel in the city. No? Can you find people who don't?"
+                de: "Alle lieben die Idee, ein Riesenrad in der Stadt zu haben. Nein? Kannst du Leute finden, die das nicht tun?"
               responses:
                 - text:
-                    en: "I'll try."
-                    de: "Ich werde es versuchen."
+                    en: "Yes, I will try."
+                    de: "Ja, ich werde es versuchen."
                   thenText:
                     en: "Great! Come back when you found them."
                     de: "Super! Komm zurück, wenn du sie gefunden hast."
-                  set: [ 'quest.concernedCitizens.active' ]
+                  set: [ 'quest.unhappyCitizens.active' ]
                 - text:
-                    en: "Mmm... I'd rather help in another way"
-                    de: "Mmm... Ich würde lieber auf andere Weise helfen"
+                    en: "I’d rather help in some other way."
+                    de: "Ich würde lieber anders helfen."
                   thenText:
-                      en: "Oh, okay. I'm sure you'll find something else to do."
-                      de: "Oh, okay. Ich bin sicher, du findest noch etwas anderes zu tun."
-            - cond: 'quest.concernedCitizens.active & COUNT("op.neg") < 3'
-              text:
-                en: "Have you found 3 citizens who don't want the Ferris wheel? Come back when you do."
-                de: "Hast du 3 Bürger*innen gefunden, die das Riesenrad nicht wollen? Komm zurück, wenn du es tust."
-            - cond: '(quest.concernedCitizens.active & COUNT("op.neg") >= 3) | quest.concernedCitizens.done'
-              text:
-                en: "I'm surprised that not everyone wants the ferris wheel. I'll organize a citizen assembly, and we'll evaluate the project together."
-                de: "Ich bin überrascht, dass nicht alle das Riesenrad wollen. Ich werde eine Bürgerversammlung organisieren und wir werden das Projekt gemeinsam bewerten."
-              set: [ 'quest.concernedCitizens.done', 'pnt.empathy.mayor' ]
-      'parksDirector':
-        - type: first
-          items:
-            - cond: '^quest.environmentalImpact.active & ^quest.environmentalImpact.done'
-              text:
-                en: 'This will be the first 100% eco-friendly Ferris wheel in the world.'
-                de: 'Dies wird das erste 100% umweltfreundliche Riesenrad der Welt sein.'
+                    en: "Come back if you change your mind."
+                    de: "Komm wieder, wenn du deine Meinung änderst."
+        stages:
+          - cond: 'COUNT("op.neg") >= 3'
+            prompt:
+              en: "Talk to the City Mayor."
+              de: "Sprich mit der Bürgermeisterin."
+            dialogues:
+              mayor:
+                - type: sequence
+                  items:
+                    - text:
+                        en: "I’m surprised that so many citizens object."
+                        de: "Ich bin überrascht, dass so viele Bürger*innen dagegen sind."
+                    - text:
+                        en: "I will try to think of a solution."
+                        de: "Ich werde versuchen, eine Lösung zu finden."
+                  set: [ 'quest.unhappyCitizens.done', 'pnt.empathy.mayor' ]
+          - prompt:
+              en: "Find 3 citizens who don't want a Ferris wheel in the city."
+              de: "Finde 3 Bürger*innen, die kein Riesenrad in der Stadt haben wollen."
+            counter:
+              expression: 'COUNT("op.neg")'
+              max: 3
+            dialogues:
+              mayor:
+                - text:
+                    en: "Have you found 3 citizens who don't want the Ferris wheel? Come back when you do."
+                    de: "Hast du 3 Bürger*innen gefunden, die gegen das Riesenrad sind? Komm zurück, wenn du es tust."
+              citizenHipster:
+                - text:
+                    de: 'Das wird zu viel Verkehr, Lärm und Kriminalität in diesem ohnehin schon sehr vernachlässigten Viertel führen.'
+                    en: 'This will add a lot of traffic, noise, and crime to the area, which is already very neglected.'
+                  set: ['op.neg.traffic']
+              citizenPuan:
+                - text:
+                    en: 'Tourism = Trash + Noise + Crime'
+                    de: 'Tourismus = Müll + Lärm + Kriminalität'
+                  set: ['op.neg.trash']
+              citizenLila:
+                - text:
+                    en: "Nobody asked us, and they’re placing it right next to our homes."
+                    de: "Niemand hat uns gefragt, und sie stellen es direkt neben unsere Häuser."
+                  set: ['op.neg.homes']
+              citizenBlue:
+                - text:
+                    en: "The north of the city is very neglected. This will only add more traffic, noise and problems."
+                    de: "Um den Norden der Stadt kümmert sich niemand. Das wird noch mehr Verkehr, Lärm und Probleme bringen."
+                  set: ['op.neg.north']
+              constructionWorker:
+                - text:
+                    en: 'Tourism makes everything more expensive! And there are so few available apartments already.'
+                    de: 'Der Tourismus macht alles teurer! Und es gibt schon jetzt so wenig freie Wohnungen.'
+                  set: ['op.neg.gentrification']
+              citizenQueen:
+                - text:
+                    en: 'Tourists = Crime!'
+                    de: 'Touristen = Kriminalität!'
+                  set: ['op.neg.crime']
+              citizenRanger:
+                - text:
+                    en: "Our landscape will be ruined by a giant metallic structure. I feel sad."
+                    de: "Unsere Landschaft wird durch eine riesige Metallkonstruktion verschandelt. Ich bin traurig."
+                  set: ['op.neg.landscape']
+      fakeNews1:
+        npc: citizenChamp
+        mood: exclamation
+        available:
+          dialogues:
+            - text:
+                en: "I read there was a Ferris wheel in Nearbyville. It fell and crushed 50 people to death."
+                de: "Ich habe gelesen, dass es in der Nachbarstadt ein Riesenrad gab. Es fiel um und zerquetschte 50 Menschen."
+              responses:
+                - text:
+                    en: "Is that true?"
+                    de: "Ist das wahr?"
+                  thenText:
+                    en: "Yes, many friends sent me the news."
+                    de: "Ja, viele Freunde haben mir die Nachricht geschickt."
+                - text:
+                    en: "Let me check if that is true."
+                    de: "Lass mich prüfen, ob das stimmt."
+                  thenText:
+                    en: "OK. But it's being shared by everyone. It must be true."
+                    de: "OK. Aber es wird von allen geteilt. Es muss wahr sein."
+                  set: [ 'quest.fakeNews1.active' ]
+        stages:
+          - prompt:
+              en: "Find out if the rumor about the accident is true by talking to someone who can verify the information."
+              de: "Finde heraus, ob das Gerücht über den Unfall wahr ist, indem du mit jemandem sprichst, der die Informationen bestätigen kann."
+            dialogues:
+              journalist:
+                - type: sequence
+                  items:
+                    - text:
+                        en: "An accident in Nearbyville? Let me check."
+                        de: "Ein Unfall in Nebenhausen? Lass mich nachsehen."
+                    - text: "..."
+                    - text:
+                        en: "OK. It never happened. Nearbyville sold their ferris wheel to Furtherburg. It’s still operating there."
+                        de: "OK. Er hat nie stattgefunden. Nebenhausen hat sein Riesenrad an Fernheim verkauft. Es ist immer noch in Betrieb."
+                    - text:
+                        en: "Here’s an article, and a video of the Ferris wheel from last week."
+                        de: "Hier ist ein Artikel und ein Video des Riesenrads von letzter Woche."
+                      set: [ 'quest.fakeNews1.done', 'pnt.information.fakeNews1' ]
+              ferrisSalesman:
+                - text:
+                    en: "A Ferris wheel accident? There haven’t been any accidents associated with our products in 50 years."
+                    de: "Ein Unfall mit einem Riesenrad? In den letzten 50 Jahren hat es keine Unfälle mit unseren Produkten gegeben."
+              citizenCool:
+                - text:
+                    en: "There are many videos about the “Nearbyville Ferris wheel tragedy” online. I’m uploading mine tonight."
+                    de: "Es gibt viele Videos über die “Nebenhausen-Riesenrad-Tragödie” im Internet. Ich lade meins heute Abend hoch."
+              citizenPunk:
+                - text:
+                    en: "I received the post about the Nearbyville Ferris wheel accident from 87 people, but it looked very fake."
+                    de: "Ich habe den Beitrag über den Riesenrad-Unfall in Nebenhausen von 87 Personen erhalten, aber er sah ziemlich fake aus."
+              citizenCat:
+                - text:
+                    en: "Everybody is sharing the post about the Ferris wheel accident."
+                    de: "Alle teilen den Beitrag über den Unfall mit dem Riesenrad."
+              citizenHipster:
+                - type: sequence
+                  items:
+                    - text:
+                        en: "I have no memory of any Ferris wheel accidents in Nearbyville."
+                        de: "Ich erinnere mich nicht an einen Unfall mit einem Riesenrad in Nebenhausen."
+                    - text:
+                        en: "You should check with the fact-checkers at the newspaper."
+                        de: "Das solltest du mit den Faktenprüfer*innen der Zeitung klären."
+      fakeNews2:
+        npc: journalist
+        mood: exclamation
+        required: fakeNews1
+        available:
+          dialogues:
+            - type: sequence
+              items:
+                - text:
+                    en: "I wrote an article debunking the rumors of the Ferris wheel accident, but many people don’t read newspapers."
+                    de: "Ich habe einen Artikel geschrieben, der die Gerüchte über den Unfall mit dem Riesenrad widerlegt, aber Menschen lesen kaum Zeitungen."
+                - text:
+                    en: "Please help me spread the information."
+                    de: "Bitte hilf mir, die Informationen zu verbreiten."
+                  responses:
+                    - text:
+                        en: "Sure."
+                        de: "Ja, sicher."
+                      set: [ 'quest.fakeNews2.active' ]
+                    - text:
+                        en: "Maybe later."
+                        de: "Vielleicht später."
+        stages:
+          - prompt:
+              en: "Find a way to spread the article that debunks the rumors about the Ferris wheel accident."
+              de: "Finde einen Weg, den Artikel zu verbreiten, der die Gerüchte über den Riesenrad-Unfall entkräftet."
+            dialogues:
+              citizenCool:
+                - type: sequence
+                  items:
+                    - text:
+                        en: "There is proof it was fake news? Great! I’ll include this in my video about the Ferris wheel."
+                        de: "Es gibt Beweise, dass die Nachrichten gefälscht waren? Wow! Ich werde das in mein Riesenrad-Video einbauen."
+                    - text:
+                        en: "With the right thumbnail I will get millions of views."
+                        de: "Mit dem richtigen Vorschaubild bekomme ich Millionen von Aufrufen."
+                    - text:
+                        en: "Remember to like and subscribe!"
+                        de: "Vergesst nicht, zu liken und zu abonnieren!"
+                      set: [ 'quest.fakeNews2.done', 'pnt.information.fakeNews2' ]
+              citizenPunk:
+                - text:
+                    en: "I knew it had to be fake news! I will share the article with everyone who sent me the rumor."
+                    de: "Ich wusste, dass es gefälschte Nachrichten sind! Ich werde den Artikel mit allen teilen, die mir das Gerücht geschickt haben."
+                  set: [ 'quest.fakeNews2.done', 'pnt.information.fakeNews2' ]
+              mayor:
+                - text:
+                    en: "Mmm… our media office will take a look at this, but we’d prefer not to even mention “accidents”."
+                    de: 'Hmm... unsere Medienstelle wird sich damit befassen, aber wir würden lieber keine "Unfälle" erwähnen.'
+              ferrisSalesman:
+                - text:
+                    en: "I can’t help you. Denying accidents, even if they never happened, is bad for business."
+                    de: "Ich kann Ihnen nicht helfen. Unfälle zu leugnen, selbst wenn sie nie passiert sind, ist schlecht fürs Geschäft."
+              citizenCat:
+                - text:
+                    en: "You should give this to the video-blogger. Everybody in the city follows him."
+                    de: "Das solltest du dem Video-Blogger geben. Jeder in der Stadt folgt ihm."
+      environmentalImpact:
+        npc: parksDirector
+        mood: interrogation
+        available:
+          dialogues:
+            - text:
+                en: "This will be the first 100% eco-friendly Ferris wheel in the world."
+                de: "Dies wird das erste 100% umweltfreundliche Riesenrad der Welt sein."
               responses:
                 - text:
                     en: "I'm glad to hear that!"
                     de: "Das freut mich zu hören!"
                   thenText:
                     en: "We'll light it up with blue and green lights, for a calming effect."
-                    de: "Wir werden es mit blauen und grünen Lichtern beleuchten, für eine beruhigende Wirkung."
+                    de: "Wir werden es blau und grün beleuchten, für eine beruhigende Wirkung."
                 - text:
                     en: "What about its energy use?"
                     de: "Wie sieht es mit dem Energieverbrauch aus?"
@@ -195,377 +518,275 @@ storylines:
                     en: "What about the impact to animals?"
                     de: "Wie sieht es mit den Auswirkungen auf Tiere aus?"
                   thenText:
-                    en: "What about it? Should I be concerned? We need an expert opinion."
-                    de: "Was ist damit? Sollte ich mir Sorgen machen? Wir brauchen eine Expertenmeinung."
-                  set: ['quest.environmentalImpact.active']
-            - cond: 'quest.environmentalImpact.done'
-              text:
-                en: 'We will fund the university to study the impact of the wheel’s lights on birds and bats.'
-                de: 'Wir werden die Universität finanzieren, um die Auswirkungen der Lichter des Riesenrads auf Vögel und Fledermäuse zu untersuchen.'
-      'biologist':
-        - type: first
-          items:
-            - cond: 'quest.environmentalImpact.active & ^quest.environmentalImpact.done'
-              type: sequence
+                    en: "Animals? Should I be concerned? We need an expert opinion."
+                    de: "Tiere? Sollte ich mir Sorgen machen? Wir brauchen eine Expertenmeinung."
+                  set: [ 'quest.environmentalImpact.active' ]
+        stages:
+          - prompt:
+              en: "Could the Ferris wheel have a negative environmental impact? Consult an expert."
+              de: "Könnte das Riesenrad negative Auswirkungen auf die Umwelt haben? Konsultiere eine Expertin."
+            dialogues:
+              biologist:
+                - type: sequence
+                  items:
+                    - text:
+                        en: "Yes, we're concerned about the ferris wheel's environmental impact."
+                        de: "Ja, wir sind besorgt über die Umweltauswirkungen des Riesenrads."
+                    - text:
+                        en: "We fear its lights could confuse the birds and bats."
+                        de: "Wir befürchten, dass seine Lichter die Vögel und Fledermäuse verwirren könnten."
+                    - text:
+                        en: "We'll be happy to investigate more and advise the city."
+                        de: "Wir werden gerne weitere Untersuchungen durchführen und die Stadt beraten."
+                      set: [ 'quest.environmentalImpact.done', 'pnt.empowerment.environmentalImpact' ]
+              museumDirector:
+                - type: sequence
+                  items:
+                    - text:
+                        en: "I guess it's likely that the ferris wheel will have an impact on the environment."
+                        de: "Ich glaube, dass das Riesenrad Auswirkungen auf die Umwelt haben könnte."
+                    - text:
+                        en: "But it's not our specialty. You should talk to a researcher from the university."
+                        de: "Aber das ist nicht unser Fachgebiet. Du solltest mit Forschenden der Universität sprechen."
+              citizenRanger:
+                - type: sequence
+                  items:
+                    - text:
+                        en: "Of course something so alien to the environment will have a big impact with animals."
+                        de: "Natürlich hat etwas so Umweltfremdes einen großen Einfluss auf die Tiere."
+                    - text:
+                        en: "Ask at the university on the other side of the city. We always collaborate with them from the field."
+                        de: "Frag bei der Universität auf der anderen Seite der Stadt nach. In unserer Feldarbeit arbeiten wir oft zusammen."
+      citizenAssembly:
+        npc: mayor
+        mood: exclamation
+        required: environmentalImpact
+        available:
+          dialogues:
+            - type: sequence
               items:
                 - text:
-                    en: "Yes, we're concerned about the ferris wheel's environmental impact."
-                    de: "Ja, wir sind besorgt über die Umweltauswirkungen des Riesenrads."
+                    en: 'We sent out the invitations to the Citizen Assembly, but we didn’t receive any responses from the north of the city.'
+                    de: 'Wir haben die Einladungen zur Bürger*innenversammlung verschickt, aber es gab keine Antworten aus dem Norden der Stadt.'
                 - text:
-                    en: "We fear its lights could confuse the birds and bats."
-                    de: "Wir befürchten, dass seine Lichter die Vögel und Fledermäuse verwirren könnten."
+                    en: 'Those who complained the loudest, now don’t want to participate.'
+                    de: 'Diejenigen, die sich am lautesten beschwert haben, machen jetzt nicht mit.'
+                  responses:
+                    - text:
+                        en: 'That’s strange.'
+                        de: 'Das ist seltsam.'
+                    - text:
+                        en: 'That’s to be expected.'
+                        de: 'Das war zu erwarten.'
+                    - text:
+                        en: 'Let me see if I can find out why.'
+                        de: 'Mal sehen, ob ich den Grund dafür finde.'
+                      set: [ 'quest.citizenAssembly.active' ]
+        stages:
+          - cond: 'citizenAssembly.foundReason'
+            prompt:
+              en: 'Can immigrants be included in the Citizen Assembly? Talk to the City Mayor.'
+              de: 'Können zugewanderte Personen in die Bürger*innenversammlung einbezogen werden? Sprich mit der Bürgermeisterin.'
+            dialogues:
+              mayor:
+                - type: sequence
+                  items:
+                    - text:
+                        en: 'Oh! Of course, those more affected by the Ferris wheel should be included. '
+                        de: 'Oh! Natürlich sollten die, die stärker vom Riesenrad betroffenen sind, eingebunden werden.'
+                    - text:
+                        en: 'We will change the rules to allow immigrants who live in the city to participate and send out the invitation again.'
+                        de: 'Wir werden die Regeln ändern, so dass zugewanderte Personen, die in der Stadt leben, teilnehmen können, und die Einladung erneut verschicken.'
+                    - text:
+                        en: '… with an apology.'
+                        de: '... mit einer Entschuldigung.'
+                      set: [ 'quest.citizenAssembly.done', 'pnt.empowerment.citizenAssembly' ]
+          - prompt:
+              en: 'Investigate why people in the north of the city have not signed up to participate in the citizen assembly.'
+              de: 'Untersuche, warum sich die Menschen im Norden der Stadt nicht für die Bürger*innenversammlung angemeldet haben.'
+            dialogues:
+              citizenQueen:
+                - type: sequence
+                  items:
+                    - text:
+                        en: 'I did sign up to the citizen assembly and hope to be selected.'
+                        de: 'Ich habe mich für die Bürger*innenversammlung angemeldet und hoffe, dass ich ausgewählt werde.'
+                    - text:
+                        en: 'We’re just very few and very busy citizens here in the north of town.'
+                        de: 'Wir sind nur sehr wenige und sehr beschäftigt, hier im Norden der Stadt.'
+              citizenLila:
                 - text:
-                    en: "We'll be happy to investigate more and advise the city."
-                    de: "Wir werden gerne weitere Untersuchungen durchführen und der Stadt beraten."
-                  set: ['quest.environmentalImpact.done', 'pnt.empowerment.environmentalImpact']
-            - cond: 'quest.environmentalImpact.done'
-              text:
-                en: "We're investigating the environmental impact of the Ferris wheel's lights on birds and bats."
-                de: "Wir untersuchen die Auswirkungen der Lichter des Riesenrads auf Vögel und Fledermäuse."
-            - text:
-                en: "The scientific point of view should be taken into consideration when making decisions."
-                de: "Der wissenschaftliche Standpunkt sollte bei Entscheidungen berücksichtigt werden."
-      'museumDirector':
-        - type: first
-          items:
-            - cond: 'quest.environmentalImpact.active & ^quest.environmentalImpact.done'
-              type: sequence
-              items:
+                    en: 'The government doesn’t care about the north of the city.'
+                    de: 'Die Regierung kümmert sich nicht um den Norden der Stadt.'
+              citizenPuan:
                 - text:
-                    en: "I guess it's likely that the ferris wheel will have an impact on the environment."
-                    de: "Ich denke, es ist wahrscheinlich, dass das Riesenrad Auswirkungen auf die Umwelt haben wird."
+                    en: 'The Citizen Assembly is just a show, so the government appears inclusive.'
+                    de: 'Die Bürger*innenversammlung ist nur eine Show, damit die Regierung inklusiv erscheint.'
+              citizenBlue:
+                - type: sequence
+                  items:
+                    - text:
+                        en: 'Many citizens in the north are immigrants and are not allowed by the rules to participate in the assembly.'
+                        de: 'Viele Bürger*innen im Norden sind zugewandert und dürfen nach den Regeln nicht an der Versammlung teilnehmen.'
+                    - text:
+                        en: 'The rules should be changed. Talk to the major.'
+                        de: 'Die Regeln sollten geändert werden. Sprich mit der Bürgermeisterin.'
+                      set: [ 'citizenAssembly.foundReason']
+              citizenHipster:
                 - text:
-                    en: "But it's not our specialty. You should talk to a researcher from the university."
-                    de: "Aber das ist nicht unser Fachgebiet. Sie sollten mit einem Forscher der Universität sprechen."
+                    en: 'If you ask a tourist if they want a Ferris wheel, they will always say yes. Only real citizens should decide.'
+                    de: 'Wenn du Touristen fragst, ob sie ein Riesenrad wollen, werden sie immer ja sagen. Nur echte Bürger*innen sollten entscheiden.'
+      openData:
+        npc: citizenBlue
+        mood: exclamation
+        available:
+          dialogues:
             - text:
-                en: "We hope that people who come to ride the Ferris wheel will also visit the museum."
-                de: "Wir hoffen, dass die Leute, die zum Riesenrad fahren, auch das Museum besuchen werden."
-              set: ['talkedTo.museumDirector']
-      'ferrisSalesman':
-        - type: sequence
-          items:
-            - text:
-                en: 'I represent Spin City™. We are excited by the opportunity of building a fantastic Ferris wheel for this city.'
-                de: 'Ich vertrete Drehmoment™. Wir sind begeistert von der Möglichkeit, ein fantastisches Riesenrad für diese Stadt zu bauen.'
-            - text:
-                en: "It will improve the north part of the city, which is currently underdeveloped."
-                de: "Es wird den nördlichen Teil der Stadt verbessern, der derzeit unterentwickelt ist."
-      'citizenPuan':
-        - type: 'first'
-          items:
-            - cond: 'pnt.empathy.museum'
-              text:
-                en: 'I love our museum and hope it’s not neglected.'
-                de: 'Ich liebe unser Museum und ich hoffe, dass es nicht vernachlässigt wird.'
-            - text:
-                en: 'Why attract tourists with such an eyesore and not our museums?'
-                de: 'Warum sollte man Tourist*inen mit einem solchen Ungetüm anlocken und nicht mit unserem Museum?'
-              responses:
-                - cond: 'talkedTo.museumDirector'
-                  text:
-                    en: 'The museum expects tourists to visit both.'
-                    de: 'Das Museum geht davon aus, dass die Tourist*innen beides besuchen werden.'
-                  thenText:
-                    en: 'Mmm. Maybe.'
-                    de: 'Hmmm. Vielleicht.'
-                  set: ['pnt.empathy.museum']
-      'tourist':
-        - type: 'random'
-          items:
-          - text:
-              en: 'I like the idea. There’s not much to do in this city.'
-              de: 'Ich finde die Idee gut. Es gibt nicht so viel zu tun in dieser Stadt.'
-          - text:
-              en: 'I love the Ferris wheel in Viena. Iconic!'
-              de: 'Ich liebe das Riesenrad in Wien! Eine Ikone!'
-      'citizenCat':
-        - type: sequence
-          items:
-            - text:
-                en: 'What do YOU think?'
-                de: 'Was denkst DU?'
-              responses:
-                - text:
-                    en: 'I’m in favor of building a Ferris wheel.'
-                    de: 'Ich bin für den Bau des Riesenrads.'
-                - text:
-                    en: 'I’m against building a Ferris wheel.'
-                    de: 'Ich bin gegen den Bau des Riesenrads.'
-                - text:
-                    en: 'I don’t know yet.'
-                    de: 'Ich weiß es noch nicht.'
-            - text:
-                en: "58% of the citizens are in favor. 33% are against. 9% don't know yet."
-                de: "58% der Bürger*innen sind dafür. 33% sind dagegen. 9% wissen es noch nicht."
-      'robot':
-        - type: first
-          items:
-            - cond: 'op.neg.birds'
-              text:
-                en: 'I hope the wheel gets rid of all the birds and bats, they’re just flying rats.'
-                de: 'Ich hoffe, dass das Riesenrad alle Vögel und Fledermäuse vertreibt, das sind doch nur fliegende Ratten.'
+                en: "Some of us don’t trust the Spin City™ company. We should be able to see what contracts the city is signing."
+                de: "Einige von uns trauen dem Unternehmen Drehmoment™ nicht. Wir sollten einsehen können, welche Verträge die Stadt unterzeichnet."
               responses:
                 - text:
-                    en: 'Birds and bats are important for the ecosystem.'
-                    de: 'Vögel und Fledermäuse sind wichtig für das Ökosystem.'
+                    en: "Shouldn’t that information be confidential?"
+                    de: "Sollten diese Informationen nicht vertraulich sein?"
                   thenText:
-                    en: '“Ecosystem” is a concept from the time before supermarkets.'
-                    de: '"Ökosystem" ist ein Begriff aus der Zeit bevor es Supermärkte gab.'
-            - cond: 'heard.rumor.accident'
-              text:
-                en: 'Anyone opposed to this project is opposed to technological progress.'
-                de: 'Wer gegen dieses Projekt ist, ist gegen den technischen Fortschritt.'
-              responses:
+                    en: "No. The Ferris wheel is being paid with our money."
+                    de: "Nein. Das Riesenrad wird mit unserem Geld bezahlt."
                 - text:
-                    en: 'The first Ferris wheel was built in 1893.'
-                    de: 'Das erste Riesenrad wurde 1893 gebaut.'
+                    en: "Why don’t you trust Spin City™?"
+                    de: "Warum traust du Drehmoment™ nicht?"
                   thenText:
-                    en: 'If you stand in the way of progress, you’ll be hit by my flying car.'
-                    de: 'Wenn du dich dem Fortschritt in den Weg stellst, wirst du von meinem fliegenden Auto überfahren.'
-            - text:
-                en: 'A Ferris wheel will put us up with London, Singapore, and Disneyland as a tourist destination.'
-                de: 'Mit einem Riesenrad können wir es als Reiseziel mit London, Singapur oder Disneyland aufnehmen!'
-              responses:
+                    en: "I can only trust people, not companies."
+                    de: "Ich kann nur Menschen vertrauen, nicht Unternehmen."
                 - text:
-                    en: 'London and Singapore are very large cities.'
-                    de: 'London und Singapur sind sehr große Städte.'
+                    en: "I’ll see if that is possible."
+                    de: "Ich werde schauen, ob das geht."
                   thenText:
-                    en: '... and without a Ferris wheel, we’ll be small forever.'
-                    de: '... und ohne ein Riesenrad werden wir für immer klein bleiben.'
+                    en: "Probably not."
+                    de: "Wahrscheinlich nicht."
+                  set: [ 'quest.openData.active' ]
+        stages:
+          - cond: "openData.excuse"
+            prompt:
+              en: "Find a system that can provide access to the contracts between the government and Spin City™."
+              de: "Finde ein System, das den Zugang zu den Verträgen zwischen der Regierung und Drehmoment™ ermöglicht."
+            dialogues:
+              mayor:
                 - text:
-                    en: 'Disneyland doesn’t have a Ferris wheel.'
-                    de: 'Disneyland hat kein Riesenrad.'
-                  thenText:
-                    en: 'There are twelve Disney parks in the world. Did you personally visit all of them?'
-                    de: 'Es gibt zwölf Disney_Parks auf der Welt. Hast du die alle persönlich besucht?'
-      'citizenBlue':
-        - type: first
-          items:
-            - cond: 'pnt.equity.neighbors'
-              text:
-                en: 'I have A LOT to say in the citizen assembly.'
-                de: 'Ich habe in der Bürgerversammlung SEHR VIEL zu sagen.'
-            - text:
-                en: 'Nobody asked us, and they’re placing it right next to our homes.'
-                de: 'Niemand hat uns gefragt, und sie stellen es direkt neben unsere Häuser.'
-              set: ['op.neg.neighbors']
-              responses:
-                - cond: 'pnt.empowerment.citizenAssembly'
-                  text:
-                    en: 'The mayor will call a citizen assembly.'
-                    de: 'Die Bürgermeisterin wird eine Bürgerversammlung einberufen.'
-                  thenText:
-                    de: 'OK, ich hoffe, sie werden sich meine Bedenken anhören.'
-                    en: 'OK, I hope they will listen to my concerns.'
-                  set: ['pnt.equity.neighbors']
-      'citizenHipster':
-        - type: first
-          items:
-            - cond: 'pnt.equity.neglectedArea'
-              text:
-                de: 'Wenn die Stadt die Gewinne wieder investiert, um die lokalen Unternehmen zu unterstützen, könnte der Tourismus gute Möglichkeiten für uns bringen.'
-                en: 'If the city invests the profits back to help local businesses, tourism might bring good opportunities for us.'
-            - text:
-                de: 'Das wird zu viel Verkehr, Lärm und Kriminalität in diesem ohnehin schon sehr vernachlässigten Viertel führen.'
-                en: 'This will add a lot of traffic, noise, and crime to the area, which is already very neglected.'
-              set: ['op.neg.neglectedArea']
-              responses:
-                - cond: 'pnt.empowerment.reinvest'
-                  text:
-                    en: 'The city promised to invest the profits back in this area.'
-                    de: 'Die Stadt hat versprochen, die Gewinne wieder in dieses Viertel zu investieren.'
-                  thenText:
-                    en: 'If they help local businesses, we can be ready for tourists.'
-                    de: 'Wenn sie die örtlichen Unternehmen unterstützen, können wir auf Touristen vorbereitet sein.'
-                  set: ['pnt.equity.neglectedArea']
-      'citizenBraid':
-        - type: 'random'
-          set: ['op.pos.citizenBraid']
-          items:
-            - text:
-                en: 'Tourism will help small local businesses.'
-                de: 'Der Tourismus wird kleinen lokalen Unternehmen helfen.'
-            - text:
-                en: 'It can make us more unique and increase visitors.'
-                de: 'Er kann uns einzigartiger machen und die Besucherzahlen erhöhen.'
-      'citizenCage':
-        - type: 'random'
-          set: ['op.pos.citizenCage']
-          items:
-            - text:
-                en: 'There are fewer jobs each day. It’s a good idea to focus on tourism. '
-                de: 'Es gibt immer weniger Arbeitsplätze. Es ist eine gute Idee, auf den Tourismus zu setzen. '
-            - text:
-                en: 'Tourism will help small local businesses.'
-                de: 'Der Tourismus wird kleinen lokalen Unternehmen helfen.'
-      'citizenPunk':
-        - type: first
-          items:
-            - cond: '^quest.fakeNews.active & ^quest.fakeNews.done'
-              text:
-                en: 'I read there was a Ferris wheel in Nearbyville. It fell and crushed 50 people to death.'
-                de: 'Ich habe gelesen, dass es in der Nachbarstadt ein Riesenrad gab. Es fiel um und zerquetschte 50 Menschen.'
-              responses:
+                    en: "A public system where people could read the information doesn't exist."
+                    de: "Ein öffentliches System, in dem die Menschen die Informationen lesen könnten, gibt es nicht."
+              citizenPunk:
                 - text:
-                    en: "Is that true?"
-                    de: 'Stimmt das?'
-                  thenText:
-                    en: 'Yes, many friends sent me the news.'
-                    de: 'Ja, viele Freunde haben mir die Nachricht geschickt.'
+                    en: "Yes, we can build it! We’ll build a system where the citizens can review the contracts between the government and companies."
+                    de: "Ja, wir können es erstellen! Wir richten ein System ein, mit dem Bürger*innen die Verträge zwischen der Regierung und den Unternehmen überprüfen können."
+                  set: [ 'quest.openData.done', 'pnt.empowerment.openData' ]
+              journalist:
+                - type: sequence
+                  items:
+                    - text:
+                        en: "Yes, open access to data is an important part of our mission as fact-checkers."
+                        de: "Ja, der offene Zugang zu Daten ist ein wichtiger Teil unserer Aufgabe als Faktenprüfer*innen."
+                    - text:
+                        en: "We will publish the contracts in our website, so citizens can review them."
+                        de: "Wir werden die Verträge auf unserer Website veröffentlichen, damit die Bürger*innen sie überprüfen können."
+                      set: [ 'quest.openData.done', 'pnt.empowerment.openData' ]
+              constructionWorker:
                 - text:
-                    en: 'Let me check if that is true.'
-                    de: 'Lass mich prüfen, ob das stimmt.'
-                  thenText:
-                    en: "OK. But it's being shared by everyone. It must be true."
-                    de: 'OK. Aber es wird von allen geteilt. Es muss wahr sein.'
-                  set: [ 'quest.fakeNews.active' ]
-            - cond: 'quest.fakeNews.active & quest.fakeNews.checked & ^quest.fakeNews.done'
-              text:
-                en: 'The accident was fake news? The rumor is being shared online by everyone.'
-                de: 'Der Unfall war Fake News? Das Gerücht wird online von allen geteilt.'
-            - cond: 'quest.fakeNews.active & ^quest.fakeNews.done'
-              text:
-                en: 'Did you find anything? I remember seeing pictures of the accident in the newspaper.'
-                de: 'Hast du etwas gefunden? Ich erinnere mich, Bilder des Unfalls in der Zeitung gesehen zu haben.'
-            - cond: 'quest.fakeNews.done'
-              text:
-                en: 'I’m still concerned with the Ferris wheel’s safety.'
-                de: 'Ich mache mir immer noch Sorgen um die Sicherheit des Riesenrads.'
-      'journalist':
-        - cond: 'quest.fakeNews.active & ^quest.fakeNews.checked & ^quest.fakeNews.done'
-          type: sequence
-          items:
-            - text:
-                en: 'An accident in Nearbyville? Let me check.'
-                de: 'Ein Unfall in Nebenhausen? Lass mich nachsehen.'
-            - text: '...'
-            - text:
-                en: 'OK. It never happened. Nearbyville sold their ferris wheel to Furtherburg. It’s still operating there.'
-                de: 'OK. Er hat nie stattgefunden. Nebenhausen hat sein Riesenrad an Fernheim verkauft. Es ist immer noch in Betrieb.'
-            - text:
-                en: 'Too bad people read forums instead of newspapers.'
-                de: 'Schade, dass die Leute Foren statt Zeitungen lesen.'
-              set: ['quest.fakeNews.checked']
-        - cond: 'quest.fakeNews.active & ^quest.fakeNews.done'
-          text:
-            en: 'That ferris wheel operates all year round. It has a lot of positive reviews from visitors.'
-            de: 'Dieses Riesenrad ist das ganze Jahr über in Betrieb. Es hat viele positive Bewertungen von Besuchern.'
-        - text:
-            en: 'Nobody buys newspapers to read about ferris wheels.'
-            de: 'Niemand kauft Zeitungen, um über Riesenräder zu lesen.'
-      'citizenCool':
-        - cond: 'quest.fakeNews.active & quest.fakeNews.checked & ^quest.fakeNews.done'
-          type: sequence
-          items:
-            - text:
-                en: "The ferris wheel accident is fake? Wow! I'll post a video about it right away!"
-                de: 'Der Unfall mit dem Riesenrad ist gefälscht? Wow! Ich werde sofort ein Video darüber posten!'
-            - text:
-                en: "I'll get a lot of views!"
-                de: 'Ich werde viele Aufrufe bekommen!'
-              set: ['quest.fakeNews.done', 'pnt.information.fakeNews']
-        - cond: 'quest.fakeNews.active & ^quest.fakeNews.done'
-          text:
-            en: "Of course I know about the Nearbyville accident. I'm looking for photos of the accident for a video for my channel."
-            de: 'Natürlich weiß ich von dem Unfall in Nebenhausen. Ich suche nach Fotos des Unfalls für ein Video für meinen Kanal.'
-        - text:
-            en: 'Subscribe to my channel and turn on notifications!'
-            de: 'Abonniere meinen Kanal und schalte die Benachrichtigungen ein!'
-      'citizenLila':
-        - type: first
-          items:
-            - cond: 'pnt.information.fakeNews.profits'
-              text:
-                en: 'I was against the project, but now I’m not sure.'
-                de: 'Ich war gegen das Projekt, aber jetzt bin ich mir nicht mehr sicher.'
-            - text:
-                en: 'It will sell tickets, but a private company gets all the money.'
-                de: 'Es werden Eintrittskarten verkauft, aber ein privates Unternehmen bekommt das ganze Geld.'
-              responses:
-                - cond: 'talkedTo.financeDirector'
-                  text:
-                    en: 'Part of the profits will go to the city.'
-                    de: 'Ein Teil des Gewinns wird an die Stadt gehen.'
-                  thenText:
-                    en: 'I didn’t know that.'
-                    de: 'Das wusste ich nicht.'
-                  set: ['pnt.information.fakeNews.profits']
-      'constructionWorker':
-        - type: first
-          items:
-            - cond: 'pnt.empathy.tourismNegativeImpact'
-              text:
-                en: 'I’m looking forward to the citizen assembly.'
-                de: 'Ich freue mich auf die Bürgerversammlung.'
-            - text:
-                en: 'Tourism makes everything more expensive! And there are so few available apartments already.'
-                de: 'Der Tourismus macht alles teurer! Und es gibt schon jetzt so wenig freie Wohnungen.'
-              set: ['op.neg.constructionWorker']
-              responses:
-                - cond: 'pnt.empowerment.citizenAssembly'
-                  text:
-                    en: 'The mayor will call a citizen assembly.'
-                    de: 'Die Bürgermeisterin wird eine Bürgerversammlung einberufen.'
-                  thenText:
-                    en: 'Oh, that’s great!'
-                    de: 'Oh, das ist ja toll!'
-                  set: ['pnt.empathy.tourismNegativeImpact']
-      'citizenQueen':
-        - type: first
-          items:
-            - cond: 'pnt.empathy.tourismCrime'
-              text:
-                en: 'I’m not too optimistic that the citizen assembly will make a difference, but I’ll give them a chance.'
-                de: 'Ich bin nicht allzu optimistisch, dass die Bürgerversammlung etwas bewirken wird, aber ich werde ihr eine Chance geben.'
-            - text: 'Touristen = Kriminalität!'
-              set: ['op.neg.citizenQueen']
-              responses:
-                - cond: 'pnt.empowerment.citizenAssembly'
-                  text:
-                    en: 'The mayor will call a citizen assembly.'
-                    de: 'Die Bürgermeisterin wird eine Bürgerversammlung einberufen.'
-                  thenText:
-                    en: 'Mmmm... OK.'
-                    de: 'Mmmm... OK.'
-                  set: ['pnt.empathy.tourismCrime']
+                    en: "Access to digital documents? That sounds like a software problem. You should find some tech people."
+                    de: "Zugang zu digitalen Dokumenten? Das klingt nach einem Softwareproblem. Du solltest ein paar Techniker*innen finden."
+              biologist:
+                - text:
+                    en: "Access to public documents? Open data is part of the fact checker’s mission. Ask the journalist next to the coffee shop."
+                    de: "Zugang zu öffentlichen Dokumenten? Offene Daten sind Teil der Aufgabe des Faktenchecks. Frage den Journalisten neben dem Café."
+          - prompt:
+              en: "Request that citizens be able to read contracts between the government and Spin City™."
+              de: "Fordere, dass Bürger*innen die Verträge zwischen der Regierung und Drehmoment™ einsehen können."
+            dialogues:
+              mayor:
+                - type: sequence
+                  items:
+                    - text:
+                        en: "Err… I don’t have a problem with people reading the contracts, but they are hundreds of pages of digital documents…"
+                        de: "Ich habe kein Problem damit, dass Leute Verträge lesen, aber das sind Hunderte von Seiten digitaler Dokumente…"
+                    - text:
+                        en: "… and the system where they are stored requires a private login."
+                        de: "... und das System, in dem sie gespeichert sind, erfordert ein privates Login."
+                    - text:
+                        en: "A public system where people could read the information doesn't exist."
+                        de: "Ein öffentliches System, in dem die Menschen die Informationen lesen könnten, gibt es nicht."
+                      set: ['openData.excuse']
+              ferrisSalesman:
+                - text:
+                    en: "You want to read our contracts? You’d have to ask the mayor about that."
+                    de: "Du willst unsere Verträge lesen? Da musst du die Bürgermeisterin fragen."
+#      profits:
+#        npc: journalist
+#        mood: interrogation
+#        required: openData
+#        available:
+#          dialogues:
+#            - type: sequence
+#              items:
+#                - text:
+#                    en: "The contracts say the city will receive a good percentage of profits from the Ferris wheel."
+#                    de: "In den Verträgen steht, dass die Stadt einen hohen Prozentsatz der Gewinne aus dem Riesenrad erhält."
+#                - text:
+#                    en: "But they don’t specify what they’ll do with the money."
+#                    de: "Aber sie legen nicht fest, was sie mit dem Geld machen werden."
+#                - text:
+#                    en: "Can you find a good use for the funds?"
+#                    de: "Kannst du eine gute Verwendung für das Geld finden?"
+#                  responses:
+#                    - text:
+#                        en: "I’ll search for the best idea."
+#                        de: "Ich werde nach der besten Idee suchen."
+#                      set: [ 'quest.profits.active' ]
+#                    - text:
+#                        en: "I’ll leave it up to the government."
+#                        de: "Ich werde es der Regierung überlassen."
+#        stages:
+#          - prompt:
+#              en: "Find a good use for the city’s share of the Ferris wheel profits and share it with the mayor."
+#              de: "Finde eine gute Verwendung für den Anteil der Stadt am Gewinn des Riesenrads und gehe damit zur Bürgermeisterin."
+#            dialogues:
+    dialogues:
       _ending:
         - type: sequence
           items:
             - type: first
               items:
-                - cond: 'COUNT("pnt") > 1'
+                - cond: 'COUNT("pnt") >= 1'
                   text:
-                    de: "Der/die Bürgermeister*in und das Unternehmen Drehmoment™ vereinbarten den Bau eines neuen Riesenrads."
+                    de: "Die Bürgermeisterin und das Unternehmen Drehmoment™ vereinbarten den Bau eines neuen Riesenrads."
                     en: "The major and the Spin City™ company agreed to build a new Ferris wheel."
                 - text:
                     en: 'The construction of the Ferris wheel was paused because of constant vandalism by angry citizens.'
-                    de: 'Der Bau des Riesenrads wurde wegen andauernden Vandalismus durch zornige Bürger*innen unterbrochen.'
+                    de: 'Der Bau des Riesenrads wurde wegen andauerndem Vandalismus durch verärgerte Bürger*innen unterbrochen.'
                   class: 'citizensAngry'
                   set: [ 'ending.notBuilt' ]
             - type: first
               items:
                 - cond: 'pnt.empowerment.citizenAssembly'
                   text:
-                    de: 'Es wurde eine Bürgerversammlung einberufen, um das Riesenradprojekt zu diskutieren. Wir müssen uns die Bedenken anhören, Fragen prüfen und Entscheidungen auf der Grundlage von Informationen treffen.'
+                    de: 'Es wurde eine Bürger*innenversammlung einberufen, um das Riesenradprojekt zu diskutieren. Wir müssen uns die Bedenken anhören, Fragen prüfen und Entscheidungen auf der Grundlage von Informationen treffen.'
                     en: 'A citizen assembly was formed to discuss the Ferris wheel project. We need to hear concerns, study issues, and make choices based on information.'
                   class: 'citizensEmpowered'
-                - cond: 'COUNT("pnt") >= 6'
+                - cond: 'COUNT("pnt") >= 4'
                   text:
                     de: 'Einige Bürger*innen sagen, es mache viel Spaß. Die meisten sagen, es sei eine große Geldverschwendung.'
                     en: 'Some citizens say it’s a lot of fun. Most say it’s a big waste of money.'
                   class: 'citizensNeutral'
-                - cond: 'COUNT("pnt") = 5'
+                - cond: 'COUNT("pnt") >= 3'
                   text:
-                    de: 'Es wurde von Anwohnern zur "hässlichsten Attraktion Deutschlands" gewählt.'
+                    de: 'Es wurde von Anwohner*innen zur "hässlichsten Attraktion Deutschlands" gewählt.'
                     en: 'It was voted “The ugliest attraction in Germany” by residents.'
                   class: 'citizensNeutral'
-                - cond: 'COUNT("pnt") = 4'
+                - cond: 'COUNT("pnt") >= 2'
                   text:
-                    de: 'Es zieht einige Tourist*innen an, aber die Einheimischen meiden die Gegend lieber.'
+                    de: 'Es zieht einige Tourist*innen an, aber die lokale Bevölkerung meidet die Gegend lieber.'
                     en: 'It attracts some tourists, but locals prefer to avoid the area.'
                   class: 'citizensSad'
                 - text:
-                    de: 'Die Bürger*innen protestierten wochenlang. Ein*e Richter*in entschied, dass das Riesenrad nur an Wochenenden und bei ausgeschalteter Beleuchtung betrieben werden darf.'
+                    de: 'Die Bürger*innen protestierten wochenlang. Eine Richterin entschied, dass das Riesenrad nur an Wochenenden und bei ausgeschalteter Beleuchtung betrieben werden darf.'
                     en: 'Citizens protested for weeks. A judge decided that the Ferris wheel must only operate on weekends and with its lights off.'
                   class: 'citizensSad'
             - type: first
@@ -578,3 +799,5 @@ storylines:
                   text:
                     de: 'Ein Teil des Gewinns wird für die Aufwertung des nördlichen Teils der Stadt verwendet.'
                     en: 'A part of the profits is being used to improve the northern part of the city.'
+
+

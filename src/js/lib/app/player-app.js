@@ -108,12 +108,12 @@ class PlayerApp {
 
     // Temporary scoring manager
     const seenFlags = {};
-    this.flags.events.on('flag', (flagId) => {
+    this.flags.events.on('flag', (flagId, value, oldValue, setter) => {
       if (seenFlags[flagId]) {
         return;
       }
       seenFlags[flagId] = true;
-      if (flagId.startsWith('pnt.')) {
+      if (flagId.startsWith('pnt.') && setter !== 'remote') {
         const flagParts = flagId.split('.');
         const category = flagParts[1];
         if (category) {
@@ -387,6 +387,10 @@ class PlayerApp {
       flags: this.flags,
         random: max => Math.floor(Math.random() * max),
     };
+  }
+
+  clearFlags() {
+    this.flags.clear();
   }
 
   playDialogue(dialogue, npc = null) {
