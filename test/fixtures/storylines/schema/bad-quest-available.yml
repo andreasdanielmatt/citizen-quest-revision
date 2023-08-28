@@ -1,0 +1,25 @@
+quests:
+  mayorIdea:
+    npc: mayor
+    mood: cake
+    available:
+      dialogues:
+        mayor:
+          - text:
+              en: "We should ask the baker."
+              es: "Deberíamos preguntarle al panadero."
+            set: ['quest.mayorIdea.active']
+    stages:
+      - prompt:
+          en: "Go talk to the baker"
+          es: "Ve a hablar con el panadero"
+        dialogues:
+          mayor:
+            - text:
+                en: "Did you talk to the baker? Come back when you did."
+                es: "¿Hablaste con el panadero? Vuelve cuando lo hayas hecho."
+          baker:
+            - text:
+                en: "I agree about celebrating cake day."
+                es: "Estoy de acuerdo con celebrar el día de las tortas."
+              set: [ 'talkedToBaker' ]

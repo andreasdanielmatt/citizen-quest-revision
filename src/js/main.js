@@ -10,6 +10,7 @@ require('./lib/live-test/dialogue-live-tester');
 require('../sass/default.scss');
 const fetchTextures = require('./lib/helpers-client/fetch-textures');
 const { PlayerAppStates } = require('./lib/app/player-app-states');
+const { validateStoryline } = require('./lib/model/storyline-validation');
 
 (async () => {
   try {
@@ -33,6 +34,14 @@ const { PlayerAppStates } = require('./lib/app/player-app-states');
       'config/storylines/touristen.yml',
     ]).catch((err) => {
       throw new Error(`Error loading configuration: ${err.message}`);
+    });
+
+    Object.entries(config.storylines).forEach(([id, storyline]) => {
+      try {
+        validateStoryline(storyline);
+      } catch (err) {
+        throw new Error(`Error validating storyline '${id}': ${err.message}`);
+      }
     });
 
     const textures = await fetchTextures('./static/textures', config.textures, 'town-view');

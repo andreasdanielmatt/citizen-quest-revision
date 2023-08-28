@@ -27146,6 +27146,291 @@ function getGlobalSingleton(name, creator, obj) {
 
 /***/ }),
 
+/***/ "./node_modules/ajv-errors/dist/index.js":
+/*!***********************************************!*\
+  !*** ./node_modules/ajv-errors/dist/index.js ***!
+  \***********************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const ajv_1 = __webpack_require__(/*! ajv */ "./node_modules/ajv/dist/ajv.js");
+const codegen_1 = __webpack_require__(/*! ajv/dist/compile/codegen */ "./node_modules/ajv/dist/compile/codegen/index.js");
+const code_1 = __webpack_require__(/*! ajv/dist/compile/codegen/code */ "./node_modules/ajv/dist/compile/codegen/code.js");
+const validate_1 = __webpack_require__(/*! ajv/dist/compile/validate */ "./node_modules/ajv/dist/compile/validate/index.js");
+const errors_1 = __webpack_require__(/*! ajv/dist/compile/errors */ "./node_modules/ajv/dist/compile/errors.js");
+const names_1 = __webpack_require__(/*! ajv/dist/compile/names */ "./node_modules/ajv/dist/compile/names.js");
+const keyword = "errorMessage";
+const used = new ajv_1.Name("emUsed");
+const KEYWORD_PROPERTY_PARAMS = {
+    required: "missingProperty",
+    dependencies: "property",
+    dependentRequired: "property",
+};
+const INTERPOLATION = /\$\{[^}]+\}/;
+const INTERPOLATION_REPLACE = /\$\{([^}]+)\}/g;
+const EMPTY_STR = /^""\s*\+\s*|\s*\+\s*""$/g;
+function errorMessage(options) {
+    return {
+        keyword,
+        schemaType: ["string", "object"],
+        post: true,
+        code(cxt) {
+            const { gen, data, schema, schemaValue, it } = cxt;
+            if (it.createErrors === false)
+                return;
+            const sch = schema;
+            const instancePath = codegen_1.strConcat(names_1.default.instancePath, it.errorPath);
+            gen.if(ajv_1._ `${names_1.default.errors} > 0`, () => {
+                if (typeof sch == "object") {
+                    const [kwdPropErrors, kwdErrors] = keywordErrorsConfig(sch);
+                    if (kwdErrors)
+                        processKeywordErrors(kwdErrors);
+                    if (kwdPropErrors)
+                        processKeywordPropErrors(kwdPropErrors);
+                    processChildErrors(childErrorsConfig(sch));
+                }
+                const schMessage = typeof sch == "string" ? sch : sch._;
+                if (schMessage)
+                    processAllErrors(schMessage);
+                if (!options.keepErrors)
+                    removeUsedErrors();
+            });
+            function childErrorsConfig({ properties, items }) {
+                const errors = {};
+                if (properties) {
+                    errors.props = {};
+                    for (const p in properties)
+                        errors.props[p] = [];
+                }
+                if (items) {
+                    errors.items = {};
+                    for (let i = 0; i < items.length; i++)
+                        errors.items[i] = [];
+                }
+                return errors;
+            }
+            function keywordErrorsConfig(emSchema) {
+                let propErrors;
+                let errors;
+                for (const k in emSchema) {
+                    if (k === "properties" || k === "items")
+                        continue;
+                    const kwdSch = emSchema[k];
+                    if (typeof kwdSch == "object") {
+                        propErrors || (propErrors = {});
+                        const errMap = (propErrors[k] = {});
+                        for (const p in kwdSch)
+                            errMap[p] = [];
+                    }
+                    else {
+                        errors || (errors = {});
+                        errors[k] = [];
+                    }
+                }
+                return [propErrors, errors];
+            }
+            function processKeywordErrors(kwdErrors) {
+                const kwdErrs = gen.const("emErrors", ajv_1.stringify(kwdErrors));
+                const templates = gen.const("templates", getTemplatesCode(kwdErrors, schema));
+                gen.forOf("err", names_1.default.vErrors, (err) => gen.if(matchKeywordError(err, kwdErrs), () => gen.code(ajv_1._ `${kwdErrs}[${err}.keyword].push(${err})`).assign(ajv_1._ `${err}.${used}`, true)));
+                const { singleError } = options;
+                if (singleError) {
+                    const message = gen.let("message", ajv_1._ `""`);
+                    const paramsErrors = gen.let("paramsErrors", ajv_1._ `[]`);
+                    loopErrors((key) => {
+                        gen.if(message, () => gen.code(ajv_1._ `${message} += ${typeof singleError == "string" ? singleError : ";"}`));
+                        gen.code(ajv_1._ `${message} += ${errMessage(key)}`);
+                        gen.assign(paramsErrors, ajv_1._ `${paramsErrors}.concat(${kwdErrs}[${key}])`);
+                    });
+                    errors_1.reportError(cxt, { message, params: ajv_1._ `{errors: ${paramsErrors}}` });
+                }
+                else {
+                    loopErrors((key) => errors_1.reportError(cxt, {
+                        message: errMessage(key),
+                        params: ajv_1._ `{errors: ${kwdErrs}[${key}]}`,
+                    }));
+                }
+                function loopErrors(body) {
+                    gen.forIn("key", kwdErrs, (key) => gen.if(ajv_1._ `${kwdErrs}[${key}].length`, () => body(key)));
+                }
+                function errMessage(key) {
+                    return ajv_1._ `${key} in ${templates} ? ${templates}[${key}]() : ${schemaValue}[${key}]`;
+                }
+            }
+            function processKeywordPropErrors(kwdPropErrors) {
+                const kwdErrs = gen.const("emErrors", ajv_1.stringify(kwdPropErrors));
+                const templatesCode = [];
+                for (const k in kwdPropErrors) {
+                    templatesCode.push([
+                        k,
+                        getTemplatesCode(kwdPropErrors[k], schema[k]),
+                    ]);
+                }
+                const templates = gen.const("templates", gen.object(...templatesCode));
+                const kwdPropParams = gen.scopeValue("obj", {
+                    ref: KEYWORD_PROPERTY_PARAMS,
+                    code: ajv_1.stringify(KEYWORD_PROPERTY_PARAMS),
+                });
+                const propParam = gen.let("emPropParams");
+                const paramsErrors = gen.let("emParamsErrors");
+                gen.forOf("err", names_1.default.vErrors, (err) => gen.if(matchKeywordError(err, kwdErrs), () => {
+                    gen.assign(propParam, ajv_1._ `${kwdPropParams}[${err}.keyword]`);
+                    gen.assign(paramsErrors, ajv_1._ `${kwdErrs}[${err}.keyword][${err}.params[${propParam}]]`);
+                    gen.if(paramsErrors, () => gen.code(ajv_1._ `${paramsErrors}.push(${err})`).assign(ajv_1._ `${err}.${used}`, true));
+                }));
+                gen.forIn("key", kwdErrs, (key) => gen.forIn("keyProp", ajv_1._ `${kwdErrs}[${key}]`, (keyProp) => {
+                    gen.assign(paramsErrors, ajv_1._ `${kwdErrs}[${key}][${keyProp}]`);
+                    gen.if(ajv_1._ `${paramsErrors}.length`, () => {
+                        const tmpl = gen.const("tmpl", ajv_1._ `${templates}[${key}] && ${templates}[${key}][${keyProp}]`);
+                        errors_1.reportError(cxt, {
+                            message: ajv_1._ `${tmpl} ? ${tmpl}() : ${schemaValue}[${key}][${keyProp}]`,
+                            params: ajv_1._ `{errors: ${paramsErrors}}`,
+                        });
+                    });
+                }));
+            }
+            function processChildErrors(childErrors) {
+                const { props, items } = childErrors;
+                if (!props && !items)
+                    return;
+                const isObj = ajv_1._ `typeof ${data} == "object"`;
+                const isArr = ajv_1._ `Array.isArray(${data})`;
+                const childErrs = gen.let("emErrors");
+                let childKwd;
+                let childProp;
+                const templates = gen.let("templates");
+                if (props && items) {
+                    childKwd = gen.let("emChildKwd");
+                    gen.if(isObj);
+                    gen.if(isArr, () => {
+                        init(items, schema.items);
+                        gen.assign(childKwd, ajv_1.str `items`);
+                    }, () => {
+                        init(props, schema.properties);
+                        gen.assign(childKwd, ajv_1.str `properties`);
+                    });
+                    childProp = ajv_1._ `[${childKwd}]`;
+                }
+                else if (items) {
+                    gen.if(isArr);
+                    init(items, schema.items);
+                    childProp = ajv_1._ `.items`;
+                }
+                else if (props) {
+                    gen.if(codegen_1.and(isObj, codegen_1.not(isArr)));
+                    init(props, schema.properties);
+                    childProp = ajv_1._ `.properties`;
+                }
+                gen.forOf("err", names_1.default.vErrors, (err) => ifMatchesChildError(err, childErrs, (child) => gen.code(ajv_1._ `${childErrs}[${child}].push(${err})`).assign(ajv_1._ `${err}.${used}`, true)));
+                gen.forIn("key", childErrs, (key) => gen.if(ajv_1._ `${childErrs}[${key}].length`, () => {
+                    errors_1.reportError(cxt, {
+                        message: ajv_1._ `${key} in ${templates} ? ${templates}[${key}]() : ${schemaValue}${childProp}[${key}]`,
+                        params: ajv_1._ `{errors: ${childErrs}[${key}]}`,
+                    });
+                    gen.assign(ajv_1._ `${names_1.default.vErrors}[${names_1.default.errors}-1].instancePath`, ajv_1._ `${instancePath} + "/" + ${key}.replace(/~/g, "~0").replace(/\\//g, "~1")`);
+                }));
+                gen.endIf();
+                function init(children, msgs) {
+                    gen.assign(childErrs, ajv_1.stringify(children));
+                    gen.assign(templates, getTemplatesCode(children, msgs));
+                }
+            }
+            function processAllErrors(schMessage) {
+                const errs = gen.const("emErrs", ajv_1._ `[]`);
+                gen.forOf("err", names_1.default.vErrors, (err) => gen.if(matchAnyError(err), () => gen.code(ajv_1._ `${errs}.push(${err})`).assign(ajv_1._ `${err}.${used}`, true)));
+                gen.if(ajv_1._ `${errs}.length`, () => errors_1.reportError(cxt, {
+                    message: templateExpr(schMessage),
+                    params: ajv_1._ `{errors: ${errs}}`,
+                }));
+            }
+            function removeUsedErrors() {
+                const errs = gen.const("emErrs", ajv_1._ `[]`);
+                gen.forOf("err", names_1.default.vErrors, (err) => gen.if(ajv_1._ `!${err}.${used}`, () => gen.code(ajv_1._ `${errs}.push(${err})`)));
+                gen.assign(names_1.default.vErrors, errs).assign(names_1.default.errors, ajv_1._ `${errs}.length`);
+            }
+            function matchKeywordError(err, kwdErrs) {
+                return codegen_1.and(ajv_1._ `${err}.keyword !== ${keyword}`, ajv_1._ `!${err}.${used}`, ajv_1._ `${err}.instancePath === ${instancePath}`, ajv_1._ `${err}.keyword in ${kwdErrs}`, 
+                // TODO match the end of the string?
+                ajv_1._ `${err}.schemaPath.indexOf(${it.errSchemaPath}) === 0`, ajv_1._ `/^\\/[^\\/]*$/.test(${err}.schemaPath.slice(${it.errSchemaPath.length}))`);
+            }
+            function ifMatchesChildError(err, childErrs, thenBody) {
+                gen.if(codegen_1.and(ajv_1._ `${err}.keyword !== ${keyword}`, ajv_1._ `!${err}.${used}`, ajv_1._ `${err}.instancePath.indexOf(${instancePath}) === 0`), () => {
+                    const childRegex = gen.scopeValue("pattern", {
+                        ref: /^\/([^/]*)(?:\/|$)/,
+                        code: ajv_1._ `new RegExp("^\\\/([^/]*)(?:\\\/|$)")`,
+                    });
+                    const matches = gen.const("emMatches", ajv_1._ `${childRegex}.exec(${err}.instancePath.slice(${instancePath}.length))`);
+                    const child = gen.const("emChild", ajv_1._ `${matches} && ${matches}[1].replace(/~1/g, "/").replace(/~0/g, "~")`);
+                    gen.if(ajv_1._ `${child} !== undefined && ${child} in ${childErrs}`, () => thenBody(child));
+                });
+            }
+            function matchAnyError(err) {
+                return codegen_1.and(ajv_1._ `${err}.keyword !== ${keyword}`, ajv_1._ `!${err}.${used}`, codegen_1.or(ajv_1._ `${err}.instancePath === ${instancePath}`, codegen_1.and(ajv_1._ `${err}.instancePath.indexOf(${instancePath}) === 0`, ajv_1._ `${err}.instancePath[${instancePath}.length] === "/"`)), ajv_1._ `${err}.schemaPath.indexOf(${it.errSchemaPath}) === 0`, ajv_1._ `${err}.schemaPath[${it.errSchemaPath}.length] === "/"`);
+            }
+            function getTemplatesCode(keys, msgs) {
+                const templatesCode = [];
+                for (const k in keys) {
+                    const msg = msgs[k];
+                    if (INTERPOLATION.test(msg))
+                        templatesCode.push([k, templateFunc(msg)]);
+                }
+                return gen.object(...templatesCode);
+            }
+            function templateExpr(msg) {
+                if (!INTERPOLATION.test(msg))
+                    return ajv_1.stringify(msg);
+                return new code_1._Code(code_1.safeStringify(msg)
+                    .replace(INTERPOLATION_REPLACE, (_s, ptr) => `" + JSON.stringify(${validate_1.getData(ptr, it)}) + "`)
+                    .replace(EMPTY_STR, ""));
+            }
+            function templateFunc(msg) {
+                return ajv_1._ `function(){return ${templateExpr(msg)}}`;
+            }
+        },
+        metaSchema: {
+            anyOf: [
+                { type: "string" },
+                {
+                    type: "object",
+                    properties: {
+                        properties: { $ref: "#/$defs/stringMap" },
+                        items: { $ref: "#/$defs/stringList" },
+                        required: { $ref: "#/$defs/stringOrMap" },
+                        dependencies: { $ref: "#/$defs/stringOrMap" },
+                    },
+                    additionalProperties: { type: "string" },
+                },
+            ],
+            $defs: {
+                stringMap: {
+                    type: "object",
+                    additionalProperties: { type: "string" },
+                },
+                stringOrMap: {
+                    anyOf: [{ type: "string" }, { $ref: "#/$defs/stringMap" }],
+                },
+                stringList: { type: "array", items: { type: "string" } },
+            },
+        },
+    };
+}
+const ajvErrors = (ajv, options = {}) => {
+    if (!ajv.opts.allErrors)
+        throw new Error("ajv-errors: Ajv option allErrors must be true");
+    if (ajv.opts.jsPropertySyntax) {
+        throw new Error("ajv-errors: ajv option jsPropertySyntax is not supported");
+    }
+    return ajv.addKeyword(errorMessage(options));
+};
+exports["default"] = ajvErrors;
+module.exports = ajvErrors;
+module.exports["default"] = ajvErrors;
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
 /***/ "./node_modules/ajv/dist/ajv.js":
 /*!**************************************!*\
   !*** ./node_modules/ajv/dist/ajv.js ***!
@@ -47713,6 +47998,201 @@ module.exports = StorylineManager;
 
 /***/ }),
 
+/***/ "./src/js/lib/model/storyline-validation.js":
+/*!**************************************************!*\
+  !*** ./src/js/lib/model/storyline-validation.js ***!
+  \**************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const Ajv = __webpack_require__(/*! ajv */ "./node_modules/ajv/dist/ajv.js");
+const AjvErrors = __webpack_require__(/*! ajv-errors */ "./node_modules/ajv-errors/dist/index.js");
+const schema = __webpack_require__(/*! ../../../../specs/storyline.schema.json */ "./specs/storyline.schema.json");
+const dialogueSchema = __webpack_require__(/*! ../../../../specs/dialogue.schema.json */ "./specs/dialogue.schema.json");
+const { fromJson } = __webpack_require__(/*! ../dialogues/dialogue */ "./src/js/lib/dialogues/dialogue.js");
+const LogicParser = __webpack_require__(/*! ../dialogues/logic-parser */ "./src/js/lib/dialogues/logic-parser.js");
+
+function validateStorylineQuestNpcs(storyline) {
+  // Every npc in /quests/*/npc must be defined in /npcs
+  const npcs = storyline.npcs ? Object.keys(storyline.npcs) : [];
+  Object.keys(storyline.quests || {}).forEach((questId) => {
+    const quest = storyline.quests[questId];
+    if (quest.npc && !npcs.includes(quest.npc)) {
+      throw new Error(`Quest ${questId} references undefined npc ${quest.npc}`);
+    }
+  });
+}
+
+function validateStorylineQuestRequirements(storyline) {
+  // Every quest in /quests/*/required must be defined in /quests
+  const quests = storyline.quests ? Object.keys(storyline.quests) : [];
+  Object.keys(storyline.quests || {}).forEach((questId) => {
+    const quest = storyline.quests[questId];
+    if (quest.required) {
+      const requirements = Array.isArray(quest.required)
+        ? quest.required : [quest.required];
+      requirements.forEach((requirement) => {
+        if (!quests.includes(requirement)) {
+          throw new Error(`Quest ${questId} references undefined quest ${requirement}`);
+        }
+      });
+    }
+  });
+}
+
+function validateStorylineQuestActivatesItself(storyline) {
+  // The dialogue in /quests/*/available/dialogues must set the quest to active
+  // through the existance of one 'set' property that includes the quest ID.
+  // Also, it must not set any other quest to active.
+
+  Object.keys(storyline.quests || {}).forEach((questId) => {
+    const activation = `quest.${questId}.active`;
+    if (storyline.quests[questId].available && storyline.quests[questId].available.dialogues) {
+      const dialogue = fromJson({
+        id: `quest-${questId}-available`,
+        items: storyline.quests[questId].available.dialogues,
+      });
+      let isQuestActivated = false;
+      dialogue.nodes.forEach((node) => {
+        if (node.set) {
+          isQuestActivated = isQuestActivated || node.set.includes(activation);
+          // Check that no other quest is activated
+          node.set.forEach((flag) => {
+            if (flag.startsWith('quest.') && flag.endsWith('.active') && flag !== activation) {
+              throw new Error(`Quest ${questId} activates another quest (${flag})`);
+            }
+          });
+        }
+        if (node.responses) {
+          node.responses.forEach((response) => {
+            if (response.set) {
+              isQuestActivated = isQuestActivated || response.set.includes(activation);
+              response.set.forEach((flag) => {
+                if (flag.startsWith('quest.') && flag.endsWith('.active') && flag !== activation) {
+                  throw new Error(`Quest ${questId} activates another quest (${flag})`);
+                }
+              });
+            }
+          });
+        }
+      });
+      if (!isQuestActivated) {
+        throw new Error(`Quest ${questId} is never activated`);
+      }
+    }
+  });
+}
+
+function validateStorylineQuestCompletes(storyline) {
+  // There must be at least one quest.<questId>.done flag in one of the
+  // dialogues in one of the stages of the quest.
+
+  Object.keys(storyline.quests || {}).forEach((questId) => {
+    const completion = `quest.${questId}.done`;
+    let isQuestCompleted = false;
+    if (storyline.quests[questId].stages) {
+      storyline.quests[questId].stages.forEach((stage, i) => {
+        if (stage.dialogues) {
+          Object.keys(stage.dialogues || {}).forEach((npcId) => {
+            const dialogue = fromJson({
+              id: `quest-${questId}-${i}-${npcId}`,
+              items: stage.dialogues[npcId],
+            });
+            dialogue.nodes.forEach((node) => {
+              if (node.set) {
+                isQuestCompleted = isQuestCompleted || node.set.includes(completion);
+              }
+              if (node.responses) {
+                node.responses.forEach((response) => {
+                  if (response.set) {
+                    isQuestCompleted = isQuestCompleted || response.set.includes(completion);
+                  }
+                });
+              }
+            });
+          });
+        }
+      });
+    }
+    if (!isQuestCompleted) {
+      throw new Error(`Quest ${questId} sets no flags to complete itself.`);
+    }
+  });
+}
+
+function validateStorylineQuestStageCounter(storyline) {
+  const parser = new LogicParser({ flags: { value: () => 0, all: () => [] } });
+  // Every expression in /quests/*/stages/*/counter/expression must be valid
+  Object.keys(storyline.quests || {}).forEach((questId) => {
+    const quest = storyline.quests[questId];
+    if (quest.stages) {
+      quest.stages.forEach((stage) => {
+        if (stage.counter && stage.counter.expression) {
+          parser.evaluate(stage.counter.expression);
+        }
+      });
+    }
+  });
+}
+
+function validateStorylineQuestStageCond(storyline) {
+  // Every expression in /quests/*/stage/cond must be valid
+  const parser = new LogicParser({ flags: { value: () => 0, all: () => [] } });
+  Object.keys(storyline.quests || {}).forEach((questId) => {
+    const quest = storyline.quests[questId];
+    if (quest.stages) {
+      quest.stages.forEach((stage) => {
+        if (stage.cond) {
+          parser.evaluate(stage.cond);
+        }
+      });
+    }
+  });
+}
+
+function validateExpressions(storyline) {
+  validateStorylineQuestStageCond(storyline);
+  validateStorylineQuestStageCounter(storyline);
+}
+
+/**
+ * Check if the storyline is valid using the schema.
+ */
+function validateStorylineUsingSchema(storylineDefinition) {
+  if (!validateStorylineUsingSchema.validate) {
+    const ajv = new Ajv({ allErrors: true }); // allErrors required by ajv-errors
+    AjvErrors(ajv);
+    validateStorylineUsingSchema.validate = ajv
+      .addSchema(dialogueSchema)
+      .compile(schema);
+  }
+  const valid = validateStorylineUsingSchema.validate(storylineDefinition);
+  if (!valid) {
+    throw new Error(`Error validating storyline: ${validateStorylineUsingSchema.validate.errors.map(e => `- ${e.instancePath}: ${e.message}`).join('\n')}`);
+  }
+  return true;
+}
+
+/**
+ * Perform various validations to a storyline object.
+ * @param storyline
+ */
+function validateStoryline(storyline) {
+  validateStorylineUsingSchema(storyline);
+  validateStorylineQuestNpcs(storyline);
+  validateStorylineQuestRequirements(storyline);
+  validateStorylineQuestActivatesItself(storyline);
+  validateExpressions(storyline);
+  validateStorylineQuestCompletes(storyline);
+}
+
+module.exports = {
+  validateStorylineUsingSchema,
+  validateStoryline,
+};
+
+
+/***/ }),
+
 /***/ "./src/js/lib/ui/decision-screen.js":
 /*!******************************************!*\
   !*** ./src/js/lib/ui/decision-screen.js ***!
@@ -48696,7 +49176,18 @@ module.exports = JSON.parse('{"$schema":"http://json-schema.org/draft-07/schema#
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"$id":"https://github.com/IMAGINARY/future-democracy/specs/dialogue.schema.json","$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"id":{"$ref":"#/definitions/node_id"},"items":{"type":"array","items":{"$ref":"#/definitions/node"}}},"required":["id","items"],"definitions":{"node_id":{"type":"string","minLength":1,"maxLength":100,"pattern":"^[a-zA-Z_][a-zA-Z0-9_-]*$"},"node":{"oneOf":[{"$ref":"#/definitions/sequence"},{"$ref":"#/definitions/random"},{"$ref":"#/definitions/first"},{"$ref":"#/definitions/statement"}]},"text":{"oneOf":[{"type":"string","minLength":1,"maxLength":1000},{"type":"object","additionalProperties":{"type":"string"}}]},"class":{"type":"string","minLength":1,"maxLength":100,"pattern":"^-?[_a-zA-Z]+[_a-zA-Z0-9-]*$"},"classes":{"oneOf":[{"$ref":"#/definitions/class"},{"type":"array","items":{"$ref":"#/definitions/class"}}]},"flag_id":{"type":"string","minLength":1,"maxLength":100,"pattern":"^[a-zA-Z_][.a-zA-Z0-9_]*$"},"flags":{"type":"array","items":{"$ref":"#/definitions/flag_id"},"minItems":0,"maxItems":100},"flag_assignments":{"type":"array","items":{"$ref":"#/definitions/flag_assignment"},"minItems":0,"maxItems":100},"flag_assignment":{"type":"string","minLength":1,"maxLength":100,"pattern":"^[a-zA-Z_][.a-zA-Z0-9_-]*(\\\\s*[+-]?=\\\\s*[0-9]{1,3})?$"},"condition":{"type":"string","minLength":1,"maxLength":1000},"sequence":{"type":"object","properties":{"type":{"const":"sequence"},"items":{"type":"array","items":{"$ref":"#/definitions/node"}},"cond":{"$ref":"#/definitions/condition"},"set":{"$ref":"#/definitions/flag_assignments"}},"required":["type","items"]},"random":{"type":"object","properties":{"type":{"const":"random"},"items":{"type":"array","items":{"$ref":"#/definitions/node"}},"cond":{"$ref":"#/definitions/condition"},"set":{"$ref":"#/definitions/flag_assignments"}},"required":["type","items"]},"first":{"type":"object","properties":{"type":{"const":"first"},"items":{"type":"array","items":{"$ref":"#/definitions/node"}},"cond":{"$ref":"#/definitions/condition"},"set":{"$ref":"#/definitions/flag_assignments"}},"required":["type","items"]},"statement":{"type":"object","properties":{"type":{"const":"statement"},"id":{"$ref":"#/definitions/node_id"},"cond":{"$ref":"#/definitions/condition"},"text":{"$ref":"#/definitions/text"},"class":{"$ref":"#/definitions/classes"},"set":{"$ref":"#/definitions/flag_assignments"},"responses":{"type":"array","items":{"$ref":"#/definitions/response"}}},"required":["text"]},"response":{"type":"object","properties":{"cond":{"$ref":"#/definitions/condition"},"text":{"$ref":"#/definitions/text"},"class":{"$ref":"#/definitions/classes"},"set":{"$ref":"#/definitions/flag_assignments"},"then":{"$ref":"#/definitions/node_id"},"thenText":{"$ref":"#/definitions/text"},"thenClass":{"$ref":"#/definitions/classes"}},"required":["text"]}}}');
+module.exports = JSON.parse('{"$id":"https://github.com/IMAGINARY/future-democracy/specs/dialogue.schema.json","$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"id":{"$ref":"#/definitions/node_id"},"items":{"$ref":"#/definitions/nodeList"}},"required":["id","items"],"definitions":{"node_id":{"type":"string","minLength":1,"maxLength":100,"pattern":"^[a-zA-Z_][a-zA-Z0-9_-]*$"},"nodeList":{"type":"array","items":{"$ref":"#/definitions/node"}},"node":{"oneOf":[{"$ref":"#/definitions/sequence"},{"$ref":"#/definitions/random"},{"$ref":"#/definitions/first"},{"$ref":"#/definitions/statement"}]},"text":{"oneOf":[{"type":"string","minLength":1,"maxLength":1000},{"type":"object","additionalProperties":{"type":"string"}}]},"class":{"type":"string","minLength":1,"maxLength":100,"pattern":"^-?[_a-zA-Z]+[_a-zA-Z0-9-]*$"},"classes":{"oneOf":[{"$ref":"#/definitions/class"},{"type":"array","items":{"$ref":"#/definitions/class"}}]},"flag_id":{"type":"string","minLength":1,"maxLength":100,"pattern":"^[a-zA-Z_][.a-zA-Z0-9_]*$"},"flags":{"type":"array","items":{"$ref":"#/definitions/flag_id"},"minItems":0,"maxItems":100},"flag_assignments":{"type":"array","items":{"$ref":"#/definitions/flag_assignment"},"minItems":0,"maxItems":100},"flag_assignment":{"type":"string","minLength":1,"maxLength":100,"pattern":"^[a-zA-Z_][.a-zA-Z0-9_-]*(\\\\s*[+-]?=\\\\s*[0-9]{1,3})?$"},"condition":{"type":"string","minLength":1,"maxLength":1000},"sequence":{"type":"object","properties":{"type":{"const":"sequence"},"items":{"$ref":"#/definitions/nodeList"},"cond":{"$ref":"#/definitions/condition"},"set":{"$ref":"#/definitions/flag_assignments"}},"required":["type","items"]},"random":{"type":"object","properties":{"type":{"const":"random"},"items":{"$ref":"#/definitions/nodeList"},"cond":{"$ref":"#/definitions/condition"},"set":{"$ref":"#/definitions/flag_assignments"}},"required":["type","items"]},"first":{"type":"object","properties":{"type":{"const":"first"},"items":{"$ref":"#/definitions/nodeList"},"cond":{"$ref":"#/definitions/condition"},"set":{"$ref":"#/definitions/flag_assignments"}},"required":["type","items"]},"statement":{"type":"object","properties":{"type":{"const":"statement"},"id":{"$ref":"#/definitions/node_id"},"cond":{"$ref":"#/definitions/condition"},"text":{"$ref":"#/definitions/text"},"class":{"$ref":"#/definitions/classes"},"set":{"$ref":"#/definitions/flag_assignments"},"responses":{"type":"array","items":{"$ref":"#/definitions/response"}}},"required":["text"]},"response":{"type":"object","properties":{"cond":{"$ref":"#/definitions/condition"},"text":{"$ref":"#/definitions/text"},"class":{"$ref":"#/definitions/classes"},"set":{"$ref":"#/definitions/flag_assignments"},"then":{"$ref":"#/definitions/node_id"},"thenText":{"$ref":"#/definitions/text"},"thenClass":{"$ref":"#/definitions/classes"}},"required":["text"]}}}');
+
+/***/ }),
+
+/***/ "./specs/storyline.schema.json":
+/*!*************************************!*\
+  !*** ./specs/storyline.schema.json ***!
+  \*************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = JSON.parse('{"$id":"https://github.com/IMAGINARY/future-democracy/specs/storyline.schema.json","$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"decision":{"$ref":"#/definitions/text"},"prompt":{"$ref":"#/definitions/text"},"npcs":{"$ref":"#/definitions/npcs"},"quests":{"$ref":"#/definitions/quests"},"dialogues":{"$ref":"#/definitions/indexedDialogues"}},"additionalProperties":false,"definitions":{"npcs":{"type":"object","additionalProperties":{"$ref":"#/definitions/npc"}},"npc":{"type":"object","properties":{"name":{"$ref":"#/definitions/text"},"spawn":{"$ref":"#/definitions/point"},"dialogues":{"$ref":"#/definitions/dialogue"}},"additionalProperties":false,"required":["name","spawn","dialogues"]},"quests":{"type":"object","additionalProperties":{"$ref":"#/definitions/quest"}},"quest":{"type":"object","properties":{"npc":{"$ref":"#/definitions/objectID"},"mood":{"$ref":"#/definitions/objectID"},"required":{"$ref":"#/definitions/questRequirements"},"available":{"type":"object","properties":{"dialogues":{"$ref":"dialogue.schema.json#/definitions/nodeList"}}},"stages":{"type":"array","items":{"$ref":"#/definitions/questStage"}}},"additionalProperties":false,"required":["npc","mood","stages","available"]},"questRequirements":{"oneOf":[{"$ref":"#/definitions/objectID"},{"type":"array","items":{"$ref":"#/definitions/objectID"}}],"errorMessage":"must be a quest ID or an array of quest IDs."},"questStage":{"type":"object","properties":{"cond":{"$ref":"#/definitions/condition"},"prompt":{"$ref":"#/definitions/text"},"dialogues":{"$ref":"#/definitions/indexedDialogues"},"counter":{"$ref":"#/definitions/questStageCounter"}},"additionalProperties":false,"required":["dialogues"]},"questStageCounter":{"type":"object","properties":{"expression":{"$ref":"#/definitions/expression"},"max":{"type":"integer","minimum":0}},"additionalProperties":false,"required":["expression","max"]},"indexedDialogues":{"type":"object","additionalProperties":{"$ref":"#/definitions/dialogue"}},"dialogues":{"type":"array","items":{"$ref":"#/definitions/dialogue"}},"dialogue":{"$ref":"dialogue.schema.json#/definitions/nodeList"},"text":{"oneOf":[{"type":"string","minLength":1,"maxLength":1000},{"type":"object","additionalProperties":{"type":"string"}}],"errorMessage":"must be a string or an object with language code keys and string values."},"condition":{"type":"string","minLength":1,"maxLength":1000},"expression":{"type":"string","minLength":1,"maxLength":1000},"objectID":{"type":"string","minLength":1,"maxLength":100,"pattern":"^[a-zA-Z_][a-zA-Z0-9_]*$"},"point":{"type":"object","properties":{"x":{"type":"number"},"y":{"type":"number"}},"additionalProperties":false,"required":["x","y"],"errorMessage":"must be an object with x and y properties."}}}');
 
 /***/ }),
 
@@ -48827,6 +49318,7 @@ __webpack_require__(/*! ./lib/live-test/dialogue-live-tester */ "./src/js/lib/li
 __webpack_require__(/*! ../sass/default.scss */ "./src/sass/default.scss");
 const fetchTextures = __webpack_require__(/*! ./lib/helpers-client/fetch-textures */ "./src/js/lib/helpers-client/fetch-textures.js");
 const { PlayerAppStates } = __webpack_require__(/*! ./lib/app/player-app-states */ "./src/js/lib/app/player-app-states.js");
+const { validateStoryline } = __webpack_require__(/*! ./lib/model/storyline-validation */ "./src/js/lib/model/storyline-validation.js");
 
 (async () => {
   try {
@@ -48850,6 +49342,14 @@ const { PlayerAppStates } = __webpack_require__(/*! ./lib/app/player-app-states 
       'config/storylines/touristen.yml',
     ]).catch((err) => {
       throw new Error(`Error loading configuration: ${err.message}`);
+    });
+
+    Object.entries(config.storylines).forEach(([id, storyline]) => {
+      try {
+        validateStoryline(storyline);
+      } catch (err) {
+        throw new Error(`Error validating storyline '${id}': ${err.message}`);
+      }
     });
 
     const textures = await fetchTextures('./static/textures', config.textures, 'town-view');
@@ -48893,4 +49393,4 @@ const { PlayerAppStates } = __webpack_require__(/*! ./lib/app/player-app-states 
 
 /******/ })()
 ;
-//# sourceMappingURL=default.830b46ef0b87cb75970b.js.map
+//# sourceMappingURL=default.9992d3cde828278ef0c9.js.map

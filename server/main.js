@@ -6,6 +6,7 @@ const { hideBin } = require('yargs/helpers');
 const createServer = require('./lib/server');
 const CfgLoader = require('../src/js/lib/loader/cfg-loader');
 const CfgReaderFile = require('../src/js/lib/loader/cfg-reader-file');
+const { validateStoryline } = require('../src/js/lib/model/storyline-validation');
 
 const { port, settingsFile, sentryDsn } = yargs(hideBin(process.argv))
   .option('p', {
@@ -38,6 +39,16 @@ cfgLoader.load([
   '../config/storylines/touristen.yml',
   settingsFile,
 ])
+  .then((config) => {
+    Object.entries(config.storylines).forEach(([id, storyline]) => {
+      try {
+        validateStoryline(storyline);
+      } catch (err) {
+        throw new Error(`Error validating storyline '${id}': ${err.message}`);
+      }
+    });
+    return config;
+  })
   .catch((err) => {
     console.error('Error loading configuration');
     console.error(err);
