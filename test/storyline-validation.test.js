@@ -103,6 +103,13 @@ describe('Storyline validation', () => {
     });
   });
 
+  describe('dialogues', () => {
+    it('should validate that the ending dialogue doesn\'t have nodes with resposes', () => {
+      const storyline = loadFixture('dialogues/bad-ending-responses.yml');
+      expect(() => validateStoryline(storyline)).to.throw('Ending dialogue nodes must not have responses');
+    });
+  });
+
   describe('game storylines', () => {
     it('should validate the "touristen" storyline', () => {
       const storyline = loadFixture('../../../config/storylines/touristen.yml')

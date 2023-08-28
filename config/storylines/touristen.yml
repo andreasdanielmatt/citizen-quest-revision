@@ -748,8 +748,8 @@ storylines:
 #              en: "Find a good use for the city’s share of the Ferris wheel profits and share it with the mayor."
 #              de: "Finde eine gute Verwendung für den Anteil der Stadt am Gewinn des Riesenrads und gehe damit zur Bürgermeisterin."
 #            dialogues:
-    dialogues:
-      _ending:
+    ending:
+      dialogue:
         - type: sequence
           items:
             - type: first

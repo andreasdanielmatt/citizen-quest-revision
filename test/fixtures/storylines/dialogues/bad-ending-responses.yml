@@ -61,7 +61,7 @@ quests:
             - text:
                 en: "Then it's decided!"
                 es: "¡Entonces está decidido!"
-              set: ['quest.mayorIdea.done', 'pnt.mayorIdea']
+              set: ['quest.mayorIdea.done']
   celebration:
     npc: mayor
     mood: party
@@ -89,7 +89,7 @@ quests:
                   thenText:
                     en: "Thanks for telling people about the celebration!"
                     es: "¡Gracias por decirle a la gente sobre la celebración!"
-                  set: ['quest.celebration.done', 'pnt.celebration']
+                  set: ['quest.celebration.done']
                 - text:
                     en: "No"
                     es: "No"
@@ -125,6 +125,10 @@ ending:
       text:
         en: "It was a great cake day, and the city celebrated for years to come."
         es: "Fue un gran día de las tortas, y la ciudad celebró durante años."
+      responses:
+        - text:
+            en: "There should not be a response here"
+            es: "No debería haber una respuesta aquí"
     - cond: 'COUNT("pnt") = 1'
       text:
         en: "Cake day was celebrated, but maybe for the last time."

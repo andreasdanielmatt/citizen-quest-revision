@@ -17,6 +17,9 @@
     },
     "dialogues": {
       "$ref": "#/definitions/indexedDialogues"
+    },
+    "ending": {
+      "$ref": "#/definitions/ending"
     }
   },
   "additionalProperties": false,
@@ -125,6 +128,16 @@
       },
       "additionalProperties": false,
       "required": ["expression", "max"]
+    },
+    "ending": {
+      "type": "object",
+      "properties": {
+        "dialogue": {
+          "$ref": "#/definitions/dialogue"
+        }
+      },
+      "additionalProperties": false,
+      "required": ["dialogue"]
     },
     "indexedDialogues": {
       "type": "object",

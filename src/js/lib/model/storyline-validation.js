@@ -148,6 +148,19 @@ function validateExpressions(storyline) {
   validateStorylineQuestStageCounter(storyline);
 }
 
+function validateStorylineEndingDialogue(storyline) {
+  if (storyline?.ending?.dialogue) {
+    const dialogue = fromJson({
+      id: 'ending',
+      items: storyline.ending.dialogue,
+    });
+
+    if (dialogue.nodes.find((node) => node.responses)) {
+      throw new Error('Ending dialogue nodes must not have responses');
+    }
+  }
+}
+
 /**
  * Check if the storyline is valid using the schema.
  */
@@ -177,6 +190,7 @@ function validateStoryline(storyline) {
   validateStorylineQuestActivatesItself(storyline);
   validateExpressions(storyline);
   validateStorylineQuestCompletes(storyline);
+  validateStorylineEndingDialogue(storyline);
 }
 
 module.exports = {

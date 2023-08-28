@@ -39976,7 +39976,7 @@ module.exports = {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 /* globals PIXI */
-const Stats = __webpack_require__(/*! ../helpers-web/stats.js */ "./src/js/lib/helpers-web/stats.js");
+const Stats = __webpack_require__(/*! ../helpers-web/stats */ "./src/js/lib/helpers-web/stats.js");
 const TownView = __webpack_require__(/*! ../views/town-view */ "./src/js/lib/views/town-view.js");
 __webpack_require__(/*! ../helpers-web/fill-with-aspect */ "./src/js/lib/helpers-web/fill-with-aspect.js");
 const PCView = __webpack_require__(/*! ../views/pc-view */ "./src/js/lib/views/pc-view.js");
@@ -40013,7 +40013,8 @@ class PlayerApp {
     this.flags = new FlagStore();
     this.storylineManager = new StorylineManager(this.config);
     this.storylineManager.events.on('storylineChanged',
-      this.handleStorylineChanged.bind(this));
+      this.handleStorylineChanged.bind(this)
+    );
 
     this.questTracker = new QuestTracker(config, this.storylineManager, this.flags);
 
@@ -40467,7 +40468,10 @@ class PlayerApp {
   }
 
   handleStorylineEnd() {
-    const [ endingText, classes ] = readEnding(this.storylineManager.getDialogue('_ending'), this.getDialogueContext());
+    const [endingText, classes] = readEnding(
+      this.storylineManager.getEndingDialogue(),
+      this.getDialogueContext()
+    );
 
     this.endingScreen = new DecisionScreen(this.config, this.lang);
     this.$element.append(this.endingScreen.$element);
@@ -43168,7 +43172,7 @@ class QuestTracker {
 
   getAvailableQuests() {
     return Object.keys(this.storylineManager.getAllQuests())
-      .filter(id => !this.questIsDone(id) && this.questRequirementsMet(id))
+      .filter((id) => !this.questIsDone(id) && this.questRequirementsMet(id))
       .slice(0, this.config.game.maxActiveQuests || 3);
   }
 
@@ -43188,7 +43192,7 @@ class QuestTracker {
   questRequirementsMet(questId) {
     const requiredQuests = this.storylineManager.getQuest(questId).required || null;
     return !requiredQuests
-      || [requiredQuests].flat().every(id => this.questIsDone(id));
+      || [requiredQuests].flat().every((id) => this.questIsDone(id));
   }
 
   setActiveQuest(questId) {
@@ -43266,7 +43270,7 @@ class QuestTracker {
       return;
     }
     const newStage = this.storylineManager.getQuest(this.activeQuestId).stages
-      .findIndex(stage => stage.cond === undefined || !!this.logicParser.evaluate(stage.cond));
+      .findIndex((stage) => stage.cond === undefined || !!this.logicParser.evaluate(stage.cond));
 
     this.setActiveStage(newStage);
   }
@@ -43292,16 +43296,16 @@ class QuestTracker {
     const currentStoryline = this.storylineManager.getCurrentStoryline();
     const currentQuest = this.storylineManager.getQuest(this.activeQuestId);
     const currentStage = currentQuest?.stages[this.activeStage];
-    const storylineDialogue = currentStoryline?.dialogues?.[npcId]
-    const npcDialogue = currentStoryline?.npcs?.[npcId]?.dialogues
+    const storylineDialogue = currentStoryline?.dialogues?.[npcId];
+    const npcDialogue = currentStoryline?.npcs?.[npcId]?.dialogues;
     const stageDialogue = currentStage?.dialogues?.[npcId];
     const questDialogue = currentQuest?.dialogues?.[npcId];
     return [
       ...(stageDialogue || []),
       ...(questDialogue || []),
       ...(this.getAvailableQuests()
-        .filter(id => this.storylineManager.getQuest(id)?.npc === npcId)
-        .map(id => this.storylineManager.getQuest(id)?.available?.dialogues || []).flat()),
+        .filter((id) => this.storylineManager.getQuest(id)?.npc === npcId)
+        .map((id) => this.storylineManager.getQuest(id)?.available?.dialogues || []).flat()),
       ...(npcDialogue || []),
       ...(storylineDialogue || []),
     ];
@@ -43333,7 +43337,6 @@ module.exports = QuestTracker;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
-const Dialogue = __webpack_require__(/*! ../dialogues/dialogue */ "./src/js/lib/dialogues/dialogue.js");
 const safeBuildDialogueFromItems = __webpack_require__(/*! ../dialogues/dialogue-safe-builder */ "./src/js/lib/dialogues/dialogue-safe-builder.js");
 
 class StorylineManager {
@@ -43400,6 +43403,18 @@ class StorylineManager {
   getNpcs() {
     const currentStoryline = this.getCurrentStoryline();
     return currentStoryline ? this.getCurrentStoryline().npcs || {} : {};
+  }
+
+  getEnding() {
+    return this.getCurrentStoryline()?.ending || null;
+  }
+
+  getEndingDialogue() {
+    const ending = this.getEnding();
+    if (!ending || !ending.dialogue) {
+      return null;
+    }
+    return safeBuildDialogueFromItems('ending', ending.dialogue);
   }
 }
 
@@ -45170,6 +45185,7 @@ const { PlayerAppStates } = __webpack_require__(/*! ./lib/app/player-app-states 
     }
   } catch (err) {
     showFatalError(err.message, err);
+    // eslint-disable-next-line no-console
     console.error(err);
   }
 })();
@@ -45178,4 +45194,4 @@ const { PlayerAppStates } = __webpack_require__(/*! ./lib/app/player-app-states 
 
 /******/ })()
 ;
-//# sourceMappingURL=player.47869bdc10a92e87099c.js.map
+//# sourceMappingURL=player.658b37c554c3a8dad7b8.js.map
