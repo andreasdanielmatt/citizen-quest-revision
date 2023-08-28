@@ -160,7 +160,7 @@ class QuestTracker {
     const currentQuest = this.storylineManager.getQuest(this.activeQuestId);
     const currentStage = currentQuest?.stages[this.activeStage];
     const storylineDialogue = currentStoryline?.dialogues?.[npcId];
-    const npcDialogue = currentStoryline?.npcs?.[npcId]?.dialogues;
+    const npcDialogue = currentStoryline?.npcs?.[npcId]?.dialogue;
     const stageDialogue = currentStage?.dialogues?.[npcId];
     const questDialogue = currentQuest?.dialogues?.[npcId];
     return [
@@ -168,7 +168,7 @@ class QuestTracker {
       ...(questDialogue || []),
       ...(this.getAvailableQuests()
         .filter((id) => this.storylineManager.getQuest(id)?.npc === npcId)
-        .map((id) => this.storylineManager.getQuest(id)?.available?.dialogues || []).flat()),
+        .map((id) => this.storylineManager.getQuest(id)?.available?.dialogue || []).flat()),
       ...(npcDialogue || []),
       ...(storylineDialogue || []),
     ];

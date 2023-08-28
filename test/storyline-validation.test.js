@@ -45,7 +45,7 @@ describe('Storyline validation', () => {
 
     it('should validate npc dialogues', () => {
       const storyline = loadFixture('schema/bad-npc-dialogue.yml');
-      expect(() => validateStoryline(storyline)).to.throw('/npcs/mayor/dialogues/0');
+      expect(() => validateStoryline(storyline)).to.throw('/npcs/mayor/dialogue/0');
     });
 
     it('should validate quests', () => {
@@ -55,7 +55,7 @@ describe('Storyline validation', () => {
 
     it('should validate quest available dialogues', () => {
       const storyline = loadFixture('schema/bad-quest-available.yml');
-      expect(() => validateStoryline(storyline)).to.throw('/quests/mayorIdea/available/dialogues: must be array');
+      expect(() => validateStoryline(storyline)).to.throw('/quests/mayorIdea/available/dialogue: must be array');
     });
 
     it('should validate quest requirements', () => {

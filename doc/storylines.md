@@ -22,7 +22,7 @@ npcs:
       en: Mayor
       es: Alcalde
     spawn: { x: 0, y: 0 }
-    dialogues:
+    dialogue:
       - text:
           en: "I like cake."
           es: "Me gusta la torta."
@@ -34,7 +34,7 @@ quests:
     npc: mayor
     mood: cake
     available:
-      dialogues:
+      dialogue:
         - text:
             en: "We should ask the baker."
             es: "Deberíamos preguntarle al panadero."
@@ -121,7 +121,7 @@ NPCs are specified through these properties:
 - **name**: (text) The name of the NPC. This is displayed at the top of dialogue windows when the 
   character speaks.
 - **spawn**: (point) The position where the NPC will be spawned in the city map screen.
-- **dialogues**: (dialogue) The dialogues that the NPC will say when the player talks to them. 
+- **dialogue**: (dialogue) The dialogues that the NPC will say when the player talks to them. 
 
 ### Dialogue overriding
 
@@ -146,7 +146,7 @@ Quests are specified through these properties:
 - **mood**: (string) The "mood" is the icon that is shown in the dialogue balloon above the npc's
   head when they have a quest available. This is a string that is used to look up the icon in the
   game's icon set.
-- **available**: (dialogue) The dialogue that the NPC says when the quest is available.
+- **available.dialogue**: (dialogue) The dialogue that the NPC says when the quest is available.
 - **stages**: (array<stage>) The stages of the quest.
 - **required**: (string | array<string>, optional) One or more quests that must be completed for 
   this quest to be available.
@@ -217,7 +217,7 @@ npcs:
       en: Mayor
       es: Alcalde
     spawn: { x: 0, y: 0 }
-    dialogues:
+    dialogue:
       - text:
           en: "I like cake."
           es: "Me gusta la torta."
@@ -229,7 +229,7 @@ quests:
     npc: mayor
     mood: cake
     available:
-      dialogues:
+      dialogue:
         - text:
             en: "We should ask the baker."
             es: "Deberíamos preguntarle al panadero."
@@ -316,7 +316,7 @@ NPCs are specified through these properties:
 - **name**: (text) The name of the NPC. This is displayed at the top of dialogue windows when the
   character speaks.
 - **spawn**: (point) The position where the NPC will be spawned in the city map screen.
-- **dialogues**: (dialogue) The dialogues that the NPC will say when the player talks to them.
+- **dialogue**: (dialogue) The dialogues that the NPC will say when the player talks to them.
 
 ### Dialogue overriding
 

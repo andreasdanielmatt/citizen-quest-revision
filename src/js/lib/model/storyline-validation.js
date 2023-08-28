@@ -40,10 +40,10 @@ function validateStorylineQuestActivatesItself(storyline) {
 
   Object.keys(storyline.quests || {}).forEach((questId) => {
     const activation = `quest.${questId}.active`;
-    if (storyline.quests[questId].available && storyline.quests[questId].available.dialogues) {
+    if (storyline.quests[questId].available && storyline.quests[questId].available.dialogue) {
       const dialogue = fromJson({
         id: `quest-${questId}-available`,
-        items: storyline.quests[questId].available.dialogues,
+        items: storyline.quests[questId].available.dialogue,
       });
       let isQuestActivated = false;
       dialogue.nodes.forEach((node) => {

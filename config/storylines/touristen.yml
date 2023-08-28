@@ -12,7 +12,7 @@ storylines:
           en: "City Mayor"
           de: "Bürgermeisterin"
         spawn: { x: 3240, y: 2974 }
-        dialogues:
+        dialogue:
           - type: "sequence"
             items:
               - text:
@@ -26,7 +26,7 @@ storylines:
           en: "Director of the environmental agency"
           de: "Leiterin des Umweltamts"
         spawn: { x: 3851, y: 2935 }
-        dialogues:
+        dialogue:
           - text:
               en: 'This will be the first 100% eco-friendly Ferris wheel in the world.'
               de: 'Dies wird das erste 100% umweltfreundliche Riesenrad der Welt sein.'
@@ -35,7 +35,7 @@ storylines:
           en: "Journalist"
           de: "Journalist"
         spawn: { x: 5050, y: 3130 }
-        dialogues:
+        dialogue:
           - text:
               en: 'Unfortunately, nobody buys newspapers to read about ferris wheels.'
               de: 'Leider niemand kauft Zeitungen, um über Riesenräder zu lesen.'
@@ -44,7 +44,7 @@ storylines:
           en: "Spin City™ Salesman"
           de: "Drehmoment™ Verkaufsagent"
         spawn: {x: 3416, y: 3110 }
-        dialogues:
+        dialogue:
           - type: sequence
             items:
               - text:
@@ -58,7 +58,7 @@ storylines:
           en: "Biologist"
           de: "Biologin"
         spawn: { x: 4698, y: 990 }
-        dialogues:
+        dialogue:
           - text:
               en: "The scientific point of view should be taken into consideration when making decisions."
               de: "Der wissenschaftliche Standpunkt sollte bei Entscheidungen berücksichtigt werden."
@@ -67,7 +67,7 @@ storylines:
           en: "Tourist"
           de: "Tourist"
         spawn: { x: 2901, y: 2050 }
-        dialogues:
+        dialogue:
           - type: 'random'
             items:
               - text:
@@ -81,7 +81,7 @@ storylines:
           en: "Robot"
           de: "Roboter"
         spawn: { x: 5748, y: 2340 }
-        dialogues:
+        dialogue:
           - cond: 'op.neg.birds'
             text:
               en: 'I hope the wheel gets rid of all the birds and bats, they’re just flying rats.'
@@ -125,7 +125,7 @@ storylines:
           en: "Museum Director"
           de: "Museumsdirektorin"
         spawn: { x: 5213, y: 2290 }
-        dialogues:
+        dialogue:
           - text:
               en: "We hope that people who come to ride the Ferris wheel will also visit the museum."
               de: "Wir hoffen, dass die Leute, die zum Riesenrad fahren, auch das Museum besuchen werden."
@@ -134,7 +134,7 @@ storylines:
           en: "Video blogger"
           de: "Videobloggerin"
         spawn: { x: 4226, y: 3130 }
-        dialogues:
+        dialogue:
           - text:
               en: 'Subscribe to my channel and turn on notifications!'
               de: 'Abonniere meinen Kanal und schalte die Benachrichtigungen ein!'
@@ -143,7 +143,7 @@ storylines:
           en: "Optimistic Citizen"
           de: "Optimistische Bürgerin"
         spawn: { x: 311, y: 3130 }
-        dialogues:
+        dialogue:
           - type: 'random'
             items:
               - text:
@@ -157,7 +157,7 @@ storylines:
           en: "Curious Citizen"
           de: "Neugierige Bürgerin"
         spawn: { x: 2390, y: 2050 }
-        dialogues:
+        dialogue:
           - text:
               en: 'What do YOU think?'
               de: 'Was denkst DU?'
@@ -181,7 +181,7 @@ storylines:
           en: "Concerned Citizen"
           de: "Zweifelnder Bürger"
         spawn: { x: 3625, y: 1470 }
-        dialogues:
+        dialogue:
           - text:
               de: 'Das wird zu viel Verkehr, Lärm und Kriminalität in diesem ohnehin schon sehr vernachlässigten Viertel führen.'
               en: 'This will add a lot of traffic, noise, and crime to the area, which is already very neglected.'
@@ -190,7 +190,7 @@ storylines:
           en: "Concerned Citizen"
           de: "Zweifelnde Bürgerin"
         spawn: { x: 2455, y: 1470 }
-        dialogues:
+        dialogue:
           - text:
               en: 'Tourism = Trash + Noise + Crime'
               de: 'Tourismus = Müll + Lärm + Kriminalität'
@@ -199,7 +199,7 @@ storylines:
           en: "Optimistic Citizen"
           de: "Optimistischer Bürger"
         spawn: { x: 1673, y: 3130 }
-        dialogues:
+        dialogue:
           - type: sequence
             items:
               - text:
@@ -213,7 +213,7 @@ storylines:
           en: "Citizen"
           de: "Bürgerin"
         spawn: { x: 4236, y: 2050 }
-        dialogues:
+        dialogue:
           - type: sequence
             items:
               - text:
@@ -227,7 +227,7 @@ storylines:
           en: "Citizen"
           de: "Bürgerin"
         spawn: { x: 2146, y: 1480 }
-        dialogues:
+        dialogue:
           - text:
               en: "Nobody asked us, and they’re placing it right next to our homes."
               de: "Niemand hat uns gefragt, und sie stellen es direkt neben unsere Häuser."
@@ -236,7 +236,7 @@ storylines:
           en: "Concerned Citizen"
           de: "Zweifelnde Bürgerin"
         spawn: { x: 1757, y: 2290 }
-        dialogues:
+        dialogue:
           - text:
               en: "The north of the city is very neglected. This will only add more traffic, noise and problems."
               de: "Um den Norden der Stadt kümmert sich niemand. Das wird noch mehr Verkehr, Lärm und Probleme bringen."
@@ -245,7 +245,7 @@ storylines:
           en: "Engineer"
           de: "Ingenieurin"
         spawn: { x: 6228, y: 3175 }
-        dialogues:
+        dialogue:
           - text:
               en: 'Tourism makes everything more expensive! And there are so few available apartments already.'
               de: 'Der Tourismus macht alles teurer! Und es gibt schon jetzt so wenig freie Wohnungen.'
@@ -254,7 +254,7 @@ storylines:
           en: "Concerned Citizen"
           de: "Zweifelnde Bürgerin"
         spawn: { x: 5773, y: 970 }
-        dialogues:
+        dialogue:
           - text:
               en: 'Tourists = Crime!'
               de: 'Touristen = Kriminalität!'
@@ -263,7 +263,7 @@ storylines:
           en: "Ranger"
           de: "Ranger"
         spawn: { x: 896, y: 2290 }
-        dialogues:
+        dialogue:
           - text:
               en: "Our landscape will be ruined by a giant metallic structure. I feel sad."
               de: "Unsere Landschaft wird durch eine riesige Metallkonstruktion verschandelt. Ich bin traurig."
@@ -272,7 +272,7 @@ storylines:
           en: "Composer"
           de: "Komponistin"
         spawn: { x: 6128, y: 2330 }
-        dialogues:
+        dialogue:
           - text:
               en: "I'm trying to get the plans for the Ferris wheel."
               de: "Ich versuche, die Pläne für das Riesenrad zu bekommen."
@@ -281,7 +281,7 @@ storylines:
           en: "Citizen"
           de: "Bürgerin"
         spawn: { x: 2521, y: 3154 }
-        dialogues:
+        dialogue:
           - text:
               en: 'I’m still concerned with the Ferris wheel’s safety.'
               de: 'Ich mache mir immer noch Sorgen um die Sicherheit des Riesenrads.'
@@ -290,7 +290,7 @@ storylines:
         npc: mayor
         mood: interrogation
         available:
-          dialogues:
+          dialogue:
             - text:
                 en: "Everyone loves the idea of having a Ferris wheel in the city. No? Can you find people who don't?"
                 de: "Alle lieben die Idee, ein Riesenrad in der Stadt zu haben. Nein? Kannst du Leute finden, die das nicht tun?"
@@ -374,7 +374,7 @@ storylines:
         npc: citizenChamp
         mood: exclamation
         available:
-          dialogues:
+          dialogue:
             - text:
                 en: "I read there was a Ferris wheel in Nearbyville. It fell and crushed 50 people to death."
                 de: "Ich habe gelesen, dass es in der Nachbarstadt ein Riesenrad gab. Es fiel um und zerquetschte 50 Menschen."
@@ -441,7 +441,7 @@ storylines:
         mood: exclamation
         required: fakeNews1
         available:
-          dialogues:
+          dialogue:
             - type: sequence
               items:
                 - text:
@@ -497,7 +497,7 @@ storylines:
         npc: parksDirector
         mood: interrogation
         available:
-          dialogues:
+          dialogue:
             - text:
                 en: "This will be the first 100% eco-friendly Ferris wheel in the world."
                 de: "Dies wird das erste 100% umweltfreundliche Riesenrad der Welt sein."
@@ -562,7 +562,7 @@ storylines:
         mood: exclamation
         required: environmentalImpact
         available:
-          dialogues:
+          dialogue:
             - type: sequence
               items:
                 - text:
@@ -640,7 +640,7 @@ storylines:
         npc: citizenBlue
         mood: exclamation
         available:
-          dialogues:
+          dialogue:
             - text:
                 en: "Some of us don’t trust the Spin City™ company. We should be able to see what contracts the city is signing."
                 de: "Einige von uns trauen dem Unternehmen Drehmoment™ nicht. Wir sollten einsehen können, welche Verträge die Stadt unterzeichnet."
@@ -723,7 +723,7 @@ storylines:
 #        mood: interrogation
 #        required: openData
 #        available:
-#          dialogues:
+#          dialogue:
 #            - type: sequence
 #              items:
 #                - text:

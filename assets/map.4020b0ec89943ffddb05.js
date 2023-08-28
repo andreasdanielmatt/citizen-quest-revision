@@ -41126,7 +41126,7 @@ class QuestTracker {
     const currentQuest = this.storylineManager.getQuest(this.activeQuestId);
     const currentStage = currentQuest?.stages[this.activeStage];
     const storylineDialogue = currentStoryline?.dialogues?.[npcId];
-    const npcDialogue = currentStoryline?.npcs?.[npcId]?.dialogues;
+    const npcDialogue = currentStoryline?.npcs?.[npcId]?.dialogue;
     const stageDialogue = currentStage?.dialogues?.[npcId];
     const questDialogue = currentQuest?.dialogues?.[npcId];
     return [
@@ -41134,7 +41134,7 @@ class QuestTracker {
       ...(questDialogue || []),
       ...(this.getAvailableQuests()
         .filter((id) => this.storylineManager.getQuest(id)?.npc === npcId)
-        .map((id) => this.storylineManager.getQuest(id)?.available?.dialogues || []).flat()),
+        .map((id) => this.storylineManager.getQuest(id)?.available?.dialogue || []).flat()),
       ...(npcDialogue || []),
       ...(storylineDialogue || []),
     ];
@@ -42619,4 +42619,4 @@ const MapApp = __webpack_require__(/*! ./lib/app/map-app */ "./src/js/lib/app/ma
 
 /******/ })()
 ;
-//# sourceMappingURL=map.c15d62027d4d040885fe.js.map
+//# sourceMappingURL=map.4020b0ec89943ffddb05.js.map
