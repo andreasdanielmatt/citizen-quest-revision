@@ -40085,12 +40085,12 @@ class PlayerApp {
     this.$element.append(this.stats.dom);
 
     // Temporary scoring manager
-    const seenFlags = {};
+    this.seenFlags = {};
     this.flags.events.on('flag', (flagId, value, oldValue, setter) => {
-      if (seenFlags[flagId]) {
+      if (this.seenFlags[flagId]) {
         return;
       }
-      seenFlags[flagId] = true;
+      this.seenFlags[flagId] = true;
       if (flagId.startsWith('pnt.') && setter !== 'remote') {
         const flagParts = flagId.split('.');
         const category = flagParts[1];
@@ -40369,6 +40369,7 @@ class PlayerApp {
 
   clearFlags() {
     this.flags.clear();
+    this.seenFlags = {};
   }
 
   playDialogue(dialogue, npc = null) {
@@ -45197,4 +45198,4 @@ const { PlayerAppStates } = __webpack_require__(/*! ./lib/app/player-app-states 
 
 /******/ })()
 ;
-//# sourceMappingURL=player.8e93b5105a593281aa6b.js.map
+//# sourceMappingURL=player.ccc4e24c34d00dff0918.js.map

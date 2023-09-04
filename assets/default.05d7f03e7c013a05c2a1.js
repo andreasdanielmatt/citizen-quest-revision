@@ -44557,12 +44557,12 @@ class PlayerApp {
     this.$element.append(this.stats.dom);
 
     // Temporary scoring manager
-    const seenFlags = {};
+    this.seenFlags = {};
     this.flags.events.on('flag', (flagId, value, oldValue, setter) => {
-      if (seenFlags[flagId]) {
+      if (this.seenFlags[flagId]) {
         return;
       }
-      seenFlags[flagId] = true;
+      this.seenFlags[flagId] = true;
       if (flagId.startsWith('pnt.') && setter !== 'remote') {
         const flagParts = flagId.split('.');
         const category = flagParts[1];
@@ -44841,6 +44841,7 @@ class PlayerApp {
 
   clearFlags() {
     this.flags.clear();
+    this.seenFlags = {};
   }
 
   playDialogue(dialogue, npc = null) {
@@ -49425,4 +49426,4 @@ const { validateStoryline } = __webpack_require__(/*! ./lib/model/storyline-vali
 
 /******/ })()
 ;
-//# sourceMappingURL=default.04850bd7b5a2f2950b09.js.map
+//# sourceMappingURL=default.05d7f03e7c013a05c2a1.js.map
