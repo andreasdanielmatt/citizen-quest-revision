@@ -40193,6 +40193,9 @@ module.exports = fetchConfig;
 /* globals PIXI */
 
 async function fetchTextures(basePath, manifest, bundle) {
+  PIXI.Assets.resolver.setDefaultSearchParams({
+    t: Date.now(), // Cache buster
+  });
   await PIXI.Assets.init({
     basePath,
     manifest,
@@ -42619,4 +42622,4 @@ const MapApp = __webpack_require__(/*! ./lib/app/map-app */ "./src/js/lib/app/ma
 
 /******/ })()
 ;
-//# sourceMappingURL=map.4020b0ec89943ffddb05.js.map
+//# sourceMappingURL=map.cafee01b65a0a70beeef.js.map
