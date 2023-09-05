@@ -25,7 +25,7 @@ storylines:
         name:
           en: "Director of the environmental agency"
           de: "Leiterin des Umweltamts"
-        spawn: { x: 3851, y: 2935 }
+        spawn: { x: 3816, y: 2890 }
         dialogue:
           - text:
               en: 'This will be the first 100% eco-friendly Ferris wheel in the world.'
@@ -133,7 +133,7 @@ storylines:
         name:
           en: "Video blogger"
           de: "Videobloggerin"
-        spawn: { x: 4226, y: 3130 }
+        spawn: { x: 4416, y: 3130 }
         dialogue:
           - text:
               en: 'Subscribe to my channel and turn on notifications!'
@@ -212,7 +212,7 @@ storylines:
         name:
           en: "Citizen"
           de: "Bürgerin"
-        spawn: { x: 4236, y: 2050 }
+        spawn: { x: 4286, y: 2050 }
         dialogue:
           - type: sequence
             items:
@@ -244,7 +244,7 @@ storylines:
         name:
           en: "Engineer"
           de: "Ingenieurin"
-        spawn: { x: 6228, y: 3175 }
+        spawn: { x: 5846, y: 3130 }
         dialogue:
           - text:
               en: 'Tourism makes everything more expensive! And there are so few available apartments already.'
@@ -253,7 +253,7 @@ storylines:
         name:
           en: "Concerned Citizen"
           de: "Zweifelnde Bürgerin"
-        spawn: { x: 5773, y: 970 }
+        spawn: { x: 5660, y: 970 }
         dialogue:
           - text:
               en: 'Tourists = Crime!'
