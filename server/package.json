@@ -1,7 +1,7 @@
 {
-  "name": "future-democracy-server",
+  "name": "citizen-quest-server",
   "version": "0.1.0",
-  "description": "Server for the Future of Democracy exhibit",
+  "description": "Citizen Quest server",
   "main": "main.js",
   "author": "Eric Londaits <eric.londaits@imaginary.org>",
   "license": "MIT",

@@ -1,4 +1,4 @@
-# future-democracy
+# Citizen Quest
 
 An exhibit about the Future of Democracy.
 
@@ -69,6 +69,10 @@ The following keyboard shortcuts are available in the player app:
 The following keyboard shortcuts are available in the map app:
 
 - 'd': Toggle stats panel. Each press of 'd' toggles to a different panel.
+
+## Credits
+
+Developed by Eric Londaits and Christian Stussak for IMAGINARY gGmbH. 
 
 ## License
 

@@ -1,16 +1,16 @@
 {
-  "name": "future-democracy",
+  "name": "citizen-quest",
   "version": "0.1.0",
-  "description": "An exhibit about the Future of Democracy",
+  "description": "An game about the Future of Democracy",
   "main": "index.html",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/IMAGINARY/future-democracy.git"
+    "url": "git+ssh://git@github.com/IMAGINARY/citizen-quest.git"
   },
   "author": "Eric Londaits <eric.londaits@imaginary.org>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/IMAGINARY/future-democracy/issues"
+    "url": "https://github.com/IMAGINARY/citizen-quest/issues"
   },
   "engines": {
     "node": ">=18.16.0"

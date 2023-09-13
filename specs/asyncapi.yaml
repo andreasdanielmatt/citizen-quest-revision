@@ -1,5 +1,5 @@
 asyncapi: 2.0.0
-id: https://github.com/IMAGINARY/future-democracy
+id: https://github.com/IMAGINARY/citizen-quest
 info:
   description: WebSocket API for Future of Democracy server
   version: 1.0.0

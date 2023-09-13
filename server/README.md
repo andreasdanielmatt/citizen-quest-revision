@@ -1,6 +1,6 @@
-# future-democracy-server
+# Citizen Quest Server
 
-Server for the future-democracy exhibit.
+Server for the Citizen QUest exhibit.
 
 This server connects the different stations that form part of the exhibit.
 
@@ -10,8 +10,12 @@ This server connects the different stations that form part of the exhibit.
 - **Settings file** (default '../settings.yml'): Set through the SETTINGS_FILE env var or the `-s` / `--settings-file` options.
 - **Sentry DSN** (default undefined): Set through the SENTRY_DSN env var or the `--sentry-dsn` option.
 
+## Credits
+
+Developed by Eric Londaits for IMAGINARY gGmbH.
+
 ## License
 
 Copyright (c) 2023 IMAGINARY gGmbH
 Licensed under the MIT license (see LICENSE)
-
+Supported by Futurium gGmbH
