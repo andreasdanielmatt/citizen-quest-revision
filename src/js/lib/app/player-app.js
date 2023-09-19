@@ -471,7 +471,7 @@ class PlayerApp {
   }
 
   showStorylinePrompt() {
-    this.questOverlay.setPrompt(this.storylineManager.getPrompt());
+    this.questOverlay.showStorylinePrompt();
   }
 
   handleStorylineChanged() {

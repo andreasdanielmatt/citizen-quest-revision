@@ -15,6 +15,7 @@ class QuestTracker {
     this.activeQuestId = null;
     this.activeStage = null;
     this.stageCounter = null;
+    window.tracker = this;
   }
 
   handleFlagChange(flag, value) {

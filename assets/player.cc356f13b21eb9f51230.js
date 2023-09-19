@@ -40448,7 +40448,7 @@ class PlayerApp {
   }
 
   showStorylinePrompt() {
-    this.questOverlay.setPrompt(this.storylineManager.getPrompt());
+    this.questOverlay.showStorylinePrompt();
   }
 
   handleStorylineChanged() {
@@ -43156,6 +43156,7 @@ class QuestTracker {
     this.activeQuestId = null;
     this.activeStage = null;
     this.stageCounter = null;
+    window.tracker = this;
   }
 
   handleFlagChange(flag, value) {
@@ -44066,20 +44067,18 @@ module.exports = DecisionScreen;
 
 /***/ }),
 
-/***/ "./src/js/lib/ui/quest-overlay.js":
-/*!****************************************!*\
-  !*** ./src/js/lib/ui/quest-overlay.js ***!
-  \****************************************/
+/***/ "./src/js/lib/ui/quest-overlay-panel.js":
+/*!**********************************************!*\
+  !*** ./src/js/lib/ui/quest-overlay-panel.js ***!
+  \**********************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const { I18nTextAdapter } = __webpack_require__(/*! ../helpers/i18n */ "./src/js/lib/helpers/i18n.js");
 
-class QuestOverlay {
-  constructor(config, lang, questTracker) {
+class QuestOverlayPanel {
+  constructor(config, lang) {
     this.config = config;
     this.lang = lang;
-    this.questTracker = questTracker;
-    this.lastUpdate = 0;
 
     this.$element = $('<div></div>')
       .addClass('quest-overlay', 'visible');
@@ -44095,12 +44094,6 @@ class QuestOverlay {
     this.$counter = $('<div></div>')
       .addClass('counter')
       .appendTo(this.$element);
-
-    this.questTracker.events.on('questActive', this.handleQuestActive.bind(this));
-    this.questTracker.events.on('questInactive', this.handleQuestInactive.bind(this));
-    this.questTracker.events.on('questDone', this.handleQuestDone.bind(this));
-    this.questTracker.events.on('stageChanged', this.handleStageChange.bind(this));
-    this.questTracker.events.on('stageCountChanged', this.handleStageCountChanged.bind(this));
   }
 
   setLang(lang) {
@@ -44120,14 +44113,8 @@ class QuestOverlay {
     return this.$element.hasClass('visible');
   }
 
-  setPrompt(text) {
-    this.hide();
-    if (text !== null) {
-      setTimeout(() => {
-        this.promptI18n.setText(text);
-        this.show();
-      }, 500);
-    }
+  setText(text) {
+    this.promptI18n.setText(text);
   }
 
   clearCounter() {
@@ -44144,36 +44131,101 @@ class QuestOverlay {
     }
   }
 
-  updateCounter(value) {
+  setCounter(value) {
     this.$counter.children().each((index, element) => {
       $(element).toggleClass('active', index < value);
     });
   }
+}
 
+module.exports = QuestOverlayPanel;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/ui/quest-overlay.js":
+/*!****************************************!*\
+  !*** ./src/js/lib/ui/quest-overlay.js ***!
+  \****************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const UIQueue = __webpack_require__(/*! ./ui-queue */ "./src/js/lib/ui/ui-queue.js");
+const QuestOverlayPanel = __webpack_require__(/*! ./quest-overlay-panel */ "./src/js/lib/ui/quest-overlay-panel.js");
+
+class QuestOverlay {
+  constructor(config, lang, questTracker) {
+    this.config = config;
+    this.lang = lang;
+    this.questTracker = questTracker;
+
+    this.uiQueue = new UIQueue();
+
+    this.panel = new QuestOverlayPanel(config, lang);
+    this.$element = this.panel.$element;
+
+    this.questTracker.events.on('questActive', this.handleQuestActive.bind(this));
+    this.questTracker.events.on('questInactive', this.handleQuestInactive.bind(this));
+    this.questTracker.events.on('questDone', this.handleQuestDone.bind(this));
+    this.questTracker.events.on('stageChanged', this.handleStageChange.bind(this));
+    this.questTracker.events.on('stageCountChanged', this.handleStageCountChanged.bind(this));
+  }
+
+  setLang(lang) {
+    this.lang = lang;
+    this.panel.setLang(lang);
+  }
+
+  hide() {
+    this.uiQueue.cancel();
+    this.panel.hide();
+  }
+
+  // eslint-disable-next-line class-methods-use-this,no-unused-vars
   handleQuestActive(questId) {
   }
 
+  // eslint-disable-next-line no-unused-vars
   handleQuestInactive(questId) {
-    this.hide();
+    this.showStorylinePrompt();
   }
 
+  // eslint-disable-next-line class-methods-use-this,no-unused-vars
   handleQuestDone(questId) {
   }
 
   handleStageChange() {
-    setTimeout(() => {
-      this.setPrompt(this.questTracker.getActivePrompt());
-      this.clearCounter();
-      const max = this.questTracker.getActiveStageCounterMax();
-      if (max) {
-        this.createCounter(max);
-      }
-    }, Math.max(0, 1000 - (Date.now() - this.lastUpdate)));
+    this.showActiveQuestPrompt();
   }
 
   handleStageCountChanged(activeQuestId, count) {
-    this.updateCounter(count);
-    this.lastUpdate = Date.now();
+    this.uiQueue.add(() => {
+      this.panel.setCounter(count);
+    }, 1000);
+  }
+
+  showStorylinePrompt() {
+    this.show(this.questTracker.storylineManager.getPrompt());
+  }
+
+  showActiveQuestPrompt() {
+    this.show(this.questTracker.getActivePrompt(), this.questTracker.getActiveStageCounterMax());
+  }
+
+  show(promptText, counterMax = null) {
+    this.uiQueue.add(() => {
+      this.panel.hide();
+      this.panel.clearCounter();
+    }, () => (this.panel.isVisible() ? 500 : 0));
+
+    if (promptText) {
+      this.uiQueue.add(() => {
+        this.panel.setText(promptText);
+        if (counterMax) {
+          this.panel.createCounter(counterMax);
+        }
+        this.panel.show();
+      }, 500);
+    }
   }
 }
 
@@ -44311,6 +44363,78 @@ class TitleOverlay {
 }
 
 module.exports = TitleOverlay;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/ui/ui-queue.js":
+/*!***********************************!*\
+  !*** ./src/js/lib/ui/ui-queue.js ***!
+  \***********************************/
+/***/ ((module) => {
+
+/**
+ * A queue for executing UI transitions serially.
+ *
+ * This queue allows for multiple UI transitions to be queued up, and executed one after the other.
+ * Each transition is specified as a callback and a minimum duration to wait after executing it.
+ */
+class UIQueue {
+  constructor() {
+    this.items = [];
+    this.timeout = null;
+  }
+
+  /**
+   * Add a callback to the queue.
+   *
+   * The callback will be executed immediately, or if a previously added callback is still
+   * executing, it will be executed after the previous callback has finished.
+   *
+   * @param {function} callback
+   *  The callback to add to the queue.
+   * @param {number|function} [duration=0]
+   *  The duration to wait after executing the callback. If a function is provided, it will be
+   *  called (right before executing the callback) to determine the duration.
+   */
+  add(callback, duration = 0) {
+    this.items.push({
+      callback,
+      duration,
+    });
+
+    if (this.timeout === null) {
+      this.next();
+    }
+  }
+
+  /**
+   * Stop and empty the queue.
+   */
+  cancel() {
+    clearTimeout(this.timeout);
+    this.timeout = null;
+    this.items = [];
+  }
+
+  /**
+   * Execute the next callback in the queue.
+   * @private
+   */
+  next() {
+    if (this.items.length === 0) {
+      this.timeout = null;
+      return;
+    }
+
+    const item = this.items.shift();
+    const duration = typeof item.duration === 'function' ? item.duration() : item.duration;
+    item.callback();
+    this.timeout = setTimeout(this.next.bind(this), duration);
+  }
+}
+
+module.exports = UIQueue;
 
 
 /***/ }),
@@ -45198,4 +45322,4 @@ const { PlayerAppStates } = __webpack_require__(/*! ./lib/app/player-app-states 
 
 /******/ })()
 ;
-//# sourceMappingURL=player.c8cea5d79a9e526d007d.js.map
+//# sourceMappingURL=player.cc356f13b21eb9f51230.js.map
