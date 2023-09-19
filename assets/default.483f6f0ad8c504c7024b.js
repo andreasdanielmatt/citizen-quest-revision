@@ -44289,6 +44289,7 @@ module.exports = LocalGameServerController;
   \*********************************************/
 /***/ ((module) => {
 
+// eslint-disable-next-line max-classes-per-file
 const PlayerAppStates = {
   IDLE: 'idle',
   INTRO: 'intro',
@@ -44402,6 +44403,7 @@ class PlayerAppEndingState extends PlayerAppState {
     super.onExit();
     this.playerApp.hideEndingScreen();
     this.playerApp.hideTextScreen();
+    this.playerApp.questTracker.reset();
     this.playerApp.clearFlags();
   }
 
@@ -44475,7 +44477,7 @@ const TitleOverlay = __webpack_require__(/*! ../ui/title-overlay */ "./src/js/li
 const TextScreen = __webpack_require__(/*! ../ui/text-screen */ "./src/js/lib/ui/text-screen.js");
 
 class PlayerApp {
-  constructor(config, textures, playerId, stateController) {
+  constructor(config, textures, playerId) {
     this.config = config;
     this.textures = textures;
     this.lang = config.game.defaultLanguage;
@@ -44835,7 +44837,7 @@ class PlayerApp {
   getDialogueContext() {
     return {
       flags: this.flags,
-        random: max => Math.floor(Math.random() * max),
+      random: max => Math.floor(Math.random() * max),
     };
   }
 
@@ -47746,7 +47748,12 @@ class QuestTracker {
     this.activeQuestId = null;
     this.activeStage = null;
     this.stageCounter = null;
-    window.tracker = this;
+  }
+
+  reset() {
+    this.activeQuestId = null;
+    this.activeStage = null;
+    this.stageCounter = null;
   }
 
   handleFlagChange(flag, value) {
@@ -49550,4 +49557,4 @@ const { validateStoryline } = __webpack_require__(/*! ./lib/model/storyline-vali
 
 /******/ })()
 ;
-//# sourceMappingURL=default.db57f2bb943fa0c988b1.js.map
+//# sourceMappingURL=default.483f6f0ad8c504c7024b.js.map

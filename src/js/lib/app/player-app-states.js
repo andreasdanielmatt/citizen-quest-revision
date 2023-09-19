@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-classes-per-file
 const PlayerAppStates = {
   IDLE: 'idle',
   INTRO: 'intro',
@@ -111,6 +112,7 @@ class PlayerAppEndingState extends PlayerAppState {
     super.onExit();
     this.playerApp.hideEndingScreen();
     this.playerApp.hideTextScreen();
+    this.playerApp.questTracker.reset();
     this.playerApp.clearFlags();
   }
 

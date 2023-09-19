@@ -26,7 +26,7 @@ const TitleOverlay = require('../ui/title-overlay');
 const TextScreen = require('../ui/text-screen');
 
 class PlayerApp {
-  constructor(config, textures, playerId, stateController) {
+  constructor(config, textures, playerId) {
     this.config = config;
     this.textures = textures;
     this.lang = config.game.defaultLanguage;
@@ -386,7 +386,7 @@ class PlayerApp {
   getDialogueContext() {
     return {
       flags: this.flags,
-        random: max => Math.floor(Math.random() * max),
+      random: max => Math.floor(Math.random() * max),
     };
   }
 
