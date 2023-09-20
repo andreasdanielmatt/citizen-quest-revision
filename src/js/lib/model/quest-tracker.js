@@ -2,6 +2,52 @@ const EventEmitter = require('events');
 const LogicParser = require('../dialogues/logic-parser');
 const safeBuildDialogueFromItems = require('../dialogues/dialogue-safe-builder');
 
+/**
+ * Quest active event. Fired when a quest becomes active.
+ *
+ * @event QuestTracker#questActive
+ * @param {string} questId
+ */
+
+/**
+ * Quest inactive event. Fired when a quest becomes inactive (because it's done or another quest
+ * became active).
+ *
+ * @event QuestTracker#questInactive
+ * @param {string} questId
+ */
+
+/**
+ * Quest done event. Fired when a quest is done (it has been completed).
+ *
+ * @event QuestTracker#questDone
+ * @param {string} questId
+ */
+
+/**
+ * Stage changed event. Fired when the active stage changes.
+ *
+ * @event QuestTracker#stageChanged
+ * @param {string} questId
+ * @param {number} stage
+ * @param {number} oldStage
+ */
+
+/**
+ * Stage count changed event. Fired when the active stage counter changes.
+ *
+ * @event QuestTracker#stageCountChanged
+ * @param {string} questId
+ * @param {number} count
+ * @param {number} oldCount
+ */
+
+/**
+ * No quest event. Fired when there is no active quest.
+ *
+ * @event QuestTracker#noQuest
+ */
+
 class QuestTracker {
   constructor(config, storylineManager, flags) {
     this.config = config;
@@ -75,6 +121,8 @@ class QuestTracker {
       this.stageCounter = null;
       if (questId) {
         this.events.emit('questActive', questId);
+      } else {
+        this.events.emit('noQuest');
       }
       this.updateStage();
       this.updateCounter();

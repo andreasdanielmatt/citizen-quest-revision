@@ -47735,6 +47735,52 @@ const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/ev
 const LogicParser = __webpack_require__(/*! ../dialogues/logic-parser */ "./src/js/lib/dialogues/logic-parser.js");
 const safeBuildDialogueFromItems = __webpack_require__(/*! ../dialogues/dialogue-safe-builder */ "./src/js/lib/dialogues/dialogue-safe-builder.js");
 
+/**
+ * Quest active event. Fired when a quest becomes active.
+ *
+ * @event QuestTracker#questActive
+ * @param {string} questId
+ */
+
+/**
+ * Quest inactive event. Fired when a quest becomes inactive (because it's done or another quest
+ * became active).
+ *
+ * @event QuestTracker#questInactive
+ * @param {string} questId
+ */
+
+/**
+ * Quest done event. Fired when a quest is done (it has been completed).
+ *
+ * @event QuestTracker#questDone
+ * @param {string} questId
+ */
+
+/**
+ * Stage changed event. Fired when the active stage changes.
+ *
+ * @event QuestTracker#stageChanged
+ * @param {string} questId
+ * @param {number} stage
+ * @param {number} oldStage
+ */
+
+/**
+ * Stage count changed event. Fired when the active stage counter changes.
+ *
+ * @event QuestTracker#stageCountChanged
+ * @param {string} questId
+ * @param {number} count
+ * @param {number} oldCount
+ */
+
+/**
+ * No quest event. Fired when there is no active quest.
+ *
+ * @event QuestTracker#noQuest
+ */
+
 class QuestTracker {
   constructor(config, storylineManager, flags) {
     this.config = config;
@@ -47808,6 +47854,8 @@ class QuestTracker {
       this.stageCounter = null;
       if (questId) {
         this.events.emit('questActive', questId);
+      } else {
+        this.events.emit('noQuest');
       }
       this.updateStage();
       this.updateCounter();
@@ -48446,6 +48494,7 @@ class QuestOverlay {
     this.questTracker.events.on('questDone', this.handleQuestDone.bind(this));
     this.questTracker.events.on('stageChanged', this.handleStageChange.bind(this));
     this.questTracker.events.on('stageCountChanged', this.handleStageCountChanged.bind(this));
+    this.questTracker.events.on('noQuest', this.handleNoQuest.bind(this));
   }
 
   setLang(lang) {
@@ -48462,9 +48511,8 @@ class QuestOverlay {
   handleQuestActive(questId) {
   }
 
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line no-unused-vars,class-methods-use-this
   handleQuestInactive(questId) {
-    this.showStorylinePrompt();
   }
 
   // eslint-disable-next-line class-methods-use-this,no-unused-vars
@@ -48481,6 +48529,10 @@ class QuestOverlay {
     }, 1000);
   }
 
+  handleNoQuest() {
+    this.showStorylinePrompt();
+  }
+
   showStorylinePrompt() {
     this.show(this.questTracker.storylineManager.getPrompt());
   }
@@ -48492,11 +48544,11 @@ class QuestOverlay {
   show(promptText, counterMax = null) {
     this.uiQueue.add(() => {
       this.panel.hide();
-      this.panel.clearCounter();
     }, () => (this.panel.isVisible() ? 500 : 0));
 
     if (promptText) {
       this.uiQueue.add(() => {
+        this.panel.clearCounter();
         this.panel.setText(promptText);
         if (counterMax) {
           this.panel.createCounter(counterMax);
@@ -49557,4 +49609,4 @@ const { validateStoryline } = __webpack_require__(/*! ./lib/model/storyline-vali
 
 /******/ })()
 ;
-//# sourceMappingURL=default.483f6f0ad8c504c7024b.js.map
+//# sourceMappingURL=default.d2d81767d15fba0bb45d.js.map

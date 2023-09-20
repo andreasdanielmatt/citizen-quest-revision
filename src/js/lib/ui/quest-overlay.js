@@ -17,6 +17,7 @@ class QuestOverlay {
     this.questTracker.events.on('questDone', this.handleQuestDone.bind(this));
     this.questTracker.events.on('stageChanged', this.handleStageChange.bind(this));
     this.questTracker.events.on('stageCountChanged', this.handleStageCountChanged.bind(this));
+    this.questTracker.events.on('noQuest', this.handleNoQuest.bind(this));
   }
 
   setLang(lang) {
@@ -33,9 +34,8 @@ class QuestOverlay {
   handleQuestActive(questId) {
   }
 
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line no-unused-vars,class-methods-use-this
   handleQuestInactive(questId) {
-    this.showStorylinePrompt();
   }
 
   // eslint-disable-next-line class-methods-use-this,no-unused-vars
@@ -52,6 +52,10 @@ class QuestOverlay {
     }, 1000);
   }
 
+  handleNoQuest() {
+    this.showStorylinePrompt();
+  }
+
   showStorylinePrompt() {
     this.show(this.questTracker.storylineManager.getPrompt());
   }
@@ -63,11 +67,11 @@ class QuestOverlay {
   show(promptText, counterMax = null) {
     this.uiQueue.add(() => {
       this.panel.hide();
-      this.panel.clearCounter();
     }, () => (this.panel.isVisible() ? 500 : 0));
 
     if (promptText) {
       this.uiQueue.add(() => {
+        this.panel.clearCounter();
         this.panel.setText(promptText);
         if (counterMax) {
           this.panel.createCounter(counterMax);
