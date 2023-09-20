@@ -44164,6 +44164,12 @@ class QuestOverlayPanel {
     this.$element.removeClass('visible');
   }
 
+  reset() {
+    this.promptI18n.setText('');
+    this.clearCounter();
+    this.hideCheckmark();
+  }
+
   isVisible() {
     return this.$element.hasClass('visible');
   }
@@ -44190,6 +44196,20 @@ class QuestOverlayPanel {
     this.$counter.children().each((index, element) => {
       $(element).toggleClass('active', index < value);
     });
+  }
+
+  showCheckmark() {
+    this.$element.addClass('with-checkmark');
+  }
+
+  hideCheckmark() {
+    this.$element.removeClass(['with-checkmark', 'with-checkmark-checked']);
+  }
+
+  checkCheckmark() {
+    if (this.$element.hasClass('with-checkmark')) {
+      this.$element.addClass('with-checkmark-checked');
+    }
   }
 }
 
@@ -44246,9 +44266,13 @@ class QuestOverlay {
 
   // eslint-disable-next-line class-methods-use-this,no-unused-vars
   handleQuestDone(questId) {
+    this.markQuestAsDone();
   }
 
-  handleStageChange() {
+  handleStageChange(questId, stage, oldStage) {
+    if (oldStage !== null) {
+      this.markStageAsDone();
+    }
     this.showActiveQuestPrompt();
   }
 
@@ -44267,24 +44291,45 @@ class QuestOverlay {
   }
 
   showActiveQuestPrompt() {
-    this.show(this.questTracker.getActivePrompt(), this.questTracker.getActiveStageCounterMax());
+    this.show(
+      this.questTracker.getActivePrompt(),
+      this.questTracker.getActiveStageCounterMax(),
+      true
+    );
   }
 
-  show(promptText, counterMax = null) {
+  show(promptText, counterMax = null, withCheckmark = false) {
     this.uiQueue.add(() => {
       this.panel.hide();
     }, () => (this.panel.isVisible() ? 500 : 0));
 
     if (promptText) {
       this.uiQueue.add(() => {
-        this.panel.clearCounter();
+        this.panel.reset();
         this.panel.setText(promptText);
+
+        if (withCheckmark) {
+          this.panel.showCheckmark();
+        }
         if (counterMax) {
           this.panel.createCounter(counterMax);
         }
         this.panel.show();
       }, 500);
     }
+  }
+
+  markStageAsDone() {
+    this.uiQueue.add(() => {
+      this.panel.checkCheckmark();
+    }, 1000);
+  }
+
+  markQuestAsDone() {
+    this.uiQueue.addPause(500);
+    this.uiQueue.add(() => {
+      this.panel.checkCheckmark();
+    }, 1500);
   }
 }
 
@@ -44465,6 +44510,10 @@ class UIQueue {
     if (this.timeout === null) {
       this.next();
     }
+  }
+
+  addPause(duration) {
+    this.add(() => {}, duration);
   }
 
   /**
@@ -45381,4 +45430,4 @@ const { PlayerAppStates } = __webpack_require__(/*! ./lib/app/player-app-states 
 
 /******/ })()
 ;
-//# sourceMappingURL=player.52f7cf0e40a133b874c4.js.map
+//# sourceMappingURL=player.57cdecf99ebbd967f6ac.js.map

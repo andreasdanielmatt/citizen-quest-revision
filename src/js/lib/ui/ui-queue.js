@@ -33,6 +33,10 @@ class UIQueue {
     }
   }
 
+  addPause(duration) {
+    this.add(() => {}, duration);
+  }
+
   /**
    * Stop and empty the queue.
    */

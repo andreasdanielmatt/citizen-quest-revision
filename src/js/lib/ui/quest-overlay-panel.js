@@ -34,6 +34,12 @@ class QuestOverlayPanel {
     this.$element.removeClass('visible');
   }
 
+  reset() {
+    this.promptI18n.setText('');
+    this.clearCounter();
+    this.hideCheckmark();
+  }
+
   isVisible() {
     return this.$element.hasClass('visible');
   }
@@ -60,6 +66,20 @@ class QuestOverlayPanel {
     this.$counter.children().each((index, element) => {
       $(element).toggleClass('active', index < value);
     });
+  }
+
+  showCheckmark() {
+    this.$element.addClass('with-checkmark');
+  }
+
+  hideCheckmark() {
+    this.$element.removeClass(['with-checkmark', 'with-checkmark-checked']);
+  }
+
+  checkCheckmark() {
+    if (this.$element.hasClass('with-checkmark')) {
+      this.$element.addClass('with-checkmark-checked');
+    }
   }
 }
 

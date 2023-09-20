@@ -24,11 +24,10 @@ $margin: 0.8em;
     margin: 0 -0.2em;
     .counter-item {
       display: inline-block;
-      width: 1em;
-      height: 1em;
-      border: 0.15em solid $c-black;
+      width: 1.3em;
+      height: 1.3em;
+      border: 0.125em dashed $c-black;
       border-radius: 50%;
-      background-color: #ffffff8c;
       margin: 0 0.1em;
 
         @keyframes activate {
@@ -47,6 +46,55 @@ $margin: 0.8em;
         background-color: $c-black;
         animation: activate 0.5s ease-in-out;
       }
+    }
+  }
+
+  &.with-checkmark {
+    padding-left: 2.4em;
+    
+    &:before {
+      content: " ";
+      display: block;
+      width: 1.3em;
+      height: 1.3em;
+      position: absolute;
+      left: 0.6em;
+      top: 0.7em;
+      background-image: url('../../static/ui/quest-checkbox-box.svg');
+      background-repeat: no-repeat;
+      background-size: contain;
+    }
+  }
+
+  @keyframes check {
+    0% {
+      transform: scale(2);
+      opacity: 0;
+    }
+
+    50% {
+      opacity: 1;
+    }
+
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  &.with-checkmark-checked {
+    &:after {
+      content: " ";
+      display: block;
+      width: 1.5em;
+      height: 1.5em;
+      position: absolute;
+      top: 0.35em;
+      left: 0.7em;
+      background-image: url('../../static/ui/quest-checkbox-check.svg');
+      background-repeat: no-repeat;
+      background-size: contain;
+      animation: check 0.5s ease-in-out;
+      animation-iteration-count: 1;
     }
   }
 }

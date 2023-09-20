@@ -637,11 +637,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 .quest-overlay .counter .counter-item {
   display: inline-block;
-  width: 1em;
-  height: 1em;
-  border: 0.15em solid #000;
+  width: 1.3em;
+  height: 1.3em;
+  border: 0.125em dashed #000;
   border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.5490196078);
   margin: 0 0.1em;
 }
 @keyframes activate {
@@ -658,6 +657,47 @@ h1, h2, h3, h4, h5, h6 {
 .quest-overlay .counter .counter-item.active {
   background-color: #000;
   animation: activate 0.5s ease-in-out;
+}
+.quest-overlay.with-checkmark {
+  padding-left: 2.4em;
+}
+.quest-overlay.with-checkmark:before {
+  content: " ";
+  display: block;
+  width: 1.3em;
+  height: 1.3em;
+  position: absolute;
+  left: 0.6em;
+  top: 0.7em;
+  background-image: url(d0821053c7984c197f1c.svg);
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+@keyframes check {
+  0% {
+    transform: scale(2);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.quest-overlay.with-checkmark-checked:after {
+  content: " ";
+  display: block;
+  width: 1.5em;
+  height: 1.5em;
+  position: absolute;
+  top: 0.35em;
+  left: 0.7em;
+  background-image: url(385b8dce4631622324f4.svg);
+  background-repeat: no-repeat;
+  background-size: contain;
+  animation: check 0.5s ease-in-out;
+  animation-iteration-count: 1;
 }
 
 .fatal-error {
@@ -740,4 +780,4 @@ html.with-fatal-error body {
   margin-bottom: 1.2em;
 }
 
-/*# sourceMappingURL=player.0adfc3fbb2c7e1a8c6f3.css.map*/
+/*# sourceMappingURL=player.7310e2466129ed6d04f6.css.map*/
