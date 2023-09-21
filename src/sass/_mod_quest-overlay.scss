@@ -20,22 +20,26 @@ $margin: 0.8em;
     transition-delay: 0.3s;
   }
 
+  $counter-size: 1.5em;
+  $counter-empty-margin: 0.2em;
+
   .counter {
     margin: 0 -0.2em;
     .counter-item {
       display: inline-block;
-      width: 1.3em;
-      height: 1.3em;
+      width: $counter-size - $counter-empty-margin;
+      height: $counter-size - $counter-empty-margin;
       border: 0.125em dashed $c-black;
       border-radius: 50%;
-      margin: 0 0.1em;
+      margin: $counter-empty-margin * 0.5  0.1 + $counter-empty-margin * 0.5;
 
         @keyframes activate {
             0% {
-              transform: scale(1);
+              opacity: 0;
+              transform: scale(2);
             }
             50% {
-              transform: scale(1.5);
+              opacity: 1;
             }
             100% {
               transform: scale(1);
@@ -43,15 +47,35 @@ $margin: 0.8em;
         }
 
       &.active {
-        background-color: $c-black;
+        width: $counter-size;
+        height: $counter-size;
+        margin: 0 0.1em;
+        border: none;
+        border-radius: 0;
         animation: activate 0.5s ease-in-out;
+        background-image: url('../../static/openmoji/counters/check.svg');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
       }
+    }
+
+    .counter-item.happy.active {
+      background-image: url('../../static/openmoji/counters/happy.svg');
+    }
+
+    .counter-item.angry.active {
+      background-image: url('../../static/openmoji/counters/frown.svg');
+    }
+
+    .counter-item.idea.active {
+      background-image: url('../../static/openmoji/counters/lightbulb.svg');
     }
   }
 
   &.with-checkmark {
     padding-left: 2.4em;
-    
+
     &:before {
       content: " ";
       display: block;

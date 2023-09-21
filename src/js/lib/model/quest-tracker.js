@@ -163,23 +163,12 @@ class QuestTracker {
   }
 
   getActiveStageCounter() {
-    if (this.activeQuestId === null || this.activeStage === null || this.stageCounter === null) {
-      return null;
-    }
-
-    return this.stageCounter;
-  }
-
-  getActiveStageCounterMax() {
     if (this.activeQuestId === null || this.activeStage === null) {
       return null;
     }
 
     const stage = this.storylineManager.getQuest(this.activeQuestId).stages[this.activeStage];
-    if (stage.counter !== undefined) {
-      return stage.counter.max;
-    }
-    return null;
+    return stage.counter || null;
   }
 
   updateStage() {

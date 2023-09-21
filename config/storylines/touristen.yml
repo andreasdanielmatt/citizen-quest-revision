@@ -330,6 +330,7 @@ storylines:
             counter:
               expression: 'COUNT("op.neg")'
               max: 3
+              icon: angry
             dialogues:
               mayor:
                 - text:

@@ -67,12 +67,12 @@ class QuestOverlay {
   showActiveQuestPrompt() {
     this.show(
       this.questTracker.getActivePrompt(),
-      this.questTracker.getActiveStageCounterMax(),
+      this.questTracker.getActiveStageCounter(),
       true
     );
   }
 
-  show(promptText, counterMax = null, withCheckmark = false) {
+  show(promptText, counter = null, withCheckmark = false) {
     this.uiQueue.add(() => {
       this.panel.hide();
     }, () => (this.panel.isVisible() ? 500 : 0));
@@ -85,8 +85,8 @@ class QuestOverlay {
         if (withCheckmark) {
           this.panel.showCheckmark();
         }
-        if (counterMax) {
-          this.panel.createCounter(counterMax);
+        if (counter) {
+          this.panel.createCounter(counter);
         }
         this.panel.show();
       }, 500);

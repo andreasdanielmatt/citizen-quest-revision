@@ -5,3 +5,6 @@ See LICENSE.txt for more information.
 The following emojis were modified by IMAGINARY gGmbH from the original:
 
 - decisions/empowerment.svg was modified by adding rays around the raised fist.
+- counters/frown.svg was recolored and cropped.
+- counters/happy.svg was recolored and cropped.
+- counters/lightbulb.svg was recolored and cropped.

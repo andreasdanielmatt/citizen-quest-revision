@@ -179,9 +179,16 @@ Counters are used to track the progress of a stage. They are specified through t
 
 - **expression**: (string) An expression that evaluates to the current count.
 - **max**: (number) The maximum value that the counter can reach.
+- **icon**: (string) The icon that will be shown to mark the counter's progress.
 
-Currently expressions can only be of the form `COUNT("prefix")`, where `prefix` is the prefix of
+Currently, expressions can only be of the form `COUNT("prefix")`, where `prefix` is the prefix of
 flags that are being counted. e.g. `COUNT("cake.")` will count all flags that start with `cake.`.
+
+Possible icons are:
+
+- `happy`: A happy face
+- `angry`: An angry/sad face
+- `idea`: A lightbulb
 
 ### Ending
 

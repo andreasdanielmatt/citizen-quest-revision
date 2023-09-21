@@ -641,22 +641,40 @@ h1, h2, h3, h4, h5, h6 {
   height: 1.3em;
   border: 0.125em dashed #000;
   border-radius: 50%;
-  margin: 0 0.1em;
+  margin: 0.1em 0.2em;
 }
 @keyframes activate {
   0% {
-    transform: scale(1);
+    opacity: 0;
+    transform: scale(2);
   }
   50% {
-    transform: scale(1.5);
+    opacity: 1;
   }
   100% {
     transform: scale(1);
   }
 }
 .quest-overlay .counter .counter-item.active {
-  background-color: #000;
+  width: 1.5em;
+  height: 1.5em;
+  margin: 0 0.1em;
+  border: none;
+  border-radius: 0;
   animation: activate 0.5s ease-in-out;
+  background-image: url(698254ebfecb14ba2387.svg);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.quest-overlay .counter .counter-item.happy.active {
+  background-image: url(c839745e9dabe878d258.svg);
+}
+.quest-overlay .counter .counter-item.angry.active {
+  background-image: url(aae1afe5b13ccdbc5e7a.svg);
+}
+.quest-overlay .counter .counter-item.idea.active {
+  background-image: url(41f453181020ad04e225.svg);
 }
 .quest-overlay.with-checkmark {
   padding-left: 2.4em;
@@ -780,4 +798,4 @@ html.with-fatal-error body {
   margin-bottom: 1.2em;
 }
 
-/*# sourceMappingURL=player.7310e2466129ed6d04f6.css.map*/
+/*# sourceMappingURL=map.5c34fb53836b51cca611.css.map*/

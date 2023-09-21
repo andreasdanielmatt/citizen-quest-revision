@@ -53,11 +53,13 @@ class QuestOverlayPanel {
     this.$counter.hide();
   }
 
-  createCounter(max) {
+  createCounter(counter) {
+    const { max, icon } = counter;
     this.$counter.show();
     for (let i = 0; i < max; i += 1) {
       $('<span></span>')
         .addClass('counter-item')
+        .addClass(icon)
         .appendTo(this.$counter);
     }
   }
