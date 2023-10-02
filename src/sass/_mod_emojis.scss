@@ -1,0 +1,16 @@
+.emoji {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: contain;
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+}
+
+.emoji.emoji-love {
+  background-image: url('../../static/openmoji/emojis/love.svg');
+  margin-bottom: -0.1em;
+}

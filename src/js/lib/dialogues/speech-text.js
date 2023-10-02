@@ -42,6 +42,7 @@ class SpeechText {
    * @param {HTMLElement} character.span
    * @param {Array} character.classes
    */
+  // eslint-disable-next-line class-methods-use-this
   revealCharacter(character) {
     character.span.classList.add('revealed');
     character.classes.forEach((c) => {
@@ -74,13 +75,31 @@ class SpeechText {
     }
   }
 
+  addCharacter(character, line) {
+    const span = document.createElement('span');
+    span.textContent = character;
+    span.classList.add(...(line.preClasses || []));
+    if (character === '\n') {
+      this.$element.append($('<div>').addClass('break'));
+    } else {
+      this.$element.append(span);
+      this.characters.push({
+        span,
+        isSpace: this.isSpace.test(character) && !line.pause,
+        delayAfter: line.speed || SpeechText.Speeds.normal,
+        classes: line.classes || [],
+      });
+    }
+  }
+
   /**
    * Set the text to be displayed
    *
    * @param lines {Array} Array of objects with the following properties:
    * - speed {Number} (optional) Speed of the text in milliseconds
    * - string {String} Text to be displayed
-   * - classes {Array} (optional) Array of classes to be added to the text
+   * - preClasses {Array} (optional) Array of classes to be added to the text
+   * - classes {Array} (optional) Array of classes to be added to the text as it is revealed
    * - stop {Boolean} (optional) Whether or not to stop after the line
    */
   showText(lines) {
@@ -88,24 +107,16 @@ class SpeechText {
 
     this.characters = [];
     lines.forEach((line, index) => {
-      if (index < lines.length - 1) {
-        line.string += ' '; // Add a space between lines
-      }
-      line.string.split('').forEach((character) => {
-        const span = document.createElement('span');
-        span.textContent = character;
-        if (character === '\n') {
-          this.$element.append($('<div>').addClass('break'));
-        } else {
-          this.$element.append(span);
-          this.characters.push({
-            span,
-            isSpace: this.isSpace.test(character) && !line.pause,
-            delayAfter: line.speed || SpeechText.Speeds.normal,
-            classes: line.classes || [],
-          });
+      if (line.noSplit) {
+        this.addCharacter(line.string, line);
+      } else {
+        if (index < lines.length - 1) {
+          line.string += ' '; // Add a space between lines
         }
-      });
+        line.string.split('').forEach((character) => {
+          this.addCharacter(character, line);
+        });
+      }
     });
 
     this.resume();

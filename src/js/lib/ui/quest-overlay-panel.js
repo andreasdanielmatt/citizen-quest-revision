@@ -1,4 +1,5 @@
 const { I18nTextAdapter } = require('../helpers/i18n');
+const { textWithEmojisToHtml } = require('../helpers/emoji-utils');
 
 class QuestOverlayPanel {
   constructor(config, lang) {
@@ -13,7 +14,7 @@ class QuestOverlayPanel {
       .appendTo(this.$element);
 
     this.promptI18n = new I18nTextAdapter((newText) => {
-      this.$prompt.text(newText);
+      this.$prompt.html(textWithEmojisToHtml(newText));
     }, this.lang);
 
     this.$counter = $('<div></div>')

@@ -2,6 +2,7 @@ const EventEmitter = require('events');
 const DialogueBalloon = require('./dialogue-balloon');
 const SpeechText = require('./speech-text');
 const { I18nTextAdapter } = require('../helpers/i18n');
+const { textWithEmojisToSpeechLines } = require('../helpers/emoji-utils');
 
 class DialogueOverlay {
   constructor(config, lang) {
@@ -28,7 +29,7 @@ class DialogueOverlay {
     });
     this.speechTopI18n = new I18nTextAdapter((text) => {
       const { revealComplete } = this.speechTop;
-      this.speechTop.showText([{ string: text }]);
+      this.speechTop.showText(textWithEmojisToSpeechLines(text));
       if (revealComplete) {
         this.speechTop.revealAll();
       }

@@ -1,6 +1,7 @@
 const EventEmitter = require('events');
 const SpeechText = require('../dialogues/speech-text');
 const { I18nTextAdapter } = require('../helpers/i18n');
+const { textWithEmojisToSpeechLines } = require('../helpers/emoji-utils');
 
 class DecisionScreen {
   constructor(config, lang) {
@@ -42,7 +43,7 @@ class DecisionScreen {
 
     this.speechI18n = new I18nTextAdapter((text) => {
       const { revealComplete } = this.speech;
-      this.speech.showText([{ string: text }]);
+      this.speech.showText(textWithEmojisToSpeechLines(text));
       if (revealComplete) {
         this.speech.revealAll();
       }

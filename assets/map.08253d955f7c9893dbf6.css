@@ -74,6 +74,23 @@ h1, h2, h3, h4, h5, h6 {
   color: #fff;
 }
 
+.emoji {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: contain;
+  white-space: nowrap;
+  text-indent: 100%;
+  overflow: hidden;
+}
+
+.emoji.emoji-love {
+  background-image: url(f7c8c8aab3a77ade0ba5.svg);
+  margin-bottom: -0.1em;
+}
+
 .player-app {
   position: relative;
   margin: auto;
@@ -798,4 +815,4 @@ html.with-fatal-error body {
   margin-bottom: 1.2em;
 }
 
-/*# sourceMappingURL=default.5c34fb53836b51cca611.css.map*/
+/*# sourceMappingURL=map.08253d955f7c9893dbf6.css.map*/

@@ -40920,6 +40920,7 @@ const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/ev
 const DialogueBalloon = __webpack_require__(/*! ./dialogue-balloon */ "./src/js/lib/dialogues/dialogue-balloon.js");
 const SpeechText = __webpack_require__(/*! ./speech-text */ "./src/js/lib/dialogues/speech-text.js");
 const { I18nTextAdapter } = __webpack_require__(/*! ../helpers/i18n */ "./src/js/lib/helpers/i18n.js");
+const { textWithEmojisToSpeechLines } = __webpack_require__(/*! ../helpers/emoji-utils */ "./src/js/lib/helpers/emoji-utils.js");
 
 class DialogueOverlay {
   constructor(config, lang) {
@@ -40946,7 +40947,7 @@ class DialogueOverlay {
     });
     this.speechTopI18n = new I18nTextAdapter((text) => {
       const { revealComplete } = this.speechTop;
-      this.speechTop.showText([{ string: text }]);
+      this.speechTop.showText(textWithEmojisToSpeechLines(text));
       if (revealComplete) {
         this.speechTop.revealAll();
       }
@@ -41697,6 +41698,7 @@ class SpeechText {
    * @param {HTMLElement} character.span
    * @param {Array} character.classes
    */
+  // eslint-disable-next-line class-methods-use-this
   revealCharacter(character) {
     character.span.classList.add('revealed');
     character.classes.forEach((c) => {
@@ -41729,13 +41731,31 @@ class SpeechText {
     }
   }
 
+  addCharacter(character, line) {
+    const span = document.createElement('span');
+    span.textContent = character;
+    span.classList.add(...(line.preClasses || []));
+    if (character === '\n') {
+      this.$element.append($('<div>').addClass('break'));
+    } else {
+      this.$element.append(span);
+      this.characters.push({
+        span,
+        isSpace: this.isSpace.test(character) && !line.pause,
+        delayAfter: line.speed || SpeechText.Speeds.normal,
+        classes: line.classes || [],
+      });
+    }
+  }
+
   /**
    * Set the text to be displayed
    *
    * @param lines {Array} Array of objects with the following properties:
    * - speed {Number} (optional) Speed of the text in milliseconds
    * - string {String} Text to be displayed
-   * - classes {Array} (optional) Array of classes to be added to the text
+   * - preClasses {Array} (optional) Array of classes to be added to the text
+   * - classes {Array} (optional) Array of classes to be added to the text as it is revealed
    * - stop {Boolean} (optional) Whether or not to stop after the line
    */
   showText(lines) {
@@ -41743,24 +41763,16 @@ class SpeechText {
 
     this.characters = [];
     lines.forEach((line, index) => {
-      if (index < lines.length - 1) {
-        line.string += ' '; // Add a space between lines
-      }
-      line.string.split('').forEach((character) => {
-        const span = document.createElement('span');
-        span.textContent = character;
-        if (character === '\n') {
-          this.$element.append($('<div>').addClass('break'));
-        } else {
-          this.$element.append(span);
-          this.characters.push({
-            span,
-            isSpace: this.isSpace.test(character) && !line.pause,
-            delayAfter: line.speed || SpeechText.Speeds.normal,
-            classes: line.classes || [],
-          });
+      if (line.noSplit) {
+        this.addCharacter(line.string, line);
+      } else {
+        if (index < lines.length - 1) {
+          line.string += ' '; // Add a space between lines
         }
-      });
+        line.string.split('').forEach((character) => {
+          this.addCharacter(character, line);
+        });
+      }
     });
 
     this.resume();
@@ -42225,6 +42237,89 @@ class Stats {
 Stats.Panel = Panel;
 
 module.exports = Stats;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/helpers/emoji-utils.js":
+/*!*******************************************!*\
+  !*** ./src/js/lib/helpers/emoji-utils.js ***!
+  \*******************************************/
+/***/ ((module) => {
+
+const EMOJI_REGEX_PATTERN = ':[a-z0-9_+-]+:';
+
+/**
+ * Tokenize a string of text, splitting it into an array of strings and emoji tokens.
+ *
+ * @param {string} text
+ * @returns {Array<string>}
+ */
+function tokenizeEmoji(text) {
+  return text.split(new RegExp(`(${EMOJI_REGEX_PATTERN})`, 'gi'));
+}
+
+/**
+ * Check if a token is an emoji.
+ *
+ * @param {string} token
+ * @returns {boolean}
+ */
+function isEmoji(token) {
+  return token.match(new RegExp(`^${EMOJI_REGEX_PATTERN}$`, 'i')) !== null;
+}
+
+/**
+ * Get the CSS class for an emoji token.
+ *
+ * @param {string} token
+ * @returns {string}
+ */
+function getEmojiClass(token) {
+  return token.replace(/:/g, '');
+}
+
+/**
+ * Convert a string that contains emojis into an array of lines for use with the SpeechText class
+ *
+ * @param {string} text
+ * @returns {Array<object>}
+ */
+function textWithEmojisToSpeechLines(text) {
+  const tokens = tokenizeEmoji(text);
+  return tokens.map((token) => {
+    if (isEmoji(token)) {
+      return {
+        string: token,
+        preClasses: ['emoji', `emoji-${getEmojiClass(token)}`],
+        noSplit: true,
+      };
+    }
+    return {
+      string: token,
+    };
+  });
+}
+
+/**
+ * Convert a text with :emojis: into HTML with spans for each emoji
+ */
+function textWithEmojisToHtml(text) {
+  const tokens = tokenizeEmoji(text);
+  return tokens.map((token) => {
+    if (isEmoji(token)) {
+      return `<span class="emoji emoji-${getEmojiClass(token)}">${token}</span>`;
+    }
+    return token;
+  }).join('');
+}
+
+module.exports = {
+  tokenizeEmoji,
+  isEmoji,
+  textWithEmojisToSpeechLines,
+  textWithEmojisToHtml,
+};
 
 
 /***/ }),
@@ -44009,6 +44104,7 @@ module.exports = {
 const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
 const SpeechText = __webpack_require__(/*! ../dialogues/speech-text */ "./src/js/lib/dialogues/speech-text.js");
 const { I18nTextAdapter } = __webpack_require__(/*! ../helpers/i18n */ "./src/js/lib/helpers/i18n.js");
+const { textWithEmojisToSpeechLines } = __webpack_require__(/*! ../helpers/emoji-utils */ "./src/js/lib/helpers/emoji-utils.js");
 
 class DecisionScreen {
   constructor(config, lang) {
@@ -44050,7 +44146,7 @@ class DecisionScreen {
 
     this.speechI18n = new I18nTextAdapter((text) => {
       const { revealComplete } = this.speech;
-      this.speech.showText([{ string: text }]);
+      this.speech.showText(textWithEmojisToSpeechLines(text));
       if (revealComplete) {
         this.speech.revealAll();
       }
@@ -44118,6 +44214,7 @@ module.exports = DecisionScreen;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const { I18nTextAdapter } = __webpack_require__(/*! ../helpers/i18n */ "./src/js/lib/helpers/i18n.js");
+const { textWithEmojisToHtml } = __webpack_require__(/*! ../helpers/emoji-utils */ "./src/js/lib/helpers/emoji-utils.js");
 
 class QuestOverlayPanel {
   constructor(config, lang) {
@@ -44132,7 +44229,7 @@ class QuestOverlayPanel {
       .appendTo(this.$element);
 
     this.promptI18n = new I18nTextAdapter((newText) => {
-      this.$prompt.text(newText);
+      this.$prompt.html(textWithEmojisToHtml(newText));
     }, this.lang);
 
     this.$counter = $('<div></div>')
@@ -45421,4 +45518,4 @@ const { PlayerAppStates } = __webpack_require__(/*! ./lib/app/player-app-states 
 
 /******/ })()
 ;
-//# sourceMappingURL=player.4306f75c01233c538b5a.js.map
+//# sourceMappingURL=player.84efc6926551dbd66d0f.js.map
