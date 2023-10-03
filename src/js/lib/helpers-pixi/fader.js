@@ -7,6 +7,10 @@ class Fader {
     this.tickHandler = null;
   }
 
+  destroy() {
+    this.removeTickHandler();
+  }
+
   removeTickHandler() {
     if (this.tickHandler) {
       this.ticker.remove(this.tickHandler);
@@ -32,15 +36,18 @@ class Fader {
     this.ticker.add(this.tickHandler);
   }
 
-  fadeOut(duration) {
+  fadeOut(duration, completeCallback = null) {
     this.installTickHandler(duration, 0, () => {
       this.display.visible = false;
+      if (completeCallback) {
+        completeCallback();
+      }
     });
   }
 
-  fadeIn(duration) {
+  fadeIn(duration, completeCallback = null) {
     this.display.visible = true;
-    this.installTickHandler(duration, 1);
+    this.installTickHandler(duration, 1, completeCallback);
   }
 }
 

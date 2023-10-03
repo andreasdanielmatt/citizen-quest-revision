@@ -367,6 +367,8 @@ Stages are specified through these properties:
 - **cond**: (string, optional) A condition that must be true for the stage to be active.
 - **counter**: (counter, optional) If the stage involves collecting several things of a kind,
   this is the counter that tracks the progress of the collection.
+- **target**: (npc, optional) An NPC that will be marked with an arrow. Use this for stages that 
+  involve talking to a specific NPC and identifying them is not part of the challenge.
 
 Stages are evaluated from top to bottom. The first stage that has a valid condition (or none) is
 the one that is active.

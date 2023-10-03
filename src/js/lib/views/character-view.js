@@ -36,6 +36,10 @@ class CharacterView {
     }
   }
 
+  hasMoodBalloon() {
+    return this.moodBalloon !== null && this.moodBalloon.visible;
+  }
+
   inRect(rect) {
     const { x, y } = this.character.position;
     return x >= rect.left && x <= rect.right

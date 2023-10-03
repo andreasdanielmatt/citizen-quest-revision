@@ -5,6 +5,7 @@ class MoodBalloon {
   constructor(characterView) {
     this.characterView = characterView;
     this.mood = null;
+    this.visible = false;
     this.display = this.createSprite();
     this.moodIconDisplay = this.createMoodIconSprite();
     this.display.addChild(this.moodIconDisplay);
@@ -47,6 +48,7 @@ class MoodBalloon {
       return;
     }
     this.mood = mood;
+    this.visible = true;
     this.fader.fadeIn(200);
     this.display.gotoAndPlay(0);
     this.setMoodIcon(mood);
@@ -70,6 +72,7 @@ class MoodBalloon {
 
   hide() {
     this.mood = null;
+    this.visible = false;
     this.moodIconTween.stop();
     this.fader.fadeOut(200);
   }

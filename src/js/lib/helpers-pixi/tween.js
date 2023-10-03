@@ -10,9 +10,11 @@ class PixiTween {
       easing: TWEEN.Easing.Sinusoidal.InOut,
       onUpdate: () => {},
       onComplete: null,
+      repeat: 0,
+      yoyo: false,
     };
 
-    this.options = Object.assign({}, defaultOptions, userOptions);
+    this.options = { ...defaultOptions, ...userOptions };
 
     this.tweenTicker = this.tweenTicker.bind(this);
     this.elapsed = 0;
@@ -21,10 +23,16 @@ class PixiTween {
       .to({ value: this.options.to }, this.options.duration)
       .easing(this.options.easing)
       .onUpdate(this.options.onUpdate)
+      .repeat(this.options.repeat)
+      .yoyo(this.options.yoyo)
       .start(this.options.delay);
 
     PIXI.Ticker.shared.add(this.tweenTicker);
     this.tween.onComplete(this.onComplete.bind(this));
+  }
+
+  destroy() {
+    PIXI.Ticker.shared.remove(this.tweenTicker);
   }
 
   stop() {
@@ -92,5 +100,20 @@ PixiTween.Popper = (displayObject) => {
     },
   };
 };
+
+PixiTween.Yoyo = (displayObject, direction, start, end, speed = 1) => new PixiTween({
+  from: start,
+  to: end,
+  duration: 400 * speed,
+  repeat: Infinity,
+  yoyo: true,
+  tween: TWEEN.Easing.Elastic.Out,
+  onUpdate: (o) => {
+    displayObject.position = {
+      x: direction.x * o.value,
+      y: direction.y * o.value,
+    };
+  },
+});
 
 module.exports = PixiTween;

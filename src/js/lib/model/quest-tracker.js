@@ -171,6 +171,15 @@ class QuestTracker {
     return stage.counter || null;
   }
 
+  getActiveStageTarget() {
+    if (this.activeQuestId === null || this.activeStage === null) {
+      return null;
+    }
+
+    const stage = this.storylineManager.getQuest(this.activeQuestId).stages[this.activeStage];
+    return stage.target || null;
+  }
+
   updateStage() {
     if (!this.activeQuestId) {
       return;

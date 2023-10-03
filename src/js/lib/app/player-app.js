@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* globals PIXI */
 const Stats = require('../helpers-web/stats');
 const TownView = require('../views/town-view');
@@ -24,6 +25,7 @@ const readEnding = require('../dialogues/ending-reader');
 const { PlayerAppStates, getHandler } = require('./player-app-states');
 const TitleOverlay = require('../ui/title-overlay');
 const TextScreen = require('../ui/text-screen');
+const TargetArrow = require('../views/target-arrow');
 
 class PlayerApp {
   constructor(config, textures, playerId) {
@@ -35,7 +37,8 @@ class PlayerApp {
     // Game logic
     this.flags = new FlagStore();
     this.storylineManager = new StorylineManager(this.config);
-    this.storylineManager.events.on('storylineChanged',
+    this.storylineManager.events.on(
+      'storylineChanged',
       this.handleStorylineChanged.bind(this)
     );
 
@@ -50,6 +53,7 @@ class PlayerApp {
     this.remotePcViews = {};
     this.npcViews = {};
     this.npcMoodsVisible = false;
+    this.targetArrow = null;
 
     this.demoDrone = new DemoDrone();
 
@@ -161,8 +165,7 @@ class PlayerApp {
       }
     });
 
-    const gamepadMapperConfig =
-      this.config?.players?.[this.playerId]?.['gamepadMapping'] ?? {};
+    const gamepadMapperConfig = this.config?.players?.[this.playerId]?.gamepadMapping ?? {};
     this.gamepadInputMgr = new GamepadInputMgr(gamepadMapperConfig);
     this.gamepadInputMgr.attachListeners();
 
@@ -188,7 +191,7 @@ class PlayerApp {
     // Game loop
     this.pixiApp.ticker.add((time) => {
       this.stats.frameBegin();
-      inputMgrs.forEach((inputMgr) => inputMgr.update());
+      inputMgrs.forEach((anInputMgr) => anInputMgr.update());
       if (this.canControlPc && this.pc) {
         const { x, y } = inputMgr.getDirection();
         this.pc.setSpeed(x * 10, y * 10);
@@ -212,33 +215,40 @@ class PlayerApp {
       if (this.cameraTarget) {
         // Cap the camera position to the town size
         this.camera.pivot.set(
-          Math.max(0,
-            Math.min(this.cameraTarget.x + this.cameraOffset.x - PlayerApp.APP_WIDTH / 2
+          Math.max(
+            0,
+            Math.min(
+              this.cameraTarget.x + this.cameraOffset.x - PlayerApp.APP_WIDTH / 2
               / this.camera.scale.x,
-              this.townView.townSize.width - PlayerApp.APP_WIDTH / this.camera.scale.x)),
-          Math.max(0,
-            Math.min(this.cameraTarget.y + this.cameraOffset.y - PlayerApp.APP_HEIGHT
+              this.townView.townSize.width - PlayerApp.APP_WIDTH / this.camera.scale.x
+            )
+          ),
+          Math.max(
+            0,
+            Math.min(
+              this.cameraTarget.y + this.cameraOffset.y - PlayerApp.APP_HEIGHT
               / 2 / this.camera.scale.y,
-              this.townView.townSize.height - PlayerApp.APP_HEIGHT / this.camera.scale.y)),
+              this.townView.townSize.height - PlayerApp.APP_HEIGHT / this.camera.scale.y
+            )
+          )
         );
       }
       this.stats.frameEnd();
     });
 
-    this.questTracker.events.on('questActive', (questId) => {
+    this.questTracker.events.on('questActive', () => {
       this.updateNpcMoods();
     });
-    this.questTracker.events.on('questDone', (questId) => {
+    this.questTracker.events.on('questDone', () => {
       this.updateNpcMoods();
+    });
+    this.questTracker.events.on('stageChanged', () => {
+      this.updateTargetArrow();
+    });
+    this.questTracker.events.on('noQuest', () => {
+      this.updateTargetArrow();
     });
 
-    // Temporary
-    // this.addPcView();
-    // Object.entries(this.config.players)
-    //   .filter(([id, player]) => (player.enabled === undefined || player.enabled) && id !== playerId)
-    //   .forEach(([id, player]) => {
-    //     this.addRemotePcView(id);
-    //   });
     this.storylineManager.setCurrentStoryline('touristen');
   }
 
@@ -322,7 +332,10 @@ class PlayerApp {
     this.pcView = new PCView(this.config, this.textures, this.pc, this.townView);
     this.townView.mainLayer.addChild(this.pcView.display);
     this.townView.bgLayer.addChild(this.pcView.hitboxDisplay);
-    this.setCameraTarget(this.pcView.display, new PIXI.Point(this.pcView.display.width / 2, -this.pcView.display.height * 0.8));
+    this.setCameraTarget(
+      this.pcView.display,
+      new PIXI.Point(this.pcView.display.width / 2, -this.pcView.display.height * 0.8)
+    );
   }
 
   removePc() {
@@ -386,7 +399,7 @@ class PlayerApp {
   getDialogueContext() {
     return {
       flags: this.flags,
-      random: max => Math.floor(Math.random() * max),
+      random: (max) => Math.floor(Math.random() * max),
     };
   }
 
@@ -396,17 +409,19 @@ class PlayerApp {
   }
 
   playDialogue(dialogue, npc = null) {
+    this.hideDistractions();
     this.inputRouter.routeToDialogueOverlay(this.dialogueOverlay, this.dialogueSequencer);
     const title = npc ? npc.name : null;
     this.dialogueSequencer.play(dialogue, this.getDialogueContext(), { top: title });
     this.dialogueSequencer.events.once('end', () => {
       this.inputRouter.routeToPcMovement(this);
+      this.showDistractions();
     });
   }
 
   getNpcsInRect(rect) {
-    return Object.values(this.npcViews).filter(npcView => npcView.inRect(rect))
-      .map(npcView => npcView.character);
+    return Object.values(this.npcViews).filter((npcView) => npcView.inRect(rect))
+      .map((npcView) => npcView.character);
   }
 
   pcAction() {
@@ -466,6 +481,29 @@ class PlayerApp {
     this.updateNpcMoods();
   }
 
+  updateTargetArrow() {
+    if (this.targetArrow !== null) {
+      this.targetArrow.destroy();
+      this.targetArrow = null;
+    }
+    const target = this.questTracker.getActiveStageTarget();
+    if (target) {
+      const targetNpc = this.npcViews[target];
+      if (targetNpc) {
+        this.targetArrow = new TargetArrow(targetNpc);
+        window.targetArrow = this.targetArrow;
+      }
+    }
+  }
+
+  hideDistractions() {
+    this.targetArrow?.hide();
+  }
+
+  showDistractions() {
+    this.targetArrow?.show();
+  }
+
   toggleHitboxDisplay() {
     this.showHitbox = !this.showHitbox;
   }
@@ -483,7 +521,7 @@ class PlayerApp {
     this.updateNpcMoods();
     if (this.demoDrone) {
       this.demoDrone.setTargets(Object.values(this.npcViews).map(
-        npcView => ({
+        (npcView) => ({
           x: npcView.display.x,
           y: npcView.display.y - npcView.display.height,
         })

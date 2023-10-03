@@ -20,3 +20,5 @@ textures:
           srcs: 'map-markers.json'
         - name: 'icons'
           srcs: 'icons.json'
+        - name: 'target-arrow'
+          srcs: 'target-arrow.png'

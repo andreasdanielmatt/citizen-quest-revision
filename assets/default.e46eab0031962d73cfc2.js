@@ -44475,6 +44475,7 @@ const readEnding = __webpack_require__(/*! ../dialogues/ending-reader */ "./src/
 const { PlayerAppStates, getHandler } = __webpack_require__(/*! ./player-app-states */ "./src/js/lib/app/player-app-states.js");
 const TitleOverlay = __webpack_require__(/*! ../ui/title-overlay */ "./src/js/lib/ui/title-overlay.js");
 const TextScreen = __webpack_require__(/*! ../ui/text-screen */ "./src/js/lib/ui/text-screen.js");
+const TargetArrow = __webpack_require__(/*! ../views/target-arrow */ "./src/js/lib/views/target-arrow.js");
 
 class PlayerApp {
   constructor(config, textures, playerId) {
@@ -44501,6 +44502,7 @@ class PlayerApp {
     this.remotePcViews = {};
     this.npcViews = {};
     this.npcMoodsVisible = false;
+    this.targetArrow = null;
 
     this.demoDrone = new DemoDrone();
 
@@ -44663,14 +44665,22 @@ class PlayerApp {
       if (this.cameraTarget) {
         // Cap the camera position to the town size
         this.camera.pivot.set(
-          Math.max(0,
-            Math.min(this.cameraTarget.x + this.cameraOffset.x - PlayerApp.APP_WIDTH / 2
+          Math.max(
+            0,
+            Math.min(
+              this.cameraTarget.x + this.cameraOffset.x - PlayerApp.APP_WIDTH / 2
               / this.camera.scale.x,
-              this.townView.townSize.width - PlayerApp.APP_WIDTH / this.camera.scale.x)),
-          Math.max(0,
-            Math.min(this.cameraTarget.y + this.cameraOffset.y - PlayerApp.APP_HEIGHT
+              this.townView.townSize.width - PlayerApp.APP_WIDTH / this.camera.scale.x
+            )
+          ),
+          Math.max(
+            0,
+            Math.min(
+              this.cameraTarget.y + this.cameraOffset.y - PlayerApp.APP_HEIGHT
               / 2 / this.camera.scale.y,
-              this.townView.townSize.height - PlayerApp.APP_HEIGHT / this.camera.scale.y)),
+              this.townView.townSize.height - PlayerApp.APP_HEIGHT / this.camera.scale.y
+            )
+          ),
         );
       }
       this.stats.frameEnd();
@@ -44682,14 +44692,10 @@ class PlayerApp {
     this.questTracker.events.on('questDone', (questId) => {
       this.updateNpcMoods();
     });
+    this.questTracker.events.on('stageChanged', () => {
+      this.updateTargetArrow();
+    });
 
-    // Temporary
-    // this.addPcView();
-    // Object.entries(this.config.players)
-    //   .filter(([id, player]) => (player.enabled === undefined || player.enabled) && id !== playerId)
-    //   .forEach(([id, player]) => {
-    //     this.addRemotePcView(id);
-    //   });
     this.storylineManager.setCurrentStoryline('touristen');
   }
 
@@ -44915,6 +44921,21 @@ class PlayerApp {
   showNpcMoods() {
     this.npcMoodsVisible = true;
     this.updateNpcMoods();
+  }
+
+  updateTargetArrow() {
+    if (this.targetArrow !== null) {
+      this.targetArrow.destroy();
+      this.targetArrow = null;
+    }
+    const target = this.questTracker.getActiveStageTarget();
+    if (target) {
+      const targetNpc = this.npcViews[target];
+      if (targetNpc) {
+        this.targetArrow = new TargetArrow(targetNpc);
+        window.targetArrow = this.targetArrow;
+      }
+    }
   }
 
   toggleHitboxDisplay() {
@@ -46348,6 +46369,10 @@ class Fader {
     this.display = display;
     this.ticker = PIXI.Ticker.shared;
     this.tickHandler = null;
+  }
+
+  destroy() {
+    this.removeTickHandler();
   }
 
   removeTickHandler() {
@@ -47999,6 +48024,15 @@ class QuestTracker {
     return stage.counter || null;
   }
 
+  getActiveStageTarget() {
+    if (this.activeQuestId === null || this.activeStage === null) {
+      return null;
+    }
+
+    const stage = this.storylineManager.getQuest(this.activeQuestId).stages[this.activeStage];
+    return stage.target || null;
+  }
+
   updateStage() {
     if (!this.activeQuestId) {
       return;
@@ -49383,6 +49417,16 @@ module.exports = PCView;
 
 /***/ }),
 
+/***/ "./src/js/lib/views/target-arrow.js":
+/*!******************************************!*\
+  !*** ./src/js/lib/views/target-arrow.js ***!
+  \******************************************/
+/***/ (() => {
+
+throw new Error("Module parse failed: Unexpected token (44:2)\nYou may need an appropriate loader to handle this file type, currently no loaders are configured to process this file. See https://webpack.js.org/concepts#loaders\n|   removeTickHandler() {\n|     this.\n>   }\n| \n|   animate(time) {");
+
+/***/ }),
+
 /***/ "./src/js/lib/views/town-view.js":
 /*!***************************************!*\
   !*** ./src/js/lib/views/town-view.js ***!
@@ -49540,7 +49584,7 @@ module.exports = JSON.parse('{"$id":"https://github.com/IMAGINARY/citizen-quest/
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"$id":"https://github.com/IMAGINARY/citizen-quest/specs/storyline.schema.json","$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"decision":{"$ref":"#/definitions/text"},"prompt":{"$ref":"#/definitions/text"},"npcs":{"$ref":"#/definitions/npcs"},"quests":{"$ref":"#/definitions/quests"},"dialogues":{"$ref":"#/definitions/indexedDialogues"},"ending":{"$ref":"#/definitions/ending"}},"additionalProperties":false,"definitions":{"npcs":{"type":"object","additionalProperties":{"$ref":"#/definitions/npc"}},"npc":{"type":"object","properties":{"name":{"$ref":"#/definitions/text"},"spawn":{"$ref":"#/definitions/point"},"dialogue":{"$ref":"#/definitions/dialogue"}},"additionalProperties":false,"required":["name","spawn","dialogue"]},"quests":{"type":"object","additionalProperties":{"$ref":"#/definitions/quest"}},"quest":{"type":"object","properties":{"npc":{"$ref":"#/definitions/objectID"},"mood":{"$ref":"#/definitions/objectID"},"required":{"$ref":"#/definitions/questRequirements"},"available":{"type":"object","properties":{"dialogue":{"$ref":"#/definitions/dialogue"}}},"stages":{"type":"array","items":{"$ref":"#/definitions/questStage"}}},"additionalProperties":false,"required":["npc","mood","stages","available"]},"questRequirements":{"oneOf":[{"$ref":"#/definitions/objectID"},{"type":"array","items":{"$ref":"#/definitions/objectID"}}],"errorMessage":"must be a quest ID or an array of quest IDs."},"questStage":{"type":"object","properties":{"cond":{"$ref":"#/definitions/condition"},"prompt":{"$ref":"#/definitions/text"},"dialogues":{"$ref":"#/definitions/indexedDialogues"},"counter":{"$ref":"#/definitions/questStageCounter"}},"additionalProperties":false,"required":["dialogues"]},"questStageCounter":{"type":"object","properties":{"expression":{"$ref":"#/definitions/expression"},"max":{"type":"integer","minimum":0},"icon":{"type":"string","enum":["happy","angry","idea"]}},"additionalProperties":false,"required":["expression","max"]},"ending":{"type":"object","properties":{"dialogue":{"$ref":"#/definitions/dialogue"}},"additionalProperties":false,"required":["dialogue"]},"indexedDialogues":{"type":"object","additionalProperties":{"$ref":"#/definitions/dialogue"}},"dialogue":{"$ref":"dialogue.schema.json#/definitions/nodeList"},"text":{"oneOf":[{"type":"string","minLength":1,"maxLength":1000},{"type":"object","additionalProperties":{"type":"string"}}],"errorMessage":"must be a string or an object with language code keys and string values."},"condition":{"type":"string","minLength":1,"maxLength":1000},"expression":{"type":"string","minLength":1,"maxLength":1000},"objectID":{"type":"string","minLength":1,"maxLength":100,"pattern":"^[a-zA-Z_][a-zA-Z0-9_]*$"},"point":{"type":"object","properties":{"x":{"type":"number"},"y":{"type":"number"}},"additionalProperties":false,"required":["x","y"],"errorMessage":"must be an object with x and y properties."}}}');
+module.exports = JSON.parse('{"$id":"https://github.com/IMAGINARY/citizen-quest/specs/storyline.schema.json","$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"decision":{"$ref":"#/definitions/text"},"prompt":{"$ref":"#/definitions/text"},"npcs":{"$ref":"#/definitions/npcs"},"quests":{"$ref":"#/definitions/quests"},"dialogues":{"$ref":"#/definitions/indexedDialogues"},"ending":{"$ref":"#/definitions/ending"}},"additionalProperties":false,"definitions":{"npcs":{"type":"object","additionalProperties":{"$ref":"#/definitions/npc"}},"npc":{"type":"object","properties":{"name":{"$ref":"#/definitions/text"},"spawn":{"$ref":"#/definitions/point"},"dialogue":{"$ref":"#/definitions/dialogue"}},"additionalProperties":false,"required":["name","spawn","dialogue"]},"quests":{"type":"object","additionalProperties":{"$ref":"#/definitions/quest"}},"quest":{"type":"object","properties":{"npc":{"$ref":"#/definitions/objectID"},"mood":{"$ref":"#/definitions/objectID"},"required":{"$ref":"#/definitions/questRequirements"},"available":{"type":"object","properties":{"dialogue":{"$ref":"#/definitions/dialogue"}}},"stages":{"type":"array","items":{"$ref":"#/definitions/questStage"}}},"additionalProperties":false,"required":["npc","mood","stages","available"]},"questRequirements":{"oneOf":[{"$ref":"#/definitions/objectID"},{"type":"array","items":{"$ref":"#/definitions/objectID"}}],"errorMessage":"must be a quest ID or an array of quest IDs."},"questStage":{"type":"object","properties":{"cond":{"$ref":"#/definitions/condition"},"prompt":{"$ref":"#/definitions/text"},"dialogues":{"$ref":"#/definitions/indexedDialogues"},"counter":{"$ref":"#/definitions/questStageCounter"},"target":{"$ref":"#/definitions/objectID"}},"additionalProperties":false,"required":["dialogues"]},"questStageCounter":{"type":"object","properties":{"expression":{"$ref":"#/definitions/expression"},"max":{"type":"integer","minimum":0},"icon":{"type":"string","enum":["happy","angry","idea"]}},"additionalProperties":false,"required":["expression","max"]},"ending":{"type":"object","properties":{"dialogue":{"$ref":"#/definitions/dialogue"}},"additionalProperties":false,"required":["dialogue"]},"indexedDialogues":{"type":"object","additionalProperties":{"$ref":"#/definitions/dialogue"}},"dialogue":{"$ref":"dialogue.schema.json#/definitions/nodeList"},"text":{"oneOf":[{"type":"string","minLength":1,"maxLength":1000},{"type":"object","additionalProperties":{"type":"string"}}],"errorMessage":"must be a string or an object with language code keys and string values."},"condition":{"type":"string","minLength":1,"maxLength":1000},"expression":{"type":"string","minLength":1,"maxLength":1000},"objectID":{"type":"string","minLength":1,"maxLength":100,"pattern":"^[a-zA-Z_][a-zA-Z0-9_]*$"},"point":{"type":"object","properties":{"x":{"type":"number"},"y":{"type":"number"}},"additionalProperties":false,"required":["x","y"],"errorMessage":"must be an object with x and y properties."}}}');
 
 /***/ }),
 
@@ -49746,4 +49790,4 @@ const { validateStoryline } = __webpack_require__(/*! ./lib/model/storyline-vali
 
 /******/ })()
 ;
-//# sourceMappingURL=default.4b669923f26f63e13b94.js.map
+//# sourceMappingURL=default.e46eab0031962d73cfc2.js.map

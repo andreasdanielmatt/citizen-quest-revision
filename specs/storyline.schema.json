@@ -110,6 +110,9 @@
         },
         "counter": {
           "$ref": "#/definitions/questStageCounter"
+        },
+        "target": {
+          "$ref": "#/definitions/objectID"
         }
       },
       "additionalProperties": false,
