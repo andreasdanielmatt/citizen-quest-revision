@@ -22,3 +22,5 @@ textures:
           srcs: 'icons.json'
         - name: 'target-arrow'
           srcs: 'target-arrow.png'
+        - name: 'guide-arrow'
+          srcs: 'guide-arrow.png'

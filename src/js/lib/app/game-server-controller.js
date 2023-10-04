@@ -8,6 +8,7 @@ class GameServerController {
     this.connector.addPlayer(this.playerApp.playerId);
   }
 
+  // eslint-disable-next-line class-methods-use-this
   roundEnd() {
     // Nothing
   }

@@ -26,6 +26,7 @@ const { PlayerAppStates, getHandler } = require('./player-app-states');
 const TitleOverlay = require('../ui/title-overlay');
 const TextScreen = require('../ui/text-screen');
 const TargetArrow = require('../views/target-arrow');
+const GuideArrow = require('../views/guide-arrow');
 
 class PlayerApp {
   constructor(config, textures, playerId) {
@@ -54,6 +55,7 @@ class PlayerApp {
     this.npcViews = {};
     this.npcMoodsVisible = false;
     this.targetArrow = null;
+    this.guideArrow = null;
 
     this.demoDrone = new DemoDrone();
 
@@ -233,6 +235,9 @@ class PlayerApp {
           )
         );
       }
+
+      this.updateGuideArrow();
+
       this.stats.frameEnd();
     });
 
@@ -326,6 +331,15 @@ class PlayerApp {
     }
   }
 
+  isOnScreen(displayObject) {
+    // Return true if the displayObject is within the PIXI viewport
+    const bounds = displayObject.getBounds();
+    return bounds.x + bounds.width >= 0
+      && bounds.x <= this.pixiApp.renderer.width
+      && bounds.y + bounds.height >= 0
+      && bounds.y <= this.pixiApp.renderer.height;
+  }
+
   addPc() {
     this.removePc();
     this.pc = new Character(this.playerId, this.config.players[this.playerId]);
@@ -336,9 +350,14 @@ class PlayerApp {
       this.pcView.display,
       new PIXI.Point(this.pcView.display.width / 2, -this.pcView.display.height * 0.8)
     );
+    this.guideArrow = new GuideArrow(this.pcView);
   }
 
   removePc() {
+    if (this.guideArrow) {
+      this.guideArrow.destroy();
+      this.guideArrow = null;
+    }
     if (this.pcView) {
       this.townView.mainLayer.removeChild(this.pcView.display);
       this.townView.bgLayer.removeChild(this.pcView.hitboxDisplay);
@@ -492,6 +511,28 @@ class PlayerApp {
       if (targetNpc) {
         this.targetArrow = new TargetArrow(targetNpc);
         window.targetArrow = this.targetArrow;
+      }
+    }
+  }
+
+  updateGuideArrow() {
+    if (this.guideArrow) {
+      if (this.targetArrow && this.targetArrow.visible
+        && !this.isOnScreen(this.targetArrow.display)) {
+        const targetArrow = {
+          x: this.targetArrow.display.x + this.targetArrow.display.parent.x,
+          y: this.targetArrow.display.y + this.targetArrow.display.parent.y,
+        };
+        const deltaX = targetArrow.x - this.pcView.display.x;
+        const deltaY = targetArrow.y - this.pcView.display.y;
+        const threshold = this.pcView.display.height;
+        this.guideArrow.pointInDirection(
+          Math.abs(deltaX) > threshold ? Math.sign(deltaX) : 0,
+          Math.abs(deltaY) > threshold ? Math.sign(deltaY) : 0
+        );
+        this.guideArrow.show();
+      } else {
+        this.guideArrow.hide();
       }
     }
   }

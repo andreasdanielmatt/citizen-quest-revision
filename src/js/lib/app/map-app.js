@@ -20,8 +20,10 @@ class MapApp {
     // Game logic
     this.flags = new FlagStore();
     this.storylineManager = new StorylineManager(config);
-    this.storylineManager.events.on('storylineChanged',
-      this.handleStorylineChanged.bind(this));
+    this.storylineManager.events.on(
+      'storylineChanged',
+      this.handleStorylineChanged.bind(this)
+    );
     window.setStoryline = this.storylineManager.setCurrentStoryline.bind(this.storylineManager);
 
     this.questTracker = new QuestTracker(config, this.storylineManager, this.flags);
@@ -144,7 +146,8 @@ class MapApp {
   addMarker(character, icon) {
     const marker = new MapMarker(
       this.textures['map-markers'].textures['pin-marker'],
-      this.textures.icons.textures[`icon-${icon}`], { x: 0.5, y: 1 }
+      this.textures.icons.textures[`icon-${icon}`],
+      { x: 0.5, y: 1 }
     );
     marker.setScale(this.townView.display.width / MapApp.APP_WIDTH);
     character.addAttachment('map-marker', marker);

@@ -39797,6 +39797,7 @@ class GameServerController {
     this.connector.addPlayer(this.playerApp.playerId);
   }
 
+  // eslint-disable-next-line class-methods-use-this
   roundEnd() {
     // Nothing
   }
@@ -39977,6 +39978,7 @@ module.exports = {
   \**************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+/* eslint-disable no-console */
 /* globals PIXI */
 const Stats = __webpack_require__(/*! ../helpers-web/stats */ "./src/js/lib/helpers-web/stats.js");
 const TownView = __webpack_require__(/*! ../views/town-view */ "./src/js/lib/views/town-view.js");
@@ -40004,6 +40006,7 @@ const { PlayerAppStates, getHandler } = __webpack_require__(/*! ./player-app-sta
 const TitleOverlay = __webpack_require__(/*! ../ui/title-overlay */ "./src/js/lib/ui/title-overlay.js");
 const TextScreen = __webpack_require__(/*! ../ui/text-screen */ "./src/js/lib/ui/text-screen.js");
 const TargetArrow = __webpack_require__(/*! ../views/target-arrow */ "./src/js/lib/views/target-arrow.js");
+const GuideArrow = __webpack_require__(/*! ../views/guide-arrow */ "./src/js/lib/views/guide-arrow.js");
 
 class PlayerApp {
   constructor(config, textures, playerId) {
@@ -40015,7 +40018,8 @@ class PlayerApp {
     // Game logic
     this.flags = new FlagStore();
     this.storylineManager = new StorylineManager(this.config);
-    this.storylineManager.events.on('storylineChanged',
+    this.storylineManager.events.on(
+      'storylineChanged',
       this.handleStorylineChanged.bind(this)
     );
 
@@ -40031,6 +40035,7 @@ class PlayerApp {
     this.npcViews = {};
     this.npcMoodsVisible = false;
     this.targetArrow = null;
+    this.guideArrow = null;
 
     this.demoDrone = new DemoDrone();
 
@@ -40142,8 +40147,7 @@ class PlayerApp {
       }
     });
 
-    const gamepadMapperConfig =
-      this.config?.players?.[this.playerId]?.['gamepadMapping'] ?? {};
+    const gamepadMapperConfig = this.config?.players?.[this.playerId]?.gamepadMapping ?? {};
     this.gamepadInputMgr = new GamepadInputMgr(gamepadMapperConfig);
     this.gamepadInputMgr.attachListeners();
 
@@ -40169,7 +40173,7 @@ class PlayerApp {
     // Game loop
     this.pixiApp.ticker.add((time) => {
       this.stats.frameBegin();
-      inputMgrs.forEach((inputMgr) => inputMgr.update());
+      inputMgrs.forEach((anInputMgr) => anInputMgr.update());
       if (this.canControlPc && this.pc) {
         const { x, y } = inputMgr.getDirection();
         this.pc.setSpeed(x * 10, y * 10);
@@ -40208,19 +40212,25 @@ class PlayerApp {
               / 2 / this.camera.scale.y,
               this.townView.townSize.height - PlayerApp.APP_HEIGHT / this.camera.scale.y
             )
-          ),
+          )
         );
       }
+
+      this.updateGuideArrow();
+
       this.stats.frameEnd();
     });
 
-    this.questTracker.events.on('questActive', (questId) => {
+    this.questTracker.events.on('questActive', () => {
       this.updateNpcMoods();
     });
-    this.questTracker.events.on('questDone', (questId) => {
+    this.questTracker.events.on('questDone', () => {
       this.updateNpcMoods();
     });
     this.questTracker.events.on('stageChanged', () => {
+      this.updateTargetArrow();
+    });
+    this.questTracker.events.on('noQuest', () => {
       this.updateTargetArrow();
     });
 
@@ -40301,16 +40311,33 @@ class PlayerApp {
     }
   }
 
+  isOnScreen(displayObject) {
+    // Return true if the displayObject is within the PIXI viewport
+    const bounds = displayObject.getBounds();
+    return bounds.x + bounds.width >= 0
+      && bounds.x <= this.pixiApp.renderer.width
+      && bounds.y + bounds.height >= 0
+      && bounds.y <= this.pixiApp.renderer.height;
+  }
+
   addPc() {
     this.removePc();
     this.pc = new Character(this.playerId, this.config.players[this.playerId]);
     this.pcView = new PCView(this.config, this.textures, this.pc, this.townView);
     this.townView.mainLayer.addChild(this.pcView.display);
     this.townView.bgLayer.addChild(this.pcView.hitboxDisplay);
-    this.setCameraTarget(this.pcView.display, new PIXI.Point(this.pcView.display.width / 2, -this.pcView.display.height * 0.8));
+    this.setCameraTarget(
+      this.pcView.display,
+      new PIXI.Point(this.pcView.display.width / 2, -this.pcView.display.height * 0.8)
+    );
+    this.guideArrow = new GuideArrow(this.pcView);
   }
 
   removePc() {
+    if (this.guideArrow) {
+      this.guideArrow.destroy();
+      this.guideArrow = null;
+    }
     if (this.pcView) {
       this.townView.mainLayer.removeChild(this.pcView.display);
       this.townView.bgLayer.removeChild(this.pcView.hitboxDisplay);
@@ -40371,7 +40398,7 @@ class PlayerApp {
   getDialogueContext() {
     return {
       flags: this.flags,
-      random: max => Math.floor(Math.random() * max),
+      random: (max) => Math.floor(Math.random() * max),
     };
   }
 
@@ -40381,17 +40408,19 @@ class PlayerApp {
   }
 
   playDialogue(dialogue, npc = null) {
+    this.hideDistractions();
     this.inputRouter.routeToDialogueOverlay(this.dialogueOverlay, this.dialogueSequencer);
     const title = npc ? npc.name : null;
     this.dialogueSequencer.play(dialogue, this.getDialogueContext(), { top: title });
     this.dialogueSequencer.events.once('end', () => {
       this.inputRouter.routeToPcMovement(this);
+      this.showDistractions();
     });
   }
 
   getNpcsInRect(rect) {
-    return Object.values(this.npcViews).filter(npcView => npcView.inRect(rect))
-      .map(npcView => npcView.character);
+    return Object.values(this.npcViews).filter((npcView) => npcView.inRect(rect))
+      .map((npcView) => npcView.character);
   }
 
   pcAction() {
@@ -40466,6 +40495,36 @@ class PlayerApp {
     }
   }
 
+  updateGuideArrow() {
+    if (this.guideArrow) {
+      if (this.targetArrow && this.targetArrow.visible
+        && !this.isOnScreen(this.targetArrow.display)) {
+        const targetArrow = {
+          x: this.targetArrow.display.x + this.targetArrow.display.parent.x,
+          y: this.targetArrow.display.y + this.targetArrow.display.parent.y,
+        };
+        const deltaX = targetArrow.x - this.pcView.display.x;
+        const deltaY = targetArrow.y - this.pcView.display.y;
+        const threshold = this.pcView.display.height;
+        this.guideArrow.pointInDirection(
+          Math.abs(deltaX) > threshold ? Math.sign(deltaX) : 0,
+          Math.abs(deltaY) > threshold ? Math.sign(deltaY) : 0
+        );
+        this.guideArrow.show();
+      } else {
+        this.guideArrow.hide();
+      }
+    }
+  }
+
+  hideDistractions() {
+    this.targetArrow?.hide();
+  }
+
+  showDistractions() {
+    this.targetArrow?.show();
+  }
+
   toggleHitboxDisplay() {
     this.showHitbox = !this.showHitbox;
   }
@@ -40483,7 +40542,7 @@ class PlayerApp {
     this.updateNpcMoods();
     if (this.demoDrone) {
       this.demoDrone.setTargets(Object.values(this.npcViews).map(
-        npcView => ({
+        (npcView) => ({
           x: npcView.display.x,
           y: npcView.display.y - npcView.display.height,
         })
@@ -41951,19 +42010,164 @@ class Fader {
     this.ticker.add(this.tickHandler);
   }
 
-  fadeOut(duration) {
+  fadeOut(duration, completeCallback = null) {
     this.installTickHandler(duration, 0, () => {
       this.display.visible = false;
+      if (completeCallback) {
+        completeCallback();
+      }
     });
   }
 
-  fadeIn(duration) {
+  fadeIn(duration, completeCallback = null) {
     this.display.visible = true;
-    this.installTickHandler(duration, 1);
+    this.installTickHandler(duration, 1, completeCallback);
   }
 }
 
 module.exports = Fader;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/helpers-pixi/tween.js":
+/*!******************************************!*\
+  !*** ./src/js/lib/helpers-pixi/tween.js ***!
+  \******************************************/
+/***/ ((module) => {
+
+/* globals PIXI, TWEEN */
+
+class PixiTween {
+  constructor(userOptions) {
+    const defaultOptions = {
+      from: 0,
+      to: 1,
+      duration: 1000,
+      delay: 0,
+      easing: TWEEN.Easing.Sinusoidal.InOut,
+      onUpdate: () => {},
+      onComplete: null,
+      repeat: 0,
+      yoyo: false,
+    };
+
+    this.options = { ...defaultOptions, ...userOptions };
+
+    this.tweenTicker = this.tweenTicker.bind(this);
+    this.elapsed = 0;
+
+    this.tween = new TWEEN.Tween({ value: this.options.from })
+      .to({ value: this.options.to }, this.options.duration)
+      .easing(this.options.easing)
+      .onUpdate(this.options.onUpdate)
+      .repeat(this.options.repeat)
+      .yoyo(this.options.yoyo)
+      .start(this.options.delay);
+
+    PIXI.Ticker.shared.add(this.tweenTicker);
+    this.tween.onComplete(this.onComplete.bind(this));
+  }
+
+  destroy() {
+    this.stop();
+    PIXI.Ticker.shared.remove(this.tweenTicker);
+  }
+
+  stop() {
+    this.tween.stop();
+    this.onComplete();
+  }
+
+  onComplete() {
+    PIXI.Ticker.shared.remove(this.tweenTicker);
+    if (this.options.onComplete) {
+      this.options.onComplete();
+    }
+  }
+
+  tweenTicker(time) {
+    this.elapsed += Math.ceil(time / PIXI.settings.TARGET_FPMS);
+    this.tween.update(this.elapsed);
+  }
+}
+
+PixiTween.popOut = (displayObject, onComplete = null) => new PixiTween({
+  from: Math.max(displayObject.scale.x, 0),
+  tween: TWEEN.Easing.Elastic.Out,
+  onUpdate: (o) => {
+    displayObject.scale = { x: o.value, y: o.value };
+  },
+  onComplete,
+});
+
+PixiTween.popIn = (displayObject, onComplete = null) => new PixiTween({
+  from: Math.min(displayObject.scale.x, 1),
+  to: 0,
+  tween: TWEEN.Easing.Elastic.Out,
+  onUpdate: (o) => {
+    displayObject.scale = { x: o.value, y: o.value };
+  },
+  onComplete,
+});
+
+PixiTween.Popper = (displayObject) => {
+  let tween = null;
+  return {
+    show: (onComplete = null) => {
+      if (tween) {
+        tween.stop();
+      }
+      displayObject.visible = true;
+      tween = PixiTween.popOut(displayObject, onComplete);
+    },
+    hide: (onComplete = null) => {
+      if (tween) {
+        tween.stop();
+      }
+      tween = PixiTween.popIn(displayObject, () => {
+        displayObject.visible = false;
+        if (onComplete) {
+          onComplete();
+        }
+      });
+    },
+    stop: () => {
+      if (tween) {
+        tween.stop();
+      }
+    },
+  };
+};
+
+PixiTween.Yoyo = (displayObject, direction, start, end, speed = 1) => new PixiTween({
+  from: start,
+  to: end,
+  duration: 400 * speed,
+  repeat: Infinity,
+  yoyo: true,
+  tween: TWEEN.Easing.Elastic.Out,
+  onUpdate: (o) => {
+    displayObject.position = {
+      x: direction.x * o.value,
+      y: direction.y * o.value,
+    };
+  },
+});
+
+PixiTween.Pulse = (displayObject, speed = 1) => new PixiTween({
+  from: 0,
+  to: 1,
+  duration: 400 * speed,
+  repeat: Infinity,
+  yoyo: true,
+  tween: TWEEN.Easing.Cubic.InOut,
+  onUpdate: (o) => {
+    displayObject.alpha = o.value;
+  },
+});
+
+module.exports = PixiTween;
 
 
 /***/ }),
@@ -42262,6 +42466,51 @@ class Stats {
 Stats.Panel = Panel;
 
 module.exports = Stats;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/helpers/bit-vector.js":
+/*!******************************************!*\
+  !*** ./src/js/lib/helpers/bit-vector.js ***!
+  \******************************************/
+/***/ ((module) => {
+
+/* eslint-disable no-bitwise */
+
+/**
+ * A bitvector implementation that uses a Uint32Array for storage
+ */
+class BitVector {
+  constructor(numBits) {
+    this.length = numBits;
+    this.data = new Uint32Array(Math.ceil(numBits / 32));
+  }
+
+  set(idx, value) {
+    const bigIndex = Math.floor(idx / 32);
+    const smallIndex = idx % 32;
+
+    if (value) {
+      this.data[bigIndex] |= (1 << smallIndex);
+    } else {
+      this.data[bigIndex] &= ~(1 << smallIndex);
+    }
+  }
+
+  get(idx) {
+    const bigIndex = Math.floor(idx / 32);
+    const smallIndex = idx % 32;
+
+    const value = this.data[bigIndex] & (1 << smallIndex);
+
+    // we convert to boolean to make sure the result is always 0 or 1,
+    // instead of what is returned by the mask
+    return value !== 0;
+  }
+}
+
+module.exports = BitVector;
 
 
 /***/ }),
@@ -44713,6 +44962,10 @@ class CharacterView {
     }
   }
 
+  hasMoodBalloon() {
+    return this.moodBalloon !== null && this.moodBalloon.visible;
+  }
+
   inRect(rect) {
     const { x, y } = this.character.position;
     return x >= rect.left && x <= rect.right
@@ -44820,6 +45073,104 @@ module.exports = DemoDrone;
 
 /***/ }),
 
+/***/ "./src/js/lib/views/guide-arrow.js":
+/*!*****************************************!*\
+  !*** ./src/js/lib/views/guide-arrow.js ***!
+  \*****************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+/* global PIXI */
+const PixiTween = __webpack_require__(/*! ../helpers-pixi/tween */ "./src/js/lib/helpers-pixi/tween.js");
+
+class GuideArrow {
+  constructor(pcView) {
+    this.pcView = pcView;
+    this.display = this.createSprite();
+    this.pcView.display.addChild(this.display);
+    this.visible = false;
+    this.active = false;
+    this.direction = { x: 0, y: 0 };
+    this.tween = PixiTween.Pulse(this.display);
+  }
+
+  createSprite() {
+    const sprite = new PIXI.Sprite(this.pcView.textures['guide-arrow']);
+    sprite.anchor.set(0, 0.5);
+    sprite.visible = false;
+
+    return sprite;
+  }
+
+  destroy() {
+    if (this.display.parent && !this.display.parent.destroyed) {
+      this.display.parent.removeChild(this.display);
+    }
+    this.display.destroy();
+  }
+
+  show() {
+    this.visible = true;
+    this.updateVisibility();
+  }
+
+  hide() {
+    this.visible = false;
+    this.updateVisibility();
+  }
+
+  updateVisibility() {
+    if (this.active && this.visible) {
+      this.display.visible = true;
+    } else {
+      this.display.visible = false;
+    }
+  }
+
+  /**
+   * Show an arrow around the character in the specified direction
+   *
+   * @param {number} x
+   *  -1, 0 or 1 for left, neutral or right
+   * @param {number} y
+   *  -1, 0 or 1 for top, neutral or bottom
+   */
+  pointInDirection(x, y) {
+    if (x === this.direction.x && y === this.direction.y) {
+      return;
+    }
+    this.direction = { x, y };
+    if (this.direction.x === 0 && this.direction.y === 0) {
+      this.active = false;
+      this.updateVisibility();
+      return;
+    }
+
+    this.updateVisibility();
+    this.active = true;
+    // By default, the sprite points to the right (x = 1, y = 0)
+    this.display.rotation = Math.atan2(this.direction.y, this.direction.x);
+    this.display.position = this.getArrowPosition();
+
+    // if (this.tween) {
+    //   this.tween.destroy();
+    //   const position = this.getArrowPosition();
+    //   this.tween = PixiTween.Yoyo(this.display, position, 1, 1.2);
+    // }
+  }
+
+  getArrowPosition() {
+    return {
+      x: (this.pcView.display.width * 0.75) * this.direction.x,
+      y: -this.pcView.display.height / 2 + (this.pcView.display.height * 0.6) * this.direction.y,
+    };
+  }
+}
+
+module.exports = GuideArrow;
+
+
+/***/ }),
+
 /***/ "./src/js/lib/views/mood-balloon.js":
 /*!******************************************!*\
   !*** ./src/js/lib/views/mood-balloon.js ***!
@@ -44833,6 +45184,7 @@ class MoodBalloon {
   constructor(characterView) {
     this.characterView = characterView;
     this.mood = null;
+    this.visible = false;
     this.display = this.createSprite();
     this.moodIconDisplay = this.createMoodIconSprite();
     this.display.addChild(this.moodIconDisplay);
@@ -44875,6 +45227,7 @@ class MoodBalloon {
       return;
     }
     this.mood = mood;
+    this.visible = true;
     this.fader.fadeIn(200);
     this.display.gotoAndPlay(0);
     this.setMoodIcon(mood);
@@ -44898,6 +45251,7 @@ class MoodBalloon {
 
   hide() {
     this.mood = null;
+    this.visible = false;
     this.moodIconTween.stop();
     this.fader.fadeOut(200);
   }
@@ -45150,9 +45504,83 @@ module.exports = PCView;
 /*!******************************************!*\
   !*** ./src/js/lib/views/target-arrow.js ***!
   \******************************************/
-/***/ (() => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-throw new Error("Module parse failed: Unexpected token (44:2)\nYou may need an appropriate loader to handle this file type, currently no loaders are configured to process this file. See https://webpack.js.org/concepts#loaders\n|   removeTickHandler() {\n|     this.\n>   }\n| \n|   animate(time) {");
+/* global PIXI */
+const Fader = __webpack_require__(/*! ../helpers-pixi/fader */ "./src/js/lib/helpers-pixi/fader.js");
+const PixiTween = __webpack_require__(/*! ../helpers-pixi/tween */ "./src/js/lib/helpers-pixi/tween.js");
+
+class TargetArrow {
+  constructor(characterView) {
+    this.characterView = characterView;
+    this.display = this.createSprite();
+    this.characterView.display.addChild(this.display);
+
+    this.visible = false;
+    this.fader = new Fader(this.display);
+
+    const [from, to] = this.getArrowCoords();
+    this.tween = PixiTween.Yoyo(
+      this.display,
+      { x: 0, y: 1 },
+      from,
+      to
+    );
+
+    this.show();
+  }
+
+  createSprite() {
+    const sprite = new PIXI.Sprite(this.characterView.textures['target-arrow']);
+    sprite.anchor.set(0.5, 1);
+    sprite.position.set(
+      0,
+      -this.characterView.display.height
+    );
+    sprite.visible = false;
+    sprite.alpha = 0;
+
+    return sprite;
+  }
+
+  destroy() {
+    this.fader.fadeOut(200, () => {
+      this.fader.destroy();
+      this.tween.destroy();
+      if (this.display.parent && !this.display.parent.destroyed) {
+        this.display.parent.removeChild(this.display);
+      }
+      this.display.destroy();
+    });
+  }
+
+  hide() {
+    this.visible = false;
+    this.fader.fadeOut(200);
+  }
+
+  show() {
+    this.visible = true;
+    this.fader.fadeIn(200);
+  }
+
+  getArrowCoords() {
+    if (this.characterView.hasMoodBalloon()) {
+      return [
+        -this.characterView.display.height * 1.2,
+        -this.characterView.display.height * 1.35,
+      ];
+    } else {
+      return [
+        -this.characterView.display.height,
+        -this.characterView.display.height * 1.15,
+      ];
+    }
+  }
+}
+
+module.exports = TargetArrow;
+
 
 /***/ }),
 
@@ -45160,9 +45588,11 @@ throw new Error("Module parse failed: Unexpected token (44:2)\nYou may need an a
 /*!***************************************!*\
   !*** ./src/js/lib/views/town-view.js ***!
   \***************************************/
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 /* globals PIXI */
+const BitVector = __webpack_require__(/*! ../helpers/bit-vector */ "./src/js/lib/helpers/bit-vector.js");
+
 class TownView {
   constructor(config, textures) {
     this.config = config;
@@ -45209,44 +45639,14 @@ class TownView {
         collisionRenderer.height
       ).data;
 
-    // An inline bitvector implementation that uses a Uint32Array for storage
-    const BitVector = class {
-      constructor(numBits) {
-        this.length = numBits;
-        this.data = new Uint32Array(Math.ceil(numBits / 32));
-      }
-
-      set(idx, value) {
-        const bigIndex = Math.floor(idx / 32);
-        const smallIndex = idx % 32;
-
-        if (value) {
-          this.data[bigIndex] = this.data[bigIndex] | (1 << smallIndex);
-        } else {
-          this.data[bigIndex] = this.data[bigIndex] & ~(1 << smallIndex);
-        }
-      }
-      get(idx) {
-        const bigIndex = Math.floor(idx / 32);
-        const smallIndex = idx % 32;
-
-        const value = this.data[bigIndex] & (1 << smallIndex);
-
-        // we convert to boolean to make sure the result is always 0 or 1,
-        // instead of what is returned by the mask
-        return value !== 0;
-      }
-    };
-
     // We only need one bit per pixel by thresholding the grayscale value
     const numBits = Math.floor(collisionMapRGBA.length / 4);
     this.collisionMap = new BitVector(numBits);
     for (let i = 0; i < numBits; i += 1) {
-      const gray =
-        (collisionMapRGBA[i * 4] +
-          collisionMapRGBA[i * 4 + 1] +
-          collisionMapRGBA[i * 4 + 2]) /
-        3;
+      const gray = (collisionMapRGBA[i * 4]
+          + collisionMapRGBA[i * 4 + 1]
+          + collisionMapRGBA[i * 4 + 2])
+        / 3;
       this.collisionMap.set(i, gray < 128);
     }
   }
@@ -45562,4 +45962,4 @@ const { PlayerAppStates } = __webpack_require__(/*! ./lib/app/player-app-states 
 
 /******/ })()
 ;
-//# sourceMappingURL=player.f6e6fee0d3b9ec4eb55f.js.map
+//# sourceMappingURL=player.027f9d6779dfb202b338.js.map

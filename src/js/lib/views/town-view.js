@@ -1,4 +1,6 @@
 /* globals PIXI */
+const BitVector = require('../helpers/bit-vector');
+
 class TownView {
   constructor(config, textures) {
     this.config = config;
@@ -45,44 +47,14 @@ class TownView {
         collisionRenderer.height
       ).data;
 
-    // An inline bitvector implementation that uses a Uint32Array for storage
-    const BitVector = class {
-      constructor(numBits) {
-        this.length = numBits;
-        this.data = new Uint32Array(Math.ceil(numBits / 32));
-      }
-
-      set(idx, value) {
-        const bigIndex = Math.floor(idx / 32);
-        const smallIndex = idx % 32;
-
-        if (value) {
-          this.data[bigIndex] = this.data[bigIndex] | (1 << smallIndex);
-        } else {
-          this.data[bigIndex] = this.data[bigIndex] & ~(1 << smallIndex);
-        }
-      }
-      get(idx) {
-        const bigIndex = Math.floor(idx / 32);
-        const smallIndex = idx % 32;
-
-        const value = this.data[bigIndex] & (1 << smallIndex);
-
-        // we convert to boolean to make sure the result is always 0 or 1,
-        // instead of what is returned by the mask
-        return value !== 0;
-      }
-    };
-
     // We only need one bit per pixel by thresholding the grayscale value
     const numBits = Math.floor(collisionMapRGBA.length / 4);
     this.collisionMap = new BitVector(numBits);
     for (let i = 0; i < numBits; i += 1) {
-      const gray =
-        (collisionMapRGBA[i * 4] +
-          collisionMapRGBA[i * 4 + 1] +
-          collisionMapRGBA[i * 4 + 2]) /
-        3;
+      const gray = (collisionMapRGBA[i * 4]
+          + collisionMapRGBA[i * 4 + 1]
+          + collisionMapRGBA[i * 4 + 2])
+        / 3;
       this.collisionMap.set(i, gray < 128);
     }
   }

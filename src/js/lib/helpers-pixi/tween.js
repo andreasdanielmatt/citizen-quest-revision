@@ -32,6 +32,7 @@ class PixiTween {
   }
 
   destroy() {
+    this.stop();
     PIXI.Ticker.shared.remove(this.tweenTicker);
   }
 
@@ -113,6 +114,18 @@ PixiTween.Yoyo = (displayObject, direction, start, end, speed = 1) => new PixiTw
       x: direction.x * o.value,
       y: direction.y * o.value,
     };
+  },
+});
+
+PixiTween.Pulse = (displayObject, speed = 1) => new PixiTween({
+  from: 0,
+  to: 1,
+  duration: 400 * speed,
+  repeat: Infinity,
+  yoyo: true,
+  tween: TWEEN.Easing.Cubic.InOut,
+  onUpdate: (o) => {
+    displayObject.alpha = o.value;
   },
 });
 

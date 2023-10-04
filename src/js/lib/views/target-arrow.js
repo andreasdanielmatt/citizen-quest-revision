@@ -8,6 +8,7 @@ class TargetArrow {
     this.display = this.createSprite();
     this.characterView.display.addChild(this.display);
 
+    this.visible = false;
     this.fader = new Fader(this.display);
 
     const [from, to] = this.getArrowCoords();
@@ -46,10 +47,12 @@ class TargetArrow {
   }
 
   hide() {
+    this.visible = false;
     this.fader.fadeOut(200);
   }
 
   show() {
+    this.visible = true;
     this.fader.fadeIn(200);
   }
 
