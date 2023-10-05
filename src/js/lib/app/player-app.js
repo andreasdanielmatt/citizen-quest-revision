@@ -12,7 +12,6 @@ const MultiplexInputMgr = require('../input/multiplex-input-mgr');
 const PlayerAppInputRouter = require('../input/player-app-input-router');
 const Character = require('../model/character');
 const FlagStore = require('../dialogues/flag-store');
-const StorylineManager = require('../model/storyline-manager');
 const QuestTracker = require('../model/quest-tracker');
 const QuestOverlay = require('../ui/quest-overlay');
 const DialogueOverlay = require('../dialogues/dialogue-overlay');
@@ -37,13 +36,11 @@ class PlayerApp {
 
     // Game logic
     this.flags = new FlagStore();
-    this.storylineManager = new StorylineManager(this.config);
-    this.storylineManager.events.on(
-      'storylineChanged',
+
+    this.questTracker = new QuestTracker(config, this.flags);
+    this.questTracker.events.on('storylineChanged',
       this.handleStorylineChanged.bind(this)
     );
-
-    this.questTracker = new QuestTracker(config, this.storylineManager, this.flags);
 
     this.pc = null;
     this.canControlPc = false;
@@ -254,7 +251,7 @@ class PlayerApp {
       this.updateTargetArrow();
     });
 
-    this.storylineManager.setCurrentStoryline('touristen');
+    this.questTracker.setActiveStoryline(this.config.storylines.touristen);
   }
 
   setGameServerController(gameServerController) {
@@ -462,7 +459,7 @@ class PlayerApp {
       }
     });
     if (closestNpc) {
-      this.playDialogue(this.questTracker.getDialogue(closestNpc.id), closestNpc);
+      this.playDialogue(this.questTracker.getNpcDialogue(closestNpc.id), closestNpc);
     }
     if (this.showHitbox) {
       this.pcView.showActionHitbox(hitbox);
@@ -554,9 +551,10 @@ class PlayerApp {
   }
 
   handleStorylineChanged() {
-    this.decisionLabelI18n.setText(this.storylineManager.getDecision());
+    const storyline = this.questTracker.activeStoryline;
+    this.decisionLabelI18n.setText(storyline.decision || '');
     this.clearNpcs();
-    Object.entries(this.storylineManager.getNpcs()).forEach(([id, props]) => {
+    Object.entries(storyline.npcs).forEach(([id, props]) => {
       this.addNpc(new Character(id, props));
     });
     this.updateNpcMoods();
@@ -572,7 +570,7 @@ class PlayerApp {
 
   handleStorylineEnd() {
     const [endingText, classes] = readEnding(
-      this.storylineManager.getEndingDialogue(),
+      this.questTracker.getEndingDialogue(),
       this.getDialogueContext()
     );
 

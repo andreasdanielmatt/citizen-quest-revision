@@ -109,3 +109,6 @@ dialogues:
     - text:
         en: "I can make 24 types of cake."
         es: "Puedo hacer 24 tipos de torta."
+ending:
+  dialogue:
+    - text: "The end."

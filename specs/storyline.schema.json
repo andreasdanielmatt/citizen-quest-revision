@@ -23,6 +23,7 @@
     }
   },
   "additionalProperties": false,
+  "required": ["decision", "prompt", "npcs", "quests", "ending"],
   "definitions": {
     "npcs": {
       "type": "object",

@@ -1,1 +1,6 @@
-{}
+decision: "..."
+prompt: "..."
+npcs: {}
+quests: {}
+ending:
+  dialogue: []

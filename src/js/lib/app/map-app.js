@@ -2,7 +2,6 @@
 
 require('../helpers-web/fill-with-aspect');
 const Stats = require('../helpers-web/stats/stats');
-const StorylineManager = require('../model/storyline-manager');
 const FlagStore = require('../dialogues/flag-store');
 const QuestTracker = require('../model/quest-tracker');
 const TownView = require('../views/town-view');
@@ -19,16 +18,13 @@ class MapApp {
 
     // Game logic
     this.flags = new FlagStore();
-    this.storylineManager = new StorylineManager(config);
-    this.storylineManager.events.on(
-      'storylineChanged',
-      this.handleStorylineChanged.bind(this)
-    );
-    window.setStoryline = this.storylineManager.setCurrentStoryline.bind(this.storylineManager);
 
-    this.questTracker = new QuestTracker(config, this.storylineManager, this.flags);
+    this.questTracker = new QuestTracker(config, this.flags);
     this.questMarkers = {};
 
+    this.questTracker.events.on('storylineChanged',
+      this.handleStorylineChanged.bind(this)
+    );
     this.questTracker.events.on('questActive', () => {
       this.updateQuestMarkers();
     });
@@ -88,7 +84,7 @@ class MapApp {
     });
 
     // Temporary
-    this.storylineManager.setCurrentStoryline('touristen');
+    this.questTracker.setActiveStoryline(this.config.storylines.touristen);
   }
 
   resize() {
@@ -97,8 +93,9 @@ class MapApp {
   }
 
   handleStorylineChanged() {
+    const storyline = this.questTracker.activeStoryline;
     this.clearNpcs();
-    Object.entries(this.storylineManager.getNpcs()).forEach(([id, props]) => {
+    Object.entries(storyline.npcs).forEach(([id, props]) => {
       this.addNpc(new Character(id, props));
     });
     this.updateQuestMarkers();

@@ -61,7 +61,7 @@ class QuestOverlay {
   }
 
   showStorylinePrompt() {
-    this.show(this.questTracker.storylineManager.getPrompt());
+    this.show(this.questTracker.activeStoryline.prompt);
   }
 
   showActiveQuestPrompt() {

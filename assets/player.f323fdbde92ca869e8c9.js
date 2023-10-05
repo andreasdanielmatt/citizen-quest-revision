@@ -39992,7 +39992,6 @@ const MultiplexInputMgr = __webpack_require__(/*! ../input/multiplex-input-mgr *
 const PlayerAppInputRouter = __webpack_require__(/*! ../input/player-app-input-router */ "./src/js/lib/input/player-app-input-router.js");
 const Character = __webpack_require__(/*! ../model/character */ "./src/js/lib/model/character.js");
 const FlagStore = __webpack_require__(/*! ../dialogues/flag-store */ "./src/js/lib/dialogues/flag-store.js");
-const StorylineManager = __webpack_require__(/*! ../model/storyline-manager */ "./src/js/lib/model/storyline-manager.js");
 const QuestTracker = __webpack_require__(/*! ../model/quest-tracker */ "./src/js/lib/model/quest-tracker.js");
 const QuestOverlay = __webpack_require__(/*! ../ui/quest-overlay */ "./src/js/lib/ui/quest-overlay.js");
 const DialogueOverlay = __webpack_require__(/*! ../dialogues/dialogue-overlay */ "./src/js/lib/dialogues/dialogue-overlay.js");
@@ -40017,13 +40016,11 @@ class PlayerApp {
 
     // Game logic
     this.flags = new FlagStore();
-    this.storylineManager = new StorylineManager(this.config);
-    this.storylineManager.events.on(
-      'storylineChanged',
+
+    this.questTracker = new QuestTracker(config, this.flags);
+    this.questTracker.events.on('storylineChanged',
       this.handleStorylineChanged.bind(this)
     );
-
-    this.questTracker = new QuestTracker(config, this.storylineManager, this.flags);
 
     this.pc = null;
     this.canControlPc = false;
@@ -40234,7 +40231,7 @@ class PlayerApp {
       this.updateTargetArrow();
     });
 
-    this.storylineManager.setCurrentStoryline('touristen');
+    this.questTracker.setActiveStoryline(this.config.storylines.touristen);
   }
 
   setGameServerController(gameServerController) {
@@ -40442,7 +40439,7 @@ class PlayerApp {
       }
     });
     if (closestNpc) {
-      this.playDialogue(this.questTracker.getDialogue(closestNpc.id), closestNpc);
+      this.playDialogue(this.questTracker.getNpcDialogue(closestNpc.id), closestNpc);
     }
     if (this.showHitbox) {
       this.pcView.showActionHitbox(hitbox);
@@ -40534,9 +40531,10 @@ class PlayerApp {
   }
 
   handleStorylineChanged() {
-    this.decisionLabelI18n.setText(this.storylineManager.getDecision());
+    const storyline = this.questTracker.activeStoryline;
+    this.decisionLabelI18n.setText(storyline.decision || '');
     this.clearNpcs();
-    Object.entries(this.storylineManager.getNpcs()).forEach(([id, props]) => {
+    Object.entries(storyline.npcs).forEach(([id, props]) => {
       this.addNpc(new Character(id, props));
     });
     this.updateNpcMoods();
@@ -40552,7 +40550,7 @@ class PlayerApp {
 
   handleStorylineEnd() {
     const [endingText, classes] = readEnding(
-      this.storylineManager.getEndingDialogue(),
+      this.questTracker.getEndingDialogue(),
       this.getDialogueContext()
     );
 
@@ -43652,30 +43650,44 @@ const safeBuildDialogueFromItems = __webpack_require__(/*! ../dialogues/dialogue
  */
 
 class QuestTracker {
-  constructor(config, storylineManager, flags) {
+  constructor(config, flags) {
     this.config = config;
     this.flags = flags;
-    this.storylineManager = storylineManager;
     this.events = new EventEmitter();
-    this.logicParser = new LogicParser({ flags });
 
-    this.flags.events.on('flag', this.handleFlagChange.bind(this));
-
+    this.activeStoryline = null;
     this.activeQuestId = null;
     this.activeStage = null;
-    this.stageCounter = null;
+    this.activeCounter = null;
+
+    this.logicParser = new LogicParser({ flags });
+    this.flags.events.on('flag', this.handleFlagChange.bind(this));
   }
 
+  /**
+   * Reset the state that tracks progress on the active storyline
+   */
   reset() {
     this.activeQuestId = null;
     this.activeStage = null;
-    this.stageCounter = null;
+    this.activeCounter = null;
+  }
+
+  /**
+   * Set the active storyline.
+   *
+   * @param {object} storyline
+   */
+  setActiveStoryline(storyline) {
+    this.activeStoryline = storyline;
+    this.reset();
+    this.events.emit('storylineChanged', storyline.id);
   }
 
   handleFlagChange(flag, value) {
     const flagParts = flag.split('.');
     if (flagParts.length === 3 && flagParts[0] === 'quest') {
-      if (this.storylineManager.hasQuest(flagParts[1])) {
+      if (this.activeStoryline?.quests?.[flagParts[1]] !== undefined) {
         if (flagParts[2] === 'active' && value === 1) {
           this.onQuestActive(flagParts[1]);
         } else if (flagParts[2] === 'done' && value === 1) {
@@ -43689,7 +43701,7 @@ class QuestTracker {
   }
 
   getAvailableQuests() {
-    return Object.keys(this.storylineManager.getAllQuests())
+    return Object.keys(this.activeStoryline.quests)
       .filter((id) => !this.questIsDone(id) && this.questRequirementsMet(id))
       .slice(0, this.config.game.maxActiveQuests || 3);
   }
@@ -43697,7 +43709,7 @@ class QuestTracker {
   getNpcsWithQuests() {
     const availableQuests = this.getAvailableQuests();
     return Object.fromEntries(
-      Object.entries(this.storylineManager.getAllQuests())
+      Object.entries(this.activeStoryline.quests)
         .filter(([id]) => availableQuests.includes(id))
         .map(([, props]) => [props.npc, props.mood])
     );
@@ -43708,9 +43720,8 @@ class QuestTracker {
   }
 
   questRequirementsMet(questId) {
-    const requiredQuests = this.storylineManager.getQuest(questId).required || null;
-    return !requiredQuests
-      || [requiredQuests].flat().every((id) => this.questIsDone(id));
+    const requiredQuests = this.activeStoryline?.quests?.[questId]?.required || [];
+    return [requiredQuests].flat().every((id) => this.questIsDone(id));
   }
 
   setActiveQuest(questId) {
@@ -43721,7 +43732,7 @@ class QuestTracker {
       }
       this.activeQuestId = questId;
       this.activeStage = null;
-      this.stageCounter = null;
+      this.activeCounter = null;
       if (questId) {
         this.events.emit('questActive', questId);
       } else {
@@ -43736,17 +43747,9 @@ class QuestTracker {
     if (stage !== this.activeStage) {
       const oldStage = this.activeStage;
       this.activeStage = stage;
-      this.stageCounter = null;
+      this.activeCounter = null;
       this.events.emit('stageChanged', this.activeQuestId, stage, oldStage);
       this.updateCounter();
-    }
-  }
-
-  setStageCounter(count) {
-    if (count !== this.stageCounter) {
-      const oldCount = this.stageCounter;
-      this.stageCounter = count;
-      this.events.emit('stageCountChanged', this.activeQuestId, count, oldCount);
     }
   }
 
@@ -43762,7 +43765,7 @@ class QuestTracker {
     if (this.activeQuestId === null || this.activeStage === null) {
       return null;
     }
-    return this.storylineManager.getQuest(this.activeQuestId).stages[this.activeStage].prompt;
+    return this.activeStoryline?.quests?.[this.activeQuestId]?.stages?.[this.activeStage]?.prompt || '';
   }
 
   getActiveStageCounter() {
@@ -43770,8 +43773,8 @@ class QuestTracker {
       return null;
     }
 
-    const stage = this.storylineManager.getQuest(this.activeQuestId).stages[this.activeStage];
-    return stage.counter || null;
+    return this.activeStoryline?.quests?.[this.activeQuestId]?.stages?.[this.activeStage]?.counter
+      || null;
   }
 
   getActiveStageTarget() {
@@ -43779,17 +43782,21 @@ class QuestTracker {
       return null;
     }
 
-    const stage = this.storylineManager.getQuest(this.activeQuestId).stages[this.activeStage];
-    return stage.target || null;
+    return this.activeStoryline?.quests?.[this.activeQuestId]?.stages?.[this.activeStage]?.target
+      || null;
   }
 
   updateStage() {
     if (!this.activeQuestId) {
       return;
     }
-    const newStage = this.storylineManager.getQuest(this.activeQuestId).stages
-      .findIndex((stage) => stage.cond === undefined || !!this.logicParser.evaluate(stage.cond));
 
+    const stages = this.activeStoryline?.quests?.[this.activeQuestId]?.stages || [];
+    const newStage = stages.findIndex(
+      (stage) => stage.cond === undefined || !!this.logicParser.evaluate(stage.cond)
+    );
+
+    // todo: Handle the case where no stages match
     this.setActiveStage(newStage);
   }
 
@@ -43797,40 +43804,46 @@ class QuestTracker {
     if (this.activeQuestId === null || this.activeStage === null) {
       return;
     }
-    const stage = this.storylineManager.getQuest(this.activeQuestId).stages[this.activeStage];
+    const stage = this.activeStoryline.quests[this.activeQuestId].stages[this.activeStage];
     if (stage.counter !== undefined) {
       const newCount = this.logicParser.evaluate(stage.counter.expression);
-      this.setStageCounter(newCount);
+      if (newCount !== this.activeCounter) {
+        const oldCount = this.activeCounter;
+        this.activeCounter = newCount;
+        this.events.emit('stageCountChanged', this.activeQuestId, newCount, oldCount);
+      }
     }
   }
 
-  getDialogueItems(npcId) {
+  getNpcDialogue(npcId) {
     // Concatenate, in order:
     // - dialogue items from the current stage
     // - dialogue items from the current quest
     // - dialogue items from all active quests
     // - dialogue items from the current storyline
 
-    const currentStoryline = this.storylineManager.getCurrentStoryline();
-    const currentQuest = this.storylineManager.getQuest(this.activeQuestId);
+    const currentQuest = this.activeStoryline?.quests?.[this.activeQuestId];
     const currentStage = currentQuest?.stages[this.activeStage];
-    const storylineDialogue = currentStoryline?.dialogues?.[npcId];
-    const npcDialogue = currentStoryline?.npcs?.[npcId]?.dialogue;
+    const storylineDialogue = this.activeStoryline?.dialogues?.[npcId];
+    const npcDialogue = this.activeStoryline?.npcs?.[npcId]?.dialogue;
     const stageDialogue = currentStage?.dialogues?.[npcId];
     const questDialogue = currentQuest?.dialogues?.[npcId];
-    return [
+    const dialogueItems = [
       ...(stageDialogue || []),
       ...(questDialogue || []),
       ...(this.getAvailableQuests()
-        .filter((id) => this.storylineManager.getQuest(id)?.npc === npcId)
-        .map((id) => this.storylineManager.getQuest(id)?.available?.dialogue || []).flat()),
+        .filter((id) => this.activeStoryline.quests[id]?.npc === npcId)
+        .map((id) => this.activeStoryline.quests[id]?.available?.dialogue || []).flat()),
       ...(npcDialogue || []),
       ...(storylineDialogue || []),
     ];
+
+    return safeBuildDialogueFromItems(npcId, dialogueItems);
   }
 
-  getDialogue(npcId) {
-    return safeBuildDialogueFromItems(npcId, this.getDialogueItems(npcId));
+  getEndingDialogue() {
+    const items = this.activeStoryline?.ending?.dialogue;
+    return safeBuildDialogueFromItems('ending', items);
   }
 
   onQuestActive(questId) {
@@ -43844,99 +43857,6 @@ class QuestTracker {
 }
 
 module.exports = QuestTracker;
-
-
-/***/ }),
-
-/***/ "./src/js/lib/model/storyline-manager.js":
-/*!***********************************************!*\
-  !*** ./src/js/lib/model/storyline-manager.js ***!
-  \***********************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
-const safeBuildDialogueFromItems = __webpack_require__(/*! ../dialogues/dialogue-safe-builder */ "./src/js/lib/dialogues/dialogue-safe-builder.js");
-
-class StorylineManager {
-  constructor(config) {
-    this.config = config;
-    this.events = new EventEmitter();
-    this.currentStorylineId = null;
-  }
-
-  setCurrentStoryline(id) {
-    if (this.currentStorylineId !== id) {
-      this.currentStorylineId = id;
-      this.events.emit('storylineChanged', id);
-    }
-  }
-
-  getAllStorylineIds() {
-    return Object.entries(this.config.storylines)
-      .filter(([, storyline]) => storyline.enabled !== false)
-      .map(([id]) => id);
-  }
-
-  getStoryline(id) {
-    return this.config.storylines[id] || null;
-  }
-
-  getCurrentStoryline() {
-    if (this.currentStorylineId === null) {
-      return null;
-    }
-
-    return this.getStoryline(this.currentStorylineId);
-  }
-
-  getPrompt() {
-    return this.getCurrentStoryline().prompt || null;
-  }
-
-  getDecision() {
-    const currentStoryline = this.getCurrentStoryline();
-    return currentStoryline ? currentStoryline.decision : null;
-  }
-
-  hasQuest(id) {
-    return !!this.getCurrentStoryline()?.quests?.[id];
-  }
-
-  getQuest(id) {
-    return this.getCurrentStoryline()?.quests?.[id] || null;
-  }
-
-  getAllQuests() {
-    const currentStoryline = this.getCurrentStoryline();
-    return currentStoryline ? currentStoryline.quests || {} : {};
-  }
-
-  getDialogue(id) {
-    const currentStoryline = this.getCurrentStoryline();
-    const items = currentStoryline ? currentStoryline.dialogues[id] : null;
-    if (!items) throw new Error(`No dialogue found with id ${id}`);
-    return safeBuildDialogueFromItems(id, items);
-  }
-
-  getNpcs() {
-    const currentStoryline = this.getCurrentStoryline();
-    return currentStoryline ? this.getCurrentStoryline().npcs || {} : {};
-  }
-
-  getEnding() {
-    return this.getCurrentStoryline()?.ending || null;
-  }
-
-  getEndingDialogue() {
-    const ending = this.getEnding();
-    if (!ending || !ending.dialogue) {
-      return null;
-    }
-    return safeBuildDialogueFromItems('ending', ending.dialogue);
-  }
-}
-
-module.exports = StorylineManager;
 
 
 /***/ }),
@@ -44824,7 +44744,7 @@ class QuestOverlay {
   }
 
   showStorylinePrompt() {
-    this.show(this.questTracker.storylineManager.getPrompt());
+    this.show(this.questTracker.activeStoryline.prompt);
   }
 
   showActiveQuestPrompt() {
@@ -46123,4 +46043,4 @@ const { PlayerAppStates } = __webpack_require__(/*! ./lib/app/player-app-states 
 
 /******/ })()
 ;
-//# sourceMappingURL=player.f06521f6bb9c09961015.js.map
+//# sourceMappingURL=player.f323fdbde92ca869e8c9.js.map

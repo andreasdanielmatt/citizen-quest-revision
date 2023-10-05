@@ -60,6 +60,9 @@ quests:
                 en: "Then it's decided!"
                 es: "¡Entonces está decidido!"
               set: ['quest.mayorIdea.done']
+ending:
+  dialogue:
+    - text: "The end."
 ```
 
 The top-level properties in a storyline are:
