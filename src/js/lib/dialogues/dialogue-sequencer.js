@@ -1,6 +1,6 @@
 const EventEmitter = require('events');
 const DialogueIterator = require('./dialogue-iterator');
-const { DialogueSequencerTextState } = require('./dialogue-sequencer-states');
+const DialogueSequencerTextState = require('./dialogue-sequencer-states/text-state');
 
 class DialogueSequencer {
   constructor(dialogueOverlay) {

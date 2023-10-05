@@ -38,11 +38,7 @@ class GuideArrow {
   }
 
   updateVisibility() {
-    if (this.active && this.visible) {
-      this.display.visible = true;
-    } else {
-      this.display.visible = false;
-    }
+    this.display.visible = this.active && this.visible;
   }
 
   /**

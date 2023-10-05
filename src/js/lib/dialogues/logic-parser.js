@@ -33,8 +33,8 @@ class LogicParser {
         '|': (a, b) => ((!!num(a()) || !!num(b())) ? 1 : 0),
       },
       PREFIX_OPS: {
-        '^': a => (!num(a()) ? 1 : 0),
-        COUNT: a => (this.prefixCount(str(a()))),
+        '^': (a) => (!num(a()) ? 1 : 0),
+        COUNT: (a) => (this.prefixCount(str(a()))),
       },
       AMBIGUOUS: {},
       PRECEDENCE: [['^', 'COUNT'], ['<', '>', '>=', '<='], ['=', '!='], ['&', '|']],

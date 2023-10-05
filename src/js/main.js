@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const yaml = require('js-yaml');
 const CfgReaderFetch = require('./lib/loader/cfg-reader-fetch');
 const CfgLoader = require('./lib/loader/cfg-loader');

@@ -87,7 +87,7 @@ class DialogueOverlay {
     this.lang = lang;
     this.topTitleI18n.setLang(lang);
     this.speechTopI18n.setLang(lang);
-    this.responseOptions.forEach(option => option.i18n.setLang(lang));
+    this.responseOptions.forEach((option) => option.i18n.setLang(lang));
   }
 
   hideSpeech() {

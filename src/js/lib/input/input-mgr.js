@@ -7,7 +7,14 @@ const EventEmitter = require('events');
  */
 
 /**
- * @typedef {{"up": boolean, "down": boolean, "left": boolean, "right": boolean, "action": boolean, "lang": boolean}} InputMgrState
+ * @typedef {{
+ *  "up": boolean,
+ *  "down": boolean,
+ *  "left": boolean,
+ *  "right": boolean,
+ *  "action": boolean,
+ *  "lang": boolean
+ *  }} InputMgrState
  */
 
 /**
@@ -61,7 +68,6 @@ class InputMgr {
    *
    * @type {InputMgrEventNames}
    */
-  static eventNames = ['up', 'down', 'left', 'right', 'action', 'lang'];
 
   constructor() {
     this.events = new EventEmitter();
@@ -138,6 +144,7 @@ class InputMgr {
    * @abstract
    * @protected
    */
+  // eslint-disable-next-line class-methods-use-this
   updateState() {
     throw new Error('Not implemented. Must be implemented by subclass!');
   }
@@ -165,5 +172,7 @@ class InputMgr {
     eventsToFire.forEach((n) => this.events.emit(n));
   }
 }
+
+InputMgr.eventNames = ['up', 'down', 'left', 'right', 'action', 'lang'];
 
 module.exports = InputMgr;

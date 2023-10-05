@@ -45,9 +45,11 @@ class DemoDrone {
       const dy = target.y - this.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
       if (distance > DemoDrone.MIN_SPEED * deltaMS) {
-        const targetSpeed = Math.max(DemoDrone.MIN_SPEED,
-          DemoDrone.MAX_SPEED * Math.min(1, distance / 400));
-        this.speed = this.speed + Math.sign(targetSpeed - this.speed) * 0.01;
+        const targetSpeed = Math.max(
+          DemoDrone.MIN_SPEED,
+          DemoDrone.MAX_SPEED * Math.min(1, distance / 400)
+        );
+        this.speed += Math.sign(targetSpeed - this.speed) * 0.01;
         this.x += (dx / distance) * this.speed * deltaMS;
         this.y += (dy / distance) * this.speed * deltaMS;
       } else {

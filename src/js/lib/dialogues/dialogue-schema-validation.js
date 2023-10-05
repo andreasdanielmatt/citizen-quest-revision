@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const Ajv = require('ajv');
 const schema = require('../../../../specs/dialogue.schema.json');
 

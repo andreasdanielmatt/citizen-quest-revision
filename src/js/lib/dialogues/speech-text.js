@@ -54,12 +54,12 @@ class SpeechText {
    * Private method to reveal a list of characters with a delay between each
    *
    * @private
-   * @param {Array} Array of characters with the following properties:
+   * @param {Array} list Array of characters with the following properties:
    * - span {HTMLElement} The span $element to be revealed
-   * - isSpace {Boolean} Whether or not the character is a space
+   * - isSpace {Boolean} Whether the character is a space
    * - delayAfter {Number} Delay after the character is revealed
    * - classes {Array} Array of classes to be added to the character
-   * - stop {Boolean} Whether or not to stop after the character
+   * - stop {Boolean} Whether to stop after the character
    */
   timedReveal(list) {
     const next = list.splice(0, 1)[0];

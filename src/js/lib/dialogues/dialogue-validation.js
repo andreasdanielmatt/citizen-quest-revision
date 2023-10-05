@@ -11,7 +11,7 @@ function checkDuplicateIds(dialogue) {
 }
 
 function checkInvalidReferences(dialogue) {
-  const validIds = new Set(dialogue.nodes.map(node => node.id));
+  const validIds = new Set(dialogue.nodes.map((node) => node.id));
   dialogue.nodes.forEach((node) => {
     if (node.then && !validIds.has(node.then)) {
       throw new Error(`Dialogue contains invalid reference: ${node.then} in node ${node.id}:${dialogue.root.id}`);

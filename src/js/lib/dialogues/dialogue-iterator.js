@@ -1,25 +1,4 @@
 const LogicParser = require('./logic-parser');
-const DialogueSchema = require('../../../../specs/dialogue.schema.json');
-
-/**
- * An interface for the context object passed to the dialogue iterator.
- * @interface
- */
-// eslint-disable-next-line no-unused-vars
-class DialogueIteratorContextInterface {
-  /**
-   * Returns a random number between 0 and max.
-   * @param {number} max
-   */
-  // eslint-disable-next-line no-unused-vars,class-methods-use-this
-  random(max) {
-    throw new Error('Not implemented');
-  }
-
-  /**
-   * @property {FlagStore} flags
-   */
-}
 
 /**
  * Iterates through a dialogue tree.
@@ -76,7 +55,7 @@ class DialogueIterator {
     }
 
     return this.activeNode.responses
-      .filter(response => !response.cond || !!this.conditionParser.evaluate(response.cond));
+      .filter((response) => !response.cond || !!this.conditionParser.evaluate(response.cond));
   }
 
   /**

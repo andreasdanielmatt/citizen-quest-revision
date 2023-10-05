@@ -24,7 +24,7 @@ function mergeTexts(texts, userOptions = {}) {
     prefix: '',
     suffix: '',
   };
-  const options = Object.assign({}, defaultOptions, userOptions);
+  const options = { ...defaultOptions, ...userOptions };
   let allStrings = true;
   texts.forEach((text) => {
     if (typeof text === 'object') {
@@ -36,7 +36,7 @@ function mergeTexts(texts, userOptions = {}) {
   });
 
   if (allStrings) {
-    return texts.map(t => `${options.prefix}${t}${options.suffix}`).join(options.separator);
+    return texts.map((t) => `${options.prefix}${t}${options.suffix}`).join(options.separator);
   }
 
   texts.forEach((text, i) => {

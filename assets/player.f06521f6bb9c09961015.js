@@ -39906,13 +39906,13 @@ class PlayerAppEndingState extends PlayerAppState {
 
   showWaitingToBeginScreen() {
     this.playerApp.showTextScreen(
-      this.playerApp.config.i18n.ui.waitingToBegin,
+      this.playerApp.config.i18n.ui.waitingToBegin
     );
   }
 
   showWaitingToEndScreen() {
     this.playerApp.showTextScreen(
-      this.playerApp.config.i18n.ui.waitingToEnd,
+      this.playerApp.config.i18n.ui.waitingToEnd
     );
   }
 
@@ -39980,7 +39980,7 @@ module.exports = {
 
 /* eslint-disable no-console */
 /* globals PIXI */
-const Stats = __webpack_require__(/*! ../helpers-web/stats */ "./src/js/lib/helpers-web/stats.js");
+const Stats = __webpack_require__(/*! ../helpers-web/stats/stats */ "./src/js/lib/helpers-web/stats/stats.js");
 const TownView = __webpack_require__(/*! ../views/town-view */ "./src/js/lib/views/town-view.js");
 __webpack_require__(/*! ../helpers-web/fill-with-aspect */ "./src/js/lib/helpers-web/fill-with-aspect.js");
 const PCView = __webpack_require__(/*! ../views/pc-view */ "./src/js/lib/views/pc-view.js");
@@ -40676,27 +40676,6 @@ module.exports = DialogueBalloon;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const LogicParser = __webpack_require__(/*! ./logic-parser */ "./src/js/lib/dialogues/logic-parser.js");
-const DialogueSchema = __webpack_require__(/*! ../../../../specs/dialogue.schema.json */ "./specs/dialogue.schema.json");
-
-/**
- * An interface for the context object passed to the dialogue iterator.
- * @interface
- */
-// eslint-disable-next-line no-unused-vars
-class DialogueIteratorContextInterface {
-  /**
-   * Returns a random number between 0 and max.
-   * @param {number} max
-   */
-  // eslint-disable-next-line no-unused-vars,class-methods-use-this
-  random(max) {
-    throw new Error('Not implemented');
-  }
-
-  /**
-   * @property {FlagStore} flags
-   */
-}
 
 /**
  * Iterates through a dialogue tree.
@@ -40753,7 +40732,7 @@ class DialogueIterator {
     }
 
     return this.activeNode.responses
-      .filter(response => !response.cond || !!this.conditionParser.evaluate(response.cond));
+      .filter((response) => !response.cond || !!this.conditionParser.evaluate(response.cond));
   }
 
   /**
@@ -41085,7 +41064,7 @@ class DialogueOverlay {
     this.lang = lang;
     this.topTitleI18n.setLang(lang);
     this.speechTopI18n.setLang(lang);
-    this.responseOptions.forEach(option => option.i18n.setLang(lang));
+    this.responseOptions.forEach((option) => option.i18n.setLang(lang));
   }
 
   hideSpeech() {
@@ -41140,6 +41119,7 @@ module.exports = DialogueOverlay;
   \*******************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+/* eslint-disable no-console */
 const Dialogue = __webpack_require__(/*! ./dialogue */ "./src/js/lib/dialogues/dialogue.js");
 
 function emptyDialogue(id) {
@@ -41185,6 +41165,7 @@ module.exports = safeBuildDialogueFromItems;
   \************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+/* eslint-disable no-console */
 const Ajv = __webpack_require__(/*! ajv */ "./node_modules/ajv/dist/ajv.js");
 const schema = __webpack_require__(/*! ../../../../specs/dialogue.schema.json */ "./specs/dialogue.schema.json");
 
@@ -41206,20 +41187,13 @@ module.exports = { validateDialogueDefinition };
 
 /***/ }),
 
-/***/ "./src/js/lib/dialogues/dialogue-sequencer-states.js":
-/*!***********************************************************!*\
-  !*** ./src/js/lib/dialogues/dialogue-sequencer-states.js ***!
-  \***********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ "./src/js/lib/dialogues/dialogue-sequencer-states/dialogue-sequencer-state.js":
+/*!************************************************************************************!*\
+  !*** ./src/js/lib/dialogues/dialogue-sequencer-states/dialogue-sequencer-state.js ***!
+  \************************************************************************************/
+/***/ ((module) => {
 
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "DialogueSequencerResponseState": () => (/* binding */ DialogueSequencerResponseState),
-/* harmony export */   "DialogueSequencerState": () => (/* binding */ DialogueSequencerState),
-/* harmony export */   "DialogueSequencerTextState": () => (/* binding */ DialogueSequencerTextState),
-/* harmony export */   "DialogueSequencerThenTextState": () => (/* binding */ DialogueSequencerThenTextState)
-/* harmony export */ });
+/* eslint-disable class-methods-use-this */
 class DialogueSequencerState {
   constructor(dialogueSequencer) {
     this.dialogueSequencer = dialogueSequencer;
@@ -41241,38 +41215,19 @@ class DialogueSequencerState {
   }
 }
 
-class DialogueSequencerThenTextState extends DialogueSequencerState {
-  constructor(dialogueSequencer, responseId) {
-    super(dialogueSequencer);
-    this.responseId = responseId;
-    this.handleSpeechComplete = this.handleSpeechComplete.bind(this);
-  }
+module.exports = DialogueSequencerState;
 
-  onBegin() {
-    this.speechDone = false;
-    const response = this.dialogueIterator.getResponse(this.responseId);
-    this.dialogueOverlay.showSpeech(response.thenText, response.thenClass || null);
-    this.dialogueOverlay.events.once('speechComplete', this.handleSpeechComplete);
-  }
 
-  handleSpeechComplete() {
-    this.speechDone = true;
-    this.dialogueOverlay.showPressToContinue();
-  }
+/***/ }),
 
-  onAction() {
-    if (this.speechDone) {
-      this.dialogueOverlay.hideSpeech();
-      this.dialogueSequencer.endUi(this.responseId);
-    } else {
-      this.dialogueOverlay.speedUpSpeech();
-    }
-  }
+/***/ "./src/js/lib/dialogues/dialogue-sequencer-states/response-state.js":
+/*!**************************************************************************!*\
+  !*** ./src/js/lib/dialogues/dialogue-sequencer-states/response-state.js ***!
+  \**************************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-  onEnd() {
-    this.dialogueOverlay.events.off('speechComplete', this.handleSpeechComplete);
-  }
-}
+const DialogueSequencerState = __webpack_require__(/*! ./dialogue-sequencer-state */ "./src/js/lib/dialogues/dialogue-sequencer-states/dialogue-sequencer-state.js");
+const DialogueSequencerThenTextState = __webpack_require__(/*! ./then-state */ "./src/js/lib/dialogues/dialogue-sequencer-states/then-state.js");
 
 class DialogueSequencerResponseState extends DialogueSequencerState {
   constructor(dialogueSequencer) {
@@ -41283,7 +41238,7 @@ class DialogueSequencerResponseState extends DialogueSequencerState {
   onBegin() {
     this.dialogueOverlay.showResponseOptions(
       Object.fromEntries(this.responses.map(
-        response => [response.id, [response.text, response.class || null]]
+        (response) => [response.id, [response.text, response.class || null]]
       ))
     );
   }
@@ -41303,8 +41258,21 @@ class DialogueSequencerResponseState extends DialogueSequencerState {
   }
 }
 
-class DialogueSequencerTextState extends DialogueSequencerState {
+module.exports = DialogueSequencerResponseState;
 
+
+/***/ }),
+
+/***/ "./src/js/lib/dialogues/dialogue-sequencer-states/text-state.js":
+/*!**********************************************************************!*\
+  !*** ./src/js/lib/dialogues/dialogue-sequencer-states/text-state.js ***!
+  \**********************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const DialogueSequencerState = __webpack_require__(/*! ./dialogue-sequencer-state */ "./src/js/lib/dialogues/dialogue-sequencer-states/dialogue-sequencer-state.js");
+const DialogueSequencerResponseState = __webpack_require__(/*! ./response-state */ "./src/js/lib/dialogues/dialogue-sequencer-states/response-state.js");
+
+class DialogueSequencerTextState extends DialogueSequencerState {
   constructor(dialogueSequencer) {
     super(dialogueSequencer);
     this.handleSpeechComplete = this.handleSpeechComplete.bind(this);
@@ -41342,6 +41310,54 @@ class DialogueSequencerTextState extends DialogueSequencerState {
   }
 }
 
+module.exports = DialogueSequencerTextState;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/dialogues/dialogue-sequencer-states/then-state.js":
+/*!**********************************************************************!*\
+  !*** ./src/js/lib/dialogues/dialogue-sequencer-states/then-state.js ***!
+  \**********************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const DialogueSequencerState = __webpack_require__(/*! ./dialogue-sequencer-state */ "./src/js/lib/dialogues/dialogue-sequencer-states/dialogue-sequencer-state.js");
+
+class DialogueSequencerThenTextState extends DialogueSequencerState {
+  constructor(dialogueSequencer, responseId) {
+    super(dialogueSequencer);
+    this.responseId = responseId;
+    this.handleSpeechComplete = this.handleSpeechComplete.bind(this);
+  }
+
+  onBegin() {
+    this.speechDone = false;
+    const response = this.dialogueIterator.getResponse(this.responseId);
+    this.dialogueOverlay.showSpeech(response.thenText, response.thenClass || null);
+    this.dialogueOverlay.events.once('speechComplete', this.handleSpeechComplete);
+  }
+
+  handleSpeechComplete() {
+    this.speechDone = true;
+    this.dialogueOverlay.showPressToContinue();
+  }
+
+  onAction() {
+    if (this.speechDone) {
+      this.dialogueOverlay.hideSpeech();
+      this.dialogueSequencer.endUi(this.responseId);
+    } else {
+      this.dialogueOverlay.speedUpSpeech();
+    }
+  }
+
+  onEnd() {
+    this.dialogueOverlay.events.off('speechComplete', this.handleSpeechComplete);
+  }
+}
+
+module.exports = DialogueSequencerThenTextState;
+
 
 /***/ }),
 
@@ -41353,7 +41369,7 @@ class DialogueSequencerTextState extends DialogueSequencerState {
 
 const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
 const DialogueIterator = __webpack_require__(/*! ./dialogue-iterator */ "./src/js/lib/dialogues/dialogue-iterator.js");
-const { DialogueSequencerTextState } = __webpack_require__(/*! ./dialogue-sequencer-states */ "./src/js/lib/dialogues/dialogue-sequencer-states.js");
+const DialogueSequencerTextState = __webpack_require__(/*! ./dialogue-sequencer-states/text-state */ "./src/js/lib/dialogues/dialogue-sequencer-states/text-state.js");
 
 class DialogueSequencer {
   constructor(dialogueOverlay) {
@@ -41662,8 +41678,8 @@ class LogicParser {
         '|': (a, b) => ((!!num(a()) || !!num(b())) ? 1 : 0),
       },
       PREFIX_OPS: {
-        '^': a => (!num(a()) ? 1 : 0),
-        COUNT: a => (this.prefixCount(str(a()))),
+        '^': (a) => (!num(a()) ? 1 : 0),
+        COUNT: (a) => (this.prefixCount(str(a()))),
       },
       AMBIGUOUS: {},
       PRECEDENCE: [['^', 'COUNT'], ['<', '>', '>=', '<='], ['=', '!='], ['&', '|']],
@@ -41790,12 +41806,12 @@ class SpeechText {
    * Private method to reveal a list of characters with a delay between each
    *
    * @private
-   * @param {Array} Array of characters with the following properties:
+   * @param {Array} list Array of characters with the following properties:
    * - span {HTMLElement} The span $element to be revealed
-   * - isSpace {Boolean} Whether or not the character is a space
+   * - isSpace {Boolean} Whether the character is a space
    * - delayAfter {Number} Delay after the character is revealed
    * - classes {Array} Array of classes to be added to the character
-   * - stop {Boolean} Whether or not to stop after the character
+   * - stop {Boolean} Whether to stop after the character
    */
   timedReveal(list) {
     const next = list.splice(0, 1)[0];
@@ -42278,10 +42294,10 @@ module.exports = Countdown;
 
 /***/ }),
 
-/***/ "./src/js/lib/helpers-web/stats.js":
-/*!*****************************************!*\
-  !*** ./src/js/lib/helpers-web/stats.js ***!
-  \*****************************************/
+/***/ "./src/js/lib/helpers-web/stats/panel.js":
+/*!***********************************************!*\
+  !*** ./src/js/lib/helpers-web/stats/panel.js ***!
+  \***********************************************/
 /***/ ((module) => {
 
 /**
@@ -42339,11 +42355,14 @@ class Panel {
     this.context.globalAlpha = 1;
     this.context.fillRect(0, 0, WIDTH, GRAPH_Y);
     this.context.fillStyle = this.fg;
-    this.context.fillText(`${Math.round(value)} ${this.name} (${Math.round(this.min)}-${Math.round(this.max)})`,
+    this.context.fillText(
+      `${Math.round(value)} ${this.name} (${Math.round(this.min)}-${Math.round(this.max)})`,
       TEXT_X,
-      TEXT_Y);
+      TEXT_Y
+    );
 
-    this.context.drawImage(this.canvas,
+    this.context.drawImage(
+      this.canvas,
       GRAPH_X + PR,
       GRAPH_Y,
       GRAPH_WIDTH - PR,
@@ -42351,17 +42370,40 @@ class Panel {
       GRAPH_X,
       GRAPH_Y,
       GRAPH_WIDTH - PR,
-      GRAPH_HEIGHT);
+      GRAPH_HEIGHT
+    );
 
     this.context.fillRect(GRAPH_X + GRAPH_WIDTH - PR, GRAPH_Y, PR, GRAPH_HEIGHT);
     this.context.fillStyle = this.bg;
     this.context.globalAlpha = 0.9;
-    this.context.fillRect(GRAPH_X + GRAPH_WIDTH - PR,
+    this.context.fillRect(
+      GRAPH_X + GRAPH_WIDTH - PR,
       GRAPH_Y,
       PR,
-      Math.round((1 - (value / maxValue)) * GRAPH_HEIGHT));
+      Math.round((1 - (value / maxValue)) * GRAPH_HEIGHT)
+    );
   }
 }
+
+module.exports = Panel;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/helpers-web/stats/stats.js":
+/*!***********************************************!*\
+  !*** ./src/js/lib/helpers-web/stats/stats.js ***!
+  \***********************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+/**
+ * Based on https://github.com/mrdoob/stats.js
+ * Copyright (c) 2009-2016 stats.js authors
+ * Licensed under the The MIT License
+ *
+ * adapted by Eric Londaits for IMAGINARY gGmbH (c) 2023
+ */
+const Panel = __webpack_require__(/*! ./panel */ "./src/js/lib/helpers-web/stats/panel.js");
 
 class Stats {
   constructor() {
@@ -42630,7 +42672,7 @@ function mergeTexts(texts, userOptions = {}) {
     prefix: '',
     suffix: '',
   };
-  const options = Object.assign({}, defaultOptions, userOptions);
+  const options = { ...defaultOptions, ...userOptions };
   let allStrings = true;
   texts.forEach((text) => {
     if (typeof text === 'object') {
@@ -42642,7 +42684,7 @@ function mergeTexts(texts, userOptions = {}) {
   });
 
   if (allStrings) {
-    return texts.map(t => `${options.prefix}${t}${options.suffix}`).join(options.separator);
+    return texts.map((t) => `${options.prefix}${t}${options.suffix}`).join(options.separator);
   }
 
   texts.forEach((text, i) => {
@@ -42753,22 +42795,142 @@ module.exports = { shuffleArray };
 
 /***/ }),
 
+/***/ "./src/js/lib/input/connections/dialogue-overlay.js":
+/*!**********************************************************!*\
+  !*** ./src/js/lib/input/connections/dialogue-overlay.js ***!
+  \**********************************************************/
+/***/ ((module) => {
+
+class DialogueOverlayConnection {
+  constructor(inputManager, dialogueOverlay, dialogueSequencer) {
+    this.inputManager = inputManager;
+    this.dialogueOverlay = dialogueOverlay;
+    this.dialogueSequencer = dialogueSequencer;
+
+    this.handleUp = this.handleUp.bind(this);
+    this.handleDown = this.handleDown.bind(this);
+    this.handleAction = this.handleAction.bind(this);
+  }
+
+  route() {
+    this.inputManager.events.on('down', this.handleDown);
+    this.inputManager.events.on('up', this.handleUp);
+    this.inputManager.events.on('action', this.handleAction);
+  }
+
+  unroute() {
+    this.inputManager.events.off('down', this.handleDown);
+    this.inputManager.events.off('up', this.handleUp);
+    this.inputManager.events.off('action', this.handleAction);
+  }
+
+  handleDown() {
+    this.dialogueOverlay.selectNextResponseOption();
+  }
+
+  handleUp() {
+    this.dialogueOverlay.selectPreviousResponseOption();
+  }
+
+  handleAction() {
+    this.dialogueSequencer.action();
+  }
+}
+
+module.exports = DialogueOverlayConnection;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/input/connections/menu.js":
+/*!**********************************************!*\
+  !*** ./src/js/lib/input/connections/menu.js ***!
+  \**********************************************/
+/***/ ((module) => {
+
+class MenuConnection {
+  constructor(inputManager, playerApp) {
+    this.inputManager = inputManager;
+    this.playerApp = playerApp;
+    this.handleAction = this.handleAction.bind(this);
+  }
+
+  route() {
+    this.inputManager.events.on('action', this.handleAction);
+  }
+
+  unroute() {
+    this.inputManager.events.off('action', this.handleAction);
+  }
+
+  handleAction() {
+    this.playerApp.menuAction();
+  }
+}
+
+module.exports = MenuConnection;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/input/connections/pc-movement.js":
+/*!*****************************************************!*\
+  !*** ./src/js/lib/input/connections/pc-movement.js ***!
+  \*****************************************************/
+/***/ ((module) => {
+
+class PcMovementConnection {
+  constructor(inputManager, playerApp) {
+    this.inputManager = inputManager;
+    this.playerApp = playerApp;
+    this.handleAction = this.handleAction.bind(this);
+  }
+
+  route() {
+    this.playerApp.enablePcControl();
+    this.inputManager.events.on('action', this.handleAction);
+  }
+
+  unroute() {
+    this.playerApp.disablePcControl();
+    this.inputManager.events.off('action', this.handleAction);
+  }
+
+  handleAction() {
+    this.playerApp.pcAction();
+  }
+}
+
+module.exports = PcMovementConnection;
+
+
+/***/ }),
+
 /***/ "./src/js/lib/input/gamepad-input-mgr.js":
 /*!***********************************************!*\
   !*** ./src/js/lib/input/gamepad-input-mgr.js ***!
   \***********************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+/* eslint-disable no-console */
 const deepmerge = __webpack_require__(/*! deepmerge */ "./node_modules/deepmerge/dist/cjs.js");
 
 const InputMgr = __webpack_require__(/*! ./input-mgr */ "./src/js/lib/input/input-mgr.js");
+const GamepadMapper = __webpack_require__(/*! ./gamepad-mapper */ "./src/js/lib/input/gamepad-mapper.js");
 
 /**
- * @typedef {horizontal: number, vertical: number, invertHorizontal: boolean, invertVertical: boolean} GamepadMapperAxesConfig
+ * @typedef {
+ *  horizontal: number,
+ *  vertical: number,
+ *  invertHorizontal: boolean,
+ *  invertVertical: boolean
+*  } GamepadMapperAxesConfig
  */
 
 /**
- * @typedef {{axes?:GamepadMapperAxesConfig,buttons?:{InputMgrEventNames:number}}} GamepadMapperConfig
+ * @typedef {
+ *  {axes?:GamepadMapperAxesConfig,buttons?:{InputMgrEventNames:number}}
+ * } GamepadMapperConfig
  */
 
 /**
@@ -42806,10 +42968,10 @@ class GamepadInputMgr extends InputMgr {
     super();
     console.log(
       mapperConfig,
-      deepmerge(standardMapperConfig, mapperConfig ?? {}),
+      deepmerge(standardMapperConfig, mapperConfig ?? {})
     );
     this.mapper = new GamepadMapper(
-      deepmerge(standardMapperConfig, mapperConfig ?? {}),
+      deepmerge(standardMapperConfig, mapperConfig ?? {})
     );
     this.gamepadIndex = -1;
     this.handleGamepadDisConnected = () => {
@@ -42865,6 +43027,19 @@ class GamepadInputMgr extends InputMgr {
   }
 }
 
+module.exports = GamepadInputMgr;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/input/gamepad-mapper.js":
+/*!********************************************!*\
+  !*** ./src/js/lib/input/gamepad-mapper.js ***!
+  \********************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const InputMgr = __webpack_require__(/*! ./input-mgr */ "./src/js/lib/input/input-mgr.js");
+
 /**
  * Maps gamepad and joystick input to events.
  *
@@ -42877,15 +43052,15 @@ class GamepadMapper {
    * Initilize the mapper with a configuration.
    *
    * @param {GamepadMapperConfig} config The configuration for mapping button pressed
-   *    and movement along axis to event names. If the same event name is mapped to an axis and a button, the axis takes
-   *    precedence.
+   *    and movement along axis to event names. If the same event name is mapped to an axis and a
+   *    button, the axis takes precedence.
    */
   constructor(config) {
     this.config = config;
 
     /**
-     * List of pairs of event name and corresponding function to grab the actual value from the gamepad while applying
-     * the mapping.
+     * List of pairs of event name and corresponding function to grab the actual value from the
+     * gamepad while applying the mapping.
      *
      * @private {[[string,(gamepad:Gamepad) => boolean]]}
      */
@@ -42908,19 +43083,17 @@ class GamepadMapper {
     const horizontalFactor = config.axes.invertHorizontal ? -1 : 1;
     const verticalFactor = config.axes.invertVertical ? -1 : 1;
     const axesDirectionMap = {
-      up: +config.axes['vertical'] * verticalFactor,
-      down: -config.axes['vertical'] * verticalFactor,
-      left: +config.axes['horizontal'] * horizontalFactor,
-      right: -config.axes['horizontal'] * horizontalFactor,
+      up: +config.axes.vertical * verticalFactor,
+      down: -config.axes.vertical * verticalFactor,
+      left: +config.axes.horizontal * horizontalFactor,
+      right: -config.axes.horizontal * horizontalFactor,
     };
-    const fromAxis =
-      typeof axesDirectionMap[key] !== 'undefined'
-        ? GamepadMapper.createGrabberForAxis(axesDirectionMap[key])
-        : () => false;
-    const fromButton =
-      typeof config?.buttons?.[key] !== 'undefined'
-        ? GamepadMapper.createGrabberForButton(config.buttons[key])
-        : () => false;
+    const fromAxis = typeof axesDirectionMap[key] !== 'undefined'
+      ? GamepadMapper.createGrabberForAxis(axesDirectionMap[key])
+      : () => false;
+    const fromButton = typeof config?.buttons?.[key] !== 'undefined'
+      ? GamepadMapper.createGrabberForButton(config.buttons[key])
+      : () => false;
     return (gamepad) => fromAxis(gamepad) || fromButton(gamepad);
   }
 
@@ -42929,7 +43102,8 @@ class GamepadMapper {
    *
    * TODO: Add support for a customizable axis threshold.
    *
-   * @param {number} signedIndex The index of the axis. Negative values are interpreted as the negative axis (including +0 and -0).
+   * @param {number} signedIndex The index of the axis. Negative values are interpreted as the
+   *  negative axis (including +0 and -0).
    * @returns {(gamepad:Gamepad) => boolean}
    */
   static createGrabberForAxis(signedIndex) {
@@ -42963,7 +43137,7 @@ class GamepadMapper {
   }
 }
 
-module.exports = GamepadInputMgr;
+module.exports = GamepadMapper;
 
 
 /***/ }),
@@ -42983,7 +43157,14 @@ const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/ev
  */
 
 /**
- * @typedef {{"up": boolean, "down": boolean, "left": boolean, "right": boolean, "action": boolean, "lang": boolean}} InputMgrState
+ * @typedef {{
+ *  "up": boolean,
+ *  "down": boolean,
+ *  "left": boolean,
+ *  "right": boolean,
+ *  "action": boolean,
+ *  "lang": boolean
+ *  }} InputMgrState
  */
 
 /**
@@ -43037,7 +43218,6 @@ class InputMgr {
    *
    * @type {InputMgrEventNames}
    */
-  static eventNames = ['up', 'down', 'left', 'right', 'action', 'lang'];
 
   constructor() {
     this.events = new EventEmitter();
@@ -43114,6 +43294,7 @@ class InputMgr {
    * @abstract
    * @protected
    */
+  // eslint-disable-next-line class-methods-use-this
   updateState() {
     throw new Error('Not implemented. Must be implemented by subclass!');
   }
@@ -43141,6 +43322,8 @@ class InputMgr {
     eventsToFire.forEach((n) => this.events.emit(n));
   }
 }
+
+InputMgr.eventNames = ['up', 'down', 'left', 'right', 'action', 'lang'];
 
 module.exports = InputMgr;
 
@@ -43175,7 +43358,8 @@ class KeyboardInputMgr extends InputMgr {
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
     /**
-     * The internal stateHandler is used to track keydown events and is pushed to the superclass stateHandler as a whole via
+     * The internal stateHandler is used to track keydown events and is pushed to the superclass
+     * stateHandler as a whole via
      * {@link updateState()}.
      */
     this.internalState = { ...this.state };
@@ -43283,7 +43467,7 @@ class MultiplexInputMgr extends InputMgr {
       .map((inputMgr) => inputMgr.getState())
       .reduce((acc, state) => {
         InputMgr.eventNames.forEach((eventName) => {
-          acc[eventName] ||= state[eventName];
+          acc[eventName] = acc[eventName] || state[eventName];
         });
         return acc;
       }, InputMgr.getInitialState());
@@ -43296,110 +43480,15 @@ module.exports = MultiplexInputMgr;
 
 /***/ }),
 
-/***/ "./src/js/lib/input/player-app-input-connections.js":
-/*!**********************************************************!*\
-  !*** ./src/js/lib/input/player-app-input-connections.js ***!
-  \**********************************************************/
-/***/ ((module) => {
-
-class DialogueOverlayConnection {
-  constructor(inputManager, dialogueOverlay, dialogueSequencer) {
-    this.inputManager = inputManager;
-    this.dialogueOverlay = dialogueOverlay;
-    this.dialogueSequencer = dialogueSequencer;
-
-    this.handleUp = this.handleUp.bind(this);
-    this.handleDown = this.handleDown.bind(this);
-    this.handleAction = this.handleAction.bind(this);
-  }
-
-  route() {
-    this.inputManager.events.on('down', this.handleDown);
-    this.inputManager.events.on('up', this.handleUp);
-    this.inputManager.events.on('action', this.handleAction);
-  }
-
-  unroute() {
-    this.inputManager.events.off('down', this.handleDown);
-    this.inputManager.events.off('up', this.handleUp);
-    this.inputManager.events.off('action', this.handleAction);
-  }
-
-  handleDown() {
-    this.dialogueOverlay.selectNextResponseOption();
-  }
-
-  handleUp() {
-    this.dialogueOverlay.selectPreviousResponseOption();
-  }
-
-  handleAction() {
-    this.dialogueSequencer.action();
-  }
-}
-
-class PcMovementConnection {
-  constructor(inputManager, playerApp) {
-    this.inputManager = inputManager;
-    this.playerApp = playerApp;
-    this.handleAction = this.handleAction.bind(this);
-  }
-
-  route() {
-    this.playerApp.enablePcControl();
-    this.inputManager.events.on('action', this.handleAction);
-  }
-
-  unroute() {
-    this.playerApp.disablePcControl();
-    this.inputManager.events.off('action', this.handleAction);
-  }
-
-  handleAction() {
-    this.playerApp.pcAction();
-  }
-}
-
-class MenuConnection {
-  constructor(inputManager, playerApp) {
-    this.inputManager = inputManager;
-    this.playerApp = playerApp;
-    this.handleAction = this.handleAction.bind(this);
-  }
-
-  route() {
-    this.inputManager.events.on('action', this.handleAction);
-  }
-
-  unroute() {
-    this.inputManager.events.off('action', this.handleAction);
-  }
-
-  handleAction() {
-    this.playerApp.menuAction();
-  }
-}
-
-module.exports = {
-  DialogueOverlayConnection,
-  PcMovementConnection,
-  MenuConnection,
-};
-
-
-/***/ }),
-
 /***/ "./src/js/lib/input/player-app-input-router.js":
 /*!*****************************************************!*\
   !*** ./src/js/lib/input/player-app-input-router.js ***!
   \*****************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const {
-  DialogueOverlayConnection,
-  PcMovementConnection,
-  MenuConnection,
-} = __webpack_require__(/*! ./player-app-input-connections */ "./src/js/lib/input/player-app-input-connections.js");
+const PcMovementConnection = __webpack_require__(/*! ./connections/pc-movement */ "./src/js/lib/input/connections/pc-movement.js");
+const DialogueOverlayConnection = __webpack_require__(/*! ./connections/dialogue-overlay */ "./src/js/lib/input/connections/dialogue-overlay.js");
+const MenuConnection = __webpack_require__(/*! ./connections/menu */ "./src/js/lib/input/connections/menu.js");
 
 class PlayerAppInputRouter {
   constructor(inputManager) {
@@ -43424,7 +43513,9 @@ class PlayerAppInputRouter {
   }
 
   routeToDialogueOverlay(dialogueOverlay, dialogueSequencer) {
-    this.setConnection(new DialogueOverlayConnection(this.inputManager, dialogueOverlay, dialogueSequencer));
+    this.setConnection(
+      new DialogueOverlayConnection(this.inputManager, dialogueOverlay, dialogueSequencer)
+    );
   }
 
   routeToMenus(playerApp) {
@@ -43868,6 +43959,7 @@ class ConnectionStateView {
       .addClass('connection-state-view');
 
     this.$icon = $('<img>')
+      .attr('alt', '')
       .attr('src', icon)
       .addClass('connection-state-view-icon')
       .appendTo(this.$element);
@@ -43956,37 +44048,15 @@ module.exports = ConnectionStateView;
 
 /***/ }),
 
-/***/ "./src/js/lib/net/server-socket-connector.js":
-/*!***************************************************!*\
-  !*** ./src/js/lib/net/server-socket-connector.js ***!
-  \***************************************************/
+/***/ "./src/js/lib/net/server-socket-connector-states/closing.js":
+/*!******************************************************************!*\
+  !*** ./src/js/lib/net/server-socket-connector-states/closing.js ***!
+  \******************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 /* eslint-disable no-console */
-const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
-
-const CONNECT_TIMEOUT = 1000 * 30;
-const PING_TIME = 1000 * 10;
-const PONG_WAIT_TIME = 1000 * 10;
-const CLOSE_TIMEOUT = 1000 * 15;
-const RECONNECT_TIME = 1000 * 5;
-
-class ServeSocketConnectorState {
-  constructor(connector) {
-    this.connector = connector;
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  onEnter() { }
-
-  // eslint-disable-next-line class-methods-use-this
-  onExit() { }
-
-  onMessage(event) {
-    const className = this.constructor.name;
-    console.error(`Unhandled message in ${className}:`, event.data);
-  }
-}
+const ServeSocketConnectorState = __webpack_require__(/*! ./server-socket-connector-state */ "./src/js/lib/net/server-socket-connector-states/server-socket-connector-state.js");
+const { CLOSE_TIMEOUT } = __webpack_require__(/*! ../server-socket-connector */ "./src/js/lib/net/server-socket-connector.js");
 
 class ClosingState extends ServeSocketConnectorState {
   constructor(connector) {
@@ -44008,25 +44078,20 @@ class ClosingState extends ServeSocketConnectorState {
   }
 }
 
-class ReconnectDelayState extends ServeSocketConnectorState {
-  constructor(connector) {
-    super(connector);
+module.exports = ClosingState;
 
-    this.timeout = null;
-  }
 
-  onEnter() {
-    this.connector.events.emit('connectWait');
-    console.log(`Reconnecting in ${RECONNECT_TIME / 1000} seconds...`);
-    this.timeout = setTimeout(() => {
-      this.connector.connect();
-    }, RECONNECT_TIME);
-  }
+/***/ }),
 
-  onExit() {
-    clearTimeout(this.reconnectTimeout);
-  }
-}
+/***/ "./src/js/lib/net/server-socket-connector-states/connecting.js":
+/*!*********************************************************************!*\
+  !*** ./src/js/lib/net/server-socket-connector-states/connecting.js ***!
+  \*********************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+/* eslint-disable no-console */
+const ServeSocketConnectorState = __webpack_require__(/*! ./server-socket-connector-state */ "./src/js/lib/net/server-socket-connector-states/server-socket-connector-state.js");
+const { CONNECT_TIMEOUT } = __webpack_require__(/*! ../server-socket-connector */ "./src/js/lib/net/server-socket-connector.js");
 
 class ConnectingState extends ServeSocketConnectorState {
   constructor(connector) {
@@ -44046,6 +44111,21 @@ class ConnectingState extends ServeSocketConnectorState {
     clearTimeout(this.connectTimeout);
   }
 }
+
+module.exports = ConnectingState;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/net/server-socket-connector-states/open.js":
+/*!***************************************************************!*\
+  !*** ./src/js/lib/net/server-socket-connector-states/open.js ***!
+  \***************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+/* eslint-disable no-console */
+const ServeSocketConnectorState = __webpack_require__(/*! ./server-socket-connector-state */ "./src/js/lib/net/server-socket-connector-states/server-socket-connector-state.js");
+const { PING_TIME, PONG_WAIT_TIME } = __webpack_require__(/*! ../server-socket-connector */ "./src/js/lib/net/server-socket-connector.js");
 
 class OpenState extends ServeSocketConnectorState {
   constructor(connector) {
@@ -44146,6 +44226,87 @@ class OpenState extends ServeSocketConnectorState {
     this.connector.onServerId(message.serverID);
   }
 }
+
+module.exports = OpenState;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/net/server-socket-connector-states/reconnect-delay.js":
+/*!**************************************************************************!*\
+  !*** ./src/js/lib/net/server-socket-connector-states/reconnect-delay.js ***!
+  \**************************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const ServeSocketConnectorState = __webpack_require__(/*! ./server-socket-connector-state */ "./src/js/lib/net/server-socket-connector-states/server-socket-connector-state.js");
+const { RECONNECT_TIME } = __webpack_require__(/*! ../server-socket-connector */ "./src/js/lib/net/server-socket-connector.js");
+
+class ReconnectDelayState extends ServeSocketConnectorState {
+  constructor(connector) {
+    super(connector);
+
+    this.timeout = null;
+  }
+
+  onEnter() {
+    this.connector.events.emit('connectWait');
+    console.log(`Reconnecting in ${RECONNECT_TIME / 1000} seconds...`);
+    this.timeout = setTimeout(() => {
+      this.connector.connect();
+    }, RECONNECT_TIME);
+  }
+
+  onExit() {
+    clearTimeout(this.reconnectTimeout);
+  }
+}
+
+module.exports = ReconnectDelayState;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/net/server-socket-connector-states/server-socket-connector-state.js":
+/*!****************************************************************************************!*\
+  !*** ./src/js/lib/net/server-socket-connector-states/server-socket-connector-state.js ***!
+  \****************************************************************************************/
+/***/ ((module) => {
+
+/* eslint-disable no-console */
+class ServeSocketConnectorState {
+  constructor(connector) {
+    this.connector = connector;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  onEnter() { }
+
+  // eslint-disable-next-line class-methods-use-this
+  onExit() { }
+
+  onMessage(event) {
+    const className = this.constructor.name;
+    console.error(`Unhandled message in ${className}:`, event.data);
+  }
+}
+
+module.exports = ServeSocketConnectorState;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/net/server-socket-connector.js":
+/*!***************************************************!*\
+  !*** ./src/js/lib/net/server-socket-connector.js ***!
+  \***************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+/* eslint-disable no-console */
+const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
+const ConnectingState = __webpack_require__(/*! ./server-socket-connector-states/connecting */ "./src/js/lib/net/server-socket-connector-states/connecting.js");
+const ClosingState = __webpack_require__(/*! ./server-socket-connector-states/closing */ "./src/js/lib/net/server-socket-connector-states/closing.js");
+const ReconnectDelayState = __webpack_require__(/*! ./server-socket-connector-states/reconnect-delay */ "./src/js/lib/net/server-socket-connector-states/reconnect-delay.js");
+const OpenState = __webpack_require__(/*! ./server-socket-connector-states/open */ "./src/js/lib/net/server-socket-connector-states/open.js");
 
 class ServerSocketConnector {
   constructor(uri) {
@@ -44329,6 +44490,12 @@ class ServerSocketConnector {
   }
 }
 
+ServerSocketConnector.CONNECT_TIMEOUT = 1000 * 30;
+ServerSocketConnector.PING_TIME = 1000 * 10;
+ServerSocketConnector.PONG_WAIT_TIME = 1000 * 10;
+ServerSocketConnector.CLOSE_TIMEOUT = 1000 * 15;
+ServerSocketConnector.RECONNECT_TIME = 1000 * 5;
+
 module.exports = ServerSocketConnector;
 
 
@@ -44447,12 +44614,11 @@ class DecisionScreen {
       .addClass('text')
       .appendTo(this.$continue);
 
-
-    this.continueI18n = new I18nTextAdapter((text) => {
-      this.$continueText.text(text);
-    },
-    this.lang,
-    this.config.i18n.ui.pressToContinue);
+    this.continueI18n = new I18nTextAdapter(
+      (text) => { this.$continueText.text(text); },
+      this.lang,
+      this.config.i18n.ui.pressToContinue
+    );
   }
 
   showDecision(endingText, classes) {
@@ -45052,9 +45218,11 @@ class DemoDrone {
       const dy = target.y - this.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
       if (distance > DemoDrone.MIN_SPEED * deltaMS) {
-        const targetSpeed = Math.max(DemoDrone.MIN_SPEED,
-          DemoDrone.MAX_SPEED * Math.min(1, distance / 400));
-        this.speed = this.speed + Math.sign(targetSpeed - this.speed) * 0.01;
+        const targetSpeed = Math.max(
+          DemoDrone.MIN_SPEED,
+          DemoDrone.MAX_SPEED * Math.min(1, distance / 400)
+        );
+        this.speed += Math.sign(targetSpeed - this.speed) * 0.01;
         this.x += (dx / distance) * this.speed * deltaMS;
         this.y += (dy / distance) * this.speed * deltaMS;
       } else {
@@ -45119,11 +45287,7 @@ class GuideArrow {
   }
 
   updateVisibility() {
-    if (this.active && this.visible) {
-      this.display.visible = true;
-    } else {
-      this.display.visible = false;
-    }
+    this.display.visible = this.active && this.visible;
   }
 
   /**
@@ -45312,6 +45476,7 @@ class PCView extends CharacterView {
     return display;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   createPositionMarker() {
     const display = new PIXI.Graphics();
     // Do a simple square
@@ -45326,7 +45491,6 @@ class PCView extends CharacterView {
 
   updateSprite(oldX, oldY, newX, newY) {
     let newDirection = this.direction;
-    let newIsWalking;
 
     if (newX > oldX) {
       newDirection = 'e';
@@ -45338,11 +45502,7 @@ class PCView extends CharacterView {
       newDirection = 'n';
     }
 
-    if (oldX !== newX || oldY !== newY) {
-      newIsWalking = true;
-    } else {
-      newIsWalking = false;
-    }
+    const newIsWalking = oldX !== newX || oldY !== newY;
 
     if (newDirection !== this.direction || newIsWalking !== this.isWalking) {
       const action = newIsWalking ? 'w' : 's';
@@ -45570,12 +45730,12 @@ class TargetArrow {
         -this.characterView.display.height * 1.2,
         -this.characterView.display.height * 1.35,
       ];
-    } else {
-      return [
-        -this.characterView.display.height,
-        -this.characterView.display.height * 1.15,
-      ];
     }
+
+    return [
+      -this.characterView.display.height,
+      -this.characterView.display.height * 1.15,
+    ];
   }
 }
 
@@ -45841,6 +46001,7 @@ var __webpack_exports__ = {};
 /*!**************************!*\
   !*** ./src/js/player.js ***!
   \**************************/
+/* eslint-disable no-console */
 const ServerSocketConnector = __webpack_require__(/*! ./lib/net/server-socket-connector */ "./src/js/lib/net/server-socket-connector.js");
 const ConnectionStateView = __webpack_require__(/*! ./lib/net/connection-state-view */ "./src/js/lib/net/connection-state-view.js");
 const showFatalError = __webpack_require__(/*! ./lib/loader/show-fatal-error */ "./src/js/lib/loader/show-fatal-error.js");
@@ -45962,4 +46123,4 @@ const { PlayerAppStates } = __webpack_require__(/*! ./lib/app/player-app-states 
 
 /******/ })()
 ;
-//# sourceMappingURL=player.027f9d6779dfb202b338.js.map
+//# sourceMappingURL=player.f06521f6bb9c09961015.js.map

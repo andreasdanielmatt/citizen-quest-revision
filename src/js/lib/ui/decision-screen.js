@@ -61,12 +61,11 @@ class DecisionScreen {
       .addClass('text')
       .appendTo(this.$continue);
 
-
-    this.continueI18n = new I18nTextAdapter((text) => {
-      this.$continueText.text(text);
-    },
-    this.lang,
-    this.config.i18n.ui.pressToContinue);
+    this.continueI18n = new I18nTextAdapter(
+      (text) => { this.$continueText.text(text); },
+      this.lang,
+      this.config.i18n.ui.pressToContinue
+    );
   }
 
   showDecision(endingText, classes) {

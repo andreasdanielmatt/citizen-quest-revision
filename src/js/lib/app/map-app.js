@@ -1,7 +1,7 @@
 /* globals PIXI */
 
 require('../helpers-web/fill-with-aspect');
-const Stats = require('../helpers-web/stats');
+const Stats = require('../helpers-web/stats/stats');
 const StorylineManager = require('../model/storyline-manager');
 const FlagStore = require('../dialogues/flag-store');
 const QuestTracker = require('../model/quest-tracker');

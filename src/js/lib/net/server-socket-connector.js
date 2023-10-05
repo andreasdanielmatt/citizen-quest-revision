@@ -1,187 +1,9 @@
 /* eslint-disable no-console */
 const EventEmitter = require('events');
-
-const CONNECT_TIMEOUT = 1000 * 30;
-const PING_TIME = 1000 * 10;
-const PONG_WAIT_TIME = 1000 * 10;
-const CLOSE_TIMEOUT = 1000 * 15;
-const RECONNECT_TIME = 1000 * 5;
-
-class ServeSocketConnectorState {
-  constructor(connector) {
-    this.connector = connector;
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  onEnter() { }
-
-  // eslint-disable-next-line class-methods-use-this
-  onExit() { }
-
-  onMessage(event) {
-    const className = this.constructor.name;
-    console.error(`Unhandled message in ${className}:`, event.data);
-  }
-}
-
-class ClosingState extends ServeSocketConnectorState {
-  constructor(connector) {
-    super(connector);
-
-    this.timeout = null;
-  }
-
-  onEnter() {
-    // The attempt to close the socket cleanly timed out, so we're going to force it closed.
-    this.timeout = setTimeout(() => {
-      console.log('Closing timed out, forcing close.');
-      this.connector.onClose();
-    }, CLOSE_TIMEOUT);
-  }
-
-  onExit() {
-    clearTimeout(this.timeout);
-  }
-}
-
-class ReconnectDelayState extends ServeSocketConnectorState {
-  constructor(connector) {
-    super(connector);
-
-    this.timeout = null;
-  }
-
-  onEnter() {
-    this.connector.events.emit('connectWait');
-    console.log(`Reconnecting in ${RECONNECT_TIME / 1000} seconds...`);
-    this.timeout = setTimeout(() => {
-      this.connector.connect();
-    }, RECONNECT_TIME);
-  }
-
-  onExit() {
-    clearTimeout(this.reconnectTimeout);
-  }
-}
-
-class ConnectingState extends ServeSocketConnectorState {
-  constructor(connector) {
-    super(connector);
-
-    this.connectTimeout = null;
-  }
-
-  onEnter() {
-    this.connectTimeout = setTimeout(() => {
-      console.log('Connecting timed out, reconnecting...');
-      this.connector.connect();
-    }, CONNECT_TIMEOUT);
-  }
-
-  onExit() {
-    clearTimeout(this.connectTimeout);
-  }
-}
-
-class OpenState extends ServeSocketConnectorState {
-  constructor(connector) {
-    super(connector);
-
-    this.pingTimeout = null;
-    this.pongTimeout = null;
-    this.serverInfoTimeout = null;
-  }
-
-  onEnter() {
-    this.schedulePing();
-    this.scheduleServerInfoTimeout();
-  }
-
-  onExit() {
-    clearTimeout(this.pingTimeout);
-    clearTimeout(this.pongTimeout);
-    clearTimeout(this.serverInfoTimeout);
-  }
-
-  schedulePing() {
-    this.cancelPing();
-    this.pingTimeout = setTimeout(() => {
-      this.pingTimeout = null;
-      this.ping();
-    }, PING_TIME);
-  }
-
-  cancelPing() {
-    if (this.pingTimeout !== null) {
-      clearTimeout(this.pingTimeout);
-      this.pingTimeout = null;
-    }
-  }
-
-  ping() {
-    this.connector.send('ping');
-    this.startPongTimeout();
-  }
-
-  startPongTimeout() {
-    this.cancelPongTimeout();
-    this.pongTimeout = setTimeout(() => {
-      this.pongTimeout = null;
-      console.warn(`PONG not received after ${PONG_WAIT_TIME / 1000} seconds`);
-      console.warn('Resetting connection.');
-      this.connector.close();
-    }, PONG_WAIT_TIME);
-  }
-
-  cancelPongTimeout() {
-    if (this.pongTimeout !== null) {
-      clearTimeout(this.pongTimeout);
-      this.pongTimeout = null;
-    }
-  }
-
-  scheduleServerInfoTimeout() {
-    this.cancelServerInfoTimeout();
-    this.serverInfoTimeout = setTimeout(() => {
-      this.serverInfoTimeout = null;
-      console.warn(`No serverInfo received after ${PONG_WAIT_TIME / 1000} seconds`);
-      console.warn('Resetting connection');
-      this.connector.close();
-    }, PONG_WAIT_TIME);
-  }
-
-  cancelServerInfoTimeout() {
-    if (this.serverInfoTimeout !== null) {
-      clearTimeout(this.serverInfoTimeout);
-      this.serverInfoTimeout = null;
-    }
-  }
-
-  onMessage(event) {
-    const message = JSON.parse(event.data);
-    if (message.type === 'sync') {
-      this.handleSync(message);
-    } else if (message.type === 'pong') {
-      this.handlePong();
-    } else if (message.type === 'serverInfo') {
-      this.handleServerInfo(message);
-    }
-  }
-
-  handleSync(message) {
-    this.connector.onSync(message);
-  }
-
-  handlePong() {
-    this.cancelPongTimeout();
-    this.schedulePing();
-  }
-
-  handleServerInfo(message) {
-    this.cancelServerInfoTimeout();
-    this.connector.onServerId(message.serverID);
-  }
-}
+const ConnectingState = require('./server-socket-connector-states/connecting');
+const ClosingState = require('./server-socket-connector-states/closing');
+const ReconnectDelayState = require('./server-socket-connector-states/reconnect-delay');
+const OpenState = require('./server-socket-connector-states/open');
 
 class ServerSocketConnector {
   constructor(uri) {
@@ -364,5 +186,11 @@ class ServerSocketConnector {
     console.warn('WebSocket error:', event);
   }
 }
+
+ServerSocketConnector.CONNECT_TIMEOUT = 1000 * 30;
+ServerSocketConnector.PING_TIME = 1000 * 10;
+ServerSocketConnector.PONG_WAIT_TIME = 1000 * 10;
+ServerSocketConnector.CLOSE_TIMEOUT = 1000 * 15;
+ServerSocketConnector.RECONNECT_TIME = 1000 * 5;
 
 module.exports = ServerSocketConnector;

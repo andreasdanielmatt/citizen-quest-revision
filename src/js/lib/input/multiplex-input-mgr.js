@@ -40,7 +40,7 @@ class MultiplexInputMgr extends InputMgr {
       .map((inputMgr) => inputMgr.getState())
       .reduce((acc, state) => {
         InputMgr.eventNames.forEach((eventName) => {
-          acc[eventName] ||= state[eventName];
+          acc[eventName] = acc[eventName] || state[eventName];
         });
         return acc;
       }, InputMgr.getInitialState());

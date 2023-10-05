@@ -62,12 +62,12 @@ class TargetArrow {
         -this.characterView.display.height * 1.2,
         -this.characterView.display.height * 1.35,
       ];
-    } else {
-      return [
-        -this.characterView.display.height,
-        -this.characterView.display.height * 1.15,
-      ];
     }
+
+    return [
+      -this.characterView.display.height,
+      -this.characterView.display.height * 1.15,
+    ];
   }
 }
 

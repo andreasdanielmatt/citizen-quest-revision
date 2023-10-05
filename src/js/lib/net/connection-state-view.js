@@ -10,6 +10,7 @@ class ConnectionStateView {
       .addClass('connection-state-view');
 
     this.$icon = $('<img>')
+      .attr('alt', '')
       .attr('src', icon)
       .addClass('connection-state-view-icon')
       .appendTo(this.$element);

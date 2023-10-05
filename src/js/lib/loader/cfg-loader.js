@@ -15,7 +15,7 @@ class CfgLoader {
     files.forEach((file, i) => {
       promises.push(
         this.reader(file)
-          .then(cfgText => this.parser(cfgText))
+          .then((cfgText) => this.parser(cfgText))
           .then((cfgSegment) => {
             // We keep the segments in order
             segments[i] = cfgSegment;
@@ -26,7 +26,8 @@ class CfgLoader {
       );
     });
 
-    return Promise.all(promises).then(() => deepmerge.all(segments.filter(s => s), { arrayMerge: overwriteMerge }));
+    return Promise.all(promises)
+      .then(() => deepmerge.all(segments.filter((s) => s), { arrayMerge: overwriteMerge }));
   }
 }
 

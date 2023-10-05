@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const Dialogue = require('../dialogues/dialogue');
 const helloWorldDialogue = require(
   '../../../../test/fixtures/dialogues/core/hello-world.dialogue.json');

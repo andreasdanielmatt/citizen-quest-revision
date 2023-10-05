@@ -28,21 +28,21 @@ function checkCyclesInDialogue(dialogue) {
     }
     if (node.then === undefined && node.parent && node.parent.type === 'sequence') {
       // Find the next sibling node
-      const nextSiblingIndex = node.parent.items.findIndex(item => item.id === node.id) + 1;
+      const nextSiblingIndex = node.parent.items.findIndex((item) => item.id === node.id) + 1;
       if (nextSiblingIndex < node.parent.items.length) {
         connectedNodes.push(node.parent.items[nextSiblingIndex].id);
       }
     }
 
-    graph.set(index, connectedNodes.map(id => ids[id]));
+    graph.set(index, connectedNodes.map((id) => ids[id]));
   });
 
   // Find cycles in the graph
   const startNodes = new Set([0]);
-  const getConnectedNodes = (index => graph.get(index));
+  const getConnectedNodes = ((index) => graph.get(index));
   const cycle = findCycle(startNodes, getConnectedNodes);
   if (cycle && cycle.length > 0) {
-    throw new Error(`Dialogue contains a cycle: ${cycle.map(index => dialogue.nodes[index].id).join(' -> ')}`);
+    throw new Error(`Dialogue contains a cycle: ${cycle.map((index) => dialogue.nodes[index].id).join(' -> ')}`);
   }
 }
 

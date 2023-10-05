@@ -42,6 +42,7 @@ class PCView extends CharacterView {
     return display;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   createPositionMarker() {
     const display = new PIXI.Graphics();
     // Do a simple square
@@ -56,7 +57,6 @@ class PCView extends CharacterView {
 
   updateSprite(oldX, oldY, newX, newY) {
     let newDirection = this.direction;
-    let newIsWalking;
 
     if (newX > oldX) {
       newDirection = 'e';
@@ -68,11 +68,7 @@ class PCView extends CharacterView {
       newDirection = 'n';
     }
 
-    if (oldX !== newX || oldY !== newY) {
-      newIsWalking = true;
-    } else {
-      newIsWalking = false;
-    }
+    const newIsWalking = oldX !== newX || oldY !== newY;
 
     if (newDirection !== this.direction || newIsWalking !== this.isWalking) {
       const action = newIsWalking ? 'w' : 's';

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const ServerSocketConnector = require('./lib/net/server-socket-connector');
 const ConnectionStateView = require('./lib/net/connection-state-view');
 const showFatalError = require('./lib/loader/show-fatal-error');

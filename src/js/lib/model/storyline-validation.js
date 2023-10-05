@@ -174,7 +174,9 @@ function validateStorylineUsingSchema(storylineDefinition) {
   }
   const valid = validateStorylineUsingSchema.validate(storylineDefinition);
   if (!valid) {
-    throw new Error(`Error validating storyline: ${validateStorylineUsingSchema.validate.errors.map(e => `- ${e.instancePath}: ${e.message}`).join('\n')}`);
+    const errors = validateStorylineUsingSchema.validate.errors
+      .map((e) => `- ${e.instancePath}: ${e.message}`).join('\n');
+    throw new Error(`Error validating storyline: ${errors}`);
   }
   return true;
 }
@@ -194,6 +196,5 @@ function validateStoryline(storyline) {
 }
 
 module.exports = {
-  validateStorylineUsingSchema,
   validateStoryline,
 };

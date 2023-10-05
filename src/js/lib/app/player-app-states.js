@@ -86,13 +86,13 @@ class PlayerAppEndingState extends PlayerAppState {
 
   showWaitingToBeginScreen() {
     this.playerApp.showTextScreen(
-      this.playerApp.config.i18n.ui.waitingToBegin,
+      this.playerApp.config.i18n.ui.waitingToBegin
     );
   }
 
   showWaitingToEndScreen() {
     this.playerApp.showTextScreen(
-      this.playerApp.config.i18n.ui.waitingToEnd,
+      this.playerApp.config.i18n.ui.waitingToEnd
     );
   }
 

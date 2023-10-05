@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 /* globals PIXI */
-const Stats = require('../helpers-web/stats');
+const Stats = require('../helpers-web/stats/stats');
 const TownView = require('../views/town-view');
 require('../helpers-web/fill-with-aspect');
 const PCView = require('../views/pc-view');
