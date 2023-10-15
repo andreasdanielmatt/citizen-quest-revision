@@ -1,12 +1,12 @@
 const EventEmitter = require('events');
 const Character = require('../../src/js/lib/model/character');
 const reportError = require('./errors');
-const {
-  GameManagerIdleState,
-  GameManagerIntroState,
-  GameManagerPlayingState,
-  GameManagerEndingState, GameManagerStates,
-} = require('./game-manager-states');
+const GameManagerStates = require('./game-manager-states');
+const GameManagerIdleState = require('./game-manager-states/idle-state');
+const GameManagerIntroState = require('./game-manager-states/intro-state');
+const GameManagerPlayingState = require('./game-manager-states/playing-state');
+const GameManagerEndingState = require('./game-manager-states/ending-state');
+
 const FlagStore = require('../../src/js/lib/dialogues/flag-store');
 
 class GameManager {
@@ -75,7 +75,7 @@ class GameManager {
     this.events.emit('playerCountChange', delta);
   }
 
-  handlePlayerCountChange(delta) {
+  handlePlayerCountChange() {
     const playerCount = Object.keys(this.players).length;
     if (this.getState() === GameManagerStates.IDLE) {
       if (playerCount > 0) {
@@ -115,7 +115,8 @@ class GameManager {
   }
 
   /**
-   * Check if all players are ready to move to the next stateHandler. If so, advance the game stateHandler.
+   * Check if all players are ready to move to the next stateHandler.
+   * If so, advance the game stateHandler.
    */
   checkAllPlayersReady() {
     const allReady = Object.keys(this.players).reduce((acc, playerId) => (

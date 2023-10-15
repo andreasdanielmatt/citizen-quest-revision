@@ -5,7 +5,7 @@ const cors = require('cors');
 const OpenApiValidator = require('express-openapi-validator');
 const reportError = require('./errors');
 const GameManager = require('./game-manager');
-const { GameManagerStates } = require('./game-manager-states');
+const GameManagerStates = require('./game-manager-states');
 
 function initApp(config) {
   const serverID = `${process.pid}:${Date.now()}`;
