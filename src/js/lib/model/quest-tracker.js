@@ -83,46 +83,29 @@ class QuestTracker {
     this.events.emit('storylineChanged', storyline.id);
   }
 
-  handleFlagChange(flag, value) {
-    const flagParts = flag.split('.');
-    if (flagParts.length === 3 && flagParts[0] === 'quest') {
-      if (this.activeStoryline?.quests?.[flagParts[1]] !== undefined) {
-        if (flagParts[2] === 'active' && value === 1) {
-          this.onQuestActive(flagParts[1]);
-        } else if (flagParts[2] === 'done' && value === 1) {
-          this.onQuestDone(flagParts[1]);
-        }
-      }
-    }
-
-    this.updateCounter();
-    this.updateStage();
+  /**
+   * Get the active quest.
+   *
+   * @returns {*|null}
+   */
+  getActiveQuest() {
+    return this.activeStoryline?.quests?.[this.activeQuestId] || null;
   }
 
-  getAvailableQuests() {
-    return Object.keys(this.activeStoryline.quests)
-      .filter((id) => !this.questIsDone(id) && this.questRequirementsMet(id))
-      .slice(0, this.config.game.maxActiveQuests || 3);
+  /**
+   * Get the active stage.
+   *
+   * @returns {*|null}
+   */
+  getActiveStage() {
+    return this.getActiveQuest()?.stages?.[this.activeStage] || null;
   }
 
-  getNpcsWithQuests() {
-    const availableQuests = this.getAvailableQuests();
-    return Object.fromEntries(
-      Object.entries(this.activeStoryline.quests)
-        .filter(([id]) => availableQuests.includes(id))
-        .map(([, props]) => [props.npc, props.mood])
-    );
-  }
-
-  questIsDone(questId) {
-    return !!this.flags.value(`quest.${questId}.done`);
-  }
-
-  questRequirementsMet(questId) {
-    const requiredQuests = this.activeStoryline?.quests?.[questId]?.required || [];
-    return [requiredQuests].flat().every((id) => this.questIsDone(id));
-  }
-
+  /**
+   * Set the active quest.
+   *
+   * @param {string} questId
+   */
   setActiveQuest(questId) {
     if (questId !== this.activeQuestId) {
       if (this.activeQuestId) {
@@ -142,63 +125,159 @@ class QuestTracker {
     }
   }
 
-  setActiveStage(stage) {
-    if (stage !== this.activeStage) {
-      const oldStage = this.activeStage;
-      this.activeStage = stage;
-      this.activeCounter = null;
-      this.events.emit('stageChanged', this.activeQuestId, stage, oldStage);
-      this.updateCounter();
-    }
+  /**
+   * Get the list of quests that are available (as a list of quest IDs)
+   *
+   * @returns {string[]}
+   */
+  getAvailableQuests() {
+    return Object.keys(this.activeStoryline.quests)
+      .filter((id) => !this.questIsDone(id) && this.questRequirementsMet(id))
+      .slice(0, this.config?.game?.maxActiveQuests || 3);
   }
 
-  getActiveQuest() {
-    return this.activeQuestId;
-  }
-
-  getActiveStage() {
-    return this.activeStage;
-  }
-
-  getActivePrompt() {
-    if (this.activeQuestId === null || this.activeStage === null) {
-      return null;
-    }
-    return this.activeStoryline?.quests?.[this.activeQuestId]?.stages?.[this.activeStage]?.prompt || '';
-  }
-
-  getActiveStageCounter() {
-    if (this.activeQuestId === null || this.activeStage === null) {
-      return null;
-    }
-
-    return this.activeStoryline?.quests?.[this.activeQuestId]?.stages?.[this.activeStage]?.counter
-      || null;
-  }
-
-  getActiveStageTarget() {
-    if (this.activeQuestId === null || this.activeStage === null) {
-      return null;
-    }
-
-    return this.activeStoryline?.quests?.[this.activeQuestId]?.stages?.[this.activeStage]?.target
-      || null;
-  }
-
-  updateStage() {
-    if (!this.activeQuestId) {
-      return;
-    }
-
-    const stages = this.activeStoryline?.quests?.[this.activeQuestId]?.stages || [];
-    const newStage = stages.findIndex(
-      (stage) => stage.cond === undefined || !!this.logicParser.evaluate(stage.cond)
+  /**
+   * Get the list of NPCs that have quests available (with their moods).
+   *
+   * The result is an object with the NPC IDs as keys and their moods as values.
+   * The mood corresponds to the icon that should advertise the quest.
+   *
+   * @returns {{[p: string]: null|*}}
+   */
+  getNpcsWithQuests() {
+    const availableQuests = this.getAvailableQuests();
+    return Object.fromEntries(
+      Object.entries(this.activeStoryline.quests)
+        .filter(([id]) => availableQuests.includes(id))
+        .map(([, props]) => [props.npc, props.mood])
     );
-
-    // todo: Handle the case where no stages match
-    this.setActiveStage(newStage);
   }
 
+  /**
+   * True if the quest passed is done.
+   *
+   * @param {string} questId
+   * @returns {boolean}
+   */
+  questIsDone(questId) {
+    return !!this.flags.value(`quest.${questId}.done`);
+  }
+
+  /**
+   * True if the quest passed has its requirements met.
+   *
+   * @param {string} questId
+   * @returns {boolean}
+   */
+  questRequirementsMet(questId) {
+    const requiredQuests = this.activeStoryline?.quests?.[questId]?.required || [];
+    return [requiredQuests].flat().every((id) => this.questIsDone(id));
+  }
+
+  /**
+   * Get the current dialogue for the NPC passed.
+   *
+   * The dialogue is built by concatenating the dialogue items from the following sources, in order:
+   * - dialogue items from the current stage
+   * - dialogue items from the current quest
+   * - dialogue items from all active quests
+   * - dialogue items from the current storyline
+   *
+   * @param {string} npcId
+   * @returns {Dialogue}
+   */
+  getNpcDialogue(npcId) {
+    const currentQuest = this.activeStoryline?.quests?.[this.activeQuestId];
+    const currentStage = currentQuest?.stages[this.activeStage];
+
+    const activeStageDialogue = currentStage?.dialogues?.[npcId];
+    const activeQuestDialogue = currentQuest?.dialogues?.[npcId];
+    const availableQuestDialogues = this.getAvailableQuests()
+      .filter((id) => this.activeStoryline.quests[id]?.npc === npcId)
+      .map((id) => this.activeStoryline.quests[id]?.available?.dialogue || []).flat();
+    const npcDialogue = this.activeStoryline?.npcs?.[npcId]?.dialogue;
+    const storylineDialogue = this.activeStoryline?.dialogues?.[npcId];
+
+    const dialogueItems = [
+      ...(activeStageDialogue || []),
+      ...(activeQuestDialogue || []),
+      ...(availableQuestDialogues || []),
+      ...(npcDialogue || []),
+      ...(storylineDialogue || []),
+    ];
+
+    return safeBuildDialogueFromItems(npcId, dialogueItems);
+  }
+
+  /**
+   * Get the dialogue for the storyline ending
+   *
+   * @returns {Dialogue}
+   */
+  getEndingDialogue() {
+    const items = this.activeStoryline?.ending?.dialogue;
+    return safeBuildDialogueFromItems('ending', items);
+  }
+
+  /**
+   * True if the flag passed indicates a quest became active.
+   *
+   * The format checked is `quest.<questId>.active`.
+   *
+   * @protected
+   * @param {string} flag
+   * @returns {boolean}
+   */
+  isQuestActiveFlag(flag) {
+    const flagParts = flag.split('.');
+    return flagParts.length === 3
+      && flagParts[0] === 'quest'
+      && this.activeStoryline?.quests?.[flagParts[1]] !== undefined
+      && flagParts[2] === 'active';
+  }
+
+  /**
+   * True if the flag passed indicates a quest became done.
+   *
+   * The format checked is `quest.<questId>.done`.
+   *
+   * @protected
+   * @param {string} flag
+   * @returns {boolean}
+   */
+  isQuestDoneFlag(flag) {
+    const flagParts = flag.split('.');
+    return flagParts.length === 3
+      && flagParts[0] === 'quest'
+      && this.activeStoryline?.quests?.[flagParts[1]] !== undefined
+      && flagParts[2] === 'done';
+  }
+
+  /**
+   * Handle a flag change.
+   *
+   * @private
+   * @param {string} flag
+   * @param {number} value
+   */
+  handleFlagChange(flag, value) {
+    if (this.isQuestActiveFlag(flag) && value === 1) {
+      this.onQuestActive(flag.split('.')[1]);
+    } else if (this.isQuestDoneFlag(flag) && value === 1) {
+      this.onQuestDone(flag.split('.')[1]);
+    }
+
+    this.updateCounter();
+    this.updateStage();
+  }
+
+  /**
+   * Recalculates the active stage counter (if there is one).
+   *
+   * If the value of the counter changed, the `stageCountChanged` event is fired.
+   *
+   * @private
+   */
   updateCounter() {
     if (this.activeQuestId === null || this.activeStage === null) {
       return;
@@ -214,44 +293,62 @@ class QuestTracker {
     }
   }
 
-  getNpcDialogue(npcId) {
-    // Concatenate, in order:
-    // - dialogue items from the current stage
-    // - dialogue items from the current quest
-    // - dialogue items from all active quests
-    // - dialogue items from the current storyline
+  /**
+   * Finds and sets the currently active stage.
+   *
+   * The current stage is the first stage in the active quest whose condition evaluates to true.
+   *
+   * @private
+   */
+  updateStage() {
+    if (!this.activeQuestId) {
+      return;
+    }
 
-    const currentQuest = this.activeStoryline?.quests?.[this.activeQuestId];
-    const currentStage = currentQuest?.stages[this.activeStage];
-    const storylineDialogue = this.activeStoryline?.dialogues?.[npcId];
-    const npcDialogue = this.activeStoryline?.npcs?.[npcId]?.dialogue;
-    const stageDialogue = currentStage?.dialogues?.[npcId];
-    const questDialogue = currentQuest?.dialogues?.[npcId];
-    const dialogueItems = [
-      ...(stageDialogue || []),
-      ...(questDialogue || []),
-      ...(this.getAvailableQuests()
-        .filter((id) => this.activeStoryline.quests[id]?.npc === npcId)
-        .map((id) => this.activeStoryline.quests[id]?.available?.dialogue || []).flat()),
-      ...(npcDialogue || []),
-      ...(storylineDialogue || []),
-    ];
+    const stages = this.activeStoryline?.quests?.[this.activeQuestId]?.stages || [];
+    const newStage = stages.findIndex(
+      (stage) => stage.cond === undefined || !!this.logicParser.evaluate(stage.cond)
+    );
 
-    return safeBuildDialogueFromItems(npcId, dialogueItems);
+    // todo: Handle the case where no stages match
+    if (newStage !== this.activeStage) {
+      this.onStageChanged(newStage);
+    }
   }
 
-  getEndingDialogue() {
-    const items = this.activeStoryline?.ending?.dialogue;
-    return safeBuildDialogueFromItems('ending', items);
-  }
-
+  /**
+   * Handle a quest becoming active.
+   *
+   * @param {string} questId
+   * @private
+   */
   onQuestActive(questId) {
     this.setActiveQuest(questId);
   }
 
+  /**
+   * Handle a quest becoming done.
+   *
+   * @param {string} questId
+   * @private
+   */
   onQuestDone(questId) {
     this.events.emit('questDone', questId);
     this.setActiveQuest(null);
+  }
+
+  /**
+   * Handle a stage change.
+   *
+   * @param {string} stage
+   * @private
+   */
+  onStageChanged(stage) {
+    const oldStage = this.activeStage;
+    this.activeStage = stage;
+    this.activeCounter = null;
+    this.events.emit('stageChanged', this.activeQuestId, stage, oldStage);
+    this.updateCounter();
   }
 }
 

@@ -502,7 +502,7 @@ class PlayerApp {
       this.targetArrow.destroy();
       this.targetArrow = null;
     }
-    const target = this.questTracker.getActiveStageTarget();
+    const target = this.questTracker.getActiveStage()?.target;
     if (target) {
       const targetNpc = this.npcViews[target];
       if (targetNpc) {

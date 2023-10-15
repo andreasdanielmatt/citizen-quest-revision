@@ -65,11 +65,8 @@ class QuestOverlay {
   }
 
   showActiveQuestPrompt() {
-    this.show(
-      this.questTracker.getActivePrompt(),
-      this.questTracker.getActiveStageCounter(),
-      true
-    );
+    const activeStage = this.questTracker.getActiveStage();
+    this.show(activeStage?.prompt, activeStage?.counter, true);
   }
 
   show(promptText, counter = null, withCheckmark = false) {
