@@ -1,0 +1,6 @@
+network:
+  connectTimeout: 3000
+  pingTime: 10000
+  pongWaitTime: 10000
+  closeTimeout: 15000
+  reconnectTime: 5000

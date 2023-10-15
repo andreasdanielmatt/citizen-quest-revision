@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 const ServeSocketConnectorState = require('./server-socket-connector-state');
-const { PING_TIME, PONG_WAIT_TIME } = require('../server-socket-connector');
 
 class OpenState extends ServeSocketConnectorState {
   constructor(connector) {
@@ -24,10 +23,11 @@ class OpenState extends ServeSocketConnectorState {
 
   schedulePing() {
     this.cancelPing();
+    const timeout = this.connector.config.network.pingTime || 10000;
     this.pingTimeout = setTimeout(() => {
       this.pingTimeout = null;
       this.ping();
-    }, PING_TIME);
+    }, timeout);
   }
 
   cancelPing() {
@@ -44,12 +44,13 @@ class OpenState extends ServeSocketConnectorState {
 
   startPongTimeout() {
     this.cancelPongTimeout();
+    const timeout = this.connector.config.network.pongWaitTime || 10000;
     this.pongTimeout = setTimeout(() => {
       this.pongTimeout = null;
-      console.warn(`PONG not received after ${PONG_WAIT_TIME / 1000} seconds`);
+      console.warn(`PONG not received after ${timeout / 1000} seconds`);
       console.warn('Resetting connection.');
       this.connector.close();
-    }, PONG_WAIT_TIME);
+    }, timeout);
   }
 
   cancelPongTimeout() {
@@ -61,12 +62,13 @@ class OpenState extends ServeSocketConnectorState {
 
   scheduleServerInfoTimeout() {
     this.cancelServerInfoTimeout();
+    const timeout = this.connector.config.network.pongWaitTime || 10000;
     this.serverInfoTimeout = setTimeout(() => {
       this.serverInfoTimeout = null;
-      console.warn(`No serverInfo received after ${PONG_WAIT_TIME / 1000} seconds`);
+      console.warn(`No serverInfo received after ${timeout / 1000} seconds`);
       console.warn('Resetting connection');
       this.connector.close();
-    }, PONG_WAIT_TIME);
+    }, timeout);
   }
 
   cancelServerInfoTimeout() {

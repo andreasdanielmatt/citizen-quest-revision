@@ -6,7 +6,8 @@ const ReconnectDelayState = require('./server-socket-connector-states/reconnect-
 const OpenState = require('./server-socket-connector-states/open');
 
 class ServerSocketConnector {
-  constructor(uri) {
+  constructor(config, uri) {
+    this.config = config;
     this.uri = uri;
     this.ws = null;
     this.events = new EventEmitter();
@@ -186,11 +187,5 @@ class ServerSocketConnector {
     console.warn('WebSocket error:', event);
   }
 }
-
-ServerSocketConnector.CONNECT_TIMEOUT = 1000 * 30;
-ServerSocketConnector.PING_TIME = 1000 * 10;
-ServerSocketConnector.PONG_WAIT_TIME = 1000 * 10;
-ServerSocketConnector.CLOSE_TIMEOUT = 1000 * 15;
-ServerSocketConnector.RECONNECT_TIME = 1000 * 5;
 
 module.exports = ServerSocketConnector;

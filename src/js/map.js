@@ -31,7 +31,7 @@ const MapApp = require('./lib/app/map-app');
     });
 
     let syncReceived = false;
-    const connector = new ServerSocketConnector(getSocketServerUrl());
+    const connector = new ServerSocketConnector(config, getSocketServerUrl());
     const connStateView = new ConnectionStateView(connector);
     $('body').append(connStateView.$element);
 

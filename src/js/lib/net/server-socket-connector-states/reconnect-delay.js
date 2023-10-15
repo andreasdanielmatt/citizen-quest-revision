@@ -1,5 +1,4 @@
 const ServeSocketConnectorState = require('./server-socket-connector-state');
-const { RECONNECT_TIME } = require('../server-socket-connector');
 
 class ReconnectDelayState extends ServeSocketConnectorState {
   constructor(connector) {
@@ -10,10 +9,11 @@ class ReconnectDelayState extends ServeSocketConnectorState {
 
   onEnter() {
     this.connector.events.emit('connectWait');
-    console.log(`Reconnecting in ${RECONNECT_TIME / 1000} seconds...`);
+    const timeout = this.connector.config.network.reconnectTime || 5000;
+    console.log(`Reconnecting in ${timeout / 1000} seconds...`);
     this.timeout = setTimeout(() => {
-      this.connector.connect();
-    }, RECONNECT_TIME);
+      // this.connector.connect();
+    }, timeout);
   }
 
   onExit() {

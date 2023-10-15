@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 const ServeSocketConnectorState = require('./server-socket-connector-state');
-const { CLOSE_TIMEOUT } = require('../server-socket-connector');
 
 class ClosingState extends ServeSocketConnectorState {
   constructor(connector) {
@@ -11,10 +10,11 @@ class ClosingState extends ServeSocketConnectorState {
 
   onEnter() {
     // The attempt to close the socket cleanly timed out, so we're going to force it closed.
+    const timeout = this.connector.config.network.closeTimeout || 15000;
     this.timeout = setTimeout(() => {
-      console.log('Closing timed out, forcing close.');
+      console.log(`Closing timed out after ${timeout / 1000} seconds, forcing close.`);
       this.connector.onClose();
-    }, CLOSE_TIMEOUT);
+    }, timeout);
   }
 
   onExit() {
