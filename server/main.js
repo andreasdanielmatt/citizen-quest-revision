@@ -12,7 +12,7 @@ const { port, settingsFile, sentryDsn } = yargs(hideBin(process.argv))
   .option('p', {
     alias: 'port',
     default: process.env.PORT || '4850',
-    coerce: opt => Number.parseInt(opt, 10),
+    coerce: (opt) => Number.parseInt(opt, 10),
   })
   .option('s', {
     alias: 'settings-file',
@@ -59,7 +59,8 @@ cfgLoader.load([
   .then((config) => {
     createServer(port, config);
     console.log(`Listening on port ${port}`);
-  }).catch((err) => {
+  })
+  .catch((err) => {
     console.error(err);
     Sentry.captureException(err);
   });

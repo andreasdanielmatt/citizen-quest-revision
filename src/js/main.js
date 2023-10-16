@@ -12,12 +12,14 @@ require('../sass/default.scss');
 const fetchTextures = require('./lib/helpers-client/fetch-textures');
 const { PlayerAppStates } = require('./lib/app/player-app-states');
 const { validateStoryline } = require('./lib/model/storyline-validation');
+const StorylineManager = require('./lib/model/storyline-manager');
 
 (async () => {
   try {
     const urlParams = new URLSearchParams(window.location.search);
     const statsPanel = urlParams.get('s') || null;
     const liveTest = urlParams.get('test') || null;
+    const storylineId = urlParams.get('storyline') || null;
 
     const sentryDSN = urlParams.get('sentry-dsn') || process.env.SENTRY_DSN;
     if (sentryDSN) {
@@ -58,11 +60,13 @@ const { validateStoryline } = require('./lib/model/storyline-validation');
         config.players[id].enabled = false;
       }
     });
+    const storylineManager = new StorylineManager(config);
     const playerApp = new PlayerApp(config, textures, playerId);
     $('[data-component="PlayerApp"]').replaceWith(playerApp.$element);
 
     playerApp.setGameServerController(new LocalGameServerController(playerApp));
     playerApp.setState(PlayerAppStates.IDLE);
+    playerApp.setStoryline(storylineId || storylineManager.getFirst());
 
     playerApp.resize();
     $(window).on('resize', () => {

@@ -21,6 +21,7 @@ class DemoDrone {
   setTargets(targets) {
     this.targets = targets;
     shuffleArray(this.targets);
+    this.currentTargetIndex = 0;
   }
 
   onReachedTarget() {

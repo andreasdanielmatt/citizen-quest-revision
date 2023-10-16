@@ -17,6 +17,11 @@ class MapMarker {
     this.popper = Popper(this.markerDisplay);
   }
 
+  destroy() {
+    this.popper.destroy();
+    this.display.destroy({ children: true });
+  }
+
   setScale(scale) {
     this.display.scale.set(scale, scale);
   }

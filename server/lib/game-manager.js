@@ -8,13 +8,18 @@ const GameManagerPlayingState = require('./game-manager-states/playing-state');
 const GameManagerEndingState = require('./game-manager-states/ending-state');
 
 const FlagStore = require('../../src/js/lib/dialogues/flag-store');
+const StorylineManager = require('../../src/js/lib/model/storyline-manager');
 
 class GameManager {
   constructor(config) {
     this.config = config;
+    this.storylineManager = new StorylineManager(this.config);
+
     this.events = new EventEmitter();
     this.players = {};
     this.roundStartTime = null;
+    this.round = 0;
+    this.storyline = null;
     this.flags = new FlagStore();
 
     this.stateHandler = null;
@@ -24,7 +29,24 @@ class GameManager {
     this.playersContinuing = new Set();
 
     this.events.on('playerCountChange', this.handlePlayerCountChange.bind(this));
+  }
+
+  init() {
     this.setState(GameManagerStates.IDLE);
+  }
+
+  startRound() {
+    if (this.getState() !== GameManagerStates.IDLE) {
+      reportError('Error: Attempting to start round when not in IDLE state');
+      return;
+    }
+    if (this.round !== 0) {
+      this.events.emit('roundEnded', this.round, this.storyline);
+    }
+    this.round += 1;
+    this.roundStartTime = null;
+    this.storyline = this.storylineManager.getNext(this.storyline);
+    this.events.emit('roundStarted', this.round, this.storyline);
   }
 
   /**

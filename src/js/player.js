@@ -26,6 +26,7 @@ const { PlayerAppStates } = require('./lib/app/player-app-states');
     const config = await fetchConfig(configUrl);
     const textures = await fetchTextures('./static/textures', config.textures, 'town-view');
     const playerApp = new PlayerApp(config, textures, playerId);
+    let round = 0;
 
     $('[data-component="PlayerApp"]').replaceWith(playerApp.$element);
     playerApp.resize();
@@ -47,6 +48,13 @@ const { PlayerAppStates } = require('./lib/app/player-app-states');
     connector.events.on('sync', (message) => {
       syncReceived = true;
       playerApp.stats.ping();
+      // If a new round started
+      if (message.round && message.storyline
+        && (round !== message.round || playerApp.storylineId !== message.storyline)) {
+        round = message.round;
+        playerApp.setStoryline(message.storyline);
+      }
+      // Sync the game state
       if (message.state && message.state !== playerApp.getState()) {
         if (message.players[playerId] === undefined) {
           playerApp.setState(PlayerAppStates.IDLE);
@@ -54,12 +62,14 @@ const { PlayerAppStates } = require('./lib/app/player-app-states');
           playerApp.setState(message.state);
         }
       }
+      // Update the countdown
       if (message.roundCountdown) {
         const seconds = Math.ceil(message.roundCountdown / 1000);
         if (seconds < playerApp.countdown.remainingSeconds) {
           playerApp.countdown.setRemainingSeconds(seconds);
         }
       }
+      // Move the players
       Object.entries(message.players).forEach(([id, player]) => {
         if (id === playerId) {
           if (playerApp.pcView === null) {

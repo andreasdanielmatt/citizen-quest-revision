@@ -17,14 +17,12 @@ class MapApp {
     this.textures = textures;
 
     // Game logic
+    this.storylineId = null;
     this.flags = new FlagStore();
 
     this.questTracker = new QuestTracker(config, this.flags);
     this.questMarkers = {};
 
-    this.questTracker.events.on('storylineChanged',
-      this.handleStorylineChanged.bind(this)
-    );
     this.questTracker.events.on('questActive', () => {
       this.updateQuestMarkers();
     });
@@ -82,23 +80,25 @@ class MapApp {
 
       this.stats.frameEnd();
     });
-
-    // Temporary
-    this.questTracker.setActiveStoryline(this.config.storylines.touristen);
   }
 
-  resize() {
-    this.$element.fillWithAspect(MapApp.APP_WIDTH / MapApp.APP_HEIGHT);
-    this.$element.css('font-size', `${(this.$element.width() * MapApp.FONT_RATIO).toFixed(3)}px`);
-  }
-
-  handleStorylineChanged() {
-    const storyline = this.questTracker.activeStoryline;
+  setStoryline(storylineId) {
+    this.storylineId = storylineId;
+    const storyline = this.config?.storylines?.[storylineId];
+    if (storyline === undefined) {
+      throw new Error(`Error: Attempting to start invalid storyline ${storylineId}`);
+    }
+    this.questTracker.setActiveStoryline(storyline);
     this.clearNpcs();
     Object.entries(storyline.npcs).forEach(([id, props]) => {
       this.addNpc(new Character(id, props));
     });
     this.updateQuestMarkers();
+  }
+
+  resize() {
+    this.$element.fillWithAspect(MapApp.APP_WIDTH / MapApp.APP_HEIGHT);
+    this.$element.css('font-size', `${(this.$element.width() * MapApp.FONT_RATIO).toFixed(3)}px`);
   }
 
   addPc(id) {

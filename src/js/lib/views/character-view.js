@@ -23,6 +23,19 @@ class CharacterView {
     return sprite;
   }
 
+  destroy() {
+    // Remove all attachments
+    Object.keys(this.attachments).forEach((id) => {
+      this.removeAttachment(id);
+    });
+    // Destroy the mood baloon
+    if (this.moodBalloon) {
+      this.moodBalloon.destroy();
+      this.moodBalloon = null;
+    }
+    this.display.destroy();
+  }
+
   showMoodBalloon(mood) {
     if (this.moodBalloon === null) {
       this.moodBalloon = new MoodBalloon(this);
@@ -57,6 +70,9 @@ class CharacterView {
   removeAttachment(id) {
     if (this.attachments[id]) {
       this.display.removeChild(this.attachments[id].display);
+      if (this.attachments[id].destroy) {
+        this.attachments[id].destroy();
+      }
       delete this.attachments[id];
     }
   }

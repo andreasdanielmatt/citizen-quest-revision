@@ -100,7 +100,7 @@ class PlayerAppEndingState extends PlayerAppState {
     this.playerApp.cameraFollowPc();
     if (fromState !== PlayerAppStates.IDLE) {
       this.playerApp.inputRouter.routeToMenus(this.playerApp);
-      this.playerApp.handleStorylineEnd();
+      this.playerApp.handleEnding();
     } else {
       this.playerApp.inputRouter.unroute();
       this.showWaitingToBeginScreen();

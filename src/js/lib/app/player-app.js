@@ -35,12 +35,10 @@ class PlayerApp {
     this.playerId = playerId;
 
     // Game logic
+    this.storylineId = null;
     this.flags = new FlagStore();
 
     this.questTracker = new QuestTracker(config, this.flags);
-    this.questTracker.events.on('storylineChanged',
-      this.handleStorylineChanged.bind(this)
-    );
 
     this.pc = null;
     this.canControlPc = false;
@@ -250,12 +248,34 @@ class PlayerApp {
     this.questTracker.events.on('noQuest', () => {
       this.updateTargetArrow();
     });
-
-    this.questTracker.setActiveStoryline(this.config.storylines.touristen);
   }
 
   setGameServerController(gameServerController) {
     this.gameServerController = gameServerController;
+  }
+
+  setStoryline(storylineId) {
+    this.storylineId = storylineId;
+    const storyline = this.config?.storylines?.[storylineId];
+    if (storyline === undefined) {
+      throw new Error(`Error: Attempting to start invalid storyline ${storylineId}`);
+    }
+    this.setState(PlayerAppStates.IDLE);
+    this.questTracker.setActiveStoryline(storyline);
+    this.decisionLabelI18n.setText(storyline.decision || '');
+    this.clearNpcs();
+    Object.entries(storyline.npcs).forEach(([id, props]) => {
+      this.addNpc(new Character(id, props));
+    });
+    this.updateNpcMoods();
+    if (this.demoDrone) {
+      this.demoDrone.setTargets(Object.values(this.npcViews).map(
+        (npcView) => ({
+          x: npcView.display.x,
+          y: npcView.display.y - npcView.display.height,
+        })
+      ));
+    }
   }
 
   getState() {
@@ -317,6 +337,10 @@ class PlayerApp {
 
   cameraFollowPc() {
     if (this.pcView) {
+      this.setCameraTarget(
+        this.pcView.display,
+        new PIXI.Point(this.pcView.display.width / 2, -this.pcView.display.height * 0.8)
+      );
       this.demoDrone.active = false;
     }
   }
@@ -338,16 +362,12 @@ class PlayerApp {
   }
 
   addPc() {
-    this.removePc();
     this.pc = new Character(this.playerId, this.config.players[this.playerId]);
     this.pcView = new PCView(this.config, this.textures, this.pc, this.townView);
     this.townView.mainLayer.addChild(this.pcView.display);
     this.townView.bgLayer.addChild(this.pcView.hitboxDisplay);
-    this.setCameraTarget(
-      this.pcView.display,
-      new PIXI.Point(this.pcView.display.width / 2, -this.pcView.display.height * 0.8)
-    );
     this.guideArrow = new GuideArrow(this.pcView);
+    this.cameraFollowPc();
   }
 
   removePc() {
@@ -507,7 +527,6 @@ class PlayerApp {
       const targetNpc = this.npcViews[target];
       if (targetNpc) {
         this.targetArrow = new TargetArrow(targetNpc);
-        window.targetArrow = this.targetArrow;
       }
     }
   }
@@ -550,25 +569,7 @@ class PlayerApp {
     this.questOverlay.showStorylinePrompt();
   }
 
-  handleStorylineChanged() {
-    const storyline = this.questTracker.activeStoryline;
-    this.decisionLabelI18n.setText(storyline.decision || '');
-    this.clearNpcs();
-    Object.entries(storyline.npcs).forEach(([id, props]) => {
-      this.addNpc(new Character(id, props));
-    });
-    this.updateNpcMoods();
-    if (this.demoDrone) {
-      this.demoDrone.setTargets(Object.values(this.npcViews).map(
-        (npcView) => ({
-          x: npcView.display.x,
-          y: npcView.display.y - npcView.display.height,
-        })
-      ));
-    }
-  }
-
-  handleStorylineEnd() {
+  handleEnding() {
     const [endingText, classes] = readEnding(
       this.questTracker.getEndingDialogue(),
       this.getDialogueContext()

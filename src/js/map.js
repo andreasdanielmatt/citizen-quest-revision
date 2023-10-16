@@ -24,6 +24,8 @@ const MapApp = require('./lib/app/map-app');
     const textures = await fetchTextures('./static/textures', config.textures, 'town-view');
 
     const mapApp = new MapApp(config, textures);
+    let round = 0;
+
     $('[data-component="MapApp"]').replaceWith(mapApp.$element);
     mapApp.resize();
     $(window).on('resize', () => {
@@ -41,6 +43,13 @@ const MapApp = require('./lib/app/map-app');
     connector.events.on('sync', (message) => {
       syncReceived = true;
       mapApp.stats.ping();
+      // If a new round started
+      if (message.round && message.storyline
+        && (round !== message.round || mapApp.storylineId !== message.storyline)) {
+        round = message.round;
+        mapApp.setStoryline(message.storyline);
+      }
+      // Move the players
       Object.entries(message.players).forEach(([id, player]) => {
         if (mapApp.pcs[id] === undefined) {
           mapApp.addPc(id);

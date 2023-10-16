@@ -38,6 +38,11 @@ class MoodBalloon {
     return sprite;
   }
 
+  destroy() {
+    this.fader.destroy();
+    this.display.destroy({ children: true });
+  }
+
   setMoodIcon(mood) {
     this.moodIconDisplay.texture = this.characterView.textures.icons.textures[`icon-${mood}`];
     this.moodIconDisplay.scale = { x: 0, y: 0 };

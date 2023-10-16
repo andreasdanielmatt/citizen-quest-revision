@@ -12,6 +12,10 @@ function initApp(config) {
   console.log(`Initializing server (id=${serverID})`);
 
   const gameManager = new GameManager(config);
+  gameManager.events.on('roundStarted', (round, storyline) => {
+    console.log(`Round ${round} started (${storyline})`);
+  });
+  gameManager.init();
 
   const app = express();
   app.use(cors());
@@ -21,7 +25,7 @@ function initApp(config) {
       apiSpec: '../specs/openapi.yaml',
       validateRequests: true,
       validateResponses: true,
-    }),
+    })
   );
 
   app.get('/config', (req, res) => {
@@ -85,6 +89,8 @@ function initApp(config) {
   function sendSync(socket) {
     const message = {
       type: 'sync',
+      round: gameManager.round,
+      storyline: gameManager.storyline,
       state: gameManager.getState(),
       players: Object.values(gameManager.players).reduce((acc, player) => {
         acc[player.id] = {
@@ -96,8 +102,10 @@ function initApp(config) {
       flags: gameManager.flags.flags,
     };
     if (gameManager.getState() === GameManagerStates.PLAYING && gameManager.roundStartTime) {
-      message.roundCountdown = Math.max(0,
-        config.game.duration * 1000 - (Date.now() - gameManager.roundStartTime));
+      message.roundCountdown = Math.max(
+        0,
+        config.game.duration * 1000 - (Date.now() - gameManager.roundStartTime)
+      );
     }
     socket.send(JSON.stringify(message));
   }

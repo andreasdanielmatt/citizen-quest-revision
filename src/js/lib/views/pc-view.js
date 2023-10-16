@@ -13,6 +13,12 @@ class PCView extends CharacterView {
     this.display.addChild(this.positionMarker);
   }
 
+  destroy() {
+    super.destroy();
+    this.hitboxDisplay.destroy();
+    this.positionMarker.destroy();
+  }
+
   getTextureId() {
     return `player-${this.character.id}`;
   }

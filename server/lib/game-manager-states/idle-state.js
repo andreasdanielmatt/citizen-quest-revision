@@ -8,6 +8,8 @@ class GameManagerIdleState extends GameManagerState {
   }
 
   onEnter() {
+    this.gameManager.startRound();
+
     const playersToRemove = [];
     Object.keys(this.gameManager.players).forEach((playerId) => {
       if (!this.gameManager.playersContinuing.has(playerId)) {
