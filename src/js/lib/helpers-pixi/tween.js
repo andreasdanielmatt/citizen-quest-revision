@@ -32,7 +32,7 @@ class PixiTween {
   }
 
   destroy() {
-    this.stop();
+    this.tween.stop();
     PIXI.Ticker.shared.remove(this.tweenTicker);
   }
 
@@ -97,6 +97,11 @@ PixiTween.Popper = (displayObject) => {
     stop: () => {
       if (tween) {
         tween.stop();
+      }
+    },
+    destroy: () => {
+      if (tween) {
+        tween.destroy();
       }
     },
   };

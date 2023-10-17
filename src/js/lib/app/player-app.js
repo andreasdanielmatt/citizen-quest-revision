@@ -148,6 +148,9 @@ class PlayerApp {
     this.keyboardInputMgr.addToggle('KeyE', () => {
       this.gameServerController.roundEnd();
     });
+    this.keyboardInputMgr.addToggle('KeyF', () => {
+      console.log(this.flags.dump());
+    });
     this.keyboardInputMgr.addToggle('KeyD', () => {
       this.stats.togglePanel();
     });

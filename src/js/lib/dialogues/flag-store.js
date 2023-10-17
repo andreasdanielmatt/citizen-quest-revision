@@ -47,6 +47,12 @@ class FlagStore {
   clear() {
     this.flags = {};
   }
+
+  dump() {
+    return JSON.stringify(Object.fromEntries(
+      Object.entries(this.flags).sort((a, b) => a[0].localeCompare(b[0]))
+    ), null, 2);
+  }
 }
 
 FlagStore.MIN_VALUE = 0;

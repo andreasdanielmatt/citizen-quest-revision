@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* globals PIXI */
 
 require('../helpers-web/fill-with-aspect');
@@ -66,7 +67,9 @@ class MapApp {
     this.keyboardInputMgr = new KeyboardInputMgr();
     this.keyboardInputMgr.attachListeners();
     this.keyboardInputMgr.addToggle('KeyD', () => { this.stats.togglePanel(); });
-
+    this.keyboardInputMgr.addToggle('KeyF', () => {
+      console.log(this.flags.dump());
+    });
     // Game loop
     this.pixiApp.ticker.add((time) => {
       this.stats.frameBegin();

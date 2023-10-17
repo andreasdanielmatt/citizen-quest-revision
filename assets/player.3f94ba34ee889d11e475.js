@@ -40128,6 +40128,9 @@ class PlayerApp {
     this.keyboardInputMgr.addToggle('KeyE', () => {
       this.gameServerController.roundEnd();
     });
+    this.keyboardInputMgr.addToggle('KeyF', () => {
+      console.log(this.flags.dump());
+    });
     this.keyboardInputMgr.addToggle('KeyD', () => {
       this.stats.togglePanel();
     });
@@ -41626,6 +41629,12 @@ class FlagStore {
   clear() {
     this.flags = {};
   }
+
+  dump() {
+    return JSON.stringify(Object.fromEntries(
+      Object.entries(this.flags).sort((a, b) => a[0].localeCompare(b[0]))
+    ), null, 2);
+  }
 }
 
 FlagStore.MIN_VALUE = 0;
@@ -42085,7 +42094,7 @@ class PixiTween {
   }
 
   destroy() {
-    this.stop();
+    this.tween.stop();
     PIXI.Ticker.shared.remove(this.tweenTicker);
   }
 
@@ -42150,6 +42159,11 @@ PixiTween.Popper = (displayObject) => {
     stop: () => {
       if (tween) {
         tween.stop();
+      }
+    },
+    destroy: () => {
+      if (tween) {
+        tween.destroy();
       }
     },
   };
@@ -46173,4 +46187,4 @@ const { PlayerAppStates } = __webpack_require__(/*! ./lib/app/player-app-states 
 
 /******/ })()
 ;
-//# sourceMappingURL=player.4bdbce10ba8a515ef6d2.js.map
+//# sourceMappingURL=player.3f94ba34ee889d11e475.js.map

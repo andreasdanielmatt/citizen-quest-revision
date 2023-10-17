@@ -64,12 +64,14 @@ The following keyboard shortcuts are available in the player app:
 
 - 'd': Toggle stats panel. Each press of 'd' toggles to a different panel.
 - 'e': Ends the countdown and jumps to the game end.
+- 'f': Dumps flags to the javascript console.
 - 'h': Shows hitboxes.
 - 'x': Outputs the player's position to the javascript console.
 
 The following keyboard shortcuts are available in the map app:
 
 - 'd': Toggle stats panel. Each press of 'd' toggles to a different panel.
+- 'f': Dumps flags to the javascript console.
 
 ## Credits
 
