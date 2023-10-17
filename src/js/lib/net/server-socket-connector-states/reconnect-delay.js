@@ -9,11 +9,11 @@ class ReconnectDelayState extends ServeSocketConnectorState {
 
   onEnter() {
     this.connector.events.emit('connectWait');
-    const timeout = this.connector.config.network.reconnectTime || 5000;
-    console.log(`Reconnecting in ${timeout / 1000} seconds...`);
+    const reconnectTime = this.connector.config.network.reconnectTime || 5000;
+    console.log(`Reconnecting in ${reconnectTime / 1000} seconds...`);
     this.timeout = setTimeout(() => {
-      // this.connector.connect();
-    }, timeout);
+      this.connector.connect();
+    }, reconnectTime);
   }
 
   onExit() {
