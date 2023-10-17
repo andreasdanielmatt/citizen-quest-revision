@@ -117,7 +117,7 @@ h1, h2, h3, h4, h5, h6 {
   font-style: normal;
   color: black;
   background-color: white;
-  border: 6px solid #000;
+  border: 0.16em solid #000;
   text-align: center;
   width: 10%;
   height: 2em;
@@ -633,7 +633,7 @@ h1, h2, h3, h4, h5, h6 {
   left: 0.8em;
   bottom: 0.8em;
   width: calc(90% - 3.2em);
-  border: 6px solid #000;
+  border: 0.22em solid #000;
   background-color: #ffeb78;
   color: #000;
   margin: 0;
@@ -815,4 +815,4 @@ html.with-fatal-error body {
   margin-bottom: 1.2em;
 }
 
-/*# sourceMappingURL=default.08253d955f7c9893dbf6.css.map*/
+/*# sourceMappingURL=map.022997087b545ffcfdaf.css.map*/
