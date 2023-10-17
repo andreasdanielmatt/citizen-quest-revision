@@ -13,6 +13,7 @@ const fetchTextures = require('./lib/helpers-client/fetch-textures');
 const { PlayerAppStates } = require('./lib/app/player-app-states');
 const { validateStoryline } = require('./lib/model/storyline-validation');
 const StorylineManager = require('./lib/model/storyline-manager');
+const storylineLoader = require('./lib/loader/storyline-loader');
 
 (async () => {
   try {
@@ -34,18 +35,15 @@ const StorylineManager = require('./lib/model/storyline-manager');
       'config/textures.yml',
       'config/town.yml',
       'config/gamepads.yml',
-      'config/storylines/touristen.yml',
+      'config/storylines.yml',
     ]).catch((err) => {
       throw new Error(`Error loading configuration: ${err.message}`);
     });
 
-    Object.entries(config.storylines).forEach(([id, storyline]) => {
-      try {
-        validateStoryline(storyline);
-      } catch (err) {
-        throw new Error(`Error validating storyline '${id}': ${err.message}`);
-      }
-    });
+    config.storylines = await storylineLoader(cfgLoader, 'config/storylines', config.storylines)
+      .catch((err) => {
+        throw new Error(`Error loading configuration: ${err.message}`);
+      });
 
     const textures = await fetchTextures('./static/textures', config.textures, 'town-view');
 

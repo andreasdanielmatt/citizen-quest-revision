@@ -48069,12 +48069,29 @@ const deepmerge = __webpack_require__(/*! deepmerge */ "./node_modules/deepmerge
 const overwriteMerge = (destinationArray, sourceArray) => sourceArray;
 
 class CfgLoader {
+  /**
+   * Creates a new CfgLoader instance.
+   *
+   * @param {function} cfgReader A function that takes a file name and returns a promise that
+   *  resolves to the file's contents.
+   * @param {function} cfgParser A function that takes a string and returns a promise that
+   *  resolves to the parsed configuration.
+   */
   constructor(cfgReader, cfgParser) {
     this.reader = cfgReader;
     this.parser = cfgParser;
   }
 
-  async load(files) {
+  /**
+   * Loads the configuration from the given files.
+   *
+   * @param {string[]} files The list of files to load.
+   * @param {function} processor A function that takes a configuration segment, the file name
+   *  and the index of the file in the list of files and returns the processed configuration.
+   * @returns {Promise<object>}
+   *  A promise that resolves to the merged configuration.
+   */
+  async load(files, processor = (cfg) => cfg) {
     const segments = [];
     const promises = [];
 
@@ -48084,7 +48101,7 @@ class CfgLoader {
           .then((cfgText) => this.parser(cfgText))
           .then((cfgSegment) => {
             // We keep the segments in order
-            segments[i] = cfgSegment;
+            segments[i] = processor(cfgSegment, file, i);
           })
           .catch((err) => {
             throw new Error(`Error in file ${file}: ${err}`);
@@ -48139,6 +48156,34 @@ function showFatalError(text, error) {
 }
 
 module.exports = showFatalError;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/loader/storyline-loader.js":
+/*!***********************************************!*\
+  !*** ./src/js/lib/loader/storyline-loader.js ***!
+  \***********************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const { validateStoryline } = __webpack_require__(/*! ../model/storyline-validation */ "./src/js/lib/model/storyline-validation.js");
+
+async function storylineLoader(cfgLoader, storylinePath, ids) {
+  return cfgLoader.load(
+    ids.map((s) => `${storylinePath}/${s}.yml`),
+    (cfgSegment, file) => {
+      const id = file.match(/\/([^/]*)\.yml$/)[1];
+      try {
+        validateStoryline(cfgSegment);
+      } catch (err) {
+        throw new Error(`Error validating storyline '${id}': ${err.message}`);
+      }
+      return Object.fromEntries([[id, cfgSegment]]);
+    }
+  );
+}
+
+module.exports = storylineLoader;
 
 
 /***/ }),
@@ -50290,6 +50335,7 @@ const fetchTextures = __webpack_require__(/*! ./lib/helpers-client/fetch-texture
 const { PlayerAppStates } = __webpack_require__(/*! ./lib/app/player-app-states */ "./src/js/lib/app/player-app-states.js");
 const { validateStoryline } = __webpack_require__(/*! ./lib/model/storyline-validation */ "./src/js/lib/model/storyline-validation.js");
 const StorylineManager = __webpack_require__(/*! ./lib/model/storyline-manager */ "./src/js/lib/model/storyline-manager.js");
+const storylineLoader = __webpack_require__(/*! ./lib/loader/storyline-loader */ "./src/js/lib/loader/storyline-loader.js");
 
 (async () => {
   try {
@@ -50311,19 +50357,15 @@ const StorylineManager = __webpack_require__(/*! ./lib/model/storyline-manager *
       'config/textures.yml',
       'config/town.yml',
       'config/gamepads.yml',
-      'config/storylines/touristen.yml',
-      'config/storylines/temp.yml',
+      'config/storylines.yml',
     ]).catch((err) => {
       throw new Error(`Error loading configuration: ${err.message}`);
     });
 
-    Object.entries(config.storylines).forEach(([id, storyline]) => {
-      try {
-        validateStoryline(storyline);
-      } catch (err) {
-        throw new Error(`Error validating storyline '${id}': ${err.message}`);
-      }
-    });
+    config.storylines = await storylineLoader(cfgLoader, 'config/storylines', config.storylines)
+      .catch((err) => {
+        throw new Error(`Error loading configuration: ${err.message}`);
+      });
 
     const textures = await fetchTextures('./static/textures', config.textures, 'town-view');
 
@@ -50368,4 +50410,4 @@ const StorylineManager = __webpack_require__(/*! ./lib/model/storyline-manager *
 
 /******/ })()
 ;
-//# sourceMappingURL=default.dc664eaf0ca19c6f9f25.js.map
+//# sourceMappingURL=default.fc885208cfcc599bd6c4.js.map
