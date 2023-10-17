@@ -112,8 +112,6 @@ class PlayerAppEndingState extends PlayerAppState {
     super.onExit();
     this.playerApp.hideEndingScreen();
     this.playerApp.hideTextScreen();
-    this.playerApp.questTracker.reset();
-    this.playerApp.clearFlags();
   }
 
   onAction() {

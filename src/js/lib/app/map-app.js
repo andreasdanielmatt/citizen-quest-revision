@@ -87,16 +87,25 @@ class MapApp {
 
   setStoryline(storylineId) {
     this.storylineId = storylineId;
-    const storyline = this.config?.storylines?.[storylineId];
+    this.resetGameState();
+  }
+
+  resetGameState() {
+    this.clearFlags();
+    this.clearNpcs();
+    const storyline = this.config?.storylines?.[this.storylineId];
     if (storyline === undefined) {
-      throw new Error(`Error: Attempting to start invalid storyline ${storylineId}`);
+      throw new Error(`Error: Attempting to start invalid storyline ${this.storylineId}`);
     }
     this.questTracker.setActiveStoryline(storyline);
-    this.clearNpcs();
     Object.entries(storyline.npcs).forEach(([id, props]) => {
       this.addNpc(new Character(id, props));
     });
     this.updateQuestMarkers();
+  }
+
+  clearFlags() {
+    this.flags.clear();
   }
 
   resize() {

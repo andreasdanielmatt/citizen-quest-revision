@@ -93,10 +93,6 @@ class ServerSocketConnector {
           (id.startsWith('quest.') && id.endsWith('.done')) || id.startsWith('pnt.')
         ))
       );
-      if (Object.keys(message.flags).length > 0 && window.firstTime === undefined) {
-        window.firstTime = false;
-        console.log(`Sending flags: ${Object.keys(message.flags).join(', ')}`);
-      }
     }
     this.send(message);
   }

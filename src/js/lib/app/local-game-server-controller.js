@@ -16,7 +16,7 @@ class LocalGameServerController {
 
   playerReady() {
     if (this.playerApp.getState() === PlayerAppStates.ENDING) {
-      this.playerApp.setState(PlayerAppStates.IDLE);
+      this.playerApp.resetGameState();
     }
   }
 }

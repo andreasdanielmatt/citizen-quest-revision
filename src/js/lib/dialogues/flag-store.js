@@ -46,6 +46,7 @@ class FlagStore {
 
   clear() {
     this.flags = {};
+    this.events.emit('clear');
   }
 
   dump() {

@@ -259,18 +259,24 @@ class PlayerApp {
 
   setStoryline(storylineId) {
     this.storylineId = storylineId;
-    const storyline = this.config?.storylines?.[storylineId];
-    if (storyline === undefined) {
-      throw new Error(`Error: Attempting to start invalid storyline ${storylineId}`);
-    }
+    this.resetGameState();
+  }
+
+  resetGameState() {
     this.setState(PlayerAppStates.IDLE);
+    this.clearFlags();
+    this.clearNpcs();
+    const storyline = this.config?.storylines?.[this.storylineId];
+    if (storyline === undefined) {
+      throw new Error(`Error: Attempting to start invalid storyline ${this.storylineId}`);
+    }
     this.questTracker.setActiveStoryline(storyline);
     this.decisionLabelI18n.setText(storyline.decision || '');
-    this.clearNpcs();
     Object.entries(storyline.npcs).forEach(([id, props]) => {
       this.addNpc(new Character(id, props));
     });
     this.updateNpcMoods();
+    // Todo: Emit event and move drone reset to a listener
     if (this.demoDrone) {
       this.demoDrone.setTargets(Object.values(this.npcViews).map(
         (npcView) => ({
