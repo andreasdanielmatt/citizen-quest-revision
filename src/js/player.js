@@ -111,7 +111,7 @@ const { PlayerAppStates } = require('./lib/app/player-app-states');
     });
     playerApp.pixiApp.ticker.add(() => {
       if (syncReceived) {
-        connector.sync(playerApp.pc, playerApp.flags);
+        connector.sync(round, playerApp.pc, playerApp.flags);
         syncReceived = false;
       }
     });

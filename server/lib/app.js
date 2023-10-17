@@ -33,6 +33,9 @@ function initApp(config) {
   });
 
   function processSync(message) {
+    if (message.round !== gameManager.round) {
+      return;
+    }
     if (message.players) {
       Object.entries(message.players).forEach(([id, props]) => {
         if (gameManager.players[id] !== undefined) {

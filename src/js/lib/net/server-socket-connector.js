@@ -75,9 +75,10 @@ class ServerSocketConnector {
   }
 
   // To do: Move this outside of this class
-  sync(player = null, flagStore = null) {
+  sync(round = 0, player = null, flagStore = null) {
     const message = {
       type: 'sync',
+      round,
     };
     if (player !== null) {
       message.players = Object.fromEntries([[player.id,
