@@ -730,16 +730,28 @@ quests:
                     de: "Hast du eine Möglichkeit gefunden, junge Menschen zu beteiligen?"
                   responses:
                     - cond: 'idea.youthParticipation.parentVote'
-                      text: "Give all parents an extra vote."
-                      thenText: "That’s a great idea. Parents can represent their interests."
+                      text:
+                        en: "Give all parents an extra vote."
+                        de: "Eltern sollen eine zusätzliche Stimme erhalten."
+                      thenText:
+                        en: "That’s a great idea. Parents can represent their interests."
+                        de: "Das ist eine großartige Idee. Die Eltern können ihre Interessen vertreten."
                       set: ['quest.youthParticipation.done', 'pnt.empowerment.youthParticipation']
                     - cond: 'idea.youthParticipation.teenVote'
-                      text: "Allow teenagers to vote."
-                      thenText: "That’s a good idea. At least some of them will be included."
+                      text:
+                        en: "Allow teenagers to vote."
+                        de: "Jugendlichen sollen mitzwählen dürfen."
+                      thenText:
+                        en: "That’s a good idea. At least some of them will be included."
+                        de: "Das ist eine gute Idee. Wenigstens werden so einige einbezogen."
                       set: ['quest.youthParticipation.done', 'pnt.empowerment.youthParticipation']
                     - cond: 'idea.youthParticipation.schools'
-                      text: "Vote in schools first and inform their decision."
-                      thenText: "That’s a decent idea. At least their voice will be heard."
+                      text:
+                        en: "Vote in schools first and inform their decision."
+                        de: "Zuerst soll in den Schulen abgestimmt und dann alle darüber informiert werden."
+                      thenText:
+                        en: "That’s a decent idea. At least their voice will be heard."
+                        de: "Das ist eine vernünftige Idee. Zumindest wird so ihre Stimme gehört."
                       set: ['quest.youthParticipation.done', 'pnt.empathy.youthParticipation']
           parksDirector:
             - text:
