@@ -57,11 +57,11 @@ class QuestOverlay {
   }
 
   handleNoQuest() {
-    this.showStorylinePrompt();
+    this.showDefaultPrompt();
   }
 
-  showStorylinePrompt() {
-    this.show(this.questTracker.activeStoryline.prompt);
+  showDefaultPrompt() {
+    this.show(this.config?.i18n?.ui?.defaultPrompt || '');
   }
 
   showActiveQuestPrompt() {

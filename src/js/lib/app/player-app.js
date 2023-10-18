@@ -26,6 +26,7 @@ const TitleOverlay = require('../ui/title-overlay');
 const TextScreen = require('../ui/text-screen');
 const TargetArrow = require('../views/target-arrow');
 const GuideArrow = require('../views/guide-arrow');
+const IntroScreen = require('../ui/intro-screen');
 
 class PlayerApp {
   constructor(config, textures, playerId) {
@@ -79,6 +80,7 @@ class PlayerApp {
       this.$decisionLabel.html(text);
     }, this.lang);
 
+    this.introScreen = null;
     this.endingScreen = null;
 
     this.countdown = new Countdown(config.game.duration);
@@ -320,6 +322,9 @@ class PlayerApp {
     this.textScreen.setLang(this.lang);
     this.questOverlay.setLang(this.lang);
     this.decisionLabelI18n.setLang(this.lang);
+    if (this.introScreen) {
+      this.introScreen.setLang(this.lang);
+    }
     if (this.endingScreen) {
       this.endingScreen.setLang(this.lang);
     }
@@ -574,8 +579,23 @@ class PlayerApp {
     this.showHitbox = !this.showHitbox;
   }
 
-  showStorylinePrompt() {
-    this.questOverlay.showStorylinePrompt();
+  showDefaultPrompt() {
+    this.questOverlay.showDefaultPrompt();
+  }
+
+  showIntroScreen() {
+    this.hideIntroScreen();
+    const introText = this.questTracker.activeStoryline.prompt;
+    this.introScreen = new IntroScreen(this.config, this.lang);
+    this.$element.append(this.introScreen.$element);
+    this.introScreen.showIntro(introText);
+  }
+
+  hideIntroScreen() {
+    if (this.introScreen) {
+      this.introScreen.$element.remove();
+      this.introScreen = null;
+    }
   }
 
   handleEnding() {

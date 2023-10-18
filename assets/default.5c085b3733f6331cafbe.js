@@ -44355,11 +44355,23 @@ class PlayerAppPlayingState extends PlayerAppState {
 
   onEnter() {
     this.playerApp.cameraFollowPc();
-    this.playerApp.inputRouter.routeToPcMovement(this.playerApp);
+    this.playerApp.inputRouter.routeToMenus(this.playerApp);
     this.playerApp.countdown.show();
     this.playerApp.countdown.start();
     this.playerApp.showNpcMoods();
-    this.playerApp.showStorylinePrompt();
+    this.playerApp.showDefaultPrompt();
+    this.playerApp.showIntroScreen();
+  }
+
+  onAction() {
+    if (this.playerApp.introScreen && this.playerApp.introScreen.revealStarted) {
+      if (!this.playerApp.introScreen.isTextRevealed()) {
+        this.playerApp.introScreen.revealText();
+      } else {
+        this.playerApp.hideIntroScreen();
+        this.playerApp.inputRouter.routeToPcMovement(this.playerApp);
+      }
+    }
   }
 
   onExit() {
@@ -44367,6 +44379,7 @@ class PlayerAppPlayingState extends PlayerAppState {
     this.playerApp.questOverlay.hide();
     this.playerApp.countdown.hide();
     this.playerApp.hideNpcMoods();
+    this.playerApp.hideIntroScreen();
   }
 }
 
@@ -44476,6 +44489,7 @@ const TitleOverlay = __webpack_require__(/*! ../ui/title-overlay */ "./src/js/li
 const TextScreen = __webpack_require__(/*! ../ui/text-screen */ "./src/js/lib/ui/text-screen.js");
 const TargetArrow = __webpack_require__(/*! ../views/target-arrow */ "./src/js/lib/views/target-arrow.js");
 const GuideArrow = __webpack_require__(/*! ../views/guide-arrow */ "./src/js/lib/views/guide-arrow.js");
+const IntroScreen = __webpack_require__(/*! ../ui/intro-screen */ "./src/js/lib/ui/intro-screen.js");
 
 class PlayerApp {
   constructor(config, textures, playerId) {
@@ -44529,6 +44543,7 @@ class PlayerApp {
       this.$decisionLabel.html(text);
     }, this.lang);
 
+    this.introScreen = null;
     this.endingScreen = null;
 
     this.countdown = new Countdown(config.game.duration);
@@ -44770,6 +44785,9 @@ class PlayerApp {
     this.textScreen.setLang(this.lang);
     this.questOverlay.setLang(this.lang);
     this.decisionLabelI18n.setLang(this.lang);
+    if (this.introScreen) {
+      this.introScreen.setLang(this.lang);
+    }
     if (this.endingScreen) {
       this.endingScreen.setLang(this.lang);
     }
@@ -45024,8 +45042,23 @@ class PlayerApp {
     this.showHitbox = !this.showHitbox;
   }
 
-  showStorylinePrompt() {
-    this.questOverlay.showStorylinePrompt();
+  showDefaultPrompt() {
+    this.questOverlay.showDefaultPrompt();
+  }
+
+  showIntroScreen() {
+    this.hideIntroScreen();
+    const introText = this.questTracker.activeStoryline.prompt;
+    this.introScreen = new IntroScreen(this.config, this.lang);
+    this.$element.append(this.introScreen.$element);
+    this.introScreen.showIntro(introText);
+  }
+
+  hideIntroScreen() {
+    if (this.introScreen) {
+      this.introScreen.$element.remove();
+      this.introScreen = null;
+    }
   }
 
   handleEnding() {
@@ -48979,6 +49012,101 @@ module.exports = DecisionScreen;
 
 /***/ }),
 
+/***/ "./src/js/lib/ui/intro-screen.js":
+/*!***************************************!*\
+  !*** ./src/js/lib/ui/intro-screen.js ***!
+  \***************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const EventEmitter = __webpack_require__(/*! events */ "./node_modules/events/events.js");
+const SpeechText = __webpack_require__(/*! ../dialogues/speech-text */ "./src/js/lib/dialogues/speech-text.js");
+const { I18nTextAdapter } = __webpack_require__(/*! ../helpers/i18n */ "./src/js/lib/helpers/i18n.js");
+const { textWithEmojisToSpeechLines } = __webpack_require__(/*! ../helpers/emoji-utils */ "./src/js/lib/helpers/emoji-utils.js");
+
+class IntroScreen {
+  constructor(config, lang) {
+    this.config = config;
+    this.events = new EventEmitter();
+    this.lang = lang;
+
+    this.$element = $('<div></div>')
+      .addClass('intro-screen-wrapper');
+
+    this.$styleWrapper = $('<div></div>')
+      .appendTo(this.$element);
+
+    this.$screen = $('<div></div>')
+      .addClass('intro-screen')
+      .appendTo(this.$styleWrapper);
+
+    this.$text = $('<div></div>')
+      .addClass('intro-screen-text')
+      .appendTo(this.$screen);
+
+    this.speech = new SpeechText();
+    this.$text.append(this.speech.$element);
+
+    this.speechI18n = new I18nTextAdapter((text) => {
+      const { revealComplete } = this.speech;
+      this.speech.showText(textWithEmojisToSpeechLines(text));
+      if (revealComplete) {
+        this.speech.revealAll();
+      }
+    }, this.lang);
+    this.speech.events.on('complete', () => {
+      this.showContinue();
+    });
+
+    this.$continue = $('<div></div>')
+      .addClass(['waiting-text', 'waiting-text-decision-screen'])
+      .appendTo(this.$screen)
+      .hide();
+
+    this.$continueText = $('<span></span>')
+      .addClass('text')
+      .appendTo(this.$continue);
+
+    this.continueI18n = new I18nTextAdapter(
+      (text) => { this.$continueText.text(text); },
+      this.lang,
+      this.config.i18n.ui.pressToContinue
+    );
+  }
+
+  showIntro(introText, classes) {
+    this.$styleWrapper.removeClass();
+    this.$styleWrapper.addClass(classes);
+    this.$element.addClass('visible');
+    setTimeout(() => {
+      this.revealStarted = true;
+      this.speechI18n.setText(introText, true);
+    }, 0);
+  }
+
+  setLang(lang) {
+    this.lang = lang;
+    this.speechI18n.setLang(lang);
+    this.continueI18n.setLang(lang);
+  }
+
+  isTextRevealed() {
+    return this.speech.revealComplete;
+  }
+
+  revealText() {
+    this.speech.revealAll();
+  }
+
+  showContinue() {
+    this.$continue.show();
+  }
+}
+
+module.exports = IntroScreen;
+
+
+/***/ }),
+
 /***/ "./src/js/lib/ui/quest-overlay-panel.js":
 /*!**********************************************!*\
   !*** ./src/js/lib/ui/quest-overlay-panel.js ***!
@@ -49143,11 +49271,11 @@ class QuestOverlay {
   }
 
   handleNoQuest() {
-    this.showStorylinePrompt();
+    this.showDefaultPrompt();
   }
 
-  showStorylinePrompt() {
-    this.show(this.questTracker.activeStoryline.prompt);
+  showDefaultPrompt() {
+    this.show(this.config?.i18n?.ui?.defaultPrompt || '');
   }
 
   showActiveQuestPrompt() {
@@ -50430,4 +50558,4 @@ const storylineLoader = __webpack_require__(/*! ./lib/loader/storyline-loader */
 
 /******/ })()
 ;
-//# sourceMappingURL=default.6e2be62b3c6d1b6b8a9a.js.map
+//# sourceMappingURL=default.5c085b3733f6331cafbe.js.map

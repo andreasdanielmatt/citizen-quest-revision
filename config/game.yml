@@ -1,7 +1,7 @@
 game:
   languages: ['de', 'en']
   defaultLanguage: en
-  duration: 300
+  duration: 15
   introTimeout: 30
   endingTimeout: 30
   maxActiveQuests: 3

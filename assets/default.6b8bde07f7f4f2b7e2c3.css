@@ -91,6 +91,12 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: -0.1em;
 }
 
+.emoji.emoji-speech_bubble {
+  background-image: url(ce32a2183dd8743ad38f.svg);
+  margin-bottom: -0.2em;
+  font-size: 1.2em;
+}
+
 .player-app {
   position: relative;
   margin: auto;
@@ -465,6 +471,50 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.intro-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  color: #fff;
+  text-align: center;
+  padding: 10em 5em 2.5em;
+}
+.intro-screen .intro-screen-text {
+  font-family: "Roboto", sans-serif;
+  font-weight: 700;
+  font-size: 1.75em;
+}
+@keyframes halfpulse {
+  0% {
+    opacity: 0;
+  }
+  45% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.intro-screen .waiting-text {
+  margin-top: 2em;
+  font-size: 1.5em;
+  font-weight: bold;
+  padding: 0.25em 0.9em;
+}
+.intro-screen .waiting-text .text {
+  display: inline-block;
+  color: #000;
+  background-color: #e0ff5f;
+  padding: 0 1.5em;
+  animation: halfpulse 1.5s infinite ease-in-out;
 }
 
 @keyframes fallIn {
@@ -856,4 +906,4 @@ html.with-fatal-error body {
   margin-bottom: 1.2em;
 }
 
-/*# sourceMappingURL=player.500e34e89408c777bd20.css.map*/
+/*# sourceMappingURL=default.6b8bde07f7f4f2b7e2c3.css.map*/

@@ -15,3 +15,6 @@ i18n:
     pressToContinue:
       en: 'Press to continue'
       de: 'Weiter mit Knopfdruck'
+    defaultPrompt:
+      en: 'Strengthen democracy by including everyone in important decisions. Talk to citizens with a :speech_bubble: to get quests.'
+      de: 'Stärke die Demokratie, indem du alle in wichtige Entscheidungen einbeziehst. Sprich mit Bürger*innen mit einer :speech_bubble:, um Aufgaben zu erhalten.'
