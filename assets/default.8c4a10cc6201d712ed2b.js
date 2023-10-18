@@ -48540,7 +48540,7 @@ class QuestTracker {
       return;
     }
     const stage = this.activeStoryline.quests[this.activeQuestId].stages[this.activeStage];
-    if (stage.counter !== undefined) {
+    if (stage?.counter !== undefined) {
       const newCount = this.logicParser.evaluate(stage.counter.expression);
       if (newCount !== this.activeCounter) {
         const oldCount = this.activeCounter;
@@ -50429,4 +50429,4 @@ const storylineLoader = __webpack_require__(/*! ./lib/loader/storyline-loader */
 
 /******/ })()
 ;
-//# sourceMappingURL=default.10094d0f08668aebe8e0.js.map
+//# sourceMappingURL=default.8c4a10cc6201d712ed2b.js.map

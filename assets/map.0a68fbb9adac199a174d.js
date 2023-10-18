@@ -41408,7 +41408,7 @@ class QuestTracker {
       return;
     }
     const stage = this.activeStoryline.quests[this.activeQuestId].stages[this.activeStage];
-    if (stage.counter !== undefined) {
+    if (stage?.counter !== undefined) {
       const newCount = this.logicParser.evaluate(stage.counter.expression);
       if (newCount !== this.activeCounter) {
         const oldCount = this.activeCounter;
@@ -43109,4 +43109,4 @@ const MapApp = __webpack_require__(/*! ./lib/app/map-app */ "./src/js/lib/app/ma
 
 /******/ })()
 ;
-//# sourceMappingURL=map.d8448c7a9e5b1743f0a3.js.map
+//# sourceMappingURL=map.0a68fbb9adac199a174d.js.map

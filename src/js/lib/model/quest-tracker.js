@@ -283,7 +283,7 @@ class QuestTracker {
       return;
     }
     const stage = this.activeStoryline.quests[this.activeQuestId].stages[this.activeStage];
-    if (stage.counter !== undefined) {
+    if (stage?.counter !== undefined) {
       const newCount = this.logicParser.evaluate(stage.counter.expression);
       if (newCount !== this.activeCounter) {
         const oldCount = this.activeCounter;
