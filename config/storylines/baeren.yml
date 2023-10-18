@@ -1,0 +1,1135 @@
+decision:
+  en: "Bears have been recently sighted in the woods, and people are scared. The city government has promised to do something about it."
+  de: "Vor kurzem wurden Bären in den Wäldern gesichtet, die Menschen haben Angst. Die Stadtverwaltung hat versprochen, sich um die Sache zu kümmern."
+prompt:
+  en: "Bears have been recently sighted in the woods, and people are scared. The city government has promised to do something about it."
+  de: "Vor kurzem wurden Bären in den Wäldern gesichtet, die Menschen haben Angst. Die Stadtverwaltung hat versprochen, sich um die Sache zu kümmern."
+npcs:
+  mayor:
+    name:
+      en: "City Mayor"
+      de: "Bürgermeisterin"
+    spawn: { x: 3240, y: 2974 }
+    dialogue:
+      - text:
+          en: "Many years ago there were bears in this region, and people back then killed them all. We’re excited to see them back."
+          de: "Vor vielen Jahren gab es in dieser Region Bären, und die Menschen haben sie damals alle getötet. Wir freuen uns, dass sie zurück sind."
+  parksDirector:
+    name:
+      en: "Director of the environmental agency"
+      de: "Leiterin des Umweltamts"
+    spawn: { x: 3816, y: 2890 }
+    dialogue:
+      - text:
+          en: "Many people are requesting action against bears, but I know others feel differently."
+          de: "Viele Menschen fordern Maßnahmen gegen Bären, aber ich weiß, dass andere das anders sehen."
+  journalist:
+    name:
+      en: "Journalist"
+      de: "Journalist"
+    spawn: { x: 5050, y: 3130 }
+    dialogue:
+      - type: first
+        items:
+          - text:
+              en: "Bears are protected by laws, but they can’t participate in decisions or make demands."
+              de: "Bären sind durch Gesetze geschützt, aber sie können nicht an Entscheidungen teilnehmen oder Forderungen stellen."
+          - cond: 'quest.bearAdvocate.done'
+            text:
+              en: "Now that they have an advocate, bears can take part in decisions and make demands for their wellbeing."
+              de: "Jetzt, da sie einen Fürsprecher haben, können Bären an Entscheidungen teilnehmen und Forderungen für ihr Wohlergehen stellen."
+  biologist:
+    name:
+      en: "Biologist"
+      de: "Biologin"
+    spawn: { x: 4698, y: 990 }
+    dialogue:
+      - text:
+          en: "It's been generations since bears were in this area. Makes me wonder what's driving them here."
+          de: "Es ist Generationen her, dass es in dieser Gegend Bären gab. Ich frage mich, was sie hierher treibt."
+  tourist:
+    name:
+      en: "Tourist"
+      de: "Tourist"
+    spawn: { x: 2901, y: 2050 }
+    dialogue:
+      - text:
+          en: "I was in the woods and managed to snap a photo of a bear from a safe distance. It was exhilarating!"
+          de: "Ich war im Wald und habe es geschafft, aus sicherer Entfernung ein Foto von einem Bären zu machen. Es war atemberaubend!"
+  robot:
+    name:
+      en: "Robot"
+      de: "Roboter"
+    spawn: { x: 5748, y: 2340 }
+    dialogue:
+      - type: random
+        items:
+          - text:
+              en: "If you can't defend yourself against a bear, maybe you shouldn't be going into the woods in the first place."
+              de: "Wenn man sich nicht gegen einen Bären wehren kann, sollte man vielleicht gar nicht erst in den Wald gehen."
+          - text:
+              en: "If bears are moving into the city, can we charge them rent?"
+              de: "Wenn Bären in die Stadt ziehen, können wir dann Miete von ihnen verlangen?"
+          - text:
+              en: "It's just a bear. Shoot it, make a rug. End of story."
+              de: "Es ist nur ein Bär. Erschieße ihn und mach einen Teppich daraus. Ende der Geschichte."
+  museumDirector:
+    name:
+      en: "Museum Director"
+      de: "Museumsdirektorin"
+    spawn: { x: 5213, y: 2290 }
+    dialogue:
+      - text:
+          en: "We should take this as an opportunity to educate our kids about coexisting with wildlife."
+          de: "Wir sollten das zum Anlass nehmen, unsere Kinder über das Zusammenleben mit Wildtieren zu informieren."
+  citizenCool:
+    name:
+      en: "Video blogger"
+      de: "Videobloggerin"
+    spawn: { x: 4416, y: 3130 }
+    dialogue:
+      - type: sequence
+        items:
+        - text:
+            en: "It’s bear-month in my online channel!"
+            de: "Es ist ein Bärenmonat in meinem Online-Kanal!"
+        - text:
+            en: "Remember to like and subscribe!"
+            de: "Vergesst nicht, zu liken und zu abonnieren!"
+  citizenBraid:
+    name:
+      en: "Citizen"
+      de: "Bürgerin"
+    spawn: { x: 536, y: 3130 }
+    dialogue:
+      - text:
+          en: "I’m happy to have a bear or two in the forest, but there are too many now."
+          de: "Meinetwegen können ein oder zwei Bären im Wald leben, aber jetzt sind es zu viele."
+  citizenCat:
+    name:
+      en: "Curious Citizen"
+      de: "Neugierige Bürgerin"
+    spawn: { x: 2390, y: 2050 }
+    dialogue:
+      - text:
+          en: "I *LOVE* bears!"
+          de: "Ich *LIEBE* Bären!"
+  citizenHipster:
+    name:
+      en: "Citizen"
+      de: "Bürger"
+    spawn: { x: 3625, y: 1470 }
+    dialogue:
+      - text:
+          en: "Are bears invading our territory or are we in theirs?"
+          de: "Dringen die Bären in unser Gebiet ein oder sind wir in ihrem?"
+  citizenPuan:
+    name:
+      en: "Citizen"
+      de: "Bürgerin"
+    spawn: { x: 2455, y: 1470 }
+    dialogue:
+      - text:
+          en: "I used to enjoy hiking in the woods. Because of the bears it’s now too dangerous for children."
+          de: "Früher ging ich gern im Wald wandern. Jetzt? Wegen der Bären ist es viel zu gefährlich für die Kinder."
+  citizenCage:
+    name:
+      en: "Citizen"
+      de: "Bürger"
+    spawn: { x: 1673, y: 3130 }
+    dialogue:
+      - text:
+          en: "I saw a video of a bear eating a guinea pig. What if a human child is next?"
+          de: "Ich habe ein Video gesehen, in dem ein Bär einen Hamster frisst. Was, wenn es nächstes mal ein Kind ist?"
+  citizenPunk:
+    name:
+      en: "Software Developer"
+      de: "Software-Entwickler"
+    spawn: { x: 4286, y: 2050 }
+    dialogue:
+      - text:
+          en: "I read that bears are mostly vegetarian and prefer berries and plants."
+          de: "Ich habe gelesen, dass Bären meist Vegetarier sind und Beeren und Pflanzen bevorzugen."
+  citizenLila:
+    name:
+      en: "Citizen"
+      de: "Bürgerin"
+    spawn: { x: 1221, y: 1625 }
+    dialogue:
+      - text:
+          en: "First bears, what's next? Wolves? This is no longer a laughing matter."
+          de: "Erst Bären, was kommt als nächstes? Wölfe? Das ist echt kein Witz mehr."
+  citizenBlue:
+    name:
+      en: "Citizen"
+      de: "Bürgerin"
+    spawn: { x: 1946, y: 2051 }
+    dialogue:
+      - text:
+          en: "I don’t mind bears in the woods, but I want to feel safe in the city."
+          de: "Bären im Wald, okay. Aber in der Stadt will ich mich sicher fühlen."
+  constructionWorker:
+    name:
+      en: "Engineer"
+      de: "Ingenieurin"
+    spawn: { x: 5846, y: 3130 }
+    dialogue:
+      - text:
+          en: "I read that bears might be coming closer because of climate change. Is that true?"
+          de: "Ich habe gelesen, dass die Bären wegen des Klimawandels immer näher kommen. Stimmt das?"
+  citizenQueen:
+    name:
+      en: "Citizen"
+      de: "Bürgerin"
+    spawn: { x: 5660, y: 970 }
+    dialogue:
+      - text:
+          en: "Bears are only welcome in the city if they are willing to adapt to our culture and traditions."
+          de: "Bären sind in der Stadt nur dann willkommen, wenn sie bereit sind, sich an unsere Kultur und Traditionen anzupassen."
+  citizenRanger:
+    name:
+      en: "Ranger"
+      de: "Ranger"
+    spawn: { x: 896, y: 2290 }
+    dialogue:
+      - text:
+          en: "I worked for decades in bear territory. Coexistence is possible."
+          de: "Ich habe jahrzehntelang im Bärengebiet gearbeitet. Koexistenz ist möglich."
+  citizenWheelchair:
+    name:
+      en: "Composer"
+      de: "Komponistin"
+    spawn: { x: 6128, y: 2330 }
+    dialogue:
+      - text:
+          en: "I’m not worried about bears, but I understand people who are that live near the woods."
+          de: "Ich habe keine Angst vor Bären, aber ich verstehe die Leute, die am Waldrand wohnen."
+  citizenChamp:
+    name:
+      en: "Citizen"
+      de: "Bürgerin"
+    spawn: { x: 1946, y: 2770 }
+    dialogue:
+      - text:
+          en: "Bears attacked sheep in another farm. I’m worried for my cattle, because my family depends on it."
+          de: "Bei einem Nachbarhof haben Bären Schafe angegriffen. Ich bin besorgt um mein Vieh. Meine Familie hängt davon ab."
+quests:
+  fear:
+    npc: mayor
+    mood: interrogation
+    available:
+      dialogue:
+        - type: sequence
+          items:
+            - text:
+                en: "Maybe the bears will go away on their own. Are people really concerned?"
+                de: "Vielleicht verschwinden die Bären von selbst. Sind die Menschen wirklich besorgt?"
+            - text:
+                en: "Can you find 3 people who are worried or unhappy about having bears near the city?"
+                de: "Kannst du 3 Menschen finden, die besorgt oder unglücklich über die Bären in der Nähe der Stadt sind?"
+              responses:
+                - text:
+                    en: "Accept the quest"
+                    de: "Nimm die Aufgabe an"
+                  thenText:
+                    en: "Good luck!"
+                    de: "Viel Glück dabei!"
+                  set: [ 'quest.fear.active' ]
+                - text:
+                    en: "Decline for now"
+                    de: "Vorläufig ablehnen"
+                  thenText:
+                    en: "OK. I’ll be here if you change your mind."
+                    de: "Okay. Ich bin hier, falls du deine Meinung änderst."
+    stages:
+      - cond: 'COUNT("op.neg") >= 3'
+        prompt:
+          en: "Report back to the city mayor."
+          de: "Sprich mit der Bürgermeisterin."
+        target: mayor
+        dialogues:
+          mayor:
+            - text:
+                en: "Thank you for your help. I’ll see what I can do."
+                de: "Danke für deine Hilfe. Ich werde sehen, was ich tun kann."
+              set: [ 'quest.fear.done', 'pnt.empathy.fear' ]
+      - prompt:
+          en: "Find 3 people who are worried or unhappy about having bears near the city."
+          de: "Finde 3 Menschen, die besorgt oder unglücklich über die Bären in der Nähe der Stadt sind."
+        counter:
+          expression: 'COUNT("op.neg")'
+          max: 3
+          icon: angry
+        dialogues:
+          citizenQueen:
+            - text:
+                en: "Bears are only welcome in the city if they are willing to adapt to our culture and traditions."
+                de: "Bären sind in der Stadt nur dann willkommen, wenn sie bereit sind, sich an unsere Kultur und Traditionen anzupassen."
+              set: [ 'op.neg.queen' ]
+          citizenBraid:
+            - text:
+                en: "I’m happy to have a bear or two in the forest, but there are too many now."
+                de: "Meinetwegen können ein oder zwei Bären im Wald leben, aber jetzt sind es zu viele."
+              set: [ 'op.neg.braid' ]
+          citizenCage:
+            - text:
+                en: "I saw a video of a bear eating a guinea pig. What if a human child is next?"
+                de: "Ich habe ein Video gesehen, in dem ein Bär einen Hamster frisst. Was, wenn es nächstes mal ein Kind ist?"
+              set: [ 'op.neg.cage' ]
+          citizenChamp:
+            - text:
+                en: "Bears attacked sheep in another farm. I’m worried for my cattle, because my family depends on it."
+                de: "Bei einem Nachbarhof haben Bären Schafe angegriffen. Ich bin besorgt um mein Vieh. Meine Familie hängt davon ab."
+              set: [ 'op.neg.champ' ]
+          citizenPuan:
+            - text:
+                en: "I used to enjoy hiking in the woods. Because of the bears it’s now too dangerous for children."
+                de: "Früher ging ich gern im Wald wandern. Jetzt? Wegen der Bären ist es viel zu gefährlich für die Kinder."
+              set: [ 'op.neg.puan' ]
+          citizenBlue:
+            - text:
+                en: "I don’t mind bears in the woods, but I want to feel safe in the city."
+                de: "Bären im Wald, okay. Aber in der Stadt will ich mich sicher fühlen."
+              set: [ 'op.neg.blue' ]
+          citizenLila:
+            - text:
+                en: "First bears, what's next? Wolves? This is no longer a laughing matter."
+                de: "Erst Bären, was kommt als nächstes? Wölfe? Das ist echt kein Witz mehr."
+              set: [ 'op.neg.lila' ]
+          museumDirector:
+            - text:
+                en: "You won’t find bear haters here. Most ignorants live in the west of the city."
+                de: "Hier gibt es niemanden, der Bären hasst. Ignorante Menschen leben im Westen der Stadt."
+          journalist:
+            - text:
+                en: "The bear panic is in farms around the city, not here in the middle of the city."
+                de: "Die Bärenpanik herrscht auf den Bauernhöfen rund um die Stadt, nicht hier im Zentrum."
+  lovers:
+    npc: parksDirector
+    mood: interrogation
+    available:
+      dialogue:
+        - type: sequence
+          items:
+            - text:
+                en: "Many people are requesting action against bears, but I know others feel differently."
+                de: "Viele Menschen fordern Maßnahmen gegen Bären, aber ich weiß, dass andere das anders sehen."
+            - text:
+                en: "Can you find 3 people who are happy about bears living in our woods again?"
+                de: "Kannst du 3 Menschen finden, die froh darüber sind, dass wieder Bären in unseren Wäldern leben?"
+              responses:
+                - text:
+                    en: "Accept the quest"
+                    de: "Nimm die Aufgabe an"
+                  thenText:
+                    en: "Thank you!"
+                    de: "Ich danke dir!"
+                  set: [ 'quest.lovers.active' ]
+                - text:
+                    en: "Decline for now"
+                    de: "Vorläufig ablehnen"
+                  thenText:
+                    en: "Come back if you change your mind."
+                    de: "Komm wieder, wenn du deine Meinung änderst."
+    stages:
+      - cond: 'COUNT("op.love") >= 3'
+        prompt:
+          en: "Report back to the Director of the Environmental Agency."
+          de: "Melde dich bei der Leiterin des Umweltamts."
+        target: parksDirector
+        dialogues:
+          parksDirector:
+            - text:
+                en: "Thank you for your help. I’ll see what I can do."
+                de: "Danke für deine Hilfe. Ich werde sehen, was ich tun kann."
+              set: [ 'quest.lovers.done', 'pnt.empathy.lovers' ]
+      - prompt:
+          en: "Find 3 people who are happy about the return of bears to the woods."
+          de: "Finde 3 Personen, die sich über die Rückkehr der Bären in die Wälder freuen."
+        counter:
+          expression: 'COUNT("op.love")'
+          max: 3
+          icon: happy
+        dialogues:
+          citizenCat:
+            - text:
+                en: "I *LOVE* bears!"
+                de: "Ich *LIEBE* Bären!"
+              set: [ 'op.love.cat' ]
+          biologist:
+            - text:
+                en: "The return of bears is a sign that our local ecosystem is recovering."
+                de: "Die Rückkehr der Bären ist ein Zeichen dafür, dass sich unser lokales Ökosystem erholt."
+              set: [ 'op.love.biologist' ]
+          citizenHipster:
+            - text:
+                en: "I'm a birdwatcher. Bears coming back is great for biodiversity. The forest is richer for it."
+                de: "Ich beobachte gerne Vögel. Die Rückkehr der Bären ist gut für die Artenvielfalt. Der Wald ist dadurch vielfältiger geworden."
+              set: [ 'op.love.hipster' ]
+          tourist:
+            - text:
+                en: "I was in the woods and managed to snap a photo of a bear from a safe distance. It was exhilarating!"
+                de: "Ich war im Wald und habe es geschafft, aus sicherer Entfernung ein Foto von einem Bären zu machen. Es war atemberaubend!"
+              set: [ 'op.love.tourist' ]
+          journalist:
+            - text:
+                en: "Having bears nearby makes our town unique and could attract tourists. Think about it!"
+                de: "Bären in der Nähe zu haben, macht unsere Stadt einzigartig und könnte Tourist*innen anziehen. Denk mal darüber nach!"
+              set: [ 'op.love.journalist' ]
+          museumDirector:
+            - text:
+                en: "We should take this as an opportunity to educate our kids about coexisting with wildlife."
+                de: "Wir sollten das zum Anlass nehmen, unsere Kinder über das Zusammenleben mit Wildtieren zu informieren."
+              set: [ 'op.love.museumDirector' ]
+          citizenCage:
+            - text:
+                en: "Only people living in apartments in the middle of the city can be happy about a bear infestation."
+                de: "Nur Menschen, die in Wohnungen mitten in der Stadt leben, können sich über eine Bärenplage freuen."
+          citizenChamp:
+            - text:
+                en: "Happy? No, we’re not happy about this threat to our safety and livelyhoods."
+                de: "Zufrieden? Nein, wir sind nicht zufrieden über diese Bedrohung für unsere Sicherheit und unser Leben."
+  video:
+    npc: parksDirector
+    mood: interrogation
+    required: lovers
+    available:
+      dialogue:
+        - type: sequence
+          items:
+            - text:
+                en: "A lot of people are scared of bears because of viral online videos made to scare instead of inform."
+                de: "Viele Menschen haben Angst vor Bären, weil virale Online-Videos sie nicht informieren, sondern verängstigen."
+            - text:
+                en: "Can you find someone to create a video with real information about bears?"
+                de: "Kannst du  jemanden finden, der ein Video mit echten Informationen über Bären erstellt?"
+              responses:
+                - text:
+                    en: "Accept the quest"
+                    de: "Nimm die Aufgabe an"
+                  thenText:
+                    en: "You’ll need someone that knows about bears and someone that can produce the video."
+                    de: "Du brauchst jemanden, der sich mit Bären auskennt und jemanden, der das Video produzieren kann."
+                  set: [ 'quest.video.active' ]
+                - text:
+                    en: "Decline for now"
+                    de: "Vorläufig ablehnen"
+                  thenText:
+                    en: "I hope you reconsider."
+                    de: "Ich hoffe, du überlegst es dir nochmal."
+    stages:
+      - cond: '^found.video.expert & found.video.producer'
+        prompt:
+          en: "You found someone that can produce the video! Now find a bear expert."
+          de: "Du hast jemanden gefunden, der das Video produzieren kann! Finde jetzt Expert*innen für Bären."
+        dialogues:
+          biologist:
+            - text:
+                en: "We’ll be happy to help. We’ve done many studies about bear behavior."
+                de: "Wir helfen dir gerne. Wir haben viele Studien über das Verhalten von Bären durchgeführt."
+              set: [ 'found.video.expert', 'quest.video.done', 'pnt.information.video' ]
+          citizenRanger:
+            - text:
+                en: "I’ll be happy to help. I have a lot of direct experience with bears I’ll be happy to share. "
+                de: "Ich helfe gerne. Ich habe viele direkte Erfahrungen mit Bären, die ich gerne weitergeben würde."
+              set: [ 'found.video.expert', 'quest.video.done', 'pnt.information.video'  ]
+          museumDirector:
+            - text:
+                en: "We can’t help you due to budgetary reasons. You’ll find an expert at the university, and the newspaper can produce it."
+                de: "Wir können dir aus Kostengründen nicht helfen. Du kannst einen Expertin an der Universität finden, und die Zeitung kann das Video produzieren."
+          citizenCool:
+            - text:
+                en: "It seems you already have someone that can produce the video. Go find an expert."
+                de: "Es scheint, dass du bereits jemanden hast, der das Video produzieren kann. Geh und finde eine Expertin."
+          journalist:
+            - text:
+                en: "It seems you already have someone that can produce the video. Go find an expert."
+                de: "Es scheint, dass du bereits jemanden hast, der das Video produzieren kann. Geh und finde eine Expertin."
+          citizenPunk:
+            - text:
+                en: "Sorry. Our company doesn’t produce original content. You should talk to the journalist at the newspaper."
+                de: "Entschuldigung. Unser Unternehmen produziert keine originären Inhalte. Du solltest mit dem Journalisten der Zeitung sprechen."
+          robot:
+            - text:
+                en: "A video with factual information about bears? Oh, so interestzzz…"
+                de: "Ein Video mit sachlichen Informationen über Bären? Oh, wie interes…zzz"
+      - cond: 'found.video.expert & ^found.video.producer'
+        prompt:
+          en: "You found an expert! Now find someone that can produce and publish a video."
+          de: "Du hast eine Expertin gefunden! Finde jetzt jemanden, der ein Video produzieren und veröffentlichen kann."
+        dialogues:
+          biologist:
+            - text:
+                en: "It seems you already have an expert. You only need someone that can produce the video."
+                de: "Anscheinend hast du bereits eine Fachmeinung. Du brauchst nur jemanden, der das Video produzieren kann."
+          citizenRanger:
+            - text:
+                en: "It seems you already have an expert. You only need someone that can produce the video."
+                de: "Anscheinend hast du bereits eine Fachmeinung. Du brauchst nur jemanden, der das Video produzieren kann."
+          museumDirector:
+            - text:
+                en: "We can’t help you due to budgetary reasons. You’ll find an expert at the university, and the newspaper can produce it."
+                de: "Wir können dir aus Kostengründen nicht helfen. Du kannst einen Expertin an der Universität finden, und die Zeitung kann das Video produzieren."
+          citizenCool:
+            - text:
+                en: "I’m in! We’ll have to add some effects and jokes, but we’ll make the #1 bear video."
+                de: "Ich bin dabei! Wir müssen ein paar Effekte und Witze einbauen, aber wir werden das beste Bärenvideo machen."
+              set: [ 'found.video.producer', 'quest.video.done', 'pnt.information.video' ]
+          journalist:
+            - text:
+                en: "Let’s do it. Our team of documentarists can have a special about bears online in no time."
+                de: "Los geht's. Unser Team von Dokumentarfilmer*innen kann in kürzester Zeit ein Special über Bären online stellen."
+              set: [ 'found.video.producer', 'quest.video.done', 'pnt.information.video' ]
+          citizenPunk:
+            - text:
+                en: "Sorry. Our company doesn’t produce original content. You should talk to the journalist at the newspaper."
+                de: "Entschuldigung. Unser Unternehmen produziert keine originären Inhalte. Du solltest mit dem Journalisten der Zeitung sprechen."
+          robot:
+            - text:
+                en: "A video with factual information about bears? Oh, so interestzzz…"
+                de: "Ein Video mit sachlichen Informationen über Bären? Oh, wie interes…zzz"
+      - cond: '^found.video.expert & ^found.video.producer'
+        prompt:
+          en: "Find a bear expert and someone that can produce and publish a video."
+          de: "Finde Expert*innen für Bären und jemanden, der ein Video produzieren und veröffentlichen kann."
+        dialogues:
+          biologist:
+            - text:
+                en: "We’ll be happy to help. We’ve done many studies about bear behavior."
+                de: "Wir helfen dir gerne. Wir haben viele Studien über das Verhalten von Bären durchgeführt."
+              set: [ 'found.video.expert' ]
+          citizenRanger:
+            - text:
+                en: "I’ll be happy to help. I have a lot of direct experience with bears I’ll be happy to share. "
+                de: "Ich helfe gerne. Ich habe viele direkte Erfahrungen mit Bären, die ich gerne weitergeben würde."
+              set: [ 'found.video.expert' ]
+          museumDirector:
+            - text:
+                en: "We can’t help you due to budgetary reasons. You’ll find an expert at the university, and the newspaper can produce it."
+                de: "Wir können dir aus Kostengründen nicht helfen. Du kannst einen Expertin an der Universität finden, und die Zeitung kann das Video produzieren."
+          citizenCool:
+            - text:
+                en: "I’m in! We’ll have to add some effects and jokes, but we’ll make the #1 bear video."
+                de: "Ich bin dabei! Wir müssen ein paar Effekte und Witze einbauen, aber wir werden das beste Bärenvideo machen."
+              set: [ 'found.video.producer' ]
+          journalist:
+            - text:
+                en: "Let’s do it. Our team of documentarists can have a special about bears online in no time."
+                de: "Los geht's. Unser Team von Dokumentarfilmer*innen kann in kürzester Zeit ein Special über Bären online stellen."
+              set: [ 'found.video.producer' ]
+          citizenPunk:
+            - text:
+                en: "Sorry. Our company doesn’t produce original content. You should talk to the journalist at the newspaper."
+                de: "Entschuldigung. Unser Unternehmen produziert keine originären Inhalte. Du solltest mit dem Journalisten der Zeitung sprechen."
+          robot:
+            - text:
+                en: "A video with factual information about bears? Oh, so interestzzz…"
+                de: "Ein Video mit sachlichen Informationen über Bären? Oh, wie interes…zzz"
+  suggestions:
+    npc: mayor
+    required: fear
+    mood: exclamation
+    available:
+      dialogue:
+        - type: sequence
+          items:
+            - text:
+                en: "Many citizens are worried because of the bears, so we need to do something."
+                de: "Viele Bürger*innen sind wegen der Bären beunruhigt, deshalb müssen wir etwas tun."
+            - text:
+                en: "We want to hear people’s needs and their ideas. Can you talk with citizens and find good suggestions?"
+                de: "Wir wollen die Bedürfnisse der Menschen und ihre Ideen hören. Kannst du mit den Bürger*innen sprechen und gute Vorschläge finden?"
+              responses:
+                - text:
+                    en: "Accept the quest"
+                    de: "Nimm die Aufgabe an"
+                  thenText:
+                    en: "Find one good idea and bring it to me."
+                    de: "Finde eine gute Idee und bringe sie zu mir."
+                  set: [ 'quest.suggestions.active' ]
+                - text:
+                    en: "Decline for now"
+                    de: "Vorläufig ablehnen"
+                  thenText:
+                    en: "OK. I’ll be here if you change your mind."
+                    de: "Okay. Ich bin hier, falls du deine Meinung änderst."
+    stages:
+      - prompt:
+          en: "Find one good suggestion that the government could use to put people at ease with bears, and share it with the mayor."
+          de: "Finde einen guten Vorschlag, um Menschen den Umgang mit Bären zu erleichtern, und teile ihn der Bürgermeisterin mit."
+        dialogues:
+          mayor:
+            - text:
+                en: "Have you found a good suggestion?"
+                de: "Hast du einen guten Vorschlag gefunden?"
+              responses:
+                - cond: 'COUNT("suggestion.") = 0'
+                  text:
+                    en: "No."
+                    de: "Nein."
+                  thenText:
+                    en: "OK. Keep searching."
+                    de: "Okay. Suche weiter."
+                - cond: 'suggestion.fences'
+                  text:
+                    en: "Installing fences."
+                    de: "Zäune aufstellen."
+                  thenText:
+                    en: "Good idea. We could do that to make citizens feel safer."
+                    de: "Das ist eine gute Idee. Wir könnten das tun, damit sich die Bürger sicherer fühlen."
+                  set: [ 'quest.suggestions.done', 'pnt.empathy.suggestions' ]
+                - cond: 'suggestion.track'
+                  text:
+                    en: "Track the bear’s locations."
+                    de: "Lokalisiere den Aufenthaltsort des Bären."
+                  thenText:
+                    en: "Good. That could help people avoid them."
+                    de: "Das ist gut. Das könnte den Menschen helfen, sie zu vermeiden."
+                  set: [ 'quest.suggestions.done', 'pnt.information.suggestions' ]
+                - cond: 'suggestion.damages'
+                  text:
+                    en: "Cover the cost of damages."
+                    de: "Übernahme der Kosten von Schäden."
+                  thenText:
+                    en: "Good. We could give everyone bear insurance."
+                    de: "Das ist gut. Wir könnten jedem eine Bärenversicherung geben."
+                  set: [ 'quest.suggestions.done', 'pnt.equity.suggestions' ]
+                - cond: 'suggestion.hunt'
+                  text:
+                    en: "Hunt the bears."
+                    de: "Bären jagen."
+                  thenText:
+                    en: "Ugh, no! Bears are protected by law."
+                    de: "Ah, nein! Bären sind durch das Gesetz geschützt."
+                - cond: 'suggestion.trap'
+                  text:
+                    en: "Use bear traps or poison."
+                    de: "Bärenfallen oder Gift verwenden."
+                  thenText:
+                    en: "Agh, no! That would put everyone in danger. Also, we can’t hurt bears."
+                    de: "Ah, nein! Das würde alle in Gefahr bringen. Außerdem dürfen wir Bären nicht verletzen."
+                - cond: 'suggestion.nothing'
+                  text:
+                    en: "Not do anything."
+                    de: "Gar nichts tun."
+                  thenText:
+                    en: "No. That could be the best, but people demand action."
+                    de: "Nein. Das wäre vielleicht das Beste, aber die Leute wollen Taten sehen."
+          journalist:
+            - text:
+                en: "The city should pay for any damages that bears cause. Farmers should not face the costs by themselves."
+                de: "Die Stadt sollte für alle Schäden, die Bären verursachen, aufkommen. Die Landwirte sollten nicht allein für die Kosten aufkommen."
+              set: [ 'suggestion.damages' ]
+          biologist:
+            - text:
+                en: "I'm more worried about people causing harm to the bears than the other way around."
+                de: "Ich mache mir mehr Sorgen darüber, dass die Menschen den Bären Schaden zufügen, als andersherum."
+              set: [ 'suggestion.nothing' ]
+          tourist:
+            - text:
+                en: "No idea. Sorry."
+                de: "Keine Ahnung. Tut mir leid."
+          museumDirector:
+            - text:
+                en: "The city should put fences to keep people and bears protected from each other."
+                de: "Die Stadt sollte Zäune aufstellen, um Menschen und Bären voreinander zu schützen."
+              set: [ 'suggestion.fences' ]
+          citizenCool:
+            - text:
+                en: "Can we track bear locations? Not being surprised by a bear is a good first step."
+                de: "Können wir die Aufenthaltsorte von Bären tracken? Sich nicht von einem Bären überraschen zu lassen, ist ein guter erster Schritt."
+              set: [ 'suggestion.track' ]
+          citizenBraid:
+            - text:
+                en: "We should hire professional bear hunters. "
+                de: "Wir sollten professionelle Bärenjäger*innen einstellen."
+              set: [ 'suggestion.hunt' ]
+          citizenCat:
+            - text:
+                en: "No idea. Sorry."
+                de: "Keine Ahnung. Tut mir leid."
+          citizenHipster:
+            - text:
+                en: "The city should pay for any damages that bears cause. Farmers should not face the costs by themselves."
+                de: "Die Stadt sollte für alle Schäden, die Bären verursachen, aufkommen. Die Landwirte sollten nicht allein für die Kosten aufkommen."
+              set: [ 'suggestion.damages' ]
+          citizenPuan:
+            - text:
+                en: "No idea. Sorry."
+                de: "Keine Ahnung. Tut mir leid."
+          citizenCage:
+            - text:
+                en: "What about bear traps? Poisoned food?"
+                de: "Was ist mit Bärenfallen? Vergiftetes Essen?"
+              set: [ 'suggestion.trap' ]
+          citizenPunk:
+            - text:
+                en: "Can we track bear locations? Not being surprised by a bear is a good first step."
+                de: "Können wir die Aufenthaltsorte von Bären tracken? Sich nicht von einem Bären überraschen zu lassen, ist ein guter erster Schritt."
+              set: [ 'suggestion.track' ]
+          citizenLila:
+            - text:
+                en: "Coming up with ideas is the government’s job, not ours."
+                de: "Es ist die Aufgabe der Stadtverwaltung, Ideen zu entwickeln, nicht unsere."
+          citizenBlue:
+            - text:
+                en: "The city should pay for any damages that bears cause. Farmers should not face the costs by themselves."
+                de: "Die Stadt sollte für alle Schäden, die Bären verursachen, aufkommen. Die Landwirte sollten nicht allein für die Kosten aufkommen."
+              set: [ 'suggestion.damages' ]
+          constructionWorker:
+            - text:
+                en: "The city should put fences to keep people and bears protected from each other."
+                de: "Die Stadt sollte Zäune aufstellen, um Menschen und Bären voreinander zu schützen."
+              set: [ 'suggestion.fences' ]
+          citizenQueen:
+            - text:
+                en: "We should hire professional bear hunters. "
+                de: "Wir sollten professionelle Bärenjäger*innen einstellen."
+              set: [ 'suggestion.hunt' ]
+          citizenRanger:
+            - text:
+                en: "We shouldn’t do anything. People in other places learn to live along with bears just fine."
+                de: "Wir sollten gar nichts tun. An anderen Orten lernen die Menschen, mit den Bären gut zu leben."
+              set: [ 'suggestion.nothing' ]
+          citizenWheelchair:
+            - text:
+                en: "If you follow the guidelines for bear safety, the risks are minimal."
+                de: "Wenn man die Richtlinien zum Schutz vor Bären befolgt, ist das Risiko minimal."
+              set: [ 'suggestion.nothing' ]
+          citizenChamp:
+            - text:
+                en: "Relax the laws to allow shooting bears."
+                de: "Die Gesetze sollten gelockert werden, um den Abschuss von Bären zu ermöglichen."
+              set: [ 'suggestion.hunt' ]
+  advocate:
+    npc: parksDirector
+    mood: exclamation
+    required: video
+    available:
+      dialogue:
+        - type: sequence
+          items:
+            - text:
+                en: "We agreed to include bears in the government…"
+                de: "Wir haben zugestimmt, Bären in die Stadtverwaltung aufzunehmen..."
+            - text:
+                en: "… through a human representative, of course."
+                de: "… durch eine menschliche Vertretung, versteht sich."
+            - text:
+                en: "Someone that can make demands and represent the bears’ best interests."
+                de: "Jemand, der Forderungen stellen und die Interessen der Bären vertreten kann."
+            - text:
+                en: "Can you help us find a good representative for bears?"
+                de: "Kannst du uns helfen, eine gute Vertretung für die Bären zu finden?"
+              responses:
+                - text:
+                    en: "Accept the quest"
+                    de: "Nimm die Aufgabe an"
+                  thenText:
+                    en: "Find someone willing to represent bears in the government and then come and tell me who they are."
+                    de: "Finde eine Person, die bereit ist, die Bären in der Stadtverwaltung zu vertreten und sage mir dann, wer es ist."
+                  set: [ 'quest.advocate.active' ]
+                - text:
+                    en: "Decline for now"
+                    de: "Vorläufig ablehnen"
+                  thenText:
+                    en: "OK. I’ll be here if you change your mind."
+                    de: "Okay. Ich bin hier, falls du deine Meinung änderst."
+    stages:
+      - prompt:
+          en: "Find a person that can represent bears in the government. Then, tell the director who they are."
+          de: "Finde eine Person, die Bären in der Stadtverwaltung vertreten kann. Sage dann der Leiterin, wer das ist."
+        dialogues:
+          parksDirector:
+            - text:
+                en: "Have you found someone that would make a good bear representative?"
+                de: "Hast du jemanden gefunden, der die Bären gut vertreten kann?"
+              responses:
+                - cond: 'COUNT("advocate.") = 0'
+                  text:
+                    en: "No."
+                    de: "Nein."
+                  thenText:
+                    en: "No problem, keep looking."
+                    de: "Kein Problem, suche weiter."
+                - cond: 'advocate.ranger'
+                  text:
+                    en: "The park ranger."
+                    de: "Der Ranger."
+                  thenText:
+                    en: "A great choice. He is knowledgeable, experienced, and cares about bears."
+                    de: "Eine gute Wahl. Er ist sachkundig, erfahren und kümmert sich um Bären."
+                  set: [ 'quest.advocate.done', 'pnt.empowerment.advocate' ]
+                - cond: 'advocate.ai'
+                  text:
+                    en: "An AI."
+                    de: "Eine KI."
+                  thenText:
+                    en: "Mmm… Including animals and AIs in democracy are both new things. Citizens won’t accept them combined."
+                    de: "Hmmm... Tiere und KI in Entscheidungen einzubeziehen ist neu. Die Bürgerschaft wird beides zusammen nicht akzeptieren."
+                - cond: 'advocate.farmer'
+                  text:
+                    en: "The farmer"
+                    de: "Die Bäuerin"
+                  thenText:
+                    en: "No, the farmer and bears are in conflict. She can’t represent their point of view."
+                    de: "Nein, die Bäuerin und die Bären stehen im Konflikt. Sie kann deren Standpunkt nicht vertreten."
+                - cond: 'advocate.hater'
+                  text:
+                    en: "The Bear hater"
+                    de: "Der Bärenhasser"
+                  thenText:
+                    en: "Someone that is biased against bears can’t represent their interests."
+                    de: "Jemand, der Vorurteile gegen Bären hat, kann deren Interessen nicht vertreten."
+          citizenRanger:
+            - text:
+                en: "Representing the bears in the government is a huge responsibility, but I am willing to do it. Thank you."
+                de: "Die Vertretung der Bären in der Stadtverwaltung ist eine große Verantwortung, aber ich bin bereit, sie zu übernehmen. Ich danke dir."
+              set: [ 'advocate.ranger' ]
+          biologist:
+            - text:
+                en: "As a biologist, I need to have a more neutral point of view, and it would not be fair for the bears. Why don’t you ask the park ranger?"
+                de: "Als Biologin muss ich einen neutralen Standpunkt einnehmen, und das wäre den Bären gegenüber nicht fair. Warum fragst du nicht den Ranger?"
+          museumDirector:
+            - text:
+                en: "A bear representative should be in direct contact with bears (live, not stuffed). Why don’t you ask the park ranger?"
+                de: "Eine Vertretung für Bären sollte in direktem Kontakt mit Bären stehen (lebend, nicht ausgestopft). Warum fragst du nicht den Ranger?"
+          citizenPunk:
+            - text:
+                en: "We can build an AI that is trained to think like a bear but that speaks like a human! It would be ideal!"
+                de: "Wir können eine KI bauen, die darauf trainiert ist, wie ein Bär zu denken, die aber wie ein Mensch spricht! Das wäre ideal!"
+              set: [ 'advocate.ai' ]
+          citizenBraid:
+            - text:
+                en: "Me? Yes! Tell the director I would love to be President of the Bears."
+                de: "Ich? Ja! Sagen Sie der Leiterin, dass ich gerne Präsidentin der Bären werden würde."
+              set: [ 'advocate.farmer' ]
+          citizenChamp:
+            - text:
+                en: "Me? Yes! I would make sure that bears follow every law, and those who don’t pay the consequences."
+                de: "Ich? Ja! Ich würde dafür sorgen, dass die Bären jedes Gesetz befolgen, und wer das nicht tut, muss die Konsequenzen tragen."
+              set: [ 'advocate.hater' ]
+          citizenQueen:
+            - text:
+                en: "Me? Yes! I would make sure that bears follow every law, and those who don’t pay the consequences."
+                de: "Ich? Ja! Ich würde dafür sorgen, dass die Bären jedes Gesetz befolgen, und wer das nicht tut, muss die Konsequenzen tragen."
+              set: [ 'advocate.hater' ]
+          citizenLila:
+            - text:
+                en: "Me? Yes! I would make sure that bears follow every law, and those who don’t pay the consequences."
+                de: "Ich? Ja! Ich würde dafür sorgen, dass die Bären jedes Gesetz befolgen, und wer das nicht tut, muss die Konsequenzen tragen."
+              set: [ 'advocate.hater' ]
+          journalist:
+            - text:
+                en: "I can’t be a bear representative. I need to keep a neutral point of view."
+                de: "Ich kann kein Bärenvertreter sein. Ich muss einen neutralen Blickwinkel bewahren."
+          citizenCool:
+            - text:
+                en: "I’m not that interested in bears, sorry."
+                de: "Ich interessiere mich nicht so sehr für Bären, tut mir leid."
+          tourist:
+            - text:
+                en: "I’m a tourist. I can’t take part in your government."
+                de: "Ich bin ein Tourist. Ich kann mich nicht an eurer Stadtverwaltung beteiligen."
+          robot:
+            - text:
+                en: "A representative for bears? What's next, universal healthcare for squirrels?"
+                de: "Eine Vertretung für Bären? Was kommt als nächstes, eine Krankenversicherung für Eichhörnchen?"
+          citizenHipster:
+            - text:
+                en: "I’m pretty busy with my job already."
+                de: "Ich bin mit meinem Job schon ziemlich beschäftigt."
+          citizenPuan:
+            - text:
+                en: "I don’t know anything about bears, sorry."
+                de: "Ich weiß nichts über Bären, tut mir leid."
+          citizenCage:
+            - text:
+                en: "Bear representative? How much does it pay?"
+                de: "Bärenvertretung? Wie viel bezahlt ihr dafür?"
+          constructionWorker:
+            - text:
+                en: "I don’t know anything about bears, sorry."
+                de: "Ich weiß nichts über Bären, tut mir leid."
+          citizenWheelchair:
+            - text:
+                en: "I don’t know anything about bears, sorry."
+              de: "Ich weiß nichts über Bären, tut mir leid."
+  tracking:
+    npc: citizenPunk
+    mood: information
+    required: suggestions
+    available:
+      dialogue:
+        - type: sequence
+          items:
+            - text:
+                en: "We developed a system that tracks bear locations using AI and Computer Vision."
+                de: "Wir haben ein System entwickelt, das mithilfe von KI und Computer -Vision den Aufenthaltsort von Bären aufspürt."
+            - text:
+                en: "We want to know if people think this technology would help, and what their concerns are."
+                de: "Wir möchten wissen, ob die Menschen glauben, dass diese Technologie hilfreich ist, und welche Bedenken sie haben."
+            - text:
+                en: "Can you help us by asking citizens?"
+                de: "Kannst du uns helfen und Bürger*innen befragen?"
+              responses:
+                - text:
+                    en: "Accept the quest"
+                    de: "Nimm die Aufgabe an"
+                  thenText:
+                    en: "Find 3 opinions by talking to the people that are most active in the discussion about bears."
+                    de: "Finde 3 Meinungen, indem du mit den Menschen sprichst, die am aktivsten an der Diskussion über Bären teilnehmen."
+                  set: [ 'quest.tracking.active' ]
+                - text:
+                    en: "Decline for now"
+                    de: "Vorläufig ablehnen"
+                  thenText:
+                    en: "OK. Come back if you change your mind."
+                    de: "Okay. Komme wieder, wenn du deine Meinung geändert hast."
+    stages:
+      - cond: 'COUNT("op.tracking") >= 3'
+        prompt:
+          en: "Report back to the software developer"
+          de: "Berichte der Softwareentwicklerin"
+        target: citizenPunk
+        dialogues:
+          citizenPunk:
+            - text:
+                en: "Thanks! We’ll use these insights to improve our system."
+                de: "Danke! Wir werden diese Erkenntnisse nutzen, um unser System zu verbessern."
+              set: [ 'quest.tracking.done', 'pnt.information.tracking' ]
+      - prompt:
+          en: "Get 3 opinions about the Bear Tracking System by talking to people that are most active in the bear issue."
+          de: "Hole 3 Meinungen über das Bären-Tracking-System ein. Spreche mit Menschen, die sich am meisten mit dem Thema Bären beschäftigen."
+        counter:
+          expression: 'COUNT("op.tracking")'
+          max: 3
+          icon: idea
+        dialogues:
+          citizenPunk:
+            - text:
+                en: "Find 3 opinions by talking to the people that are most active in the discussion about bears."
+                de: "Finde 3 Meinungen, indem du mit den Menschen sprichst, die am aktivsten an der Diskussion über Bären teilnehmen."
+          journalist:
+            - text:
+                en: "Does this system allow anyone to see where bears are? Even hunters?"
+                de: "Erlaubt dieses System jedem zu sehen, wo sich Bären aufhalten? Auch Jäger*innen?"
+              set: [ 'op.tracking.journalist' ]
+          biologist:
+            - text:
+                en: "This system could be useful for understanding the needs and behaviour of bears."
+                de: "Dieses System könnte nützlich sein, um die Bedürfnisse und das Verhalten von Bären zu verstehen."
+              set: [ 'op.tracking.biologist' ]
+          tourist:
+            - text:
+                en: "Sorry. I don’t know anything about AI."
+                de: "Entschuldigung. Ich weiß nichts über KI."
+          robot:
+            - text:
+                en: "Combining AI with bears? That’s how you end up with the Bearminator."
+                de: "Eine Kombination aus KI und Bären? Da erhält man ja den Bärminator."
+          museumDirector:
+            - text:
+                en: "I worry that knowing there’s a bear nearby will scare people, even if they’re not doing anything bad."
+                de: "Ich befürchte, dass das Wissen über einen Bären in der Nähe die Menschen verängstigt, selbst wenn die nichts Schlimmes tun."
+              set: [ 'op.tracking.museumDirector' ]
+          citizenCool:
+            - text:
+                en: "How expensive is this system? Isn’t it better to pay for whatever bears break?"
+                de: "Wie teuer ist dieses System? Ist es nicht besser, für alles aufzukommen, was die Bären kaputt machen?"
+              set: [ 'op.tracking.citizenCool' ]
+          citizenBraid:
+            - text:
+                en: "What if this system fails and confuses humans with bears?"
+                de: "Was ist, wenn dieses System versagt und Menschen mit Bären verwechselt?"
+              set: [ 'op.tracking.citizenBraid' ]
+          citizenCat:
+            - text:
+                en: "Sorry. I don’t know anything about AI."
+                de: "Entschuldigung. Ich weiß nichts über KI."
+          citizenHipster:
+            - text:
+                en: "I’m sure this system has positives and negatives, like anything."
+                de: "Ich bin sicher, dieses System hat Vor- und Nachteile, wie alles andere auch."
+          citizenPuan:
+            - text:
+                en: "Sorry. I don’t know anything about AI."
+                de: "Entschuldigung. Ich weiß nichts über KI."
+          citizenCage:
+            - text:
+                en: "Sorry. I don’t know anything about AI."
+                de: "Entschuldigung. Ich weiß nichts über KI."
+          citizenLila:
+            - text:
+                en: "I’m sure this system has positives and negatives, like anything."
+                de: "Ich bin sicher, dieses System hat Vor- und Nachteile, wie alles andere auch."
+          citizenBlue:
+            - text:
+                en: "Sorry. I don’t know anything about AI."
+                de: "Entschuldigung. Ich weiß nichts über KI."
+          constructionWorker:
+            - text:
+                en: "This system could alert farmers of nearby bears, avoiding a nasty surprise."
+                de: "Das System könnte Landwirt*innen vor Bären in der Nähe warnen und so eine böse Überraschung vermeiden."
+              set: [ 'op.tracking.citizenCage' ]
+          citizenRanger:
+            - text:
+                en: "People can also track bears, and we avoid installing electronics all through the woods."
+                de: "Auch Menschen können Bären aufspüren. Wir möchten vermeiden, überall in den Wäldern Elektronik zu installieren."
+              set: [ 'op.tracking.citizenRanger' ]
+          citizenWheelchair:
+            - text:
+                en: "Sorry. I don’t know anything about AI."
+                de: "Entschuldigung. Ich weiß nichts über KI."
+          citizenChamp:
+            - text:
+                en: "Sorry. I don’t know anything about AI."
+                de: "Entschuldigung. Ich weiß nichts über KI."
+  territories:
+    npc: biologist
+    mood: exclamation
+    required: ['tracking', 'advocate']
+    available:
+      dialogue:
+        - type: sequence
+          items:
+            - text:
+                en: "We analized movement data, and found out that bears are crossing through farms because our roads divide their population."
+                de: "Wir haben die Bewegungsdaten analysiert und herausgefunden, dass die Bären durch Bauernhöfe wandern, weil unsere Straßen ihre Population teilen."
+            - text:
+                en: "If bears had paths that go under the roads, they would be safer and stay away from farms."
+                de: "Wenn Bären Wege hätten, die unter den Straßen hindurchführen, wären sie sicherer und würden sich von den Bauernhöfen fernhalten."
+            - text:
+                en: "Can you help us getting this information to the right people?"
+                de: "Kannst du uns helfen, diese Informationen an die richtigen Leute weiterzuleiten?"
+              responses:
+                - text:
+                    en: "Accept the quest"
+                    de: "Nimm die Aufgabe an"
+                  thenText:
+                    en: "Find someone that can get these safe paths built. Good luck!"
+                    de: "Finde jemanden, der diese sicheren Wege bauen kann. Viel Glück!"
+                  set: [ 'quest.territories.active' ]
+                - text:
+                    en: "Decline for now"
+                    de: "Vorläufig ablehnen"
+                  thenText:
+                    en: "OK. Come back if you change your mind."
+                    de: "Okay. Komm wieder, wenn du deine Meinung änderst."
+    stages:
+      - prompt:
+          en: "Find someone that can order the construction of pathways so bears can safely cross the roads."
+          de: "Finde jemanden, der den Bau von Wegen anordnen kann, damit Bären die Straßen sicher überqueren können."
+        dialogues:
+          citizenRanger:
+            - text:
+                en: "This makes a lot of sense. I will make a motion right away demanding that the government builds safe paths for the bears."
+                de: "Das macht sehr viel Sinn. Ich werde sofort einen Antrag stellen und die Stadt auffordern, sichere Wege für die Bären zu bauen."
+              set: [ 'quest.territories.done', 'pnt.equity.territories' ]
+          biologist:
+            - text:
+                en: "If bears had paths that go under the roads, they would be safer and stay away from farms."
+                de: "Wenn Bären Wege hätten, die unter den Straßen hindurchführen, wären sie sicherer und würden sich von den Bauernhöfen fernhalten."
+          mayor:
+            - text:
+                en: "That’s very interesting! Unfortunately it seems too expensive for now."
+                de: "Das ist sehr interessant! Leider scheint das im Moment zu teuer zu sein."
+          parksDirector:
+            - text:
+                en: "I fully support this idea, but my office can’t do construction around roads. Sorry."
+                de: "Ich unterstütze diese Idee voll und ganz, aber mein Büro kann keine Bauarbeiten an Straßen durchführen. Tut mir leid."
+          journalist:
+            - text:
+                en: "These findings are very interesting. Maybe the Bear Representative could set this in motion."
+                de: "Diese Erkenntnisse sind sehr interessant. Vielleicht kann der Bärenbeauftragte das in die Wege leiten."
+          museumDirector:
+            - text:
+                en: "I hope the government listens to scientists. Maybe the Bear Representative could set this in motion."
+                de: "Ich hoffe, die Stadt hört auf die Wissenschaft. Vielleicht könnte der Bärenbeauftragte dies in die Wege leiten."
+          citizenBraid:
+            - text:
+                en: "I hope this is true, but we can’t fund it ourselves. We have enough problems as it is."
+                de: "Ich hoffe, dass das stimmt, aber wir können es nicht selbst finanzieren. Wir haben schon genug Probleme."
+          constructionWorker:
+            - text:
+                en: "Building tunnels under the roads is not a big challenge in terms of engineering. It’s a political problem."
+                de: "Der Bau von Tunneln unter den Straßen ist keine große Herausforderung in Bezug auf die Technik. Es ist ein politisches Problem."
+          citizenCool:
+            - text:
+                en: "I will make a video about this issue, but sorry… I can’t dig the pathways myself."
+                de: "Ich werde ein Video über dieses Thema machen, aber leider kann ich die Wege nicht selbst graben."
+          citizenPunk:
+            - text:
+                en: "I wish it was easier to get the government to act once we have the data that shows the solution to a problem."
+                de: "Ich wünschte, es wäre einfacher, die Stadt zum Handeln zu bewegen, sobald wir die Daten zur Problemlösung haben."
+          citizenCage:
+            - text:
+                en: "Bears get new infrastructure to cross the woods while humans keep facing its horrors?"
+                de: "Bären bekommen eine neue Infrastruktur, um die Wälder zu durchqueren, und wir Menschen sind weiterhin mit ihrem Schrecken konfrontiert?"
+          robot:
+            - text:
+                en: "Why not build a Yoga studio for bears, so they become more chill?"
+                de: "Warum nicht ein Yogastudio für Bären bauen, damit sie entspannter werden?"
+ending:
+  dialogue:
+    - type: first
+      items:
+        - cond: 'quest.territories.done'
+          type: sequence
+          class: 'citizensEmpowered'
+          items:
+            - text:
+                en: "The government built safe pathways for the bears, which reduced random encounters."
+                de: "Die Regierung baute sichere Wege für die Bären, was zu weniger zufälligen Begegnungen führte."
+            - text:
+                en: "People are learning to live together with bears and enjoy the forest more."
+                de: "Die Menschen lernen, mit den Bären zusammenzuleben und den Wald mehr zu genießen."
+        - cond: 'COUNT("pnt") >= 5'
+          type: sequence
+          class: 'citizensHappy'
+          items:
+            - text:
+                en: "The government decided to cover economic damages caused by bears and invest in teaching people to live together with bears without violent solutions."
+                de: "Die Regierung beschloss, für die von Bären verursachten wirtschaftlichen Schäden aufzukommen und in die Aufklärung der Menschen über das Zusammenleben mit Bären ohne gewaltsame Lösungen zu investieren."
+            - text:
+                en: "Many people signed up for guided forest walks."
+                de: "Viele Menschen meldeten sich für geführte Waldspaziergänge an."
+        - cond: 'COUNT("pnt") >= 4'
+          type: sequence
+          class: 'citizensNeutral'
+          items:
+            - text:
+                en: "The government decided to install protective fences and bear alarms."
+                de: "Die Regierung beschloss, Schutzzäune und Bärenalarmanlagen zu installieren."
+            - text:
+                en: "Many citizens avoid the woods, although encounters with bears are not too common."
+                de: "Viele Bürger*innen meiden die Wälder, obwohl Begegnungen mit Bären nicht allzu häufig sind."
+        - cond: 'COUNT("pnt") >= 3'
+          type: sequence
+          class: 'citizensNeutral'
+          items:
+            - text:
+                en: "The government decided to cover economic damages caused by bears."
+                de: "Die Regierung hat beschlossen, durch Bären verursachte wirtschaftliche Schäden zu decken."
+            - text:
+                en: "Many citizens avoid the woods, although encounters with bears are not too common."
+                de: "Viele Bürger*innen meiden die Wälder, obwohl Begegnungen mit Bären nicht allzu häufig sind."
+        - cond: 'COUNT("pnt") >= 2'
+          type: sequence
+          class: 'citizensSad'
+          items:
+            - text:
+                en: "The government now gives out exceptional hunting licenses to deal with \"problem bears\"."
+                de: "Die Regierung vergibt jetzt Sonderjagdlizenzen, um mit \"Problembären\" fertig zu werden."
+            - text:
+                en: "Most avoid the woods, because these are even more dangerous than bears."
+                de: "Die meisten meiden die Wälder, weil diese noch gefährlicher wirken als Bären."
+        - type: sequence
+          class: 'citizensAngry'
+          items:
+            - text:
+                en: "Some citizens decided to hire hunters and install illegal traps."
+                de: "Einige Bürger*innen haben beschlossen, Jäger zu engagieren und illegale Fallen aufzustellen."
+            - text:
+                en: "Everyone avoids the woods, because these are even more dangerous than bears."
+                de: "Alle meiden die Wälder, denn diese wirken jetzt noch gefährlicher als Bären."

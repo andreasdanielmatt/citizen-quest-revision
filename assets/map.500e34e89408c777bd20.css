@@ -250,7 +250,7 @@ h1, h2, h3, h4, h5, h6 {
   position: absolute;
   left: 0.6em;
   width: calc(100% - 1.2em);
-  height: calc(33% - 1.2em);
+  min-height: calc(33% - 1.2em);
   background-color: #fff;
   color: #000;
   border-radius: 1em;
@@ -856,4 +856,4 @@ html.with-fatal-error body {
   margin-bottom: 1.2em;
 }
 
-/*# sourceMappingURL=player.2e489a3e5535ce42a669.css.map*/
+/*# sourceMappingURL=map.500e34e89408c777bd20.css.map*/

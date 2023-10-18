@@ -44273,6 +44273,7 @@ class LocalGameServerController {
 
   playerReady() {
     if (this.playerApp.getState() === PlayerAppStates.ENDING) {
+      this.playerApp.removePc();
       this.playerApp.resetGameState();
     }
   }
@@ -50429,4 +50430,4 @@ const storylineLoader = __webpack_require__(/*! ./lib/loader/storyline-loader */
 
 /******/ })()
 ;
-//# sourceMappingURL=default.8c4a10cc6201d712ed2b.js.map
+//# sourceMappingURL=default.6e2be62b3c6d1b6b8a9a.js.map

@@ -16,6 +16,7 @@ class LocalGameServerController {
 
   playerReady() {
     if (this.playerApp.getState() === PlayerAppStates.ENDING) {
+      this.playerApp.removePc();
       this.playerApp.resetGameState();
     }
   }

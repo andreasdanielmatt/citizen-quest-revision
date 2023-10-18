@@ -36,7 +36,7 @@ $response-pointer-size: 2em;
     position: absolute;
     left: $dialogue-margin;
     width: calc(100% - 2 * $dialogue-margin);
-    height: calc(33% - 2 * $dialogue-margin);
+    min-height: calc(33% - 2 * $dialogue-margin);
     background-color: $c-white;
     color: $c-black;
     border-radius: 1em;
