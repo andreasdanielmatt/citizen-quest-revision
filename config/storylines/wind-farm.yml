@@ -1,0 +1,901 @@
+decision:
+  en: "A wind farm that can generate clean energy will be built in the mountains. Many people oppose this project and this is causing heated arguments."
+  de: "In den Bergen soll ein Windpark gebaut werden, um saubere Energie zu erzeugen. Viele Menschen sind gegen dieses Projekt, was zu heftigen Auseinandersetzungen führt."
+prompt:
+  en: "A wind farm that can generate clean energy will be built in the mountains. Many people oppose this project and this is causing heated arguments."
+  de: "In den Bergen soll ein Windpark gebaut werden, um saubere Energie zu erzeugen. Viele Menschen sind gegen dieses Projekt, was zu heftigen Auseinandersetzungen führt."
+npcs:
+  mayor:
+    name:
+      en: "City Mayor"
+      de: "Bürgermeisterin"
+    spawn: { x: 3240, y: 2974 }
+    dialogue:
+      - text:
+          en: "Clean energy brings us closer to the future."
+          de: "Saubere Energie bringt uns der Zukunft näher."
+  parksDirector:
+    name:
+      en: "Director of the environmental agency"
+      de: "Leiterin des Umweltamts"
+    spawn: { x: 3816, y: 2890 }
+    dialogue:
+      - text:
+          en: "Why would anyone oppose producing clean energy?"
+          de: "Warum sollte jemand gegen die Erzeugung sauberer Energie sein?"
+  journalist:
+    name:
+      en: "Journalist"
+      de: "Journalist"
+    spawn: { x: 5050, y: 3130 }
+    dialogue:
+      - text:
+          en: "Misinformation is stopping the development of renewable energy worldwide."
+          de: "Fehlinformationen behindern weltweit die Entwicklung der erneuerbaren Energien."
+  ferrisSalesman:
+    name:
+      en: "Spin City™ Salesman"
+      de: "Drehmoment™ Verkaufsagent"
+    spawn: { x: 3416, y: 3110 }
+    dialogue:
+      - type: sequence
+        items:
+          - text:
+              en: "We offered the city a great deal in wind turbines…"
+              de: "Wir haben der Stadt ein tolles Angebot für Windräder gemacht…"
+          - text:
+              en: "…Pay 19, get 20!"
+              de: "…Zahle 19, bekomme 20!"
+  biologist:
+    name:
+      en: "Biologist"
+      de: "Biologin"
+    spawn: { x: 4698, y: 990 }
+    dialogue:
+      - text:
+          en: "Wind turbines are necessary, but we must limit their impact on the environment."
+          de: "Windräder sind notwendig, aber wir müssen ihre Auswirkungen auf die Umwelt begrenzen."
+  tourist:
+    name:
+      en: "Tourist"
+      de: "Tourist"
+    spawn: { x: 2901, y: 2050 }
+    dialogue:
+      - text:
+          en: "If the wind farm is installed, I’ll have to find a new place for hiking."
+          de: "Wenn der Windpark errichtet wird, muss ich mir einen neuen Ort zum Wandern suchen."
+  robot:
+    name:
+      en: "Robot"
+      de: "Roboter"
+    spawn: { x: 5748, y: 2340 }
+    dialogue:
+      - type: random
+        items:
+          - text:
+              en: "Oh no, the sky is falling! Wait, no, it's just a turbine."
+              de: "Oh nein, der Himmel stürzt ein! Moment, nein, es ist nur ein Windrad."
+          - text:
+              en: "Turbines kill birds? Just get a drone. They're more resilient and fun."
+              de: "Windräder töten Vögel? Hol dir einfach eine Drohne. Die sind widerstandsfähiger und machen mehr Spaß."
+          - text:
+              en: "They should put a turbine on every mountain. Modern art!"
+              de: "Man sollte auf jedem Berg ein Windrad aufstellen. Moderne Kunst!"
+          - text:
+              en: "They want to stop global warming with these giant fans that hardly make a breeze."
+              de: "Sie wollen die globale Erwärmung mit diesen riesigen Ventilatoren aufhalten, die erzeiugen ja kaum einen Luftzug."
+  museumDirector:
+    name:
+      en: "Museum Director"
+      de: "Museumsdirektorin"
+    spawn: { x: 5213, y: 2290 }
+    dialogue:
+      - text:
+          en: "I just wish there were more community discussions before such big decisions."
+          de: "Ich wünschte, es gäbe mehr Diskussionen in der Gemeinschaft vor so großen Entscheidungen."
+  citizenCool:
+    name:
+      en: "Video blogger"
+      de: "Videobloggerin"
+    spawn: { x: 4416, y: 3130 }
+    dialogue:
+      - type: sequence
+        items:
+          - text:
+              en: "In my newest video…"
+              de: "In meinem neuesten Video…"
+          - text:
+              en: "… I try to generate electricity faster than a wind turbine by pedaling on a bike!"
+              de: "… versuche ich, mit dem Fahrrad schneller Strom zu erzeugen als ein Windrad!"
+          - text:
+              en: "Remember to like and subscribe!"
+              de: "Vergesst nicht, zu liken und zu abonnieren!"
+  citizenBraid:
+    name:
+      en: "Citizen"
+      de: "Bürgerin"
+    spawn: { x: 536, y: 3130 }
+    dialogue:
+      - text:
+          en: "People in big cities demand clean energy, and we're the ones paying the cost."
+          de: "Die Menschen in den Großstädten verlangen saubere Energie und wir sind diejenigen, die die Kosten dafür tragen."
+  citizenCat:
+    name:
+      en: "Citizen"
+      de: "Bürgerin"
+    spawn: { x: 2390, y: 2050 }
+    dialogue:
+      - text:
+          en: "I've heard they can affect bird migration. Is that true?"
+          de: "Ich habe gehört, dass sie den Vogelzug beeinträchtigen können. Stimmt das?"
+  citizenHipster:
+    name:
+      en: "Citizen"
+      de: "Bürger"
+    spawn: { x: 3625, y: 1470 }
+    dialogue:
+      - text:
+          en: "I'm in favor of clean energy, but also of a clean landscape. Put them elsewhere."
+          de: "Ich bin für saubere Energie, aber auch für eine saubere Landschaft. Stellt sie woanders hin!"
+  citizenPuan:
+    name:
+      en: "Citizen"
+      de: "Bürgerin"
+    spawn: { x: 2455, y: 1470 }
+    dialogue:
+      - text:
+          en: "Have you read about the materials used to make the turbines? Not as eco-friendly as you'd think."
+          de: "Hast du über die Materialien gelesen, die für die Herstellung der Windräder verwendet werden? Sie sind nicht so umweltfreundlich, wie man meinen könnte."
+  citizenCage:
+    name:
+      en: "Citizen"
+      de: "Bürger"
+    spawn: { x: 1673, y: 3130 }
+    dialogue:
+      - text:
+          en: "Maybe those against clean energy have a stake in the old ways. Makes you think."
+          de: "Vielleicht wollen diejenigen, die gegen saubere Energie sind, an den alten Methoden festhalten. Das gibt einem zu denken."
+  citizenPunk:
+    name:
+      en: "Software Developer"
+      de: "Software-Entwickler"
+    spawn: { x: 4286, y: 2050 }
+    dialogue:
+      - text:
+          en: "It’s necessary to invest in renewable energy even if it ruins the view a little."
+          de: "Es ist notwendig, in erneuerbare Energien zu investieren, auch wenn es die Aussicht ein wenig verdirbt."
+  citizenLila:
+    name:
+      en: "Citizen"
+      de: "Bürgerin"
+    spawn: { x: 1221, y: 1625 }
+    dialogue:
+      - text:
+          en: "Every time I look at the mountains now, I won't see beauty, but those turbines."
+          de: "Jedes Mal, wenn ich jetzt auf die Berge schaue, werde ich nicht die Schönheit sehen, sondern diese Windräder."
+  citizenBlue:
+    name:
+      en: "Citizen"
+      de: "Bürgerin"
+    spawn: { x: 1946, y: 2051 }
+    dialogue:
+      - text:
+          en: "100% in favor. I don’t want my kids to deal with crazy climate."
+          de: "Ich bin zu 100 % dafür. Ich will nicht, dass meine Kinder mit einem verrückten Klima zu kämpfen haben."
+  constructionWorker:
+    name:
+      en: "Engineer"
+      de: "Ingenieurin"
+    spawn: { x: 5846, y: 3130 }
+    dialogue:
+      - text:
+          en: "The townspeople should've had more say before they decided to build them here."
+          de: "Die Bürger*innen hätten vor dem Bau der Windräder mehr Mitspracherecht erhalten sollen."
+  citizenQueen:
+    name:
+      en: "Citizen"
+      de: "Bürgerin"
+    spawn: { x: 5660, y: 970 }
+    dialogue:
+      - text:
+          en: "People say it's progress, but at what cost to our heritage and serenity?"
+          de: "Ist es wirklich Fortschritt, wenn unser Erbe und unsere Lebensqualität dabei auf der Strecke bleiben?"
+  citizenRanger:
+    name:
+      en: "Ranger"
+      de: "Ranger"
+    spawn: { x: 896, y: 2290 }
+    dialogue:
+      - text:
+          en: "It's not just about energy; it's about respecting nature."
+          de: "Es geht nicht nur um Energie, sondern auch um den Respekt vor der Natur."
+  citizenWheelchair:
+    name:
+      en: "Composer"
+      de: "Komponistin"
+    spawn: { x: 6128, y: 2330 }
+    dialogue:
+      - text:
+          en: "Can't they design them to be more in harmony with the landscape? It's not rocket science!"
+          de: "Kann man sie nicht so gestalten, dass sie sich besser in die Landschaft einfügen? Das ist doch keine Raketenwissenschaft!"
+  citizenChamp:
+    name:
+      en: "Citizen"
+      de: "Bürgerin"
+    spawn: { x: 1946, y: 2770 }
+    dialogue:
+      - text:
+          en: "The mountains have always been untouched. It's sad to see them changed."
+          de: "Die Berge blieben bisher unberührt. Es ist traurig, wenn sich das ändert."
+quests:
+  against:
+    npc: mayor
+    mood: interrogation
+    available:
+      dialogue:
+        - type: sequence
+          items:
+            - text:
+                en: "Who could be against clean energy?"
+                de: "Wer könnte gegen saubere Energie sein?"
+            - text:
+                en: "Can you find 3 people who are against building the wind park?"
+                de: "Kannst du 3 Personen finden, die gegen den Bau des Windparks sind?"
+              responses:
+                - text:
+                    en: "Accept the quest"
+                    de: "Nimm die Aufgabe an"
+                  thenText:
+                    en: "Thanks, I want to understand their point of view."
+                    de: "Danke, ich möchte ihren Standpunkt verstehen."
+                  set: [ 'quest.against.active' ]
+                - text:
+                    en: "Decline for now"
+                    de: "Vorläufig ablehnen"
+                  thenText:
+                    en: "OK. I’ll be here if you change your mind."
+                    de: "Okay. Ich bin hier, falls du deine Meinung änderst."
+    stages:
+      - cond: 'COUNT("op.neg") >= 3'
+        prompt:
+          en: "Report back to the city mayor."
+          de: "Sprich mit der Bürgermeisterin."
+        target: mayor
+        dialogues:
+          mayor:
+            - text:
+                en: "Thank you for your help. I’ll see what I can do."
+                de: "Danke für deine Hilfe. Ich werde sehen, was ich tun kann."
+              set: [ 'quest.against.done', 'pnt.empathy.against' ]
+      - prompt:
+          en: "Find 3 people who are against building a wind park."
+          de: "Finde 3 Personen, die gegen den Bau eines Windparks sind."
+        counter:
+          expression: 'COUNT("op.neg")'
+          max: 3
+          icon: angry
+        dialogues:
+          tourist:
+            - text:
+                en: "If the wind farm is installed, I’ll have to find a new place for hiking."
+                de: "Wenn der Windpark errichtet wird, muss ich mir einen neuen Ort zum Wandern suchen."
+              set: [ 'op.neg.tourist' ]
+          citizenBraid:
+            - text:
+                en: "People in big cities demand clean energy, and we're the ones paying the cost."
+                de: "Die Menschen in den Großstädten verlangen saubere Energie und wir sind diejenigen, die die Kosten dafür tragen."
+              set: [ 'op.neg.citizenBraid' ]
+          citizenHipster:
+            - text:
+                en: "I'm in favor of clean energy, but also of a clean landscape. Put them elsewhere."
+                de: "Ich bin für saubere Energie, aber auch für eine saubere Landschaft. Stellt sie woanders hin!"
+              set: [ 'op.neg.citizenHipster' ]
+          citizenPuan:
+            - text:
+                en: "Have you read about the materials used to make the turbines? Not as eco-friendly as you'd think."
+                de: "Hast du über die Materialien gelesen, die für die Herstellung der Windräder verwendet werden? Sie sind nicht so umweltfreundlich, wie man meinen könnte."
+              set: [ 'op.neg.citizenPuan' ]
+          citizenLila:
+            - text:
+                en: "Every time I look at the mountains now, I won't see beauty, but those turbines."
+                de: "Jedes Mal, wenn ich jetzt auf die Berge schaue, werde ich nicht die Schönheit sehen, sondern diese Windräder."
+              set: [ 'op.neg.citizenLila' ]
+          constructionWorker:
+            - text:
+                en: "The townspeople should've had more say before they decided to build them here."
+                de: "Die Bürger*innen hätten vor dem Bau der Windräder mehr Mitspracherecht erhalten sollen."
+              set: [ 'op.neg.constructionWorker' ]
+          citizenQueen:
+            - text:
+                en: "People say it's progress, but at what cost to our heritage and serenity?"
+                de: "Ist es wirklich Fortschritt, wenn unser Erbe und unsere Lebensqualität dabei auf der Strecke bleiben?"
+              set: [ 'op.neg.citizenQueen' ]
+          citizenRanger:
+            - text:
+                en: "It's not just about energy; it's about respecting nature."
+                de: "Es geht nicht nur um Energie, sondern auch um den Respekt vor der Natur."
+              set: [ 'op.neg.citizenRanger' ]
+          citizenWheelchair:
+            - text:
+                en: "Can't they design them to be more in harmony with the landscape? It's not rocket science!"
+                de: "Kann man sie nicht so gestalten, dass sie sich besser in die Landschaft einfügen? Das ist doch keine Raketenwissenschaft!"
+              set: [ 'op.neg.citizenWheelchair' ]
+          citizenChamp:
+            - text:
+                en: "The mountains have always been untouched. It's sad to see them changed."
+                de: "Die Berge blieben bisher unberührt. Es ist traurig, wenn sich das ändert."
+              set: [ 'op.neg.citizenChamp' ]
+  favor:
+    npc: mayor
+    mood: interrogation
+    available:
+      dialogue:
+        - type: sequence
+          items:
+            - text:
+                en: "Wow! Most people are actually against the project."
+                de: "Wow! Die meisten sind tatsächlich gegen das Projekt."
+            - text:
+                en: "Can you find 2 people who are in favor of building the wind park?"
+                de: "Kannst du 2 Personen finden, die für den Bau des Windparks sind?"
+              responses:
+                - text:
+                    en: "Accept the quest"
+                    de: "Nimm die Aufgabe an"
+                  thenText:
+                    en: "Thanks. Let’s see if there’s some support."
+                    de: "Danke. Schauen wir mal, ob es Unterstützung gibt."
+                  set: [ 'quest.favor.active' ]
+                - text:
+                    en: "Decline for now"
+                    de: "Vorläufig ablehnen"
+                  thenText:
+                    en: "OK. I’ll be here if you change your mind."
+                    de: "Okay. Ich bin hier, falls du deine Meinung änderst."
+    stages:
+      - cond: 'COUNT("op.favor") >= 2'
+        prompt:
+          en: "Report back to the city mayor."
+          de: "Sprich mit der Bürgermeisterin."
+        target: mayor
+        dialogues:
+          mayor:
+            - type: sequence
+              items:
+                - text:
+                    en: "The city seems very divided."
+                    de: "Die Stadt scheint sehr gespalten zu sein."
+                - text:
+                    en: "We will have a referendum. Citizens will vote for or against the project and the majority will decide."
+                    de: "Wir werden ein Referendum durchführen. Die Bevölkerung stimmt ab und die Mehrheit entscheidet."
+              set: [ 'quest.favor.done', 'pnt.empathy.favor' ]
+      - prompt:
+          en: "Find 2 people who are in favor of the wind park."
+          de: "Finde 2 Personen, die für den Windpark sind."
+        counter:
+          expression: 'COUNT("op.favor")'
+          max: 2
+          icon: happy
+        dialogues:
+          mayor:
+            - text:
+                en: "Come back when you found the 2 people. I hope it’s not too hard."
+                de: "Komm wieder, wenn du die 2 Leute gefunden hast. Ich hoffe, es ist nicht zu schwer."
+          biologist:
+            - text:
+                en: "Wind turbines are necessary, but we must limit their impact on the environment."
+                de: "Windräder sind notwendig, aber wir müssen ihre Auswirkungen auf die Umwelt begrenzen."
+              set: [ 'op.favor.biologist' ]
+          citizenCage:
+            - text:
+                en: "Maybe those against clean energy have a stake in the old ways. Makes you think."
+                de: "Vielleicht wollen diejenigen, die gegen saubere Energie sind, an den alten Methoden festhalten. Das gibt einem zu denken."
+              set: [ 'op.favor.citizenCage' ]
+          citizenPunk:
+            - text:
+                en: "It’s necessary to invest in renewable energy even if it ruins the view a little."
+                de: "Es ist notwendig, in erneuerbare Energien zu investieren, auch wenn es die Aussicht ein wenig verdirbt."
+              set: [ 'op.favor.citizenPunk' ]
+          citizenBlue:
+            - text:
+                en: "100% in favor. I don’t want my kids to deal with crazy climate."
+                de: "Ich bin zu 100 % dafür. Ich will nicht, dass meine Kinder mit einem verrückten Klima zu kämpfen haben."
+              set: [ 'op.favor.citizenBlue' ]
+  impact:
+    npc: parksDirector
+    mood: interrogation
+    available:
+      dialogue:
+        - type: sequence
+          items:
+            - text:
+                en: "We want to make sure the wind farm doesn’t hurt nature."
+                de: "Wir wollen sicherstellen, dass der Windpark der Natur nicht schadet."
+            - text:
+                en: "Can you talk to the biologist to see if there’s anything to worry about?"
+                de: "Kannst du mit der Biologin sprechen, um herauszufinden, ob es etwas zu befürchten gibt?"
+              responses:
+                - text:
+                    en: "Accept the quest"
+                    de: "Nimm die Aufgabe an"
+                  thenText:
+                    en: "Great! The biologist is in the university, up northeast."
+                    de: "Super! Die Biologin ist an der Universität, oben im Nordosten."
+                  set: [ 'quest.impact.active' ]
+                - text:
+                    en: "Decline for now"
+                    de: "Vorläufig ablehnen"
+                  thenText:
+                    en: "OK. I’ll be here if you change your mind."
+                    de: "Okay. Ich bin hier, falls du deine Meinung änderst."
+    stages:
+      - cond: 'impact.talked.biologist'
+        prompt:
+          en: "Talk to the park ranger."
+          de: "Sprich mit dem Ranger."
+        target: citizenRanger
+        dialogues:
+          citizenRanger:
+            - type: sequence
+              items:
+                - text:
+                    en: "There’s no perfect location. A wind turbine will affect nature no matter what…"
+                    de: "Es gibt keinen perfekten Standort. Ein Windrad wird die Natur beeinflussen, egal wo es steht…"
+                - text:
+                    en: "… but there’s an area up in the mountain where the drought killed the trees. That would have the least impact."
+                    de: "… aber es gibt ein Gebiet oben in den Bergen, wo es wegen der Dürre keine Bäume mehr gibt. Dort gäbe es die geringsten Auswirkungen."
+                  set: [ 'quest.impact.done', 'pnt.information.impact' ]
+      - prompt:
+          en: "Talk to the biologist."
+          de: "Sprich mit der Biologin."
+        target: biologist
+        dialogues:
+          biologist:
+            - type: sequence
+              items:
+                - text:
+                    en: "We studied the subject. Sometimes birds and bats crash against the blades of wind turbines."
+                    de: "Wir haben das Thema untersucht. Manchmal prallen Vögel und Fledermäuse gegen die Flügel von Windrädern."
+                - text:
+                    en: "It’s also important to place them in the right location to avoid affecting biodiversity."
+                    de: "Es ist auch wichtig, sie am richtigen Ort zu platzieren, um die Artenvielfalt nicht zu beeinträchtigen."
+                - text:
+                    en: "Talk to the park ranger for advice about the best place to install the wind farm."
+                    de: "Sprich mit dem Ranger, um dich über den besten Standort für den Windpark zu informieren."
+                  set: [ 'impact.talked.biologist' ]
+  turbines:
+    npc: parksDirector
+    mood: interrogation
+    available:
+      dialogue:
+        - type: sequence
+          items:
+            - text:
+                en: "I’m worried about wind turbines killing birds and bats."
+                de: "Ich mache mir Sorgen, dass Windräder Vögel und Fledermäuse töten."
+            - text:
+                en: "Could there be a technical solution to the problem?"
+                de: "Gibt es eine technische Lösung für dieses Problem?"
+            - text:
+                en: "Can you find someone that can come up with a solution?"
+                de: "Kannst du jemanden finden, der eine Lösung hat?"
+              responses:
+                - text:
+                    en: "Accept the quest"
+                    de: "Nimm die Aufgabe an"
+                  thenText:
+                    en: "Great! Good luck."
+                    de: "Super! Viel Glück! "
+                  set: [ 'quest.turbines.active' ]
+                - text:
+                    en: "Decline for now"
+                    de: "Vorläufig ablehnen"
+                  thenText:
+                    en: "OK. I’ll be here if you change your mind."
+                    de: "Okay. Ich bin hier, falls du deine Meinung änderst."
+    stages:
+      - prompt:
+          en: "Find someone that can make the wind turbines friendlier to birds through technology."
+          de: "Finde jemanden, der die Windräder mit Hilfe von Technologie vogelfreundlicher machen kann."
+        dialogues:
+          biologist:
+            - type: sequence
+              items:
+                - text:
+                    en: "If the turbines were tall enough, most birds would fly under the blades safely."
+                    de: "Wenn die Windräder hoch genug wären, würden die meisten Vögel unter den Flügeln sicher durchfliegen."
+                - text:
+                    en: "Could someone build taller turbines?"
+                    de: "Könnte jemand höhere Windräder bauen?"
+          museumDirector:
+            - type: sequence
+              items:
+                - text:
+                    en: "None of the birds in our collection are in danger of wind turbines."
+                    de: "Keiner der Vögel in unserer Sammlung ist durch Windräder in Gefahr."
+                - text:
+                    en: "Ask the software people, their pet is a penguin."
+                    de: "Fragen Sie die Software-Leute, ihr Lieblingstier ist ein Pinguin."
+          citizenCool:
+            - type: sequence
+              items:
+                - text:
+                    en: "Couldn’t an AI see birds approaching the turbines and scream warnings?"
+                    de: "Könnte eine KI nicht Vögel erkennen, die sich den Windrädern nähern, und Warnschreie abgeben?"
+                - text:
+                    en: "Talk to the software developer."
+                    de: "Sprich mit dem Softwareentwickler."
+          constructionWorker:
+            - type: sequence
+              items:
+                - text:
+                    en: "If we build the turbines in the city we could make them tall enough that most birds just fly under them."
+                    de: "Wenn wir die Windräder in der Stadt bauen, könnten wir sie so hoch machen, dass die meisten Vögel einfach unter ihnen durchfliegen."
+                - text:
+                    en: "This would also create jobs. Win win!"
+                    de: "Das würde auch Arbeitsplätze schaffen. Win-Win!"
+                  set: [ 'quest.turbines.done', 'pnt.equity.turbines' ]
+          citizenPunk:
+            - text:
+                en: "No problem! Using computer vision we can detect birds and make the turbines stop."
+                de: "Kein Problem! Mit Hilfe von Software können wir Vögel erkennen und die Windräder abschalten."
+              set: [ 'quest.turbines.done', 'pnt.information.turbines' ]
+          journalist:
+            - type: sequence
+              items:
+                - text:
+                    en: "I bet a locally produced wind turbine could be adapted to local fauna."
+                    de: "Ich wette, eine lokal produzierte Windturbine könnte an die lokale Fauna angepasst werden."
+                - text:
+                    en: "You should talk to the engineer, down by the factory."
+                    de: "Du solltest mit der Ingenieurin unten in der Fabrik sprechen."
+  cooperative:
+    npc: constructionWorker
+    mood: exclamation
+    available:
+      dialogue:
+        - type: sequence
+          items:
+            - text:
+                en: "We could build and install the wind turbines in the city through a cooperative."
+                de: "Wir könnten die Windräder in der Stadt über eine Genossenschaft bauen und installieren."
+            - text:
+                en: "I’m sure people would be happier if the profits stay in the community."
+                de: "Ich bin sicher, die Menschen wären glücklicher, wenn die Gewinne in der Gemeinde blieben."
+            - text:
+                en: "Can you help us find ideas of how to reinvest the profits?"
+                de: "Kannst du uns helfen, Ideen zu finden, wie wir die Gewinne reinvestieren können?"
+              responses:
+                - text:
+                    en: "Accept the quest"
+                    de: "Nimm die Aufgabe an"
+                  thenText:
+                    en: "Once you found a good idea, tell the mayor."
+                    de: "Wenn du eine gute Idee gefunden hast, sag es der Bürgermeisterin."
+                  set: [ 'quest.cooperative.active' ]
+                - text:
+                    en: "Decline for now"
+                    de: "Vorläufig ablehnen"
+                  thenText:
+                    en: "OK. I’ll be here if you change your mind."
+                    de: "Okay. Ich bin hier, falls du deine Meinung änderst."
+    stages:
+      - prompt:
+          en: "Find a good idea for reinvesting the profits from the wind farm, then tell it to the mayor."
+          de: "Schlage der Bürgermeisterin eine gute Idee zur Reinvestition der Windparkgewinne vor."
+        dialogues:
+          constructionWorker:
+            - text:
+                en: "Find a good idea for reinvesting the profits from the wind farm."
+                de: "Finde eine gute Idee für die Reinvestition der Gewinne aus dem Windpark."
+          mayor:
+            - type: first
+              items:
+                - cond: 'COUNT("idea.cooperative") = 0'
+                  text:
+                    en: "You’re searching for ideas to reinvest the profits from the wind farm? Great. Come back when you have one."
+                    de: "Du suchst nach Investitionsideen für die Windparkgewinne? Prima. Komm wieder, wenn du eine hast."
+                - cond: 'COUNT("idea.cooperative") > 0'
+                  text:
+                    en: "Did you find any good ideas of what to do with the profits of the wind farm?"
+                    de: "Hast du gute Ideen gefunden, was man mit den Gewinnen aus dem Windpark machen könnte?"
+                  responses:
+                    - cond: 'idea.cooperative.biodiversity'
+                      text:
+                        en: "Conservation of biodiversity."
+                        de: "Erhaltung der Artenvielfalt."
+                      thenText:
+                        en: "That’s a great idea. I hope it will turn more citizens in favor of the wind farm."
+                        de: "Das ist eine tolle Idee. Ich hoffe, dass sich dadurch mehr Bürger*innen für den Windpark entscheiden."
+                      set: [ 'quest.cooperative.done', 'pnt.equity.cooperative' ]
+                    - cond: 'idea.cooperative.subsidies'
+                      text:
+                        en: "Energy subsidies"
+                        de: "Energie-Subventionen"
+                      thenText:
+                        en: "That’s a great idea. I hope it will turn more citizens in favor of the wind farm."
+                        de: "Das ist eine tolle Idee. Ich hoffe, dass sich dadurch mehr Bürger*innen für den Windpark entscheiden."
+                      set: [ 'quest.cooperative.done', 'pnt.equity.cooperative' ]
+                    - cond: 'idea.cooperative.kindergartens'
+                      text:
+                        en: "New kindergartens"
+                        de: "Neue Kindergärten"
+                      thenText:
+                        en: "That’s a great idea. I hope it will turn more citizens in favor of the wind farm."
+                        de: "Das ist eine tolle Idee. Ich hoffe, dass sich dadurch mehr Bürger*innen für den Windpark entscheiden."
+                      set: [ 'quest.cooperative.done', 'pnt.equity.cooperative' ]
+                    - cond: 'idea.cooperative.tourism'
+                      text:
+                        en: "Tourism."
+                        de: "Tourismus."
+                      thenText:
+                        en: "That’s a great idea. I hope it will turn more citizens in favor of the wind farm."
+                        de: "Das ist eine tolle Idee. Ich hoffe, dass sich dadurch mehr Bürger*innen für den Windpark entscheiden."
+                      set: [ 'quest.cooperative.done', 'pnt.equity.cooperative' ]
+          biologist:
+            - text:
+                en: "The profits should go to conservation of our mountains’ biodiversity."
+                de: "Die Gewinne sollten der Erhaltung der biologischen Vielfalt in unseren Bergen zugute kommen."
+              set: [ 'idea.cooperative.biodiversity' ]
+          parkRanger:
+            - text:
+                en: "The profits should go to conservation of our mountains’ biodiversity."
+                de: "Die Gewinne sollten der Erhaltung der biologischen Vielfalt in unseren Bergen zugute kommen."
+              set: [ 'idea.cooperative.biodiversity' ]
+          journalist:
+            - text:
+                en: "The profits should go to subsidizing the cost of energy in our city."
+                de: "Die Gewinne sollten zur Subventionierung der Energiekosten in unserer Stadt verwendet werden."
+              set: [ 'idea.cooperative.subsidies' ]
+          citizenCool:
+            - text:
+                en: "The profits should go to subsidizing the cost of energy in our city."
+                de: "Die Gewinne sollten zur Subventionierung der Energiekosten in unserer Stadt verwendet werden."
+              set: [ 'idea.cooperative.subsidies' ]
+          citizenPunlk:
+            - text:
+                en: "The profits should go to subsidizing the cost of energy in our city."
+                de: "Die Gewinne sollten zur Subventionierung der Energiekosten in unserer Stadt verwendet werden."
+              set: [ 'idea.cooperative.subsidies' ]
+          citizenHipster:
+            - text:
+                en: "I think the profits should be used to build kindergartens. There aren’t enough."
+                de: "Ich finde, die Gewinne sollten für den Bau von Kindergärten verwendet werden. Es gibt nicht genug."
+              set: [ 'idea.cooperative.kindergartens' ]
+          citizenBlue:
+            - text:
+                en: "I think the profits should be used to build kindergartens. There aren’t enough."
+                de: "Ich finde, die Gewinne sollten für den Bau von Kindergärten verwendet werden. Es gibt nicht genug."
+              set: [ 'idea.cooperative.kindergartens' ]
+          citizenWheelchair:
+            - text:
+                en: "I think the profits should be used to build kindergartens. There aren’t enough."
+                de: "Ich finde, die Gewinne sollten für den Bau von Kindergärten verwendet werden. Es gibt nicht genug."
+              set: [ 'idea.cooperative.kindergartens' ]
+          museumDirector:
+            - text:
+                en: "I think the profits should be used to build tourist attractions, to compensate for the horrible wind farm."
+                de: "Die Gewinne sollten in Touristenattraktionen investiert werden, um für den schrecklichen Windpark zu entschädigen."
+              set: [ 'idea.cooperative.tourism' ]
+          tourist:
+            - text:
+                en: "I think the profits should be used to build tourist attractions, to compensate for the horrible wind farm."
+                de: "Die Gewinne sollten in Touristenattraktionen investiert werden, um für den schrecklichen Windpark zu entschädigen."
+              set: [ 'idea.cooperative.tourism' ]
+  youthParticipation:
+    npc: mayor
+    mood: interrogation
+    available:
+      dialogue:
+        - type: sequence
+          items:
+            - text:
+                en: "I saw that most young people in the city are in favor of the wind farm."
+                de: "Ich habe gesehen, dass die meisten jungen Menschen in der Stadt für den Windpark sind."
+            - text:
+                en: "They are the ones who will be more affected by our vote."
+                de: "Sie sind diejenigen, die von unserer Abstimmung am meisten betroffen sein werden."
+            - text:
+                en: "Can you find a good idea to make them participate?"
+                de: "Hast du eine gute Idee, wie sie doch teilnehmen könnten?"
+              responses:
+                  - text:
+                      en: "Accept the quest"
+                      de: "Nimm die Aufgabe an"
+                    thenText:
+                      en: "Excellent. This might be insightful."
+                      de: "Ausgezeichnet. Da bin ich gespannt."
+                    set: [ 'quest.youthParticipation.active' ]
+                  - text:
+                      en: "Decline for now"
+                      de: "Vorläufig ablehnen"
+                    thenText:
+                      en: "OK. I’ll be here if you change your mind."
+                      de: "Okay. Ich bin hier, falls du deine Meinung änderst."
+    stages:
+      - prompt:
+          en: "Find a good idea to make young people participate in the referendum. Tell it to the Mayor."
+          de: "Finde eine gute Idee, um junge Menschen zur Teilnahme am Referendum zu bewegen. Sag es der Bürgermeisterin."
+        dialogues:
+          mayor:
+            - type: first
+              items:
+                - cond: 'COUNT("idea.youthParticipation") = 0'
+                  text:
+                    en: "Once you find an idea you like, share it with me."
+                    de: "Wenn du eine Idee findest, die dir gefällt, dann melde dich."
+                - cond: 'COUNT("idea.youthParticipation") > 0'
+                  text:
+                    en: "Have you found a way for young people to participate?"
+                    de: "Hast du eine Möglichkeit gefunden, junge Menschen zu beteiligen?"
+                  responses:
+                    - cond: 'idea.youthParticipation.parentVote'
+                      text: "Give all parents an extra vote."
+                      thenText: "That’s a great idea. Parents can represent their interests."
+                      set: ['quest.youthParticipation.done', 'pnt.empowerment.youthParticipation']
+                    - cond: 'idea.youthParticipation.teenVote'
+                      text: "Allow teenagers to vote."
+                      thenText: "That’s a good idea. At least some of them will be included."
+                      set: ['quest.youthParticipation.done', 'pnt.empowerment.youthParticipation']
+                    - cond: 'idea.youthParticipation.schools'
+                      text: "Vote in schools first and inform their decision."
+                      thenText: "That’s a decent idea. At least their voice will be heard."
+                      set: ['quest.youthParticipation.done', 'pnt.empathy.youthParticipation']
+          parksDirector:
+            - text:
+                en: "I'm just not sure kids have the perspective needed for this choice."
+                de: "Ich bin mir nur nicht sicher, ob Kinder die nötige Perspektive für diese Entscheidung haben."
+          journalist:
+            - text:
+                en: "Why not give each parent an extra vote?"
+                de: "Warum nicht jedem Elternteil eine zusätzliche Stimme geben?"
+              set: [ 'idea.youthParticipation.parentVote' ]
+          ferrisSalesman:
+            - text:
+                en: "I haven't really made up my mind yet."
+                de: "Dazu habe ich noch keine Meinung."
+          biologist:
+            - text:
+                en: "What if we had a pre-vote in the schools to see where the kids stand?"
+                de: "Wie wäre es, wenn wir in den Schulen eine Vorabstimmung durchführen würden, um zu sehen, was die Kinder denken?"
+              set: [ 'idea.youthParticipation.schools' ]
+          tourist:
+            - text:
+                en: "I wish I had something to add."
+                de: "Leider kann ich dazu nichts sagen."
+          robot:
+            - type: sequence
+              items:
+                - text:
+                    en: "Kids opinions? Ever ask a kid what they want for dinner?"
+                    de: "Die Meinung der Kinder? Hast du schon mal ein Kind gefragt, was es zum Abendessen möchte?"
+                - text:
+                    en: "That’s how you end up having a gummy bear and chocolate salad."
+                    de: "Da gibt es dann Gummibärchen-Schokoladen-Salat."
+          museumDirector:
+            - text:
+                en: "How about letting parents vote on behalf of their children?"
+                de: "Wie wäre es, wenn die Eltern im Namen ihrer Kinder abstimmen dürften?"
+              set: [ 'idea.youthParticipation.parentVote' ]
+          citizenCool:
+            - text:
+                en: "How about hosting a mock vote in schools and sharing the outcome?"
+                de: "Wie wäre es, eine Probeabstimmung in Schulen zu organisieren und das Ergebnis dann mit allen zu teilen?"
+              set: [ 'idea.youthParticipation.schools' ]
+          citizenBraid:
+            - text:
+                en: "Hmm, no idea."
+                de: "Hmm, keine Ahnung"
+          citizenCat:
+            - text:
+                en: "I wish I had something to add."
+                de: "Leider kann ich dazu nichts sagen."
+          citizenHipster:
+            - text:
+                en: "Why not trust the young adults of our city with a vote?"
+                de: "Warum sollte man den jungen Erwachsenen unserer Stadt nicht eine Stimme geben?"
+              set: [ 'idea.youthParticipation.teenVote' ]
+          citizenPuan:
+            - text:
+                en: "I wish I had something to add."
+                de: "Leider kann ich dazu nichts sagen."
+          citizenCage:
+            - text:
+                en: "I haven't really made up my mind yet."
+                de: "Dazu habe ich noch keine Meinung."
+          citizenPunk:
+            - text:
+                en: "What about kids voting in school and then publicizing the result?"
+                de: "Wie wäre es, wenn die Kinder in der Schule abstimmen und dann das Ergebnis veröffentlicht würde?"
+              set: [ 'idea.youthParticipation.schools' ]
+          citizenLila:
+            - text:
+                en: "Hmm, no idea."
+                de: "Hmm, keine Ahnung"
+          citizenBlue:
+            - text:
+                en: "Maybe the city could allow parents an additional vote for the future generation?"
+                de: "Vielleicht könnte die Stadt den Eltern eine zusätzliche Stimme für die nächste Generation geben?"
+              set: [ 'idea.youthParticipation.parentVote' ]
+          constructionWorker:
+            - text:
+                en: "High school students should be able to vote as well."
+                de: "Auch Schüler*innen der Oberstufe sollten wählen dürfen."
+              set: [ 'idea.youthParticipation.teenVote' ]
+          citizenQueen:
+            - text:
+                en: "Maybe it's best if the adults handle this one."
+                de: "Vielleicht ist es am besten, wenn sich die Erwachsenen um diese Angelegenheit kümmern."
+          citizenRanger:
+            - text:
+                en: "I'm just not sure kids have the perspective needed for this choice."
+                de: "Ich bin mir nur nicht sicher, ob Kinder die nötige Perspektive für diese Entscheidung haben."
+          citizenWheelchair:
+            - text:
+                en: "Why not drop the voting age a bit, at least to include teens?"
+                de: "Warum wird das Wahlalter nicht ein wenig gesenkt, um zumindest Jugendliche einzubeziehen?"
+              set: [ 'idea.youthParticipation.teenVote' ]
+          citizenChamp:
+            - text:
+                en: "It's a complicated matter. Maybe not one for young minds."
+                de: "Das ist eine komplizierte Angelegenheit. Vielleicht nichts für junge Köpfe."
+ending:
+  dialogue:
+    - type: first
+      items:
+        - cond: '^quest.favor.done & (COUNT("pnt") >= 1)'
+          text:
+              en: "The wind farm was never built. The city now has weekly protests demanding an investment in clean energy."
+              de: "Der Windpark wurde nie gebaut. In der Stadt finden nun wöchentlich Proteste statt, um Investitionen in saubere Energie zu fordern."
+        - cond: '^quest.favor.done & (COUNT("pnt") = 0)'
+          type: sequence
+          items:
+            - text:
+                en: "The wind farm was built, but due to excessive complaints from citizens, it was never operational."
+                de: "Der Windpark wurde zwar gebaut, aber aufgrund übermäßiger Beschwerden von Bürger*innen nie in Betrieb genommen."
+            - text:
+                en: "Citizens want to dismantle it but are now fighting about how to dispose of the parts."
+                de: "Die Bürger*innen wollen ihn abbauen, streiten sich aber jetzt um die Entsorgung der Teile."
+        - cond: 'quest.favor.done'
+          type: sequence
+          items:
+            - text:
+                en: "The citizens voted to decide whether to build the wind farm."
+                de: "Die Bürger*innen haben über den Bau des Windparks abgestimmt."
+            - type: first
+              items:
+                - cond: 'quest.youthParticipation.done | quest.cooperative.done'
+                  type: sequence
+                  items:
+                    - type: first
+                      items:
+                        - cond: '^quest.youthParticipation.done'
+                          text:
+                            en: "The majority decided YES (by a small margin)."
+                            de: "Die Mehrheit stimme für JA (mit geringem Abstand)."
+                        - cond: 'quest.youthParticipation.done'
+                          text:
+                            en: "The majority decided YES (by a large margin)."
+                            de: "Die Mehrheit stimme für JA (mit großem Abstand)."
+                    - type: first
+                      items:
+                        - cond: '^quest.turbines.done'
+                          text:
+                            en: "Conservationists are trying to shut it down because of its impact on the environment."
+                            de: "Naturschützer*innen versuchen, die Anlage wegen ihrer Auswirkungen auf die Umwelt zu schließen."
+                        - text:
+                            en: "Almost everyone is now happy with the decision."
+                            de: "Fast alle sind jetzt mit der Entscheidung zufrieden."
+                - text:
+                    en: "The majority said NO."
+                    de: "Die Mehrheit stimme für NEIN."
+
+
+
+
+
+
+
+
+
+
