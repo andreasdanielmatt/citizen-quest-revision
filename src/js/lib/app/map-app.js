@@ -11,6 +11,7 @@ const CharacterView = require('../views/character-view');
 const Character = require('../model/character');
 const KeyboardInputMgr = require('../input/keyboard-input-mgr');
 const MapMarker = require('../views/map-marker');
+const MultiTextScroller = require('../ui/multi-text-scroller');
 
 class MapApp {
   constructor(config, textures) {
@@ -63,6 +64,9 @@ class MapApp {
     this.stats = new Stats();
     this.$element.append(this.stats.dom);
 
+    this.textScroller = new MultiTextScroller(config);
+    this.$element.append(this.textScroller.$element);
+
     // Input
     this.keyboardInputMgr = new KeyboardInputMgr();
     this.keyboardInputMgr.attachListeners();
@@ -97,6 +101,8 @@ class MapApp {
     if (storyline === undefined) {
       throw new Error(`Error: Attempting to start invalid storyline ${this.storylineId}`);
     }
+    this.textScroller.displayText(storyline.prompt);
+    this.textScroller.start();
     this.questTracker.setActiveStoryline(storyline);
     Object.entries(storyline.npcs).forEach(([id, props]) => {
       this.addNpc(new Character(id, props));

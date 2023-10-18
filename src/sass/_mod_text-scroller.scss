@@ -1,0 +1,37 @@
+.text-scroller {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 3.5em;
+  background-color: $c-lime-green;
+  padding: 1em 0;
+  overflow: hidden;
+  @include RobotoCondensedBoldItalic;
+  font-size: 1.1em;
+
+  .text {
+    position: absolute;
+    color: $c-black;
+    white-space: nowrap;
+    padding-right: 4em;
+  }
+}
+
+.multi-text-scroller {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 0.5em 0 2em;
+  background-color: $c-lime-green;
+
+  .text-scroller {
+    position: relative;
+    padding: 0;
+    height: 1.5em;
+    @include RobotoCondensedRegularItalic;
+
+    &:first-child {
+      @include RobotoCondensedBoldItalic;
+    }
+  }
+}

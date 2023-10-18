@@ -39656,6 +39656,7 @@ const CharacterView = __webpack_require__(/*! ../views/character-view */ "./src/
 const Character = __webpack_require__(/*! ../model/character */ "./src/js/lib/model/character.js");
 const KeyboardInputMgr = __webpack_require__(/*! ../input/keyboard-input-mgr */ "./src/js/lib/input/keyboard-input-mgr.js");
 const MapMarker = __webpack_require__(/*! ../views/map-marker */ "./src/js/lib/views/map-marker.js");
+const MultiTextScroller = __webpack_require__(/*! ../ui/multi-text-scroller */ "./src/js/lib/ui/multi-text-scroller.js");
 
 class MapApp {
   constructor(config, textures) {
@@ -39708,6 +39709,9 @@ class MapApp {
     this.stats = new Stats();
     this.$element.append(this.stats.dom);
 
+    this.textScroller = new MultiTextScroller(config);
+    this.$element.append(this.textScroller.$element);
+
     // Input
     this.keyboardInputMgr = new KeyboardInputMgr();
     this.keyboardInputMgr.attachListeners();
@@ -39742,6 +39746,8 @@ class MapApp {
     if (storyline === undefined) {
       throw new Error(`Error: Attempting to start invalid storyline ${this.storylineId}`);
     }
+    this.textScroller.displayText(storyline.prompt);
+    this.textScroller.start();
     this.questTracker.setActiveStoryline(storyline);
     Object.entries(storyline.npcs).forEach(([id, props]) => {
       this.addNpc(new Character(id, props));
@@ -42074,6 +42080,179 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./src/js/lib/ui/multi-text-scroller.js":
+/*!**********************************************!*\
+  !*** ./src/js/lib/ui/multi-text-scroller.js ***!
+  \**********************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const TextScroller = __webpack_require__(/*! ./text-scroller */ "./src/js/lib/ui/text-scroller.js");
+
+class MultiTextScroller {
+  constructor(config) {
+    this.config = config;
+    this.$element = $('<div></div>')
+      .addClass('multi-text-scroller');
+    this.scrollers = [];
+    this.speed = this.config?.map?.promptScrollSpeed || 100; // px per second
+  }
+
+  destroy() {
+    this.clear();
+  }
+
+  clear() {
+    this.scrollers.forEach((s) => { s.$element.remove(); s.destroy(); });
+    this.scrollers = [];
+  }
+
+  displayText(text) {
+    this.clear();
+    const texts = (typeof text === 'object')
+      ? this.config.game.languages
+        .map((lang) => text?.[lang])
+        .filter((t) => t)
+      : [text];
+    texts.forEach((t) => { this.createScroller(t); });
+    if (this.scrollers.length > 0) {
+      this.scrollers[0].speed = this.speed;
+      this.scrollers.forEach((scroller, i) => {
+        if (i > 0) {
+          scroller.speed = this.speed * (
+            scroller.texts[0].width() / this.scrollers[0].texts[0].width()
+          );
+        }
+      });
+    }
+  }
+
+  createScroller(text) {
+    const scroller = new TextScroller(this.config);
+    this.$element.append(scroller.$element);
+    this.scrollers.push(scroller);
+    scroller.displayText(text);
+    return scroller;
+  }
+
+  start() {
+    this.scrollers.forEach((s) => { s.start(); });
+  }
+
+  stop() {
+    this.scrollers.forEach((s) => { s.stop(); });
+  }
+}
+
+module.exports = MultiTextScroller;
+
+
+/***/ }),
+
+/***/ "./src/js/lib/ui/text-scroller.js":
+/*!****************************************!*\
+  !*** ./src/js/lib/ui/text-scroller.js ***!
+  \****************************************/
+/***/ ((module) => {
+
+/* globals PIXI */
+
+const MAX_TEXTS = 10;
+
+class TextScroller {
+  constructor(config) {
+    this.config = config;
+    this.$element = $('<div></div>')
+      .addClass('text-scroller');
+    this.texts = [];
+    this.speed = 75; // px per second
+    this.ticker = this.ticker.bind(this);
+  }
+
+  destroy() {
+    this.stop();
+    this.clear();
+  }
+
+  clear() {
+    this.texts.forEach((t) => { t.remove(); });
+    this.texts = [];
+  }
+
+  displayText(text) {
+    this.clear();
+    const $text = $('<div></div>')
+      .addClass('text')
+      .html(text);
+    this.$element.append($text);
+    this.texts.push($text);
+    // Measure the text width against the container width.
+    // Create as many copies of the text as needed to fill the container.
+    const containerWidth = this.$element.width();
+    const textWidth = $text.width();
+    const textCount = Math.min(Math.ceil(containerWidth / textWidth), MAX_TEXTS);
+    for (let i = 0; i < textCount; i += 1) {
+      const $textCopy = $text.clone();
+      this.$element.append($textCopy);
+      this.texts.push($textCopy);
+    }
+    // Place the first text on the left edge of the container.
+    // and each subsequent text to the right of the previous one.
+    this.scrollTexts(0);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  moveSingleText($text, left) {
+    $text.data('left', left);
+    $text.css('left', `${left}px`);
+  }
+
+  scrollTexts(distance) {
+    // Move the first text by the distance
+    this.moveSingleText(this.texts[0], (this.texts[0].data('left') || 0) - distance);
+    // Move each text to the right of the previous one.
+    // This might seem wasteful, but when the webfont finishes loading,
+    // the text width might change, so we need to re-measure the text width.
+    // This is not optimal, but it's good enough for now.
+    this.texts.forEach(($t, i) => {
+      if (i > 0) {
+        const previousText = this.texts[i - 1];
+        this.moveSingleText($t, previousText.data('left') + previousText.outerWidth());
+      }
+    });
+    // If a text has moved off the left edge of the container,
+    // move it to the right edge of rightmost text.
+    while (this.texts[0].data('left') + this.texts[0].width() < 0) {
+      const leftmostText = this.texts.shift();
+      const rightmostText = this.texts[this.texts.length - 1];
+      const newLeft = parseInt(rightmostText.css('left'), 10) + rightmostText.width();
+      this.moveSingleText(leftmostText, newLeft);
+      this.texts.push(leftmostText);
+    }
+  }
+
+  start() {
+    PIXI.Ticker.shared.add(this.ticker);
+  }
+
+  stop() {
+    PIXI.Ticker.shared.remove(this.ticker);
+  }
+
+  ticker(time) {
+    // Elapsed seconds
+    const elapsed = time / PIXI.settings.TARGET_FPMS / 1000;
+    // Distance to move
+    const distance = elapsed * this.speed;
+    // Scroll the texts
+    this.scrollTexts(distance);
+  }
+}
+
+module.exports = TextScroller;
+
+
+/***/ }),
+
 /***/ "./src/js/lib/views/character-view.js":
 /*!********************************************!*\
   !*** ./src/js/lib/views/character-view.js ***!
@@ -42930,4 +43109,4 @@ const MapApp = __webpack_require__(/*! ./lib/app/map-app */ "./src/js/lib/app/ma
 
 /******/ })()
 ;
-//# sourceMappingURL=map.20e7e28becf479bb6ad6.js.map
+//# sourceMappingURL=map.d8448c7a9e5b1743f0a3.js.map

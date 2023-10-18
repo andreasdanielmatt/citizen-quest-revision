@@ -38,6 +38,7 @@ cfgLoader.load([
   '../config/textures.yml',
   '../config/town.yml',
   '../config/gamepads.yml',
+  '../config/map.yml',
   '../config/storylines.yml',
   settingsFile,
 ])
