@@ -139,7 +139,7 @@ class PlayerApp {
     this.townView = new TownView(this.config, this.textures);
     this.camera.addChild(this.townView.display);
     this.pixiApp.stage.addChild(this.camera);
-    this.demoDrone.setPosition(this.townView.townSize.width / 2, this.townView.townSize.height / 2);
+    this.demoDrone.setPosition(this.townView.width / 2, this.townView.height / 2);
 
     this.cameraTarget = null;
     this.cameraOffset = new PIXI.Point(0, 0);
@@ -222,7 +222,7 @@ class PlayerApp {
             Math.min(
               this.cameraTarget.x + this.cameraOffset.x - PlayerApp.APP_WIDTH / 2
               / this.camera.scale.x,
-              this.townView.townSize.width - PlayerApp.APP_WIDTH / this.camera.scale.x
+              this.townView.width - PlayerApp.APP_WIDTH / this.camera.scale.x
             )
           ),
           Math.max(
@@ -230,7 +230,7 @@ class PlayerApp {
             Math.min(
               this.cameraTarget.y + this.cameraOffset.y - PlayerApp.APP_HEIGHT
               / 2 / this.camera.scale.y,
-              this.townView.townSize.height - PlayerApp.APP_HEIGHT / this.camera.scale.y
+              this.townView.height - PlayerApp.APP_HEIGHT / this.camera.scale.y
             )
           )
         );
