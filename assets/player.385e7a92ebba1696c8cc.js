@@ -40135,58 +40135,15 @@ class PlayerApp {
     this.cameraTarget = null;
     this.cameraOffset = new PIXI.Point(0, 0);
 
-    // Input
-    this.keyboardInputMgr = new KeyboardInputMgr();
-    this.keyboardInputMgr.attachListeners();
-    this.keyboardInputMgr.addToggle('KeyE', () => {
-      this.gameServerController.roundEnd();
-    });
-    this.keyboardInputMgr.addToggle('KeyF', () => {
-      console.log(this.flags.dump());
-    });
-    this.keyboardInputMgr.addToggle('KeyD', () => {
-      this.stats.togglePanel();
-    });
-    this.keyboardInputMgr.addToggle('KeyH', () => {
-      this.toggleHitboxDisplay();
-    });
-    this.keyboardInputMgr.addToggle('KeyX', () => {
-      if (this.pc) {
-        console.log(`x: ${this.pc.position.x}, y: ${this.pc.position.y}`);
-      } else {
-        console.log('No PC');
-      }
-    });
-
-    const gamepadMapperConfig = this.config?.players?.[this.playerId]?.gamepadMapping ?? {};
-    this.gamepadInputMgr = new GamepadInputMgr(gamepadMapperConfig);
-    this.gamepadInputMgr.attachListeners();
-
-    this.multiplexInputMgr = new MultiplexInputMgr(
-      this.keyboardInputMgr,
-      this.gamepadInputMgr
-    );
-    this.multiplexInputMgr.attachListeners();
-
-    const inputMgrs = [
-      this.keyboardInputMgr,
-      this.gamepadInputMgr,
-      this.multiplexInputMgr, // the multiplexer must be the last one
-    ];
-
-    const inputMgr = this.multiplexInputMgr;
-    inputMgr.events.on('lang', () => {
-      this.toggleLanguage();
-    });
-
-    this.inputRouter = new PlayerAppInputRouter(inputMgr);
+    this.inputMgr = this.createInputMgr();
+    this.inputRouter = new PlayerAppInputRouter(this.inputMgr);
 
     // Game loop
     this.pixiApp.ticker.add((time) => {
       this.stats.frameBegin();
-      inputMgrs.forEach((anInputMgr) => anInputMgr.update());
+      this.inputMgr.update();
       if (this.canControlPc && this.pc) {
-        const { x, y } = inputMgr.getDirection();
+        const { x, y } = this.inputMgr.getDirection();
         this.pc.setSpeed(x * 10, y * 10);
       }
 
@@ -40244,6 +40201,47 @@ class PlayerApp {
     this.questTracker.events.on('noQuest', () => {
       this.updateTargetArrow();
     });
+  }
+
+  createInputMgr() {
+    const keyboardInputMgr = new KeyboardInputMgr();
+    keyboardInputMgr.attachListeners();
+    keyboardInputMgr.addToggle('KeyE', () => {
+      this.gameServerController.roundEnd();
+    });
+    keyboardInputMgr.addToggle('KeyF', () => {
+      console.log(this.flags.dump());
+    });
+    keyboardInputMgr.addToggle('KeyD', () => {
+      this.stats.togglePanel();
+    });
+    keyboardInputMgr.addToggle('KeyH', () => {
+      this.toggleHitboxDisplay();
+    });
+    keyboardInputMgr.addToggle('KeyX', () => {
+      if (this.pc) {
+        console.log(`x: ${this.pc.position.x}, y: ${this.pc.position.y}`);
+      } else {
+        console.log('No PC');
+      }
+    });
+
+    const gamepadMapperConfig = this.config?.players?.[this.playerId]?.gamepadMapping ?? {};
+    const gamepadInputMgr = new GamepadInputMgr(gamepadMapperConfig);
+    gamepadInputMgr.attachListeners();
+
+    const multiplexInputMgr = new MultiplexInputMgr(
+      keyboardInputMgr,
+      gamepadInputMgr
+    );
+    multiplexInputMgr.attachListeners();
+
+    const inputMgr = multiplexInputMgr;
+    inputMgr.events.on('lang', () => {
+      this.toggleLanguage();
+    });
+
+    return inputMgr;
   }
 
   setGameServerController(gameServerController) {
@@ -43524,6 +43522,11 @@ class MultiplexInputMgr extends InputMgr {
       }, InputMgr.getInitialState());
     Object.assign(this.state, newState);
   }
+
+  update() {
+    this.inputMgrs.forEach((inputMgr) => inputMgr.update());
+    super.update();
+  }
 }
 
 module.exports = MultiplexInputMgr;
@@ -46341,4 +46344,4 @@ const { PlayerAppStates } = __webpack_require__(/*! ./lib/app/player-app-states 
 
 /******/ })()
 ;
-//# sourceMappingURL=player.0cc7211cdd0c2856afb7.js.map
+//# sourceMappingURL=player.385e7a92ebba1696c8cc.js.map

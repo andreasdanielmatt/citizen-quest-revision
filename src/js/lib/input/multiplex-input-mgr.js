@@ -46,6 +46,11 @@ class MultiplexInputMgr extends InputMgr {
       }, InputMgr.getInitialState());
     Object.assign(this.state, newState);
   }
+
+  update() {
+    this.inputMgrs.forEach((inputMgr) => inputMgr.update());
+    super.update();
+  }
 }
 
 module.exports = MultiplexInputMgr;
