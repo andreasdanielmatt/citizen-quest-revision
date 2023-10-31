@@ -8,7 +8,7 @@ class PlayerAppIdleState extends PlayerAppState {
   }
 
   onEnter() {
-    this.playerApp.titleOverlay.show();
+    this.playerApp.playerOverlayMgr.titleOverlay.show();
     this.playerApp.gameView.cameraFollowDrone();
     this.playerApp.inputRouter.routeToMenus(this.playerApp);
   }
@@ -18,7 +18,7 @@ class PlayerAppIdleState extends PlayerAppState {
   }
 
   onExit() {
-    this.playerApp.titleOverlay.hide();
+    this.playerApp.playerOverlayMgr.titleOverlay.hide();
   }
 }
 

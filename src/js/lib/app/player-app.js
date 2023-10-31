@@ -12,17 +12,9 @@ const PlayerAppInputRouter = require('../input/player-app-input-router');
 const Character = require('../model/character');
 const FlagStore = require('../dialogues/flag-store');
 const QuestTracker = require('../model/quest-tracker');
-const QuestOverlay = require('../ui/quest-overlay');
-const DialogueOverlay = require('../dialogues/dialogue-overlay');
-const DialogueSequencer = require('../dialogues/dialogue-sequencer');
-const Countdown = require('../helpers-web/countdown');
-const DecisionScreen = require('../ui/decision-screen');
-const ScoringOverlay = require('../ui/scoring-overlay');
-const { I18nTextAdapter } = require('../helpers/i18n');
 const readEnding = require('../dialogues/ending-reader');
-const TitleOverlay = require('../ui/title-overlay');
-const TextScreen = require('../ui/text-screen');
-const IntroScreen = require('../ui/intro-screen');
+const PlayerOverlayManager = require('../ui/player-overlay-mgr');
+const DialogueSequencer = require('../dialogues/dialogue-sequencer');
 
 class PlayerApp {
   constructor(config, textures, playerId) {
@@ -46,57 +38,16 @@ class PlayerApp {
     this.stateHandler = null;
     this.gameServerController = null;
 
-    // HTML elements
-    this.$element = $('<div></div>')
-      .addClass('player-app')
-      .addClass(`player-${playerId}`);
-
-    this.$pixiWrapper = $('<div></div>')
-      .addClass('pixi-wrapper')
-      .appendTo(this.$element);
-
-    this.$storylineBar = $('<div></div>')
-      .addClass('storyline-bar')
-      .appendTo(this.$element)
-      .hide();
-
-    this.$decisionLabel = $('<div></div>')
-      .addClass('decision-label')
-      .appendTo(this.$storylineBar);
-
-    this.decisionLabelI18n = new I18nTextAdapter((text) => {
-      this.$decisionLabel.html(text);
-    }, this.lang);
-
-    this.introScreen = null;
-    this.endingScreen = null;
-
-    this.countdown = new Countdown(config.game.duration);
-    this.countdown.$element.appendTo(this.$element);
-    this.countdown.hide();
-    this.countdown.events.on('end', () => {
+    this.playerOverlayMgr = new PlayerOverlayManager(config, this.lang, playerId);
+    this.$element = this.playerOverlayMgr.$element;
+    this.stats = new Stats();
+    this.playerOverlayMgr.$element.append(this.stats.dom);
+    // todo: refactor the following lines. The countdown component should not signal the round end
+    this.playerOverlayMgr.countdown.events.on('end', () => {
       this.gameServerController.roundEnd();
     });
 
-    this.questOverlay = new QuestOverlay(this.config, this.lang, this.questTracker);
-    this.$element.append(this.questOverlay.$element);
-
-    this.textScreen = new TextScreen(this.config, this.lang);
-    this.$element.append(this.textScreen.$element);
-
-    this.dialogueOverlay = new DialogueOverlay(this.config, this.lang);
-    this.dialogueSequencer = new DialogueSequencer(this.dialogueOverlay);
-    this.$element.append(this.dialogueOverlay.$element);
-
-    this.scoringOverlay = new ScoringOverlay(this.config);
-    this.$element.append(this.scoringOverlay.$element);
-
-    this.titleOverlay = new TitleOverlay(this.config, this.lang);
-    this.$element.append(this.titleOverlay.$element);
-    this.titleOverlay.show();
-
-    this.stats = new Stats();
-    this.$element.append(this.stats.dom);
+    this.dialogueSequencer = new DialogueSequencer(this.playerOverlayMgr.dialogueOverlay);
 
     // Temporary scoring manager
     this.seenFlags = {};
@@ -109,22 +60,21 @@ class PlayerApp {
         const flagParts = flagId.split('.');
         const category = flagParts[1];
         if (category) {
-          this.scoringOverlay.show(category);
+          this.playerOverlayMgr.scoringOverlay.show(category);
         }
       }
     });
 
-    const width = PlayerApp.APP_WIDTH;
-    const height = PlayerApp.APP_HEIGHT;
+    const width = this.config?.game?.playerAppWidth ?? 1024;
+    const height = this.config?.game?.playerAppHeight ?? 768;
 
     // PIXI
     this.pixiApp = new PIXI.Application({
-      // todo: get these from config or constants
       width,
       height,
       backgroundColor: 0xffffff,
     });
-    this.$pixiWrapper.append(this.pixiApp.view);
+    this.playerOverlayMgr.$pixiWrapper.append(this.pixiApp.view);
 
     this.gameView = new GameView(config, textures, this.pixiApp, width, height);
     this.pixiApp.stage.addChild(this.gameView.getDisplay());
@@ -142,7 +92,6 @@ class PlayerApp {
       }
 
       this.gameView.animate(time);
-
       this.stats.frameEnd();
     });
 
@@ -155,7 +104,7 @@ class PlayerApp {
         });
         this.updateNpcMoods();
         this.gameView.resetDroneTargets();
-        this.decisionLabelI18n.setText(storyline.decision || '');
+        this.playerOverlayMgr.decisionLabelI18n.setText(storyline.decision || '');
       }
     });
 
@@ -164,13 +113,32 @@ class PlayerApp {
     });
     this.questTracker.events.on('questDone', () => {
       this.updateNpcMoods();
+      this.playerOverlayMgr.questOverlay.markQuestAsDone();
     });
-    this.questTracker.events.on('stageChanged', () => {
+    this.questTracker.events.on('stageChanged', (questId, stage, oldStage) => {
+      if (oldStage !== null) {
+        this.playerOverlayMgr.questOverlay.markStageAsDone();
+      }
+      const activeStage = this.questTracker.getActiveStage();
+      this.playerOverlayMgr.questOverlay.showActiveQuestPrompt(
+        activeStage?.prompt,
+        activeStage?.counter
+      );
       this.gameView.updateTargetArrow(this.questTracker.getActiveStage()?.target);
     });
+
+    this.questTracker.events.on('stageCountChanged', (questId, count) => {
+      this.playerOverlayMgr.questOverlay.setCounter(count);
+    });
+
     this.questTracker.events.on('noQuest', () => {
+      this.playerOverlayMgr.questOverlay.showDefaultPrompt();
       this.gameView.updateTargetArrow(this.questTracker.getActiveStage()?.target);
     });
+  }
+
+  refresh() {
+    this.playerOverlayMgr.refresh();
   }
 
   createInputMgr() {
@@ -257,17 +225,7 @@ class PlayerApp {
 
   setLanguage(lang) {
     this.lang = lang;
-    this.titleOverlay.setLang(this.lang);
-    this.dialogueOverlay.setLang(this.lang);
-    this.textScreen.setLang(this.lang);
-    this.questOverlay.setLang(this.lang);
-    this.decisionLabelI18n.setLang(this.lang);
-    if (this.introScreen) {
-      this.introScreen.setLang(this.lang);
-    }
-    if (this.endingScreen) {
-      this.endingScreen.setLang(this.lang);
-    }
+    this.playerOverlayMgr.setLang(lang);
   }
 
   toggleLanguage() {
@@ -277,11 +235,6 @@ class PlayerApp {
     } else {
       this.setLanguage(this.config.game.languages[langIndex + 1]);
     }
-  }
-
-  resize() {
-    this.$element.fillWithAspect(PlayerApp.APP_WIDTH / PlayerApp.APP_HEIGHT);
-    this.$element.css('font-size', `${(this.$element.width() * PlayerApp.FONT_RATIO).toFixed(3)}px`);
   }
 
   addPc() {
@@ -320,7 +273,10 @@ class PlayerApp {
 
   playDialogue(dialogue, npc = null) {
     this.gameView.hideDistractions();
-    this.inputRouter.routeToDialogueOverlay(this.dialogueOverlay, this.dialogueSequencer);
+    this.inputRouter.routeToDialogueOverlay(
+      this.playerOverlayMgr.dialogueOverlay,
+      this.dialogueSequencer
+    );
     const title = npc ? npc.name : null;
     this.dialogueSequencer.play(dialogue, this.getDialogueContext(), { top: title });
     this.dialogueSequencer.events.once('end', () => {
@@ -385,56 +341,14 @@ class PlayerApp {
     this.updateNpcMoods();
   }
 
-  showDefaultPrompt() {
-    this.questOverlay.showDefaultPrompt();
-  }
-
-  showIntroScreen() {
-    this.hideIntroScreen();
-    const introText = this.questTracker.activeStoryline.prompt;
-    this.introScreen = new IntroScreen(this.config, this.lang);
-    this.$element.append(this.introScreen.$element);
-    this.introScreen.showIntro(introText);
-  }
-
-  hideIntroScreen() {
-    if (this.introScreen) {
-      this.introScreen.$element.remove();
-      this.introScreen = null;
-    }
-  }
-
   handleEnding() {
     const [endingText, classes] = readEnding(
       this.questTracker.getEndingDialogue(),
       this.getDialogueContext()
     );
 
-    this.endingScreen = new DecisionScreen(this.config, this.lang);
-    this.$element.append(this.endingScreen.$element);
-    this.endingScreen.showDecision(endingText, classes);
-  }
-
-  hideEndingScreen() {
-    if (this.endingScreen) {
-      this.endingScreen.$element.remove();
-      this.endingScreen = null;
-    }
-  }
-
-  showTextScreen(text) {
-    this.textScreen.setText(text);
-    this.textScreen.show();
-  }
-
-  hideTextScreen() {
-    this.textScreen.hide();
-    this.textScreen.setText('');
+    this.playerOverlayMgr.showEndingScreen(endingText, classes);
   }
 }
-
-PlayerApp.APP_WIDTH = 1024;
-PlayerApp.APP_HEIGHT = 768;
-PlayerApp.FONT_RATIO = 0.0175; // 1.75% of the width of the app
 
 module.exports = PlayerApp;

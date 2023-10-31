@@ -30,10 +30,7 @@ const Character = require('./lib/model/character');
     let round = 0;
 
     $('[data-component="PlayerApp"]').replaceWith(playerApp.$element);
-    playerApp.resize();
-    $(window).on('resize', () => {
-      playerApp.resize();
-    });
+    playerApp.refresh();
 
     let syncReceived = false;
     const connector = new ServerSocketConnector(config, getSocketServerUrl());
@@ -66,8 +63,8 @@ const Character = require('./lib/model/character');
       // Update the countdown
       if (message.roundCountdown) {
         const seconds = Math.ceil(message.roundCountdown / 1000);
-        if (seconds < playerApp.countdown.remainingSeconds) {
-          playerApp.countdown.setRemainingSeconds(seconds);
+        if (seconds < playerApp.playerOverlayMgr.countdown.remainingSeconds) {
+          playerApp.playerOverlayMgr.countdown.setRemainingSeconds(seconds);
         }
       }
       // Move the players

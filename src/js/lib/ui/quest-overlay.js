@@ -2,22 +2,14 @@ const UIQueue = require('./ui-queue');
 const QuestOverlayPanel = require('./quest-overlay-panel');
 
 class QuestOverlay {
-  constructor(config, lang, questTracker) {
+  constructor(config, lang) {
     this.config = config;
     this.lang = lang;
-    this.questTracker = questTracker;
 
     this.uiQueue = new UIQueue();
 
     this.panel = new QuestOverlayPanel(config, lang);
     this.$element = this.panel.$element;
-
-    this.questTracker.events.on('questActive', this.handleQuestActive.bind(this));
-    this.questTracker.events.on('questInactive', this.handleQuestInactive.bind(this));
-    this.questTracker.events.on('questDone', this.handleQuestDone.bind(this));
-    this.questTracker.events.on('stageChanged', this.handleStageChange.bind(this));
-    this.questTracker.events.on('stageCountChanged', this.handleStageCountChanged.bind(this));
-    this.questTracker.events.on('noQuest', this.handleNoQuest.bind(this));
   }
 
   setLang(lang) {
@@ -30,43 +22,18 @@ class QuestOverlay {
     this.panel.hide();
   }
 
-  // eslint-disable-next-line class-methods-use-this,no-unused-vars
-  handleQuestActive(questId) {
-  }
-
-  // eslint-disable-next-line no-unused-vars,class-methods-use-this
-  handleQuestInactive(questId) {
-  }
-
-  // eslint-disable-next-line class-methods-use-this,no-unused-vars
-  handleQuestDone(questId) {
-    this.markQuestAsDone();
-  }
-
-  handleStageChange(questId, stage, oldStage) {
-    if (oldStage !== null) {
-      this.markStageAsDone();
-    }
-    this.showActiveQuestPrompt();
-  }
-
-  handleStageCountChanged(activeQuestId, count) {
+  setCounter(count) {
     this.uiQueue.add(() => {
       this.panel.setCounter(count);
     }, 1000);
-  }
-
-  handleNoQuest() {
-    this.showDefaultPrompt();
   }
 
   showDefaultPrompt() {
     this.show(this.config?.i18n?.ui?.defaultPrompt || '');
   }
 
-  showActiveQuestPrompt() {
-    const activeStage = this.questTracker.getActiveStage();
-    this.show(activeStage?.prompt, activeStage?.counter, true);
+  showActiveQuestPrompt(prompt, counter = null) {
+    this.show(prompt, counter, true);
   }
 
   show(promptText, counter = null, withCheckmark = false) {

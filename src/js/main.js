@@ -59,14 +59,10 @@ const storylineLoader = require('./lib/loader/storyline-loader');
     const storylineManager = new StorylineManager(config);
     const playerApp = new PlayerApp(config, textures, playerId);
     $('[data-component="PlayerApp"]').replaceWith(playerApp.$element);
+    playerApp.refresh();
 
     playerApp.setGameServerController(new LocalGameServerController(playerApp));
     playerApp.setStoryline(storylineId || storylineManager.getFirst());
-
-    playerApp.resize();
-    $(window).on('resize', () => {
-      playerApp.resize();
-    });
 
     if (statsPanel) {
       playerApp.stats.showPanel(statsPanel);

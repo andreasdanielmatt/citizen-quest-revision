@@ -5,3 +5,6 @@ game:
   introTimeout: 30
   endingTimeout: 30
   maxActiveQuests: 3
+  playerAppWidth: 1024
+  playerAppHeight: 768
+  playerAppFontRatio: 0.0175

@@ -9,20 +9,22 @@ class PlayerAppPlayingState extends PlayerAppState {
 
   onEnter() {
     this.playerApp.gameView.cameraFollowPc();
-    this.playerApp.inputRouter.routeToMenus(this.playerApp);
-    this.playerApp.countdown.show();
-    this.playerApp.countdown.start();
     this.playerApp.showNpcMoods();
-    this.playerApp.showDefaultPrompt();
-    this.playerApp.showIntroScreen();
+    this.playerApp.inputRouter.routeToMenus(this.playerApp);
+    this.playerApp.playerOverlayMgr.countdown.show();
+    this.playerApp.playerOverlayMgr.countdown.start();
+    this.playerApp.playerOverlayMgr.showDefaultPrompt();
+    const introText = this.playerApp.questTracker.activeStoryline.prompt;
+    this.playerApp.playerOverlayMgr.showIntroScreen(introText);
   }
 
   onAction() {
-    if (this.playerApp.introScreen && this.playerApp.introScreen.revealStarted) {
-      if (!this.playerApp.introScreen.isTextRevealed()) {
-        this.playerApp.introScreen.revealText();
+    if (this.playerApp.playerOverlayMgr.introScreen
+      && this.playerApp.playerOverlayMgr.introScreen.revealStarted) {
+      if (!this.playerApp.playerOverlayMgr.introScreen.isTextRevealed()) {
+        this.playerApp.playerOverlayMgr.introScreen.revealText();
       } else {
-        this.playerApp.hideIntroScreen();
+        this.playerApp.playerOverlayMgr.hideIntroScreen();
         this.playerApp.inputRouter.routeToPcMovement(this.playerApp);
       }
     }
@@ -30,10 +32,10 @@ class PlayerAppPlayingState extends PlayerAppState {
 
   onExit() {
     this.playerApp.dialogueSequencer.terminate();
-    this.playerApp.questOverlay.hide();
-    this.playerApp.countdown.hide();
     this.playerApp.hideNpcMoods();
-    this.playerApp.hideIntroScreen();
+    this.playerApp.playerOverlayMgr.questOverlay.hide();
+    this.playerApp.playerOverlayMgr.countdown.hide();
+    this.playerApp.playerOverlayMgr.hideIntroScreen();
   }
 }
 

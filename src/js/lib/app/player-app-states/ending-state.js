@@ -8,13 +8,13 @@ class PlayerAppEndingState extends PlayerAppState {
   }
 
   showWaitingToBeginScreen() {
-    this.playerApp.showTextScreen(
+    this.playerApp.playerOverlayMgr.showTextScreen(
       this.playerApp.config.i18n.ui.waitingToBegin
     );
   }
 
   showWaitingToEndScreen() {
-    this.playerApp.showTextScreen(
+    this.playerApp.playerOverlayMgr.showTextScreen(
       this.playerApp.config.i18n.ui.waitingToEnd
     );
   }
@@ -33,16 +33,17 @@ class PlayerAppEndingState extends PlayerAppState {
 
   onExit() {
     super.onExit();
-    this.playerApp.hideEndingScreen();
-    this.playerApp.hideTextScreen();
+    this.playerApp.playerOverlayMgr.hideEndingScreen();
+    this.playerApp.playerOverlayMgr.hideTextScreen();
   }
 
   onAction() {
-    if (this.playerApp.endingScreen && this.playerApp.endingScreen.revealStarted) {
-      if (!this.playerApp.endingScreen.isTextRevealed()) {
-        this.playerApp.endingScreen.revealText();
+    if (this.playerApp.playerOverlayMgr.endingScreen
+      && this.playerApp.playerOverlayMgr.endingScreen.revealStarted) {
+      if (!this.playerApp.playerOverlayMgr.endingScreen.isTextRevealed()) {
+        this.playerApp.playerOverlayMgr.endingScreen.revealText();
       } else {
-        this.playerApp.hideEndingScreen();
+        this.playerApp.playerOverlayMgr.hideEndingScreen();
         this.showWaitingToEndScreen();
         this.playerApp.gameServerController.playerReady();
       }
