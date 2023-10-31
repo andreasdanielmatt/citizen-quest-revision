@@ -77,10 +77,14 @@ class QuestTracker {
    *
    * @param {object} storyline
    */
-  setActiveStoryline(storyline) {
+  setActiveStoryline(storylineId) {
+    const storyline = this.config?.storylines?.[storylineId];
+    if (storyline === undefined) {
+      throw new Error(`Error: Attempting to start invalid storyline ${this.storylineId}`);
+    }
     this.activeStoryline = storyline;
     this.reset();
-    this.events.emit('storylineChanged', storyline.id);
+    this.events.emit('storylineChanged', storylineId);
   }
 
   /**

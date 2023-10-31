@@ -25,6 +25,20 @@ class MapApp {
     this.questTracker = new QuestTracker(config, this.flags);
     this.questMarkers = {};
 
+    this.questTracker.events.on('storylineChanged', (storylineId) => {
+      this.clearNpcs();
+      const storyline = this.config?.storylines?.[storylineId];
+      if (storyline === undefined) {
+        throw new Error(`Error: Attempting to start invalid storyline ${storylineId}`);
+      }
+      this.textScroller.displayText(storyline.prompt);
+      this.textScroller.start();
+      Object.entries(storyline.npcs).forEach(([id, props]) => {
+        this.addNpc(new Character(id, props));
+      });
+      this.updateQuestMarkers();
+    });
+
     this.questTracker.events.on('questActive', () => {
       this.updateQuestMarkers();
     });
@@ -96,18 +110,7 @@ class MapApp {
 
   resetGameState() {
     this.clearFlags();
-    this.clearNpcs();
-    const storyline = this.config?.storylines?.[this.storylineId];
-    if (storyline === undefined) {
-      throw new Error(`Error: Attempting to start invalid storyline ${this.storylineId}`);
-    }
-    this.textScroller.displayText(storyline.prompt);
-    this.textScroller.start();
-    this.questTracker.setActiveStoryline(storyline);
-    Object.entries(storyline.npcs).forEach(([id, props]) => {
-      this.addNpc(new Character(id, props));
-    });
-    this.updateQuestMarkers();
+    this.questTracker.setActiveStoryline(this.storylineId);
   }
 
   clearFlags() {

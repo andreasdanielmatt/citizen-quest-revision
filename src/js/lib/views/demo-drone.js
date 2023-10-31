@@ -2,6 +2,8 @@
 
 const { shuffleArray } = require('../helpers/shuffle');
 
+const SPEED_CAP = 1000 / 10;
+
 class DemoDrone {
   constructor() {
     this.active = false;
@@ -35,7 +37,7 @@ class DemoDrone {
       return;
     }
 
-    const deltaMS = time / PIXI.settings.TARGET_FPMS;
+    const deltaMS = Math.min(time / PIXI.settings.TARGET_FPMS, SPEED_CAP);
     if (this.wait > 0) {
       this.wait = Math.max(0, this.wait - deltaMS);
     }

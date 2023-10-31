@@ -10,8 +10,6 @@ require('./lib/live-test/live-test-manager');
 require('./lib/live-test/dialogue-live-tester');
 require('../sass/default.scss');
 const fetchTextures = require('./lib/helpers-client/fetch-textures');
-const { PlayerAppStates } = require('./lib/app/player-app-states');
-const { validateStoryline } = require('./lib/model/storyline-validation');
 const StorylineManager = require('./lib/model/storyline-manager');
 const storylineLoader = require('./lib/loader/storyline-loader');
 
@@ -63,7 +61,6 @@ const storylineLoader = require('./lib/loader/storyline-loader');
     $('[data-component="PlayerApp"]').replaceWith(playerApp.$element);
 
     playerApp.setGameServerController(new LocalGameServerController(playerApp));
-    playerApp.setState(PlayerAppStates.IDLE);
     playerApp.setStoryline(storylineId || storylineManager.getFirst());
 
     playerApp.resize();

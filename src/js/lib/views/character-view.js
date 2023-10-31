@@ -33,6 +33,7 @@ class CharacterView {
       this.moodBalloon.destroy();
       this.moodBalloon = null;
     }
+    this.display.removeFromParent();
     this.display.destroy();
   }
 

@@ -1,4 +1,4 @@
-const { PlayerAppStates } = require('./player-app-states');
+const PlayerAppStates = require('./player-app-states/states');
 
 class LocalGameServerController {
   constructor(playerApp) {

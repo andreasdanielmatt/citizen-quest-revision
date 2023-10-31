@@ -39670,6 +39670,20 @@ class MapApp {
     this.questTracker = new QuestTracker(config, this.flags);
     this.questMarkers = {};
 
+    this.questTracker.events.on('storylineChanged', (storylineId) => {
+      this.clearNpcs();
+      const storyline = this.config?.storylines?.[storylineId];
+      if (storyline === undefined) {
+        throw new Error(`Error: Attempting to start invalid storyline ${storylineId}`);
+      }
+      this.textScroller.displayText(storyline.prompt);
+      this.textScroller.start();
+      Object.entries(storyline.npcs).forEach(([id, props]) => {
+        this.addNpc(new Character(id, props));
+      });
+      this.updateQuestMarkers();
+    });
+
     this.questTracker.events.on('questActive', () => {
       this.updateQuestMarkers();
     });
@@ -39741,18 +39755,7 @@ class MapApp {
 
   resetGameState() {
     this.clearFlags();
-    this.clearNpcs();
-    const storyline = this.config?.storylines?.[this.storylineId];
-    if (storyline === undefined) {
-      throw new Error(`Error: Attempting to start invalid storyline ${this.storylineId}`);
-    }
-    this.textScroller.displayText(storyline.prompt);
-    this.textScroller.start();
-    this.questTracker.setActiveStoryline(storyline);
-    Object.entries(storyline.npcs).forEach(([id, props]) => {
-      this.addNpc(new Character(id, props));
-    });
-    this.updateQuestMarkers();
+    this.questTracker.setActiveStoryline(this.storylineId);
   }
 
   clearFlags() {
@@ -41202,10 +41205,14 @@ class QuestTracker {
    *
    * @param {object} storyline
    */
-  setActiveStoryline(storyline) {
+  setActiveStoryline(storylineId) {
+    const storyline = this.config?.storylines?.[storylineId];
+    if (storyline === undefined) {
+      throw new Error(`Error: Attempting to start invalid storyline ${this.storylineId}`);
+    }
     this.activeStoryline = storyline;
     this.reset();
-    this.events.emit('storylineChanged', storyline.id);
+    this.events.emit('storylineChanged', storylineId);
   }
 
   /**
@@ -42294,6 +42301,7 @@ class CharacterView {
       this.moodBalloon.destroy();
       this.moodBalloon = null;
     }
+    this.display.removeFromParent();
     this.display.destroy();
   }
 
@@ -42772,7 +42780,8 @@ class PCView extends CharacterView {
     };
   }
 
-  showActionHitbox(hitbox) {
+  showActionHitbox() {
+    const hitbox = this.getActionHitbox();
     this.hitboxDisplay.width = Math.abs(hitbox.right - hitbox.left);
     this.hitboxDisplay.height = Math.abs(hitbox.bottom - hitbox.top);
     this.hitboxDisplay.position.x = hitbox.left;
@@ -43133,4 +43142,4 @@ const MapApp = __webpack_require__(/*! ./lib/app/map-app */ "./src/js/lib/app/ma
 
 /******/ })()
 ;
-//# sourceMappingURL=map.0ee1d83eb128713572ab.js.map
+//# sourceMappingURL=map.cbb7d19abf7b73b164e6.js.map

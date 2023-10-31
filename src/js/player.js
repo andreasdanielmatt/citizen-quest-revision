@@ -9,7 +9,8 @@ const PlayerApp = require('./lib/app/player-app');
 const GameServerController = require('./lib/app/game-server-controller');
 const fetchConfig = require('./lib/helpers-client/fetch-config');
 const fetchTextures = require('./lib/helpers-client/fetch-textures');
-const { PlayerAppStates } = require('./lib/app/player-app-states');
+const PlayerAppStates = require('./lib/app/player-app-states/states');
+const Character = require('./lib/model/character');
 
 (async () => {
   try {
@@ -72,14 +73,15 @@ const { PlayerAppStates } = require('./lib/app/player-app-states');
       // Move the players
       Object.entries(message.players).forEach(([id, player]) => {
         if (id === playerId) {
-          if (playerApp.pcView === null) {
+          if (playerApp.gameView.pcView === null) {
             playerApp.addPc();
             playerApp.pc.setPosition(player.position.x, player.position.y);
           }
         }
         if (id !== playerId) {
           if (playerApp.remotePcs[id] === undefined) {
-            playerApp.addRemotePcView(id);
+            playerApp.remotePcs[id] = new Character(id, config.players[id]);
+            playerApp.gameView.addRemotePcView(playerApp.remotePcs[id]);
           }
           if (player.position) {
             playerApp.remotePcs[id].setPosition(player.position.x, player.position.y);
@@ -92,7 +94,8 @@ const { PlayerAppStates } = require('./lib/app/player-app-states');
       // Remove players that were not included in the sync
       Object.keys(playerApp.remotePcs).forEach((id) => {
         if (message.players[id] === undefined) {
-          playerApp.removeRemotePcView(id);
+          delete playerApp.remotePcs[id];
+          playerApp.gameView.removeRemotePcView(id);
         }
       });
       // Remove the PC if it was not included in the sync

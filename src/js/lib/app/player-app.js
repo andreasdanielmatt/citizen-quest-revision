@@ -1,11 +1,10 @@
 /* eslint-disable no-console */
 /* globals PIXI */
+const PlayerAppStates = require('./player-app-states/states');
+const getHandler = require('./player-app-states/get-handler');
 const Stats = require('../helpers-web/stats/stats');
-const TownView = require('../views/town-view');
+const GameView = require('../views/game-view');
 require('../helpers-web/fill-with-aspect');
-const PCView = require('../views/pc-view');
-const DemoDrone = require('../views/demo-drone');
-const CharacterView = require('../views/character-view');
 const KeyboardInputMgr = require('../input/keyboard-input-mgr');
 const GamepadInputMgr = require('../input/gamepad-input-mgr');
 const MultiplexInputMgr = require('../input/multiplex-input-mgr');
@@ -21,11 +20,8 @@ const DecisionScreen = require('../ui/decision-screen');
 const ScoringOverlay = require('../ui/scoring-overlay');
 const { I18nTextAdapter } = require('../helpers/i18n');
 const readEnding = require('../dialogues/ending-reader');
-const { PlayerAppStates, getHandler } = require('./player-app-states');
 const TitleOverlay = require('../ui/title-overlay');
 const TextScreen = require('../ui/text-screen');
-const TargetArrow = require('../views/target-arrow');
-const GuideArrow = require('../views/guide-arrow');
 const IntroScreen = require('../ui/intro-screen');
 
 class PlayerApp {
@@ -45,15 +41,7 @@ class PlayerApp {
     this.canControlPc = false;
     this.remotePcs = {};
 
-    this.pcView = null;
-    this.showHitbox = false;
-    this.remotePcViews = {};
-    this.npcViews = {};
     this.npcMoodsVisible = false;
-    this.targetArrow = null;
-    this.guideArrow = null;
-
-    this.demoDrone = new DemoDrone();
 
     this.stateHandler = null;
     this.gameServerController = null;
@@ -126,23 +114,20 @@ class PlayerApp {
       }
     });
 
+    const width = PlayerApp.APP_WIDTH;
+    const height = PlayerApp.APP_HEIGHT;
+
     // PIXI
     this.pixiApp = new PIXI.Application({
       // todo: get these from config or constants
-      width: PlayerApp.APP_WIDTH,
-      height: PlayerApp.APP_HEIGHT,
+      width,
+      height,
       backgroundColor: 0xffffff,
     });
     this.$pixiWrapper.append(this.pixiApp.view);
 
-    this.camera = new PIXI.Container();
-    this.townView = new TownView(this.config, this.textures);
-    this.camera.addChild(this.townView.display);
-    this.pixiApp.stage.addChild(this.camera);
-    this.demoDrone.setPosition(this.townView.width / 2, this.townView.height / 2);
-
-    this.cameraTarget = null;
-    this.cameraOffset = new PIXI.Point(0, 0);
+    this.gameView = new GameView(config, textures, this.pixiApp, width, height);
+    this.pixiApp.stage.addChild(this.gameView.getDisplay());
 
     this.inputMgr = this.createInputMgr();
     this.inputRouter = new PlayerAppInputRouter(this.inputMgr);
@@ -156,46 +141,22 @@ class PlayerApp {
         this.pc.setSpeed(x * 10, y * 10);
       }
 
-      Object.entries(this.remotePcViews).forEach(([, pcView]) => {
-        pcView.display.position = pcView.character.position;
-        pcView.display.zIndex = pcView.character.position.y;
-        pcView.animate(time);
-      });
-      this.townView.mainLayer.sortChildren();
-
-      if (this.pcView) {
-        this.pcView.animate(time);
-      }
-
-      if (this.demoDrone) {
-        this.demoDrone.animate(time);
-      }
-
-      if (this.cameraTarget) {
-        // Cap the camera position to the town size
-        this.camera.pivot.set(
-          Math.max(
-            0,
-            Math.min(
-              this.cameraTarget.x + this.cameraOffset.x - PlayerApp.APP_WIDTH / 2
-              / this.camera.scale.x,
-              this.townView.width - PlayerApp.APP_WIDTH / this.camera.scale.x
-            )
-          ),
-          Math.max(
-            0,
-            Math.min(
-              this.cameraTarget.y + this.cameraOffset.y - PlayerApp.APP_HEIGHT
-              / 2 / this.camera.scale.y,
-              this.townView.height - PlayerApp.APP_HEIGHT / this.camera.scale.y
-            )
-          )
-        );
-      }
-
-      this.updateGuideArrow();
+      this.gameView.animate(time);
 
       this.stats.frameEnd();
+    });
+
+    this.questTracker.events.on('storylineChanged', (storylineId) => {
+      this.gameView.removeAllNpcs();
+      const storyline = this.config?.storylines?.[storylineId];
+      if (storyline) {
+        Object.entries(storyline.npcs).forEach(([id, props]) => {
+          this.gameView.addNpc(new Character(id, props));
+        });
+        this.updateNpcMoods();
+        this.gameView.resetDroneTargets();
+        this.decisionLabelI18n.setText(storyline.decision || '');
+      }
     });
 
     this.questTracker.events.on('questActive', () => {
@@ -205,10 +166,10 @@ class PlayerApp {
       this.updateNpcMoods();
     });
     this.questTracker.events.on('stageChanged', () => {
-      this.updateTargetArrow();
+      this.gameView.updateTargetArrow(this.questTracker.getActiveStage()?.target);
     });
     this.questTracker.events.on('noQuest', () => {
-      this.updateTargetArrow();
+      this.gameView.updateTargetArrow(this.questTracker.getActiveStage()?.target);
     });
   }
 
@@ -225,7 +186,7 @@ class PlayerApp {
       this.stats.togglePanel();
     });
     keyboardInputMgr.addToggle('KeyH', () => {
-      this.toggleHitboxDisplay();
+      this.gameView.toggleHitboxDisplay();
     });
     keyboardInputMgr.addToggle('KeyX', () => {
       if (this.pc) {
@@ -265,26 +226,7 @@ class PlayerApp {
   resetGameState() {
     this.setState(PlayerAppStates.IDLE);
     this.clearFlags();
-    this.clearNpcs();
-    const storyline = this.config?.storylines?.[this.storylineId];
-    if (storyline === undefined) {
-      throw new Error(`Error: Attempting to start invalid storyline ${this.storylineId}`);
-    }
-    this.questTracker.setActiveStoryline(storyline);
-    this.decisionLabelI18n.setText(storyline.decision || '');
-    Object.entries(storyline.npcs).forEach(([id, props]) => {
-      this.addNpc(new Character(id, props));
-    });
-    this.updateNpcMoods();
-    // Todo: Emit event and move drone reset to a listener
-    if (this.demoDrone) {
-      this.demoDrone.setTargets(Object.values(this.npcViews).map(
-        (npcView) => ({
-          x: npcView.display.x,
-          y: npcView.display.y - npcView.display.height,
-        })
-      ));
-    }
+    this.questTracker.setActiveStoryline(this.storylineId);
   }
 
   getState() {
@@ -342,95 +284,15 @@ class PlayerApp {
     this.$element.css('font-size', `${(this.$element.width() * PlayerApp.FONT_RATIO).toFixed(3)}px`);
   }
 
-  setCameraTarget(displayObject, offset = { x: 0, y: 0 }) {
-    this.cameraTarget = displayObject;
-    this.cameraOffset = offset;
-  }
-
-  cameraFollowPc() {
-    if (this.pcView) {
-      this.setCameraTarget(
-        this.pcView.display,
-        new PIXI.Point(this.pcView.display.width / 2, -this.pcView.display.height * 0.8)
-      );
-      this.demoDrone.active = false;
-    }
-  }
-
-  cameraFollowDrone() {
-    if (this.demoDrone) {
-      this.setCameraTarget(this.demoDrone);
-      this.demoDrone.active = true;
-    }
-  }
-
-  isOnScreen(displayObject) {
-    // Return true if the displayObject is within the PIXI viewport
-    const bounds = displayObject.getBounds();
-    return bounds.x + bounds.width >= 0
-      && bounds.x <= this.pixiApp.renderer.width
-      && bounds.y + bounds.height >= 0
-      && bounds.y <= this.pixiApp.renderer.height;
-  }
-
   addPc() {
     this.pc = new Character(this.playerId, this.config.players[this.playerId]);
-    this.pcView = new PCView(this.config, this.textures, this.pc, this.townView);
-    this.townView.mainLayer.addChild(this.pcView.display);
-    this.townView.bgLayer.addChild(this.pcView.hitboxDisplay);
-    this.guideArrow = new GuideArrow(this.pcView);
-    this.cameraFollowPc();
+    this.gameView.addPc(this.pc);
+    this.gameView.cameraFollowPc();
   }
 
   removePc() {
-    if (this.guideArrow) {
-      this.guideArrow.destroy();
-      this.guideArrow = null;
-    }
-    if (this.pcView) {
-      this.townView.mainLayer.removeChild(this.pcView.display);
-      this.townView.bgLayer.removeChild(this.pcView.hitboxDisplay);
-      this.pcView = null;
-      this.pc = null;
-    }
-  }
-
-  addRemotePcView(id) {
-    if (this.config.players[id]) {
-      const pc = new Character(id, this.config.players[id]);
-      this.remotePcs[id] = pc;
-      const view = new PCView(this.config, this.textures, pc, this.townView);
-      this.remotePcViews[id] = view;
-      this.townView.mainLayer.addChild(view.display);
-    }
-  }
-
-  removeRemotePcView(id) {
-    if (this.remotePcViews[id]) {
-      this.townView.mainLayer.removeChild(this.remotePcViews[id].display);
-      delete this.remotePcs[id];
-      delete this.remotePcViews[id];
-    }
-  }
-
-  addNpc(npc) {
-    const view = new CharacterView(this.config, this.textures, npc, this.townView);
-    this.npcViews[npc.id] = view;
-    this.townView.mainLayer.addChild(view.display);
-  }
-
-  removeNpc(id) {
-    if (this.npcViews[id]) {
-      this.townView.mainLayer.removeChild(this.npcViews[id].display);
-      delete this.npcViews[id];
-    }
-  }
-
-  clearNpcs() {
-    Object.values(this.npcViews).forEach((npcView) => {
-      this.townView.mainLayer.removeChild(npcView.display);
-    });
-    this.npcViews = { };
+    this.gameView.removePc();
+    this.pc = null;
   }
 
   enablePcControl() {
@@ -457,27 +319,24 @@ class PlayerApp {
   }
 
   playDialogue(dialogue, npc = null) {
-    this.hideDistractions();
+    this.gameView.hideDistractions();
     this.inputRouter.routeToDialogueOverlay(this.dialogueOverlay, this.dialogueSequencer);
     const title = npc ? npc.name : null;
     this.dialogueSequencer.play(dialogue, this.getDialogueContext(), { top: title });
     this.dialogueSequencer.events.once('end', () => {
       this.inputRouter.routeToPcMovement(this);
-      this.showDistractions();
+      this.gameView.showDistractions();
     });
   }
 
-  getNpcsInRect(rect) {
-    return Object.values(this.npcViews).filter((npcView) => npcView.inRect(rect))
-      .map((npcView) => npcView.character);
-  }
-
   pcAction() {
-    if (this.pcView === null) {
+    const pcView = this.gameView.getPcView();
+    if (!pcView) {
       return;
     }
-    const hitbox = this.pcView.getActionHitbox();
-    const npcs = this.getNpcsInRect(hitbox);
+    this.gameView.handlePcAction();
+    const hitbox = pcView.getActionHitbox();
+    const npcs = this.gameView.getNpcViewsInRect(hitbox).map((view) => view.character);
     let closestNpc = null;
     let closestDistance = null;
     npcs.forEach((npc) => {
@@ -493,9 +352,6 @@ class PlayerApp {
     if (closestNpc) {
       this.playDialogue(this.questTracker.getNpcDialogue(closestNpc.id), closestNpc);
     }
-    if (this.showHitbox) {
-      this.pcView.showActionHitbox(hitbox);
-    }
   }
 
   menuAction() {
@@ -510,7 +366,7 @@ class PlayerApp {
 
   updateNpcMoods() {
     const npcsWithQuests = this.questTracker.getNpcsWithQuests();
-    Object.values(this.npcViews).forEach((npcView) => {
+    this.gameView.getAllNpcViews().forEach((npcView) => {
       if (this.npcMoodsVisible && Object.keys(npcsWithQuests).includes(npcView.character.id)) {
         npcView.showMoodBalloon(npcsWithQuests[npcView.character.id]);
       } else {
@@ -527,54 +383,6 @@ class PlayerApp {
   showNpcMoods() {
     this.npcMoodsVisible = true;
     this.updateNpcMoods();
-  }
-
-  updateTargetArrow() {
-    if (this.targetArrow !== null) {
-      this.targetArrow.destroy();
-      this.targetArrow = null;
-    }
-    const target = this.questTracker.getActiveStage()?.target;
-    if (target) {
-      const targetNpc = this.npcViews[target];
-      if (targetNpc) {
-        this.targetArrow = new TargetArrow(targetNpc);
-      }
-    }
-  }
-
-  updateGuideArrow() {
-    if (this.guideArrow) {
-      if (this.targetArrow && this.targetArrow.visible
-        && !this.isOnScreen(this.targetArrow.display)) {
-        const targetArrow = {
-          x: this.targetArrow.display.x + this.targetArrow.display.parent.x,
-          y: this.targetArrow.display.y + this.targetArrow.display.parent.y,
-        };
-        const deltaX = targetArrow.x - this.pcView.display.x;
-        const deltaY = targetArrow.y - this.pcView.display.y;
-        const threshold = this.pcView.display.height;
-        this.guideArrow.pointInDirection(
-          Math.abs(deltaX) > threshold ? Math.sign(deltaX) : 0,
-          Math.abs(deltaY) > threshold ? Math.sign(deltaY) : 0
-        );
-        this.guideArrow.show();
-      } else {
-        this.guideArrow.hide();
-      }
-    }
-  }
-
-  hideDistractions() {
-    this.targetArrow?.hide();
-  }
-
-  showDistractions() {
-    this.targetArrow?.show();
-  }
-
-  toggleHitboxDisplay() {
-    this.showHitbox = !this.showHitbox;
   }
 
   showDefaultPrompt() {

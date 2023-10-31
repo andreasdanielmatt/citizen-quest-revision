@@ -202,7 +202,8 @@ class PCView extends CharacterView {
     };
   }
 
-  showActionHitbox(hitbox) {
+  showActionHitbox() {
+    const hitbox = this.getActionHitbox();
     this.hitboxDisplay.width = Math.abs(hitbox.right - hitbox.left);
     this.hitboxDisplay.height = Math.abs(hitbox.bottom - hitbox.top);
     this.hitboxDisplay.position.x = hitbox.left;
