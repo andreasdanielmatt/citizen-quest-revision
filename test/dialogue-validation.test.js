@@ -1,6 +1,6 @@
 const { expect } = require('chai');
-const Dialogue = require('../src/js/lib/dialogues/dialogue');
-const { validateDialogue } = require('../src/js/lib/dialogues/dialogue-validation');
+const Dialogue = require('../src/js/lib/model/dialogues/dialogue');
+const { validateDialogue } = require('../src/js/lib/model/dialogues/dialogue-validation');
 const cycleThenDialogue = require('./fixtures/dialogues/invalid/invalid-cycle-then.dialogue.json');
 const cycleResponseDialogue = require('./fixtures/dialogues/invalid/invalid-cycle-response.dialogue.json');
 const cycleSequenceDialogue = require('./fixtures/dialogues/invalid/invalid-cycle-sequence.dialogue.json');

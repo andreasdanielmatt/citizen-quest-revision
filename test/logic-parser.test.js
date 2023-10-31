@@ -1,6 +1,6 @@
 const { expect } = require('chai');
-const LogicParser = require('../src/js/lib/dialogues/logic-parser');
-const FlagStore = require('../src/js/lib/dialogues/flag-store');
+const LogicParser = require('../src/js/lib/model/dialogues/logic-parser');
+const FlagStore = require('../src/js/lib/model/flag-store');
 
 describe('LogicParser', () => {
   let parser = null;

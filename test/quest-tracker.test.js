@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const eventemitter2 = require('chai-eventemitter2');
 const QuestTracker = require('../src/js/lib/model/quest-tracker');
-const FlagStore = require('../src/js/lib/dialogues/flag-store');
+const FlagStore = require('../src/js/lib/model/flag-store');
 
 chai.use(eventemitter2());
 const { expect } = chai;

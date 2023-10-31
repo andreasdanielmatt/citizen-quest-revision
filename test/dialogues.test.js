@@ -1,7 +1,7 @@
 const { expect } = require('chai');
-const Dialogue = require('../src/js/lib/dialogues/dialogue');
-const DialogueIterator = require('../src/js/lib/dialogues/dialogue-iterator');
-const FlagStore = require('../src/js/lib/dialogues/flag-store');
+const Dialogue = require('../src/js/lib/model/dialogues/dialogue');
+const DialogueIterator = require('../src/js/lib/model/dialogues/dialogue-iterator');
+const FlagStore = require('../src/js/lib/model/flag-store');
 const { getText } = require('../src/js/lib/helpers/i18n');
 const helloWorldDialogue = require('./fixtures/dialogues/core/hello-world.dialogue.json');
 const helloThenWorldDialogue = require('./fixtures/dialogues/core/then.dialogue.json');

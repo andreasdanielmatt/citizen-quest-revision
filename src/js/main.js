@@ -2,7 +2,7 @@
 const yaml = require('js-yaml');
 const CfgReaderFetch = require('./lib/loader/cfg-reader-fetch');
 const CfgLoader = require('./lib/loader/cfg-loader');
-const showFatalError = require('./lib/loader/show-fatal-error');
+const showFatalError = require('./lib/helpers-web/show-fatal-error');
 const PlayerApp = require('./lib/app/player-app');
 const LocalGameServerController = require('./lib/app/local-game-server-controller');
 const { initSentry } = require('./lib/helpers/sentry');

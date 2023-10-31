@@ -7,7 +7,7 @@ const GameManagerIntroState = require('./game-manager-states/intro-state');
 const GameManagerPlayingState = require('./game-manager-states/playing-state');
 const GameManagerEndingState = require('./game-manager-states/ending-state');
 
-const FlagStore = require('../../src/js/lib/dialogues/flag-store');
+const FlagStore = require('../../src/js/lib/model/flag-store');
 const StorylineManager = require('../../src/js/lib/model/storyline-manager');
 
 class GameManager {

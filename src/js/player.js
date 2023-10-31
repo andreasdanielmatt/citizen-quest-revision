@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 const ServerSocketConnector = require('./lib/net/server-socket-connector');
 const ConnectionStateView = require('./lib/net/connection-state-view');
-const showFatalError = require('./lib/loader/show-fatal-error');
+const showFatalError = require('./lib/helpers-web/show-fatal-error');
 require('../sass/default.scss');
 const { getApiServerUrl, getSocketServerUrl } = require('./lib/net/server-url');
 const { initSentry } = require('./lib/helpers/sentry');

@@ -1,5 +1,5 @@
 const DialogueIterator = require('./dialogue-iterator');
-const { mergeTexts } = require('../helpers/i18n');
+const { mergeTexts } = require('../../helpers/i18n');
 
 function readEnding(dialogue, context) {
   const output = [];

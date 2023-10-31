@@ -3,15 +3,15 @@
 
 require('../helpers-web/fill-with-aspect');
 const Stats = require('../helpers-web/stats/stats');
-const FlagStore = require('../dialogues/flag-store');
+const FlagStore = require('../model/flag-store');
 const QuestTracker = require('../model/quest-tracker');
-const TownView = require('../views/town-view');
-const PCView = require('../views/pc-view');
-const CharacterView = require('../views/character-view');
+const TownView = require('../view-pixi/town-view');
+const PCView = require('../view-pixi/pc-view');
+const CharacterView = require('../view-pixi/character-view');
 const Character = require('../model/character');
 const KeyboardInputMgr = require('../input/keyboard-input-mgr');
-const MapMarker = require('../views/map-marker');
-const MultiTextScroller = require('../ui/multi-text-scroller');
+const MapMarker = require('../view-pixi/map-marker');
+const MultiTextScroller = require('../view-html/multi-text-scroller');
 
 class MapApp {
   constructor(config, textures) {

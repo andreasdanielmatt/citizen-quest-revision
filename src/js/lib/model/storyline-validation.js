@@ -2,8 +2,8 @@ const Ajv = require('ajv');
 const AjvErrors = require('ajv-errors');
 const schema = require('../../../../specs/storyline.schema.json');
 const dialogueSchema = require('../../../../specs/dialogue.schema.json');
-const { fromJson } = require('../dialogues/dialogue');
-const LogicParser = require('../dialogues/logic-parser');
+const { fromJson } = require('./dialogues/dialogue');
+const LogicParser = require('./dialogues/logic-parser');
 
 function validateStorylineQuestNpcs(storyline) {
   // Every npc in /quests/*/npc must be defined in /npcs

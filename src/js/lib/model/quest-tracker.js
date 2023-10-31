@@ -1,6 +1,6 @@
 const EventEmitter = require('events');
-const LogicParser = require('../dialogues/logic-parser');
-const safeBuildDialogueFromItems = require('../dialogues/dialogue-safe-builder');
+const LogicParser = require('./dialogues/logic-parser');
+const safeBuildDialogueFromItems = require('./dialogues/dialogue-safe-builder');
 
 /**
  * Quest active event. Fired when a quest becomes active.

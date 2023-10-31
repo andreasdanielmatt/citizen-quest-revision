@@ -3,18 +3,18 @@
 const PlayerAppStates = require('./player-app-states/states');
 const getHandler = require('./player-app-states/get-handler');
 const Stats = require('../helpers-web/stats/stats');
-const GameView = require('../views/game-view');
+const GameView = require('../view-pixi/game-view');
 require('../helpers-web/fill-with-aspect');
 const KeyboardInputMgr = require('../input/keyboard-input-mgr');
 const GamepadInputMgr = require('../input/gamepad-input-mgr');
 const MultiplexInputMgr = require('../input/multiplex-input-mgr');
 const PlayerAppInputRouter = require('../input/player-app-input-router');
 const Character = require('../model/character');
-const FlagStore = require('../dialogues/flag-store');
+const FlagStore = require('../model/flag-store');
 const QuestTracker = require('../model/quest-tracker');
-const readEnding = require('../dialogues/ending-reader');
-const PlayerOverlayManager = require('../ui/player-overlay-mgr');
-const DialogueSequencer = require('../dialogues/dialogue-sequencer');
+const readEnding = require('../model/dialogues/ending-reader');
+const PlayerOverlayManager = require('../view-html/player-overlay-mgr');
+const DialogueSequencer = require('../model/dialogues/dialogue-sequencer');
 
 class PlayerApp {
   constructor(config, textures, playerId) {

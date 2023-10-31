@@ -1,45 +1,30 @@
 const EventEmitter = require('events');
-const SpeechText = require('../dialogues/speech-text');
+const SpeechText = require('./speech-text');
 const { I18nTextAdapter } = require('../helpers/i18n');
 const { textWithEmojisToSpeechLines } = require('../helpers/emoji-utils');
 
-class DecisionScreen {
+class IntroScreen {
   constructor(config, lang) {
     this.config = config;
     this.events = new EventEmitter();
     this.lang = lang;
-    this.revealStarted = false;
 
     this.$element = $('<div></div>')
-      .addClass('decision-screen-wrapper');
+      .addClass('intro-screen-wrapper');
 
     this.$styleWrapper = $('<div></div>')
       .appendTo(this.$element);
 
     this.$screen = $('<div></div>')
-      .addClass('decision-screen')
+      .addClass('intro-screen')
       .appendTo(this.$styleWrapper);
 
-    this.$title = $('<h1></h1>')
-      .addClass('decision-screen-title')
-      .appendTo(this.$screen);
-
-    this.$icon = $('<div></div>')
-      .addClass('decision-screen-icon')
-      .appendTo(this.$screen);
-
     this.$text = $('<div></div>')
-      .addClass('decision-screen-text')
+      .addClass('intro-screen-text')
       .appendTo(this.$screen);
 
     this.speech = new SpeechText();
     this.$text.append(this.speech.$element);
-
-    this.titleI18n = new I18nTextAdapter((text) => {
-      this.$title.text(text);
-    }, this.lang);
-
-    this.titleI18n.setText(this.config.i18n.ui.decisionMade);
 
     this.speechI18n = new I18nTextAdapter((text) => {
       const { revealComplete } = this.speech;
@@ -68,19 +53,18 @@ class DecisionScreen {
     );
   }
 
-  showDecision(endingText, classes) {
+  showIntro(introText, classes) {
     this.$styleWrapper.removeClass();
     this.$styleWrapper.addClass(classes);
     this.$element.addClass('visible');
     setTimeout(() => {
       this.revealStarted = true;
-      this.speechI18n.setText(endingText, true);
-    }, 2000);
+      this.speechI18n.setText(introText, true);
+    }, 0);
   }
 
   setLang(lang) {
     this.lang = lang;
-    this.titleI18n.setLang(lang);
     this.speechI18n.setLang(lang);
     this.continueI18n.setLang(lang);
   }
@@ -98,4 +82,4 @@ class DecisionScreen {
   }
 }
 
-module.exports = DecisionScreen;
+module.exports = IntroScreen;

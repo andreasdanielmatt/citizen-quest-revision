@@ -1,5 +1,5 @@
 const { ExpressionParser } = require('expressionparser');
-const DialogueSchema = require('../../../../specs/dialogue.schema.json');
+const DialogueSchema = require('../../../../../specs/dialogue.schema.json');
 
 const num = (result) => {
   if (typeof result !== 'number') {
