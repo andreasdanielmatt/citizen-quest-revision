@@ -859,6 +859,7 @@ ending:
           text:
               en: "The wind farm was never built. The city now has weekly protests demanding an investment in clean energy."
               de: "Der Windpark wurde nie gebaut. In der Stadt finden nun wöchentlich Proteste statt, um Investitionen in saubere Energie zu fordern."
+          class: 'citizensSad'
         - cond: '^quest.favor.done & (COUNT("pnt") = 0)'
           type: sequence
           items:
@@ -868,6 +869,7 @@ ending:
             - text:
                 en: "Citizens want to dismantle it but are now fighting about how to dispose of the parts."
                 de: "Die Bürger*innen wollen ihn abbauen, streiten sich aber jetzt um die Entsorgung der Teile."
+          class: 'citizensAngry'
         - cond: 'quest.favor.done'
           type: sequence
           items:
@@ -885,23 +887,26 @@ ending:
                           text:
                             en: "The majority decided YES (by a small margin)."
                             de: "Die Mehrheit stimme für JA (mit geringem Abstand)."
+                          class: 'citizensHappy'
                         - cond: 'quest.youthParticipation.done'
                           text:
                             en: "The majority decided YES (by a large margin)."
                             de: "Die Mehrheit stimme für JA (mit großem Abstand)."
+                          class: 'citizensEmpowered'
                     - type: first
                       items:
                         - cond: '^quest.turbines.done'
                           text:
                             en: "Conservationists are trying to shut it down because of its impact on the environment."
                             de: "Naturschützer*innen versuchen, die Anlage wegen ihrer Auswirkungen auf die Umwelt zu schließen."
+                          class: 'citizensNeutral'
                         - text:
                             en: "Almost everyone is now happy with the decision."
                             de: "Fast alle sind jetzt mit der Entscheidung zufrieden."
                 - text:
                     en: "The majority said NO."
                     de: "Die Mehrheit stimme für NEIN."
-
+                  class: 'citizensNeutral'
 
 
 
