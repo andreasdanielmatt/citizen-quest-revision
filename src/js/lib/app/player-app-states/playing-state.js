@@ -19,8 +19,7 @@ class PlayerAppPlayingState extends PlayerAppState {
   }
 
   onAction() {
-    if (this.playerApp.playerOverlayMgr.introScreen
-      && this.playerApp.playerOverlayMgr.introScreen.revealStarted) {
+    if (this.playerApp.playerOverlayMgr?.introScreen?.revealStarted) {
       if (!this.playerApp.playerOverlayMgr.introScreen.isTextRevealed()) {
         this.playerApp.playerOverlayMgr.introScreen.revealText();
       } else {

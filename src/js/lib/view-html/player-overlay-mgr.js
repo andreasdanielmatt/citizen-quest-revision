@@ -93,6 +93,14 @@ class PlayerOverlayManager {
     }
   }
 
+  showTitleScreen() {
+    this.titleOverlay.show();
+  }
+
+  hideTitleScreen() {
+    this.titleOverlay.hide();
+  }
+
   showIntroScreen(introText) {
     this.hideIntroScreen();
     this.introScreen = new IntroScreen(this.config, this.lang);

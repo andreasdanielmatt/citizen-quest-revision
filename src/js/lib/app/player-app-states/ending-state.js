@@ -23,7 +23,8 @@ class PlayerAppEndingState extends PlayerAppState {
     this.playerApp.gameView.cameraFollowPc();
     if (fromState !== IDLE) {
       this.playerApp.inputRouter.routeToMenus(this.playerApp);
-      this.playerApp.handleEnding();
+      const [endingText, classes] = this.playerApp.getCurrentEnding();
+      this.playerApp.playerOverlayMgr.showEndingScreen(endingText, classes);
     } else {
       this.playerApp.inputRouter.unroute();
       this.showWaitingToBeginScreen();
@@ -38,8 +39,7 @@ class PlayerAppEndingState extends PlayerAppState {
   }
 
   onAction() {
-    if (this.playerApp.playerOverlayMgr.endingScreen
-      && this.playerApp.playerOverlayMgr.endingScreen.revealStarted) {
+    if (this.playerApp.playerOverlayMgr?.endingScreen?.revealStarted) {
       if (!this.playerApp.playerOverlayMgr.endingScreen.isTextRevealed()) {
         this.playerApp.playerOverlayMgr.endingScreen.revealText();
       } else {

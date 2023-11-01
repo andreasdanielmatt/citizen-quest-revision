@@ -12,10 +12,10 @@ const PlayerAppInputRouter = require('../input/player-app-input-router');
 const Character = require('../model/character');
 const FlagStore = require('../model/flag-store');
 const QuestTracker = require('../model/quest-tracker');
-const readEnding = require('../model/dialogues/ending-reader');
 const PlayerOverlayManager = require('../view-html/player-overlay-mgr');
 const DialogueSequencer = require('../model/dialogues/dialogue-sequencer');
 const RoundTimer = require('../model/round-timer');
+const readEnding = require('../model/dialogues/ending-reader');
 
 class PlayerApp {
   constructor(config, textures, playerId) {
@@ -347,13 +347,11 @@ class PlayerApp {
     this.updateNpcMoods();
   }
 
-  handleEnding() {
-    const [endingText, classes] = readEnding(
+  getCurrentEnding() {
+    return readEnding(
       this.questTracker.getEndingDialogue(),
       this.getDialogueContext()
     );
-
-    this.playerOverlayMgr.showEndingScreen(endingText, classes);
   }
 }
 
