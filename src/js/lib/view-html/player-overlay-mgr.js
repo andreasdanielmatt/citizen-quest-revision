@@ -1,5 +1,5 @@
 const { I18nTextAdapter } = require('../helpers/i18n');
-const Countdown = require('../helpers-web/countdown');
+const Countdown = require('./countdown');
 const QuestOverlay = require('./quest-overlay');
 const TextScreen = require('./text-screen');
 const DialogueOverlay = require('./dialogue-overlay');
@@ -43,7 +43,7 @@ class PlayerOverlayManager {
     this.introScreen = null;
     this.endingScreen = null;
 
-    this.countdown = new Countdown(config.game.duration);
+    this.countdown = new Countdown();
     this.countdown.$element.appendTo(this.$element);
     this.countdown.hide();
 

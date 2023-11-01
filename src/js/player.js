@@ -63,8 +63,8 @@ const Character = require('./lib/model/character');
       // Update the countdown
       if (message.roundCountdown) {
         const seconds = Math.ceil(message.roundCountdown / 1000);
-        if (seconds < playerApp.playerOverlayMgr.countdown.remainingSeconds) {
-          playerApp.playerOverlayMgr.countdown.setRemainingSeconds(seconds);
+        if (seconds < playerApp.roundTimer.getRemainingTime()) {
+          playerApp.roundTimer.setRemainingTime(seconds);
         }
       }
       // Move the players

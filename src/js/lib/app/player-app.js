@@ -15,6 +15,7 @@ const QuestTracker = require('../model/quest-tracker');
 const readEnding = require('../model/dialogues/ending-reader');
 const PlayerOverlayManager = require('../view-html/player-overlay-mgr');
 const DialogueSequencer = require('../model/dialogues/dialogue-sequencer');
+const RoundTimer = require('../model/round-timer');
 
 class PlayerApp {
   constructor(config, textures, playerId) {
@@ -28,6 +29,7 @@ class PlayerApp {
     this.flags = new FlagStore();
 
     this.questTracker = new QuestTracker(config, this.flags);
+    this.roundTimer = new RoundTimer(config.game.duration);
 
     this.pc = null;
     this.canControlPc = false;
@@ -42,10 +44,6 @@ class PlayerApp {
     this.$element = this.playerOverlayMgr.$element;
     this.stats = new Stats();
     this.playerOverlayMgr.$element.append(this.stats.dom);
-    // todo: refactor the following lines. The countdown component should not signal the round end
-    this.playerOverlayMgr.countdown.events.on('end', () => {
-      this.gameServerController.roundEnd();
-    });
 
     this.dialogueSequencer = new DialogueSequencer(this.playerOverlayMgr.dialogueOverlay);
 
@@ -134,6 +132,14 @@ class PlayerApp {
     this.questTracker.events.on('noQuest', () => {
       this.playerOverlayMgr.questOverlay.showDefaultPrompt();
       this.gameView.updateTargetArrow(this.questTracker.getActiveStage()?.target);
+    });
+
+    this.roundTimer.events.on('update', (timeLeft) => {
+      this.playerOverlayMgr.countdown.set(timeLeft);
+    });
+
+    this.roundTimer.events.on('end', () => {
+      this.gameServerController.roundEnd();
     });
   }
 

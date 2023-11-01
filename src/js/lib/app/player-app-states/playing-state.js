@@ -11,8 +11,8 @@ class PlayerAppPlayingState extends PlayerAppState {
     this.playerApp.gameView.cameraFollowPc();
     this.playerApp.showNpcMoods();
     this.playerApp.inputRouter.routeToMenus(this.playerApp);
+    this.playerApp.roundTimer.start();
     this.playerApp.playerOverlayMgr.countdown.show();
-    this.playerApp.playerOverlayMgr.countdown.start();
     this.playerApp.playerOverlayMgr.showDefaultPrompt();
     const introText = this.playerApp.questTracker.activeStoryline.prompt;
     this.playerApp.playerOverlayMgr.showIntroScreen(introText);
