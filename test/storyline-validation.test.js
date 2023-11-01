@@ -112,8 +112,7 @@ describe('Storyline validation', () => {
 
   describe('game storylines', () => {
     it('should validate the "touristen" storyline', () => {
-      const storyline = loadFixture('../../../config/storylines/touristen.yml')
-        .storylines.touristen;
+      const storyline = loadFixture('../../../config/storylines/touristen.yml');
       expect(() => validateStoryline(storyline)).to.not.throw();
     });
   });

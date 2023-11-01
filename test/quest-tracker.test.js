@@ -16,9 +16,13 @@ function loadFixture(name) {
 describe('QuestTracker', () => {
   let questTracker = null;
   let flags = null;
+  const fixture = loadFixture('storyline-default.yml');
   const config = {
     game: {
       maxActiveQuests: 2,
+    },
+    storylines: {
+      default: fixture,
     },
   };
 
@@ -30,8 +34,7 @@ describe('QuestTracker', () => {
   describe('on storyline change', () => {
     it('should emit a "storylineChanged" event', () => {
       expect(questTracker.events).to.emit('storylineChanged').on(() => {
-        const fixture = loadFixture('storyline-default.yml');
-        questTracker.setActiveStoryline(fixture);
+        questTracker.setActiveStoryline('default');
       });
       expect(questTracker.getActiveQuest()).to.be.null;
       expect(questTracker.getActiveStage()).to.be.null;
@@ -39,9 +42,8 @@ describe('QuestTracker', () => {
   });
 
   describe('before any quest is active', () => {
-    const fixture = loadFixture('storyline-default.yml');
     beforeEach(() => {
-      questTracker.setActiveStoryline(fixture);
+      questTracker.setActiveStoryline('default');
     });
 
     it('should return the initial available quests', () => {
@@ -59,7 +61,7 @@ describe('QuestTracker', () => {
     });
 
     it('should emit a "questActive" event when a quest becomes active', () => {
-      questTracker.setActiveStoryline(fixture);
+      questTracker.setActiveStoryline('default');
       expect(questTracker.events).to.emit('questActive', { withArgs: ['mayorIdea'] }).on(() => {
         questTracker.setActiveQuest('mayorIdea');
       });
@@ -68,7 +70,7 @@ describe('QuestTracker', () => {
     });
 
     it('should emit a "stageChanged" event when a quest becomes active', () => {
-      questTracker.setActiveStoryline(fixture);
+      questTracker.setActiveStoryline('default');
       expect(questTracker.events).to.emit('stageChanged', { withArgs: ['mayorIdea', 1, null] }).on(() => {
         questTracker.setActiveQuest('mayorIdea');
       });
@@ -78,9 +80,8 @@ describe('QuestTracker', () => {
   });
 
   describe('when a quest is active', () => {
-    const fixture = loadFixture('storyline-default.yml');
     beforeEach(() => {
-      questTracker.setActiveStoryline(fixture);
+      questTracker.setActiveStoryline('default');
       questTracker.setActiveQuest('mayorIdea');
     });
 
@@ -132,9 +133,8 @@ describe('QuestTracker', () => {
   });
 
   describe('when a stage is completed', () => {
-    const fixture = loadFixture('storyline-default.yml');
     beforeEach(() => {
-      questTracker.setActiveStoryline(fixture);
+      questTracker.setActiveStoryline('default');
       questTracker.setActiveQuest('mayorIdea');
     });
 
@@ -166,9 +166,8 @@ describe('QuestTracker', () => {
   });
 
   describe('when the last stage is completed', () => {
-    const fixture = loadFixture('storyline-default.yml');
     beforeEach(() => {
-      questTracker.setActiveStoryline(fixture);
+      questTracker.setActiveStoryline('default');
       questTracker.setActiveQuest('mayorIdea');
       flags.set('talkedToBaker', 1);
     });
