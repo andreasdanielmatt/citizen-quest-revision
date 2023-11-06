@@ -743,6 +743,9 @@ h1, h2, h3, h4, h5, h6 {
 .quest-overlay .counter .counter-item.idea.active {
   background-image: url(41f453181020ad04e225.svg);
 }
+.quest-overlay .counter .counter-item.person.active {
+  background-image: url(903b2a9272b699fb0fb7.svg);
+}
 .quest-overlay.with-checkmark {
   padding-left: 2.4em;
 }
@@ -906,4 +909,4 @@ html.with-fatal-error body {
   margin-bottom: 1.2em;
 }
 
-/*# sourceMappingURL=player.6b8bde07f7f4f2b7e2c3.css.map*/
+/*# sourceMappingURL=default.2a8c24a67fb2a0df3797.css.map*/

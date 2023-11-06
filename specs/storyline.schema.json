@@ -131,7 +131,7 @@
         },
         "icon": {
           "type": "string",
-          "enum": ["happy", "angry", "idea"]
+          "enum": ["happy", "angry", "idea", "person"]
         }
       },
       "additionalProperties": false,

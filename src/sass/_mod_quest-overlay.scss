@@ -71,6 +71,10 @@ $margin: 0.8em;
     .counter-item.idea.active {
       background-image: url('../../static/openmoji/counters/lightbulb.svg');
     }
+
+    .counter-item.person.active {
+      background-image: url('../../static/openmoji/counters/person.svg');
+    }
   }
 
   &.with-checkmark {
