@@ -5,7 +5,7 @@ class RoundTimer {
     this.durationSecs = seconds;
     this.remainingSecs = 0;
     this.events = new EventEmitter();
-    this.ended = false;
+    this.ended = !(this.durationSecs > 0);
   }
 
   setDuration(seconds) {
@@ -25,7 +25,7 @@ class RoundTimer {
   }
 
   start() {
-    this.ended = false;
+    this.ended = !(this.durationSecs > 0);
     this.setRemainingTime(this.durationSecs);
     if (this.getRemainingTime() > 0) {
       this.interval = setInterval(() => {
