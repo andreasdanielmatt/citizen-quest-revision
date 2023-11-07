@@ -1,9 +1,9 @@
 decision:
   en: "Bicycle theft reached a peak! The software company offered AI-powered cameras to prevent crime. Should the city accept?"
-  de: "Der Fahrraddiebstahl hat einen Höchststand erreicht! Das Softwareunternehmen bietet AI-gestützte Kameras zur Verbrechensbekämpfung an. Soll die Stadt das Angebot annehmen?"
+  de: "Fahrraddiebstähle sind auf einem Höchststand! Das Softwareunternehmen bietet KI-gestützte Kameras zur Diebstahlsbekämpfung an. Soll die Stadt das Angebot annehmen?"
 prompt:
   en: "Bicycle theft reached a peak! The software company offered AI-powered cameras to prevent crime. Should the city accept?"
-  de: "Der Fahrraddiebstahl hat einen Höchststand erreicht! Das Softwareunternehmen bietet AI-gestützte Kameras zur Verbrechensbekämpfung an. Soll die Stadt das Angebot annehmen?"
+  de: "Fahrraddiebstähle sind auf einem Höchststand! Das Softwareunternehmen bietet KI-gestützte Kameras zur Diebstahlsbekämpfung an. Soll die Stadt das Angebot annehmen?"
 npcs:
   mayor:
     name:
@@ -13,7 +13,7 @@ npcs:
     dialogue:
       - text:
           en: "AI cameras will transform our city for the better. It's a commitment to our citizens' well-being."
-          de: "AI-Kameras werden unsere Stadt zum Besseren verändern. Es ist ein Bekenntnis zum Wohlergehen unserer Bürger*innen."
+          de: "KI-Kameras werden unsere Stadt zum Besseren verändern. Es geht um das Wohlergehen unserer Bürger*innen."
   journalist:
     name:
       en: "Journalist"
@@ -22,7 +22,7 @@ npcs:
     dialogue:
       - text:
           en: "Technology is never neutral. We must see if it matches our values."
-          de: "Technologie ist nie neutral. Wir müssen sehen, ob sie unseren Werten entspricht."
+          de: "Technologie ist nie neutral. Wir müssen prüfen, ob sie unseren Werten entspricht."
   biologist:
     name:
       en: "Biologist"
@@ -31,7 +31,7 @@ npcs:
     dialogue:
       - text:
           en: "“AI camera” does not mean anything. What algorithms are used? How are they trained?"
-          de: "„AI-Kamera“ bedeutet nichts. Welche Algorithmen werden verwendet? Wie werden sie trainiert?"
+          de: "„KI-Kamera“ bedeutet nichts. Welche Algorithmen werden verwendet? Wie werden sie trainiert?"
   tourist:
     name:
       en: "Tourist"
@@ -40,7 +40,7 @@ npcs:
     dialogue:
       - text:
           en: "Surveillance cameras in my country reduced crime enormously."
-          de: "Überwachungskameras in meinem Land haben die Kriminalität enorm reduziert."
+          de: "In meinem Land haben Überwachungskameras die Kriminalität enorm reduziert."
   robot:
     name:
       en: "Robot"
@@ -54,10 +54,10 @@ npcs:
               de: "Die Technologie hat bereits Fahrräder erfunden, die nicht gestohlen werden können: Autos!"
           - text:
               en: "Perhaps you would notice crime if you weren’t so busy composting."
-              de: "Vielleicht würden Sie die Kriminalität bemerken, wenn Sie nicht so beschäftigt wären, Kompost zu machen."
+              de: "Vielleicht würde dir die Kriminalität auffallen, wenn du nicht so faul herumhängen würdest."
           - text:
               en: "I know how to solve crime with AI: get me a badge and a gun."
-              de: "Ich weiß, wie man Verbrechen mit KI löst: Geben Sie mir eine Marke und eine Waffe."
+              de: "Ich weiß, wie man Verbrechen mit KI löst: Gib mir einen Polizeimarke und eine Waffe."
   museumDirector:
     name:
       en: "Museum Director"
@@ -66,11 +66,11 @@ npcs:
     dialogue:
       - text:
           en: "Can our city even afford such an investment?"
-          de: "Kann sich unsere Stadt eine solche Investition überhaupt leisten?"
+          de: "Kann sich unsere Stadt so eine Investition überhaupt leisten?"
   citizenCool:
     name:
       en: "Video blogger"
-      de: "Videobloggerin"
+      de: "Video-Blogger"
     spawn: { x: 4416, y: 3130 }
     dialogue:
       - type: sequence
@@ -96,7 +96,7 @@ npcs:
   citizenCat:
     name:
       en: "Citizen"
-      de: "Bürgerin"
+      de: "Bürger"
     spawn: { x: 2390, y: 2050 }
     dialogue:
       - text:
@@ -105,7 +105,7 @@ npcs:
   citizenHipster:
     name:
       en: "Citizen"
-      de: "Bürger"
+      de: "Bürgerin"
     spawn: { x: 3625, y: 1470 }
     dialogue:
       - text:
@@ -128,7 +128,7 @@ npcs:
     dialogue:
       - text:
           en: "I want my kids to be safe. So I’m in favor of AI cameras."
-          de: "Ich will, dass meine Kinder sicher sind. Deshalb bin ich für AI-Kameras."
+          de: "Ich will, dass meine Kinder sicher sind. Deshalb bin ich für KI-Kameras."
   citizenPunk:
     name:
       en: "Software Developer"
@@ -164,7 +164,7 @@ npcs:
     dialogue:
       - text:
           en: "Our personal data is at stake with AI cameras."
-          de: "Unsere persönlichen Daten stehen bei AI-Kameras auf dem Spiel."
+          de: "Unsere persönlichen Daten stehen bei KI-Kameras auf dem Spiel."
   citizenQueen:
     name:
       en: "Citizen"
@@ -173,7 +173,7 @@ npcs:
     dialogue:
       - text:
           en: "Bike theft is impacting on our community's sense of trust."
-          de: "Der Fahrraddiebstahl beeinträchtigt das Vertrauen in unsere Gemeinschaft."
+          de: "Die Fahrraddiebstähle beeinträchtigen das Vertrauen in unsere Gemeinschaft."
   citizenRanger:
     name:
       en: "Ranger"
@@ -191,7 +191,7 @@ npcs:
     dialogue:
       - text:
           en: "We need to ensure that these AI cameras respect our citizens' privacy and civil liberties."
-          de: "Wir müssen sicherstellen, dass diese AI-Kameras die Privatsphäre und die Bürgerrechte unserer Bürger*innen respektieren."
+          de: "Wir müssen sicherstellen, dass diese KI-Kameras die Privatsphäre und die Rechte von uns Bürger*innen respektieren."
   citizenChamp:
     name:
       en: "Citizen"
@@ -200,7 +200,7 @@ npcs:
     dialogue:
       - text:
           en: "AI will only provide data. Can the police act on it?"
-          de: "KI wird nur Daten liefern. Kann die Polizei darauf reagieren?"
+          de: "KI wird nur Daten liefern. Kann die Polizei diese nutzen?"
   police:
     name:
       en: "Police Officers"
@@ -208,8 +208,8 @@ npcs:
     spawn: { x: 3671, y: 2930 }
     dialogue:
       - text:
-          en: "Bike theft is impacting on our community's sense of trust."
-          de: "Der Fahrraddiebstahl beeinträchtigt das Vertrauen in unsere Gemeinschaft."
+          en: "Bike theft is impacting our community's sense of trust."
+          de: "Fahrraddiebstähle beeinträchtigen das Vertrauen in unsere Gemeinschaft."
   lawyer:
     name:
       en: "Lawyer"
@@ -218,7 +218,7 @@ npcs:
     dialogue:
       - text:
           en: "AI systems are trained with all of our experience, but also with all of our mistakes."
-          de: "KI-Systeme werden mit all unserer Erfahrung, aber auch mit all unseren Fehlern trainiert."
+          de: "KI-Systeme werden mit all unserer Erfahrung, aber auch mit all unseren Irrtümern trainiert."
 quests:
   favor:
     npc: mayor
@@ -239,7 +239,7 @@ quests:
                     de: "Nimm die Aufgabe an"
                   thenText:
                     en: "Thanks, I want to ensure the project has support."
-                    de: "Danke, ich möchte sicherstellen, dass das Projekt Unterstützung hat."
+                    de: "Danke, ich möchte sicherstellen, dass das Projekt unterstützt wird.."
                   set: [ 'quest.favor.active' ]
                 - text:
                     en: "Decline for now"
@@ -257,7 +257,7 @@ quests:
           mayor:
             - text:
                 en: "I’m happy to learn there’s a good amount of support."
-                de: "Ich freue mich zu erfahren, dass es eine gute Unterstützung gibt."
+                de: "Ich freue mich zu hören, dass es viel Unterstützung gibt."
               set: [ 'quest.favor.done', 'pnt.empathy.favor' ]
       - prompt:
           en: "Find 3 people who favor installing AI-assisted cameras in the city."
@@ -289,7 +289,7 @@ quests:
           citizenCage:
             - text:
                 en: "I want my kids to be safe. So I’m in favor of AI cameras."
-                de: "Ich will, dass meine Kinder sicher sind. Deshalb bin ich für AI-Kameras."
+                de: "Ich möchte, dass meine Kinder sicher sind. Deshalb bin ich für KI-Kameras."
               set: [ 'op.favor.citizenCage' ]
           citizenPunk:
             - text:
@@ -299,17 +299,17 @@ quests:
           citizenLila:
             - text:
                 en: "I'm in favor. I wonder if AI can analyze bike theft patterns."
-                de: "Ich bin dafür. Ich frage mich, ob KI Fahrraddiebstahlmuster analysieren kann."
+                de: "Ich bin dafür. Kann eine KI auch Fahrraddiebstahlmuster analysieren?"
               set: [ 'op.favor.citizenLila' ]
           citizenQueen:
             - text:
                 en: "I'm in favor. Bike theft is impacting on our community's sense of trust."
-                de: "Ich bin dafür. Der Fahrraddiebstahl beeinträchtigt das Vertrauen in unsere Gemeinschaft."
+                de: "Ich bin dafür. Fahrraddiebstähle beeinträchtigen das Vertrauen in unsere Gemeinschaft."
               set: [ 'op.favor.citizenQueen' ]
           police:
             - text:
                 en: "Is following the orders of AI the future of police work?"
-                de: "Ist das Befolgen der Befehle von KI die Zukunft der Polizeiarbeit?"
+                de: "Ist das Befolgen der Befehle einer KI die Zukunft der Polizeiarbeit?"
   against:
     npc: mayor
     required: favor
@@ -323,7 +323,7 @@ quests:
                 de: "Sind manche Menschen unglücklich darüber, dass KI-unterstützte Kameras zur Erkennung und Verhinderung von Verbrechen in der Stadt eingesetzt werden?"
             - text:
                 en: "Can you find 3 people who are against the idea?"
-                de: "Kannst du 3 Personen finden, die gegen die Idee sind?"
+                de: "Kannst du 3 Personen finden, die gegen diese Idee sind?"
               responses:
                 - text:
                     en: "Accept the quest"
@@ -361,7 +361,7 @@ quests:
           journalist:
             - text:
                 en: "I'm not sure. Technology is never neutral. We must see if it matches our values."
-                de: "Ich bin mir nicht sicher. Technologie ist nie neutral. Wir müssen sehen, ob sie unseren Werten entspricht."
+                de: "Ich bin mir nicht sicher. Technologie ist nie neutral. Wir müssen prüfen, ob sie unseren Werten entspricht."
               set: [ 'op.neg.journalist' ]
           biologist:
             - text:
@@ -391,7 +391,7 @@ quests:
           constructionWorker:
             - text:
                 en: "I'm against. Our personal data is at stake with AI cameras."
-                de: "Ich bin dagegen. Unsere persönlichen Daten stehen bei AI-Kameras auf dem Spiel."
+                de: "Ich bin dagegen. Unsere persönlichen Daten stehen bei KI-Kameras auf dem Spiel."
               set: [ 'op.neg.constructionWorker' ]
           citizenRanger:
             - text:
@@ -401,12 +401,12 @@ quests:
           citizenWheelchair:
             - text:
                 en: "I'm against. We need to ensure that these AI cameras respect our citizens' privacy and civil liberties."
-                de: "Ich bin dagegen. Wir müssen sicherstellen, dass diese AI-Kameras die Privatsphäre und die Bürgerrechte unserer Bürger*innen respektieren."
+                de: "Ich bin dagegen. Wir müssen sicherstellen, dass diese KI-Kameras die Privatsphäre und die Rechte von uns Bürger*innen respektieren."
               set: [ 'op.neg.citizenWheelchair' ]
           citizenChamp:
             - text:
                 en: "I'm unsure. AI will only provide data. Can the police act on it?"
-                de: "Ich bin mir nicht sicher. KI wird nur Daten liefern. Kann die Polizei darauf reagieren?"
+                de: "Ich bin mir nicht sicher. KI wird nur Daten liefern. Kann die Polizei diese nutzen?"
               set: [ 'op.neg.citizenChamp' ]
           police:
             - text:
@@ -416,7 +416,7 @@ quests:
           lawyer:
             - text:
                 en: "I'm against. AI systems are trained with all of our experience, but also with all of our mistakes."
-                de: "Ich bin dagegen. KI-Systeme werden mit all unserer Erfahrung, aber auch mit all unseren Fehlern trainiert."
+                de: "Ich bin dagegen. KI-Systeme werden mit all unserer Erfahrung, aber auch mit all unseren Irrtümern trainiert."
               set: [ 'op.neg.lawyer' ]
   video:
     npc: museumDirector
@@ -452,7 +452,7 @@ quests:
       - cond: '^found.video.expert & found.video.producer'
         prompt:
           en: "You found someone that can produce the video! Now find an AI expert."
-          de: "Du hast jemanden gefunden, der das Video produzieren kann! Finde jetzt eine KI-Expertin."
+          de: "Du hast jemanden gefunden, der das Video produzieren kann! Finde jetzt eine Fachperson für KI."
         dialogues:
           museumDirector:
             - text:
@@ -461,7 +461,7 @@ quests:
           biologist:
             - text:
                 en: "We’ll be happy to help. The university has many experts in AI."
-                de: "Wir helfen dir gerne. Die Universität hat viele Expert*innen für KI."
+                de: "Wir helfen dir gerne. Die Universität hat viele Fachleute für KI."
               set: [ 'found.video.expert', 'quest.video.done', 'pnt.information.video' ]
           citizenPunk:
             - text:
@@ -471,19 +471,19 @@ quests:
           journalist:
             - text:
                 en: "It seems you already have someone that can produce the video. Go find an expert."
-                de: "Es scheint, dass du bereits jemanden hast, der das Video produzieren kann. Geh und finde eine Expertin."
+                de: "Es scheint, dass du bereits jemanden hast, der das Video produzieren kann. Finde noch eine Fachperson."
           citizenCool:
             - text:
                 en: "It seems you already have someone that can produce the video. Go find an expert."
-                de: "Es scheint, dass du bereits jemanden hast, der das Video produzieren kann. Geh und finde eine Expertin."
+                de: "Es scheint, dass du bereits jemanden hast, der das Video produzieren kann. Finde noch eine Fachperson."
           robot:
             - text:
                 en: "Teaching people about AI is like teaching fish to climb trees."
-                de: "Menschen KI beizubringen, ist wie Fischen das Klettern auf Bäume beizubringen."
+                de: "Menschen KI beizubringen, ist wie Fischen das Klettern auf Bäume zu lehren."
       - cond: 'found.video.expert & ^found.video.producer'
         prompt:
           en: "You found an expert! Now find someone that can produce and publish a video."
-          de: "Du hast eine Expertin gefunden! Finde jetzt jemanden, der ein Video produzieren und veröffentlichen kann."
+          de: "Du hast eine Fachperson gefunden! Finde jetzt jemanden, der ein Video produzieren und veröffentlichen kann."
         dialogues:
           museumDirector:
             - text:
@@ -492,29 +492,29 @@ quests:
           biologist:
             - text:
                 en: "It seems you already have an expert. You only need someone that can produce the video."
-                de: "Anscheinend hast du bereits eine Fachmeinung. Du brauchst nur jemanden, der das Video produzieren kann."
+                de: "Anscheinend hast du bereits eine Fachperson. Du brauchst nur jemanden, der das Video produzieren kann."
           citizenCool:
             - text:
                 en: "Yes, I’ll make a video! My audience is super excited about AI."
-                de: "Ja, ich werde ein Video machen! Mein Publikum ist super begeistert von KI."
+                de: "Ja, ich werde ein Video machen! Mein Publikum ist total begeistert von KI."
               set: [ 'found.video.producer', 'quest.video.done', 'pnt.information.video' ]
           journalist:
             - text:
                 en: "Let’s do it. Our media team can make a great video about AI."
-                de: "Los geht's. Unser Medienteam kann ein großartiges Video über KI machen."
+                de: "Dann mal los! Unser Medienteam kann ein großartiges Video über KI machen."
               set: [ 'found.video.producer', 'quest.video.done', 'pnt.information.video' ]
           citizenPunk:
             - text:
                 en: "It seems you already have an expert. You only need someone who can produce the video."
-                de: "Anscheinend hast du bereits eine Fachmeinung. Du brauchst nur jemanden, der das Video produzieren kann."
+                de: "Anscheinend hast du bereits eine Fachperson. Du brauchst nur jemanden, der das Video produzieren kann."
           robot:
             - text:
                 en: "Teaching people about AI is like teaching fish to climb trees."
-                de: "Menschen KI beizubringen, ist wie Fischen das Klettern auf Bäume beizubringen."
+                de: "Menschen KI beizubringen, ist wie Fischen das Klettern auf Bäume zu lehren."
       - cond: '^found.video.expert & ^found.video.producer'
         prompt:
           en: "Find an AI expert and someone who can produce and publish a video."
-          de: "Finde eine KI-Expertin und jemanden, der ein Video produzieren und veröffentlichen kann."
+          de: "Finde eine Fachperson für KI und jemanden, der ein Video produzieren und veröffentlichen kann."
         dialogues:
           museumDirector:
             - text:
@@ -523,7 +523,7 @@ quests:
           biologist:
             - text:
                 en: "We’ll be happy to help. The university has many experts in AI."
-                de: "Wir helfen dir gerne. Die Universität hat viele Expert*innen für KI."
+                de: "Wir helfen dir gerne. Die Universität hat viele Fachleute für KI."
               set: [ 'found.video.expert' ]
           citizenPunk:
             - text:
@@ -533,17 +533,17 @@ quests:
           citizenCool:
             - text:
                 en: "Yes, I’ll make a video! My audience is super excited about AI."
-                de: "Ja, ich werde ein Video machen! Mein Publikum ist super begeistert von KI."
+                de: "Ja, ich werde ein Video machen! Mein Publikum ist total begeistert von KI."
               set: [ 'found.video.producer' ]
           journalist:
             - text:
                 en: "Let’s do it. Our media team can make a great video about AI."
-                de: "Los geht's. Unser Medienteam kann ein großartiges Video über KI machen."
+                de: "Dann mal los. Unser Medienteam kann ein großartiges Video über KI machen."
               set: [ 'found.video.producer' ]
           robot:
             - text:
                 en: "Teaching people about AI is like teaching fish to climb trees."
-                de: "Menschen KI beizubringen, ist wie Fischen das Klettern auf Bäume beizubringen."
+                de: "Menschen KI beizubringen, ist wie Fischen das Klettern auf Bäume zu lehren."
   lobby:
     npc: citizenPunk
     mood: exclamation
@@ -553,7 +553,7 @@ quests:
           items:
             - text:
                 en: "Every police officer wants the help of our AI…"
-                de: "Jede Polizistin will die Hilfe unserer KI…"
+                de: "Die Polizei will die Hilfe unserer KI…"
             - text:
                 en: "… but the government is taking too long to make a decision."
                 de: "… aber die Regierung braucht zu lange, um eine Entscheidung zu treffen."
@@ -566,7 +566,7 @@ quests:
                     de: "Nimm die Aufgabe an"
                   thenText:
                     en: "Tell the mayor that the police officers wait for her decision."
-                    de: "Sag der Bürgermeisterin, dass die Polizistinnen auf ihre Entscheidung warten."
+                    de: "Sag der Bürgermeisterin, dass die Polizei auf ihre Entscheidung wartet."
                   set: [ 'quest.lobby.active' ]
                 - text:
                     en: "Decline for now"
@@ -585,7 +585,7 @@ quests:
               items:
                 - text:
                     en: "We can see some of the advantages of the AI system…"
-                    de: "Wir können einige der Vorteile des KI-Systems sehen…"
+                    de: "Wir können einige Vorteile des KI-Systems sehen…"
                 - text:
                     en: "… but it has to be a tool and not a replacement for our work."
                     de: "… aber es muss ein Werkzeug sein und kein Ersatz für unsere Arbeit."
@@ -598,7 +598,7 @@ quests:
               items:
                 - text:
                     en: "The software company is using you to lobby for their AI system?"
-                    de: "Das Softwareunternehmen nutzt dich, um für ihr KI-System zu lobbyieren?"
+                    de: "Das Softwareunternehmen benutzt dich, um Lobbyarbeit für ihr KI-System zu machen?"
                 - text:
                     en: "A decision might take time, but it’s essential to make the right one."
                     de: "Eine Entscheidung kann Zeit in Anspruch nehmen, aber es ist wichtig, die richtige zu treffen."
@@ -616,13 +616,13 @@ quests:
           items:
             - text:
                 en: "We are preparing an article for the newspaper about the challenges of using AI-assisted cameras."
-                de: "Wir bereiten einen Artikel für die Zeitung über die Herausforderungen der Verwendung von KI-unterstützten Kameras vor."
+                de: "Wir schreiben einen Zeitungsartikel über die Herausforderungen bei der Nutzung von KI-unterstützten Kameras."
             - text:
                 en: "Some experts recommend involving citizens actively to oversee them."
-                de: "Einige Expert*innen empfehlen, die Bürger*innen aktiv einzubeziehen, um sie zu überwachen."
+                de: "Einige Fachleute empfehlen, die Bürger*innen aktiv einzubeziehen, um sie zu überwachen."
             - text:
                 en: "Can you see what the mayor thinks of this possibility?"
-                de: "Kannst du sehen, was die Bürgermeisterin von dieser Möglichkeit hält?"
+                de: "Was meinst du, was die Bürgermeisterin von dieser Möglichkeit hält?"
               responses:
                 - text:
                     en: "Accept the quest"
@@ -641,7 +641,7 @@ quests:
       - cond: 'quest.issues.talkedToMayor'
         prompt:
             en: "Report back to the journalist."
-            de: "Sprich mit der Journalistin."
+            de: "Sprich mit dem Journalisten."
         target: journalist
         dialogues:
           journalist:
@@ -662,10 +662,10 @@ quests:
                     de: "KI kann lernen, Dinge besser zu machen als Menschen…"
                 - text:
                     en: "… Involving a committee of citizens will only slow progress."
-                    de: "… Die Einbeziehung eines Bürgerausschusses wird den Fortschritt nur verlangsamen."
+                    de: "… Die Einbeziehung eines öffentlichen Ausschusses wird den Fortschritt nur verlangsamen."
       - prompt:
           en: "Ask the mayor if she thinks involving citizens is a good idea."
-          de: "Frag die Bürgermeisterin, ob sie es für eine gute Idee hält, die Bürger*innen einzubeziehen."
+          de: "Frag die Bürgermeisterin, ob sie es für eine gute Idee hält, die Stadtbevölkerung einzubeziehen."
         target: mayor
         dialogues:
             mayor:
@@ -673,7 +673,7 @@ quests:
                 items:
                   - text:
                       en: "A citizen committee? Mmm…"
-                      de: "Ein Bürgerausschuss? Mmm…"
+                      de: "Ein öffentlicher Ausschuss? Hmm…"
                   - text:
                       en: "… Using AI allows us to have a smaller government and be more efficient…"
                       de: "… Die Verwendung von KI ermöglicht es uns, eine kleinere Regierung zu haben und effizienter zu sein…"
@@ -689,7 +689,7 @@ quests:
                       de: "KI kann lernen, Dinge besser zu machen als Menschen…"
                   - text:
                       en: "… Involving a committee of citizens will only slow progress."
-                      de: "… Die Einbeziehung eines Bürgerausschusses wird den Fortschritt nur verlangsamen."
+                      de: "… Die Einbeziehung eines öffentlichen Ausschusses wird den Fortschritt nur verlangsamen."
   issuePrivacy:
     npc: citizenWheelchair
     mood: exclamation
@@ -700,16 +700,16 @@ quests:
           items:
             - text:
                 en: "These cameras will constantly monitor citizens’ movements…"
-                de: "Diese Kameras werden die Bewegungen der Bürger*innen ständig überwachen…"
+                de: "Diese Kameras werden die Bewegungen der Stadtbevölkerung ständig überwachen…"
             - text:
                 en: "… who will have access to this private information? Will it be used for anything else?"
-                de: "… wer wird Zugang zu diesen privaten Informationen haben? Wird es für etwas anderes verwendet?"
+                de: "… wer wird Zugang zu diesen privaten Informationen haben? Wird sie auch für etwas anderes verwendet?"
             - text:
                 en: "Why should we trust the software developers?"
                 de: "Warum sollten wir den Softwareentwickler*innen vertrauen?"
             - text:
                 en: "Can you share this concern with the mayor?"
-                de: "Kannst du diese Bedenken mit der Bürgermeisterin teilen?"
+                de: "Kannst du diese Bedenken der Bürgermeisterin mitteilen?"
               responses:
                 - text:
                     en: "Accept the quest"
@@ -727,13 +727,13 @@ quests:
     stages:
       - prompt:
           en: "Share the concern about privacy with the mayor."
-          de: "Teile die Sorge um die Privatsphäre mit der Bürgermeisterin."
+          de: "Teile die Sorge um die Privatsphäre der Bürgermeisterin mit."
         target: mayor
         dialogues:
           citizenCool:
             - text:
                 en: "All of our software is specially designed to protect citizens’ privacy through fine-grained controls."
-                de: "Unsere gesamte Software ist speziell entwickelt, um die Privatsphäre der Bürger*innen durch fein abgestimmte Kontrollen zu schützen."
+                de: "Unsere gesamte Software ist speziell entwickelt, um die Privatsphäre aller durch fein abgestimmte Kontrollen zu schützen."
           mayor:
             - type: sequence
               items:
@@ -750,10 +750,10 @@ quests:
                     - cond: 'COUNT("shared.issues") = 2'
                       text:
                         en: "… So far, you found two issues. It's still not enough to justify a citizen committee."
-                        de: "… Bisher haben Sie zwei Punkte gefunden. Es ist immer noch nicht genug, um einen Bürgerausschuss zu rechtfertigen."
+                        de: "… Bisher hast du zwei Punkte gefunden. Es ist immer noch nicht genug, um einen öffentlichen Ausschuss zu rechtfertigen."
                     - text:
                         en: "… But for now, not enough to justify a citizen committee."
-                        de: "… Aber vorerst nicht genug, um einen Bürgerausschuss zu rechtfertigen."
+                        de: "… Aber vorerst nicht genug, um einen öffentlichen Ausschuss zu rechtfertigen."
   issueBias:
     npc: citizenBlue
     mood: exclamation
@@ -764,13 +764,13 @@ quests:
           items:
             - text:
                 en: "Many studies have shown that AI is often biased towards people with darker skin."
-                de: "Viele Studien haben gezeigt, dass KI oft voreingenommen gegenüber Menschen mit dunklerer Haut ist."
+                de: "Viele Studien haben gezeigt, dass KI oft voreingenommen gegenüber Menschen mit dunklerer Hautfarbe ist."
             - text:
                 en: "A racist AI is completely unacceptable for a policing system."
-                de: "Eine rassistische KI ist für ein Polizeisystem völlig inakzeptabel."
+                de: "Eine rassistische KI ist als Hilfsmittel für die Polizei völlig inakzeptabel."
             - text:
                 en: "Can you share this concern with the mayor?"
-                de: "Kannst du diese Bedenken mit der Bürgermeisterin teilen?"
+                de: "Kannst du diese Bedenken der Bürgermeisterin mitteilen?"
               responses:
                 - text:
                     en: "Accept the quest"
@@ -788,7 +788,7 @@ quests:
     stages:
       - prompt:
           en: "Share the concern about bias with the mayor."
-          de: "Teile die Sorge um Voreingenommenheit mit der Bürgermeisterin."
+          de: "Teile der Bürgermeisterin die Sorge um Voreingenommenheit mit."
         target: mayor
         dialogues:
           citizenCool:
@@ -799,7 +799,7 @@ quests:
                     de: "Wir nehmen Voreingenommenheit sehr ernst…"
                 - text:
                     en: "… We use diverse datasets to better reflect the global community we serve."
-                    de: "… Wir verwenden vielfältige Datensätze, um die globale Gemeinschaft, der wir dienen, besser widerzuspiegeln."
+                    de: "… Wir verwenden Datensätze mit einer breiten Palette von Merkmalen, um die globale Gemeinschaft, der wir dienen, besser zu repräsentieren."
           mayor:
             - type: sequence
               items:
@@ -816,10 +816,10 @@ quests:
                     - cond: 'COUNT("shared.issues") = 2'
                       text:
                         en: "… So far, you found two issues. It's still not enough to justify a citizen committee."
-                        de: "… Bisher haben Sie zwei Punkte gefunden. Es ist immer noch nicht genug, um einen Bürgerausschuss zu rechtfertigen."
+                        de: "… Bisher hast du zwei Punkte gefunden. Es ist immer noch nicht genug, um einen öffentlichen Ausschuss zu rechtfertigen."
                     - text:
                         en: "… But for now, not enough to justify a citizen committee."
-                        de: "… Aber vorerst nicht genug, um einen Bürgerausschuss zu rechtfertigen."
+                        de: "… Aber vorerst nicht genug, um einen öffentlichen Ausschuss zu rechtfertigen."
   issueAccountability:
     npc: lawyer
     mood: exclamation
@@ -836,7 +836,7 @@ quests:
                 de: "Wir können diese wichtigen Entscheidungen nicht automatisieren. Menschen müssen beteiligt sein."
             - text:
                 en: "Can you share this concern with the mayor?"
-                de: "Kannst du diese Bedenken mit der Bürgermeisterin teilen?"
+                de: "Kannst du diese Bedenken der Bürgermeisterin mitteilen?"
               responses:
                 - text:
                     en: "Accept the quest"
@@ -854,7 +854,7 @@ quests:
     stages:
       - prompt:
           en: "Share the concern about accountability with the mayor."
-          de: "Teile die Sorge um die Rechenschaftspflicht mit der Bürgermeisterin."
+          de: "Teile der Bürgermeisterin die Bedenken um die Rechenschaftspflicht mit."
         target: mayor
         dialogues:
           citizenCool:
@@ -877,10 +877,10 @@ quests:
                     - cond: 'COUNT("shared.issues") = 2'
                       text:
                         en: "… So far, you found two issues. It's still not enough to justify a citizen committee."
-                        de: "… Bisher haben Sie zwei Punkte gefunden. Es ist immer noch nicht genug, um einen Bürgerausschuss zu rechtfertigen."
+                        de: "… Bisher haben Sie zwei Punkte gefunden. Es ist immer noch nicht genug, um einen öffentlichen Ausschuss zu rechtfertigen."
                     - text:
                         en: "… But for now, not enough to justify a citizen committee."
-                        de: "… Aber vorerst nicht genug, um einen Bürgerausschuss zu rechtfertigen."
+                        de: "… Aber vorerst nicht genug, um einen öffentlichen Ausschuss zu rechtfertigen."
   committee:
     npc: mayor
     mood: exclamation
@@ -897,7 +897,7 @@ quests:
                 de: "Wir werden einen Ausschuss aus Bürger*innen und Fachleuten bilden, der uns bei der Überwachung ihres Einsatzes hilft."
             - text:
                 en: "Can you help us find some citizens that could join the committee?"
-                de: "Kannst du uns helfen, einige Bürger*innen zu finden, die dem Ausschuss beitreten könnten?"
+                de: "Kannst du uns helfen, Personen zu finden, die dem Ausschuss beitreten könnten?"
               responses:
                 - text:
                     en: "Accept the quest"
@@ -935,7 +935,7 @@ quests:
           journalist:
             - text:
                 en: "As a journalist I prefer to stay outside of the committee, so I can report on it neutrally."
-                de: "Als Journalistin bleibe ich lieber außerhalb des Ausschusses, damit ich neutral darüber berichten kann."
+                de: "Als Journalist bleibe ich lieber außerhalb des Ausschusses, damit ich neutral berichten kann."
           citizenPunk:
             - type: sequence
               items:
@@ -944,7 +944,7 @@ quests:
                     de: "Ich würde gerne dem Ausschuss beitreten, aber ich habe die Bürgermeisterin schon gefragt…"
                 - text:
                     en: "… she said absolutely not. Apparently, I’m too biased."
-                    de: "… sie hat absolut nein gesagt. Anscheinend bin ich zu voreingenommen."
+                    de: "… sie hat „Nein” gesagt. Anscheinend bin ich zu voreingenommen."
           biologist:
             - text:
                 en: "Yes, I’d love to join the committee and help bring a scientific point of view."
@@ -957,7 +957,7 @@ quests:
           museumDirector:
             - text:
                 en: "Yes, I’d love to join the committee. I’m personally invested in making AI understandable to citizens."
-                de: "Ja, ich würde gerne dem Ausschuss beitreten. Ich persönlich setze mich dafür ein, KI für die Bürger*innen verständlich zu machen."
+                de: "Ja, ich würde gerne dem Ausschuss beitreten. Ich setze mich persönlich dafür ein, KI für die Menschen verständlich zu machen."
               set: [ 'joined.committee.museumDirector' ]
           citizenCool:
             - text:
@@ -978,14 +978,14 @@ quests:
               items:
                 - text:
                     en: "I’d love to join your losing battle against AI…"
-                    de: "Ich würde gerne deinem verlorenen Kampf gegen KI beitreten…"
+                    de: "Ich würde mich gerne deinem vergeblichen Kampf gegen KI anschließen…"
                 - text:
                     en: "… but I don’t want to sacrifice my videogame time."
-                    de: "… aber ich möchte nicht meine Videospielezeit opfern."
+                    de: "… aber ich möchte nicht meine Videospiel-Zeit dafür opfern."
           citizenWheelchair:
             - text:
                 en: "Yes, I’d love to join the committee. The artistic point of view is always necessary."
-                de: "Ja, ich würde gerne dem Ausschuss beitreten. Der künstlerische Standpunkt ist immer notwendig."
+                de: "Ja, ich würde gerne dem Ausschuss beitreten. Ein künstlerischer Standpunkt ist immer notwendig."
               set: [ 'joined.committee.citizenWheelchair' ]
           police:
             - text:
@@ -1008,31 +1008,31 @@ quests:
           citizenBraid:
             - text:
                 en: "No, thanks. I don’t have time to join your committee."
-                de: "Nein danke. Ich habe keine Zeit, Ihrem Ausschuss beizutreten."
+                de: "Nein, danke. Ich habe keine Zeit, deinem Ausschuss beizutreten."
           citizenHipster:
             - text:
                 en: "No, thanks. I still don’t understand enough about AI to join your committee."
-                de: "Nein danke. Ich verstehe immer noch nicht genug über KI, um Ihrem Ausschuss beizutreten."
+                de: "Nein, danke. Ich verstehe immer noch nicht genug über KI, um deinem Ausschuss beizutreten."
           citizenPuan:
             - text:
                 en: "No, thanks. I don’t want to be part of a committee that will be used to justify AI."
-                de: "Nein danke. Ich möchte kein Teil eines Ausschusses sein, der dazu benutzt wird, KI zu rechtfertigen."
+                de: "Nein, danke. Ich möchte kein Teil eines Ausschusses sein, der dazu benutzt wird, KI zu rechtfertigen."
           citizenCage:
             - text:
                 en: "No, thanks. I don’t have time to join your committee."
-                de: "Nein danke. Ich habe keine Zeit, Ihrem Ausschuss beizutreten."
+                de: "Nein, danke. Ich habe keine Zeit, deinem Ausschuss beizutreten."
           citizenLila:
             - text:
                 en: "No, thanks. I don’t have time to join your committee."
-                de: "Nein danke. Ich habe keine Zeit, Ihrem Ausschuss beizutreten."
+                de: "Nein, danke. Ich habe keine Zeit, deinem Ausschuss beizutreten."
           citizenQueen:
             - text:
                 en: "No, thanks. I don’t have time to join your committee."
-                de: "Nein danke. Ich habe keine Zeit, Ihrem Ausschuss beizutreten."
+                de: "Nein, danke. Ich habe keine Zeit, deinem Ausschuss beizutreten."
           citizenChamp:
             - text:
                 en: "No, thanks. I still don’t understand enough about AI to join your committee."
-                de: "Nein danke. Ich verstehe immer noch nicht genug über KI, um Ihrem Ausschuss beizutreten."
+                de: "Nein, danke. Ich verstehe immer noch nicht genug über KI, um deinem Ausschuss beizutreten."
 ending:
   dialogue:
     - type: sequence
@@ -1048,7 +1048,7 @@ ending:
                     de: 'Die Regierung hat mit der Installation von KI-unterstützten Kameras in wichtigen Teilen der Stadt begonnen.'
                 - text:
                     en: "A civil commitee oversees their correct use. It also proposed improvements to the system, which are being shared with other cities."
-                    de: "Ein ziviler Ausschuss überwacht ihren korrekten Einsatz. Er schlug auch Verbesserungen des Systems vor, die mit anderen Städten geteilt werden."
+                    de: "Ein öffentlicher Ausschuss überwacht ihren korrekten Einsatz. Er schlug auch Verbesserungen des Systems vor, die mit anderen Städten geteilt werden."
             - cond: 'quest.issues.done'
               class: 'citizensNeutral'
               type: sequence
@@ -1058,7 +1058,7 @@ ending:
                     de: "Die Regierung hat beschlossen, keine KI-unterstützten Kameras zu installieren."
                 - text:
                     en: "The mayor realized that more work is needed to make them fair for everyone."
-                    de: "Die Bürgermeisterin erkannte, dass mehr Arbeit nötig ist, um sie für alle fair zu machen."
+                    de: "Die Bürgermeisterin erkannte, dass mehr Arbeit nötig wäre, um sie gerecht für alle zu machen."
             - cond: 'quest.against.done'
               class: 'citizensSad'
               type: sequence
@@ -1068,7 +1068,7 @@ ending:
                     de: 'Die Regierung hat mit der Installation von KI-unterstützten Kameras in wichtigen Teilen der Stadt begonnen.'
                 - text:
                     en: 'Bike robberies were reduced, but there are many complaints from innocent people who were wrongly accused.'
-                    de: 'Fahrraddiebstähle wurden reduziert, aber es gibt viele Beschwerden von unschuldigen Menschen, die zu Unrecht beschuldigt wurden.'
+                    de: 'Es gab weniger Fahrraddiebstähle, aber viele Beschwerden von Menschen, die zu Unrecht beschuldigt wurden.'
             - type: sequence
               class: 'citizensAngry'
               items:
@@ -1080,8 +1080,8 @@ ending:
                     - cond: 'quest.video.done'
                       class: 'citizensSad'
                       text:
-                        en: "After a series of social media posts exposed their many issues, a judged stopped their use. The government still has to pay for them while the problems are fixed."
-                        de: "Nachdem eine Reihe von Social-Media-Posts ihre vielen Probleme aufgedeckt hatten, hat ein Richter ihren Einsatz gestoppt. Die Regierung muss immer noch für sie bezahlen, während die Probleme behoben werden."
+                        en: "After a series of social media posts exposed their many issues, a judge stopped their use. The government still has to pay for them while the problems are fixed."
+                        de: "Nachdem eine Reihe von Social Media-Posts ihre vielen Probleme aufgedeckt hatten, hat ein Richter ihren Einsatz gestoppt. Die Stadt muss immer noch für sie bezahlen, während die Probleme behoben werden."
                     - text:
                         en: "Bike robberies are now very rare, but the legal system is overwhelmed with complaints from innocent people who were wrongly accused."
-                        de: "Fahrraddiebstähle sind jetzt sehr selten, aber das Rechtssystem ist überlastet mit Beschwerden von unschuldigen Menschen, die zu Unrecht beschuldigt wurden."
+                        de: "Fahrraddiebstähle sind jetzt sehr selten, aber das Rechtssystem ist mit Beschwerden von Menschen überlastet, die zu Unrecht beschuldigt wurden."
