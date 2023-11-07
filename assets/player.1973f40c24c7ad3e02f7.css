@@ -869,6 +869,53 @@ h1, h2, h3, h4, h5, h6 {
   font-style: italic;
 }
 
+@keyframes inclusionBarPush {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.inclusion-bar {
+  background-color: #71ffb4;
+  position: absolute;
+  width: 8em;
+  height: 21.8em;
+  right: 0;
+  top: 4em;
+  text-align: center;
+  overflow: hidden;
+}
+.inclusion-bar .title {
+  background-color: #f251e7;
+  color: white;
+  padding: 0.8em 0.5em 0.5em;
+  font-size: 0.7em;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+.inclusion-bar .title .text {
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  white-space: nowrap;
+}
+.inclusion-bar .title .text:first-child {
+  font-family: "Roboto", sans-serif;
+  font-weight: 700;
+}
+.inclusion-bar .inclusion {
+  margin: 0.3em;
+  display: inline-block;
+}
+.inclusion-bar .inclusion .inclusion-image {
+  height: 3em;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  animation: inclusionBarPush 1s ease-in-out;
+}
+
 .fatal-error {
   position: absolute;
   width: 100%;
@@ -949,4 +996,4 @@ html.with-fatal-error body {
   margin-bottom: 1.2em;
 }
 
-/*# sourceMappingURL=default.009b762a08aff4a9f89a.css.map*/
+/*# sourceMappingURL=player.1973f40c24c7ad3e02f7.css.map*/

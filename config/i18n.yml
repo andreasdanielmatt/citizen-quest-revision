@@ -21,3 +21,6 @@ i18n:
     includedInDecision:
       en: 'Included in the decision'
       de: 'In die Entscheidung einbezogen'
+    inclusionBarTitle:
+      en: 'Who decides?'
+      de: 'Wer entscheidet?'

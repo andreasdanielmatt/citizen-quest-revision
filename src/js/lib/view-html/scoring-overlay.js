@@ -9,8 +9,6 @@ class ScoringOverlay {
     this.$element = $('<div></div>')
       .addClass('scoring-overlay');
     this.activeTitle = null;
-
-    window.scoring = this;
   }
 
   showAchievement(type) {

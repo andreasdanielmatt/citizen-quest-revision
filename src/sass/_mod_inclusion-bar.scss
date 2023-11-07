@@ -1,0 +1,49 @@
+@keyframes inclusionBarPush {
+  0% {
+    transform: scale(0);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.inclusion-bar {
+  background-color: $c-mint;
+  position: absolute;
+  width: 8em;
+  height: 21.8em;
+  right: 0;
+  top: 4em;
+  text-align: center;
+  overflow: hidden;
+
+  .title {
+    background-color: $c-magenta;
+    color: white;
+    padding: 0.8em 0.5em 0.5em;
+    font-size: 0.7em;
+    text-transform: uppercase;
+    line-height: 1.2;
+    .text {
+      @include RobotoRegular;
+      white-space: nowrap;
+      &:first-child {
+        @include RobotoBold;
+      }
+    }
+  }
+
+  .inclusion {
+    margin: 0.3em;
+    display: inline-block;
+
+    .inclusion-image {
+      height: 3em;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;
+      animation: inclusionBarPush 1s ease-in-out;
+    }
+  }
+}

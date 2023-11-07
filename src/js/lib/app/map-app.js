@@ -12,6 +12,7 @@ const Character = require('../model/character');
 const KeyboardInputMgr = require('../input/keyboard-input-mgr');
 const MapMarker = require('../view-pixi/map-marker');
 const MultiTextScroller = require('../view-html/multi-text-scroller');
+const InclusionBar = require('../view-html/inclusion-bar');
 
 class MapApp {
   constructor(config, textures) {
@@ -80,6 +81,9 @@ class MapApp {
 
     this.textScroller = new MultiTextScroller(config);
     this.$element.append(this.textScroller.$element);
+
+    this.inclusionBar = new InclusionBar(config);
+    this.$element.append(this.inclusionBar.$element);
 
     // Input
     this.keyboardInputMgr = new KeyboardInputMgr();

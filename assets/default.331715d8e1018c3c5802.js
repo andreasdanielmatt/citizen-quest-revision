@@ -49114,8 +49114,6 @@ class ScoringOverlay {
     this.$element = $('<div></div>')
       .addClass('scoring-overlay');
     this.activeTitle = null;
-
-    window.scoring = this;
   }
 
   showAchievement(type) {
@@ -50884,4 +50882,4 @@ const storylineLoader = __webpack_require__(/*! ./lib/loader/storyline-loader */
 
 /******/ })()
 ;
-//# sourceMappingURL=default.82852c9d85d439670edf.js.map
+//# sourceMappingURL=default.331715d8e1018c3c5802.js.map
