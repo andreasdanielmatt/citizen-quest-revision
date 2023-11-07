@@ -74,6 +74,12 @@ class ServerSocketConnector {
     this.ws.send(JSON.stringify(message));
   }
 
+  isSyncable(flag) {
+    return (flag.startsWith('quest.') && flag.endsWith('.done'))
+      || flag.startsWith('pnt.')
+      || flag.startsWith('inc.');
+  }
+
   // To do: Move this outside of this class
   sync(round = 0, player = null, flagStore = null) {
     const message = {
@@ -90,9 +96,7 @@ class ServerSocketConnector {
     }
     if (flagStore !== null) {
       message.flags = Object.fromEntries(
-        Object.entries(flagStore.all()).filter(([id]) => (
-          (id.startsWith('quest.') && id.endsWith('.done')) || id.startsWith('pnt.')
-        ))
+        Object.entries(flagStore.all()).filter(([id]) => this.isSyncable(id))
       );
     }
     this.send(message);

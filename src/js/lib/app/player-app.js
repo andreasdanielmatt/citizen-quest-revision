@@ -58,7 +58,7 @@ class PlayerApp {
         const flagParts = flagId.split('.');
         const category = flagParts[1];
         if (category) {
-          this.playerOverlayMgr.scoringOverlay.show(category);
+          this.playerOverlayMgr.scoringOverlay.showAchievement(category);
         }
       }
     });

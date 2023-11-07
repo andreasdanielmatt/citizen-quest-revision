@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="b" data-name="Characters" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 53.645 144.539">
+  <g>
+    <ellipse cx="26.783" cy="138.881" rx="26.283" ry="5.658" opacity=".15" stroke-width="0"/>
+    <circle cx="26.784" cy="18.95" r="17.178" fill="#f8f1d3" stroke="#231f20" stroke-miterlimit="10" stroke-width="3.543"/>
+    <path d="m26.784,42.035c-2.357,0-17.178-.001-17.178,28.451v31.857c0,1.381,1.119,2.5,2.5,2.5h29.357c1.381,0,2.5-1.119,2.5-2.5v-31.857c0-28.451-14.821-28.451-17.178-28.451Z" fill="#fa97ff" stroke="#231f20" stroke-miterlimit="10" stroke-width="3.543"/>
+    <polyline points="16.135 104.843 16.135 138.881 9.606 138.881" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4.252"/>
+    <polyline points="37.433 104.843 37.433 138.881 43.963 138.881" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="4.252"/>
+    <path d="m1.781,95.63c-.352-41.367,8.961-41.2,10.032-41.169" fill="none" stroke="#231f20" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.543"/>
+    <path d="m51.864,95.63c.352-41.367-8.961-41.2-10.032-41.169" fill="none" stroke="#231f20" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.543"/>
+    <path d="m12.682,16.437c-.026-.629,11.022.474,15.621.474s12.58-1.104,12.58-.474c0,.817-.04,1.727-.163,2.64-.084.623-1.688-.225-1.821.384-.589,2.686-2.059,5.847-4.742,5.904-4.493.095-5.565-4.464-7.647-4.559s-2.648,4.241-6.961,4.144c-2.42-.055-5.148-.986-5.148-5.639,0,0-1.434.325-1.719-.55-.251-.77.028-1.656,0-2.323Z" fill="#6e12ff" stroke="#231f20" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    <path d="m18.215,45.968l4.45,58.875h6.824l5.756-58.875s-.459-3.933-8.46-3.933-8.569,3.933-8.569,3.933Z" fill="#fff" stroke="#231f20" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    <polygon points="18.215 45.239 12.535 54.459 17.278 58.691 14.712 64.756 20.726 79.19 18.215 45.239" fill="#fa97ff" stroke="#231f20" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    <polygon points="35.217 44.737 40.897 53.958 36.154 58.189 38.72 64.255 32.015 79.005 35.217 44.737" fill="#fa97ff" stroke="#231f20" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+  </g>
+  <path d="m19.382,46.73c0,2.593,3.29,8.498,7.348,8.498s7.348-5.905,7.348-8.498-3.29-4.695-7.348-4.695-7.348,2.102-7.348,4.695Z" fill="#f8f1d3" stroke="#231f20" stroke-miterlimit="10" stroke-width="2"/>
+</svg>

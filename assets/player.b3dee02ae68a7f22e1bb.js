@@ -40136,7 +40136,7 @@ class PlayerApp {
         const flagParts = flagId.split('.');
         const category = flagParts[1];
         if (category) {
-          this.playerOverlayMgr.scoringOverlay.show(category);
+          this.playerOverlayMgr.scoringOverlay.showAchievement(category);
         }
       }
     });
@@ -43841,6 +43841,12 @@ class ServerSocketConnector {
     this.ws.send(JSON.stringify(message));
   }
 
+  isSyncable(flag) {
+    return (flag.startsWith('quest.') && flag.endsWith('.done'))
+      || flag.startsWith('pnt.')
+      || flag.startsWith('inc.');
+  }
+
   // To do: Move this outside of this class
   sync(round = 0, player = null, flagStore = null) {
     const message = {
@@ -43857,9 +43863,7 @@ class ServerSocketConnector {
     }
     if (flagStore !== null) {
       message.flags = Object.fromEntries(
-        Object.entries(flagStore.all()).filter(([id]) => (
-          (id.startsWith('quest.') && id.endsWith('.done')) || id.startsWith('pnt.')
-        ))
+        Object.entries(flagStore.all()).filter(([id]) => this.isSyncable(id))
       );
     }
     this.send(message);
@@ -44529,7 +44533,7 @@ class PlayerOverlayManager {
     this.dialogueOverlay = new DialogueOverlay(this.config, this.lang);
     this.$element.append(this.dialogueOverlay.$element);
 
-    this.scoringOverlay = new ScoringOverlay(this.config);
+    this.scoringOverlay = new ScoringOverlay(this.config, this.lang);
     this.$element.append(this.scoringOverlay.$element);
 
     this.titleOverlay = new TitleOverlay(this.config, this.lang);
@@ -44558,6 +44562,7 @@ class PlayerOverlayManager {
     this.textScreen.setLang(this.lang);
     this.questOverlay.setLang(this.lang);
     this.decisionLabelI18n.setLang(this.lang);
+    this.scoringOverlay.setLang(this.lang);
     if (this.introScreen) {
       this.introScreen.setLang(this.lang);
     }
@@ -44808,20 +44813,71 @@ module.exports = QuestOverlay;
 /*!*************************************************!*\
   !*** ./src/js/lib/view-html/scoring-overlay.js ***!
   \*************************************************/
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const UIQueue = __webpack_require__(/*! ./ui-queue */ "./src/js/lib/view-html/ui-queue.js");
+const { I18nTextAdapter } = __webpack_require__(/*! ../helpers/i18n */ "./src/js/lib/helpers/i18n.js");
 
 class ScoringOverlay {
-  constructor(config) {
+  constructor(config, lang) {
     this.config = config;
+    this.lang = lang;
+    this.uiQueue = new UIQueue();
     this.$element = $('<div></div>')
       .addClass('scoring-overlay');
+    this.activeTitle = null;
+
+    window.scoring = this;
   }
 
-  show(achievement) {
-    $('<div></div>')
-      .addClass('achievement')
-      .addClass(`achievement-${achievement}`)
-      .appendTo(this.$element);
+  showAchievement(type) {
+    this.uiQueue.add(() => {
+      $('<div></div>')
+        .addClass('achievement')
+        .addClass(`achievement-${type}`)
+        .appendTo(this.$element);
+    }, 2000);
+    this.uiQueue.add(() => {
+      this.clear();
+    });
+  }
+
+  showInclusion(type) {
+    this.uiQueue.add(() => {
+      const $titleElement = $('<div></div>')
+        .addClass('inclusion-title')
+        .text(this.config?.i18n?.inclusion?.[type] || '');
+
+      this.activeTitle = new I18nTextAdapter((newText) => {
+        $titleElement.html(newText);
+      }, this.lang, this.config.i18n.ui.includedInDecision);
+
+      $('<div></div>')
+        .addClass('inclusion')
+        .addClass(`inclusion-${type}`)
+        .append($titleElement)
+        .append($('<div></div>')
+          .addClass('inclusion-image-container')
+          .append($('<div></div>')
+            .addClass('inclusion-image')
+            .css('background-image', `url(/static/inclusion/${type}.svg)`)))
+        .appendTo(this.$element);
+    }, 2500);
+    this.uiQueue.add(() => {
+      this.clear();
+    });
+  }
+
+  clear() {
+    this.$element.empty();
+    this.activeTitle = null;
+  }
+
+  setLang(code) {
+    this.lang = code;
+    if (this.activeTitle) {
+      this.activeTitle.setLang(code);
+    }
   }
 }
 
@@ -46598,4 +46654,4 @@ const Character = __webpack_require__(/*! ./lib/model/character */ "./src/js/lib
 
 /******/ })()
 ;
-//# sourceMappingURL=player.06049e40a9b435a8fb36.js.map
+//# sourceMappingURL=player.b3dee02ae68a7f22e1bb.js.map

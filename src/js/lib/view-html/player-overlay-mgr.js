@@ -56,7 +56,7 @@ class PlayerOverlayManager {
     this.dialogueOverlay = new DialogueOverlay(this.config, this.lang);
     this.$element.append(this.dialogueOverlay.$element);
 
-    this.scoringOverlay = new ScoringOverlay(this.config);
+    this.scoringOverlay = new ScoringOverlay(this.config, this.lang);
     this.$element.append(this.scoringOverlay.$element);
 
     this.titleOverlay = new TitleOverlay(this.config, this.lang);
@@ -85,6 +85,7 @@ class PlayerOverlayManager {
     this.textScreen.setLang(this.lang);
     this.questOverlay.setLang(this.lang);
     this.decisionLabelI18n.setLang(this.lang);
+    this.scoringOverlay.setLang(this.lang);
     if (this.introScreen) {
       this.introScreen.setLang(this.lang);
     }

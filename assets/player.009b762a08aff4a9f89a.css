@@ -626,23 +626,19 @@ h1, h2, h3, h4, h5, h6 {
 @keyframes score {
   0% {
     opacity: 0;
-    width: 20%;
-    height: 20%;
+    transform: scale(0.5);
   }
-  50% {
+  30% {
     opacity: 1;
-    width: 35%;
-    height: 35%;
+    transform: scale(1);
   }
-  80% {
+  95% {
     opacity: 1;
-    width: 35%;
-    height: 35%;
+    transform: scale(1);
   }
   100% {
     opacity: 0;
-    width: 35%;
-    height: 35%;
+    transform: scale(1);
   }
 }
 .scoring-overlay {
@@ -651,19 +647,19 @@ h1, h2, h3, h4, h5, h6 {
   left: 0;
   width: 100%;
   height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   pointer-events: none;
+  opacity: 0.85;
 }
 .scoring-overlay .achievement {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 20%;
-  height: 20%;
+  width: 40%;
+  height: 40%;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  animation: score 2s ease-out forwards;
+  animation: score 1.5s ease-out forwards;
 }
 .scoring-overlay .achievement-empathy {
   background-image: url(b2f567707c1eb0a572ab.svg);
@@ -676,6 +672,50 @@ h1, h2, h3, h4, h5, h6 {
 }
 .scoring-overlay .achievement-information {
   background-image: url(9bf9c726c7525ba3f141.svg);
+}
+.scoring-overlay .inclusion {
+  width: 80%;
+  height: 40%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  animation: score 2.5s ease-out forwards;
+  font-size: 2.1em;
+  text-align: center;
+  margin-top: -4.5em;
+}
+.scoring-overlay .inclusion .inclusion-title, .scoring-overlay .inclusion .inclusion-image-container {
+  opacity: 0;
+  animation: score 2.25s ease-out forwards 0.25s;
+}
+.scoring-overlay .inclusion .inclusion-title {
+  display: inline-block;
+  font-weight: bold;
+  font-style: italic;
+  text-transform: uppercase;
+  line-height: 1;
+  color: black;
+  background-color: #e0ff5f;
+  padding: 0.3em 0.75em;
+  white-space: nowrap;
+  margin-bottom: 0.6em;
+}
+.scoring-overlay .inclusion .inclusion-image-container {
+  display: block;
+  max-width: 40%;
+  height: 100%;
+  background-color: #ffeb79;
+  border-radius: 50%;
+  margin: auto;
+  padding: 1%;
+}
+.scoring-overlay .inclusion .inclusion-image {
+  width: 100%;
+  height: 100%;
+  margin: auto;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: contain;
 }
 
 .quest-overlay {
@@ -909,4 +949,4 @@ html.with-fatal-error body {
   margin-bottom: 1.2em;
 }
 
-/*# sourceMappingURL=player.2a8c24a67fb2a0df3797.css.map*/
+/*# sourceMappingURL=player.009b762a08aff4a9f89a.css.map*/
