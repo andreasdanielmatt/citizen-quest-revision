@@ -199,8 +199,8 @@ class PlayerApp {
 
   resetGameState() {
     this.setState(PlayerAppStates.IDLE);
-    this.clearFlags();
     this.questTracker.setActiveStoryline(this.storylineId);
+    this.seenFlags = {};
   }
 
   getState() {
@@ -270,11 +270,6 @@ class PlayerApp {
       flags: this.flags,
       random: (max) => Math.floor(Math.random() * max),
     };
-  }
-
-  clearFlags() {
-    this.flags.clear();
-    this.seenFlags = {};
   }
 
   playDialogue(dialogue, npc = null) {

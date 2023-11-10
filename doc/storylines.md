@@ -29,6 +29,7 @@ npcs:
   baker:
     name: Joe Baker
     spawn: { x: 100, y: 100 }
+initFlags: ['inc.mayor', 'inc.mayorSon']
 quests:
   mayorIdea:
     npc: mayor
@@ -59,7 +60,7 @@ quests:
             - text:
                 en: "Then it's decided!"
                 es: "¡Entonces está decidido!"
-              set: ['quest.mayorIdea.done']
+              set: ['quest.mayorIdea.done', 'inc.baker']
 ending:
   dialogue:
     - text: "The end."
@@ -72,6 +73,7 @@ The top-level properties in a storyline are:
 - **prompt**: (text) The initial prompt that will be shown on player screens before any quests 
   become active.
 - **npcs**: (npc) The npcs that participate in this story.
+- **initFlags**: (string|array) Flags that are set when the storyline starts.
 - **quests**: (quest) The quests that are available in this story.
 - **ending** (ending) How the story ends.
 
@@ -108,9 +110,11 @@ would go within `items`.
 
 #### Use of flags
 
-There are two types of flags that are synchronized between clients:
+There are three types of flags that are synchronized between clients:
 
 - Those beginning with `pnt.`, which are used to track "scoring".
+- Those beginning with `inc.`, which are used to track achievements (i.e. people included in the
+  decision associated with the storyline).
 - Those beginning with `quest.`, and ending with `.done` which are used to track quest completion.
 
 ### NPCs

@@ -4,6 +4,9 @@ decision:
 prompt:
   en: "Bicycle theft reached a peak! The software company offered AI-powered cameras to prevent crime. Should the city accept?"
   de: "Der Fahrraddiebstahl hat einen Höchststand erreicht! Das Softwareunternehmen bietet AI-gestützte Kameras zur Verbrechensbekämpfung an. Soll die Stadt das Angebot annehmen?"
+initFlags:
+  - inc.mayor
+  - inc.citizenCool
 npcs:
   mayor:
     name:

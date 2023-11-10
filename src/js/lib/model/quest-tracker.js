@@ -67,9 +67,20 @@ class QuestTracker {
    * Reset the state that tracks progress on the active storyline
    */
   reset() {
+    this.clearFlags();
     this.activeQuestId = null;
     this.activeStage = null;
     this.activeCounter = null;
+    this.initFlags();
+  }
+
+  clearFlags() {
+    this.flags.clear();
+  }
+
+  initFlags() {
+    const flags = [this.activeStoryline?.initFlags ?? []].flat();
+    flags.forEach((flag) => this.flags.set(flag, 1, 'init'));
   }
 
   /**

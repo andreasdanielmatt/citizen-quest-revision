@@ -12,6 +12,9 @@
     "npcs": {
       "$ref": "#/definitions/npcs"
     },
+    "initFlags": {
+      "$ref": "#/definitions/initFlags"
+    },
     "quests": {
       "$ref": "#/definitions/quests"
     },
@@ -25,6 +28,20 @@
   "additionalProperties": false,
   "required": ["decision", "prompt", "npcs", "quests", "ending"],
   "definitions": {
+    "initFlags": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/flagId"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/flagId"
+          }
+        }
+      ],
+      "errorMessage": "must be a flag or an array of flags."
+    },
     "npcs": {
       "type": "object",
       "additionalProperties": {
@@ -155,6 +172,9 @@
     },
     "dialogue": {
       "$ref": "dialogue.schema.json#/definitions/nodeList"
+    },
+    "flagId": {
+      "$ref": "dialogue.schema.json#/definitions/flag_id"
     },
     "text": {
       "oneOf": [

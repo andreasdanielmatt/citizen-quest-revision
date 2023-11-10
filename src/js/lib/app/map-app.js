@@ -113,12 +113,7 @@ class MapApp {
   }
 
   resetGameState() {
-    this.clearFlags();
     this.questTracker.setActiveStoryline(this.storylineId);
-  }
-
-  clearFlags() {
-    this.flags.clear();
   }
 
   resize() {
