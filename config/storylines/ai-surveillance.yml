@@ -924,7 +924,7 @@ quests:
         dialogues:
           mayor:
             - text:
-                en: "Thank you! That seems like a good diversity of backgrounds and specialities."
+                en: "Thank you! That seems like a good variety of backgrounds and specialities."
                 de: "Danke! Das scheint eine gute Vielfalt an Hintergründen und Spezialgebieten zu sein."
               set: [ 'quest.committee.done', 'pnt.emporwerment.committee' ]
       - prompt:

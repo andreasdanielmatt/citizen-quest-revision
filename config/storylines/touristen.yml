@@ -483,7 +483,7 @@ quests:
           mayor:
             - text:
                 en: "Mmm… our media office will take a look at this, but we’d prefer not to even mention “accidents”."
-                de: 'Hmm... unsere Medienstelle wird sich damit befassen, aber wir würden lieber keine "Unfälle" erwähnen.'
+                de: "Hmm… unsere Medienstelle wird sich damit befassen, aber wir würden lieber keine „Unfälle“ erwähnen."
           ferrisSalesman:
             - text:
                 en: "I can’t help you. Denying accidents, even if they never happened, is bad for business."

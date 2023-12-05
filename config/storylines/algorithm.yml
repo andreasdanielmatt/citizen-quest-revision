@@ -1,0 +1,1100 @@
+decision:
+  en: "Cut trees to make space for new homes? Citizens disagree. An algorithm created by the local software company says YES. Should the government let an algorithm decide?"
+  de: "Sollen Bäume gefällt werden, um neuen Wohnraum zu schaffen? Die Bürger*innen sind dagegen. Ein von der örtlichen Softwarefirma entwickelter Algorithmus sagt JA. Soll die Stadtverwaltung einen Algorithmus entscheiden lassen?"
+prompt:
+  en: "Cut trees to make space for new homes? An algorithm created by the local software company says YES. Should the government let an algorithm decide?"
+  de: "Sollen Bäume gefällt werden, um neuen Wohnraum zu schaffen? Ein von der örtlichen Softwarefirma entwickelter Algorithmus sagt JA. Soll die Stadtverwaltung einen Algorithmus entscheiden lassen?"
+initFlags:
+  - inc.mayor
+  - inc.citizenPunk
+npcs:
+  mayor:
+    name:
+      en: "City Mayor"
+      de: "Bürgermeisterin"
+    spawn: { x: 3240, y: 2974 }
+    dialogue:
+      - text:
+          en: "Algorithmic decision-making might be the future of democracy."
+          de: "Algorithmische Entscheidungsfindung könnte die Zukunft der Demokratie sein."
+  parksDirector:
+    name:
+      en: "Director of the environmental agency"
+      de: "Leiterin des Umweltamts"
+    spawn: { x: 3816, y: 2890 }
+    dialogue:
+      - text:
+          en: "The mayor is too eager to let a computer do her work."
+          de: "Die Bürgermeisterin ist zu sehr daran interessiert, ihre Arbeit von einem Computer erledigen zu lassen."
+  journalist:
+    name:
+      en: "Journalist"
+      de: "Journalist"
+    spawn: { x: 5050, y: 3130 }
+    dialogue:
+      - type: sequence
+        items:
+          - text:
+              en: "Are people really in favor of letting an algorithm decide? "
+              de: "Sind die Menschen wirklich dafür, dass Algorithmus entscheidet? "
+          - text:
+              en: "Or do they support it because it agrees with their existing opinions?"
+              de: "Oder unterstützen sie das nur, weil er mit ihren Meinungen übereinstimmt?"
+  biologist:
+    name:
+      en: "Biologist"
+      de: "Biologin"
+    spawn: { x: 4698, y: 990 }
+    dialogue:
+      - type: sequence
+        items:
+          - text:
+              en: "An algorithm could be designed to minimize tree-cutting or to maximize construction profits."
+              de: "Ein Algorithmus könnte so konzipiert sein, dass er die Abholzung von Bäumen minimiert oder die Gewinne im Baugewerbe maximiert."
+          - text:
+              en: "Technology, by itself, is neither good nor bad."
+              de: "Technologie an sich ist weder gut noch schlecht."
+  tourist:
+    name:
+      en: "Tourist"
+      de: "Tourist"
+    spawn: { x: 2901, y: 2050 }
+    dialogue:
+      - text:
+          en: "In my country, citizens have access to the same data and algorithms the government uses and can help improve them."
+          de: "In meinem Land haben die Bürger*innen Zugang zu denselben Daten und Algorithmen wie die Regierung und sie können zu deren Verbesserung beitragen."
+  robot:
+    name:
+      en: "Robot"
+      de: "Roboter"
+    spawn: { x: 5748, y: 2340 }
+    dialogue:
+      - type: random
+        items:
+          - text:
+              en: "People can’t even decide what to have for breakfast. Relax and let computers show you how it’s done."
+              de: "Die Menschen können nicht mal entscheiden, was sie zum Frühstück essen wollen. Entspannt euch und lasst euch von den Computern zeigen, wie es geht."
+          - text:
+              en: "Let’s decide the human way: Left-swipe = the tree lives, right-swipe = cut it down!"
+              de: "Lasst es uns auf menschliche Art entscheiden: Nach links wischen = der Baum lebt, nach rechts wischen = abholzen!"
+  museumDirector:
+    name:
+      en: "Museum Director"
+      de: "Museumsdirektorin"
+    spawn: { x: 5213, y: 2290 }
+    dialogue:
+      - type: sequence
+        items:
+          - text:
+              en: "It’s important that our city be allowed to grow, and that it does so responsibly."
+              de: "Es ist wichtig, dass unsere Stadt wachsen kann, und zwar verantwortungsvoll."
+          - text:
+              en: "The algorithm might not be perfect, but it represents our best effort."
+              de: "Der Algorithmus mag nicht perfekt sein, aber er stellt unser bestes Bemühen dar."
+  citizenCool:
+    name:
+      en: "Video blogger"
+      de: "Videobloggerin"
+    spawn: { x: 4416, y: 3130 }
+    dialogue:
+      - type: sequence
+        items:
+          - text:
+              en: "In my latest video…"
+              de: "In meinem letzten Video..."
+          - text:
+              en: "… I let an algorithm take all my decisions for a week!"
+              de: "... hat ein Algorithmus eine Woche lang alle meine Entscheidungen getroffen!"
+          - text:
+              en: "Remember to like and subscribe!"
+              de: "Vergesst nicht zu liken und zu abonnieren!"
+  citizenBraid:
+    name:
+      en: "Citizen"
+      de: "Bürgerin"
+    spawn: { x: 536, y: 3130 }
+    dialogue:
+      - text:
+          en: "We all said more homes are needed. Now even a computer agrees! Why wait?"
+          de: "Wir alle haben gesagt, dass wir mehr Wohnungen brauchen. Jetzt stimmt uns sogar ein Computer zu! Warum warten?"
+  citizenCat:
+    name:
+      en: "Citizen"
+      de: "Bürgerin"
+    spawn: { x: 2390, y: 2050 }
+    dialogue:
+      - text:
+          en: "Construction companies wanted to cut down the forest for years. Did they create the algorithm?"
+          de: "Bauunternehmen wollten den Wald jahrelang abholzen. Haben sie den Algorithmus entworfen?"
+  citizenHipster:
+    name:
+      en: "Citizen"
+      de: "Bürger"
+    spawn: { x: 3625, y: 1470 }
+    dialogue:
+      - text:
+          en: "Rent is very expensive and it’s very hard to find an apartment. We need new homes, no question."
+          de: "Die Mieten sind sehr teuer und es ist sehr schwer, eine Wohnung zu finden. Wir brauchen neue Wohnungen, keine Frage."
+  citizenPuan:
+    name:
+      en: "Citizen"
+      de: "Bürgerin"
+    spawn: { x: 2455, y: 1470 }
+    dialogue:
+      - text:
+          en: "A computer is telling us to cut down our trees? Scary!"
+          de: "Ein Computer sagt uns, dass wir unsere Bäume fällen sollen? Unheimlich!"
+  citizenCage:
+    name:
+      en: "Citizen"
+      de: "Bürger"
+    spawn: { x: 1673, y: 3130 }
+    dialogue:
+      - text:
+          en: "Expanding the city is a big decision. I think using technology to help us is a good idea."
+          de: "Die Ausweitung der Stadt ist eine große Entscheidung. Ich denke, es ist eine gute Idee, Technologie dafür zu nutzen."
+  citizenQueen:
+    name:
+      en: "Citizen"
+      de: "Bürgerin"
+    spawn: { x: 5660, y: 970 }
+    dialogue:
+      - text:
+          en: "If we build new homes it’ll only attract undesirables. I’d rather pay a high rent."
+          de: "Wenn wir neue Wohnungen bauen, wird das nur unliebsame Leute anziehen. Da zahle ich lieber eine hohe Miete."
+  citizenPunk:
+    name:
+      en: "Software Developer"
+      de: "Software-Entwickler"
+    spawn: { x: 4286, y: 2050 }
+    dialogue:
+      - text:
+          en: "Big data is the future of decision-making."
+          de: "Big Data ist die Zukunft der Entscheidungsfindung."
+  citizenLila:
+    name:
+      en: "Citizen"
+      de: "Bürgerin"
+    spawn: { x: 1221, y: 1625 }
+    dialogue:
+      - text:
+          en: "I don’t trust politicians. I’m happy for the city to make decisions using data and logic."
+          de: "Ich vertraue Politiker*innen nicht. Ich bin froh, wenn die Stadt ihre Entscheidungen anhand von Daten und Logik trifft."
+  citizenBlue:
+    name:
+      en: "Citizen"
+      de: "Bürgerin"
+    spawn: { x: 1946, y: 2051 }
+    dialogue:
+      - type: sequence
+        items:
+          - text:
+              en: "New homes are important, but nature is more important. "
+              de: "Neue Häuser sind wichtig, aber die Natur ist noch wichtiger."
+          - text:
+              en: "They should use their computer to find an alternative solution."
+              de: "Sie sollten den Computer nutzen, um eine alternative Lösung zu finden."
+  constructionWorker:
+    name:
+      en: "Engineer"
+      de: "Ingenieurin"
+    spawn: { x: 5846, y: 3130 }
+    dialogue:
+      - text:
+          en: "I trust numbers more than people’s opinions."
+          de: "Ich vertraue Zahlen mehr als der Meinung von Leuten."
+  citizenHoodie:
+    name:
+      en: "Burger*innen"
+      de: "Bürger*innen"
+    spawn: { x: 5261, y: 3130 }
+    dialogue:
+      - text:
+          en: "We have a housing crisis. Using a computer is logic over emotions."
+          de: "Wir haben eine Wohnungskrise. Ein Computer stellt Logik über Emotionen."
+  citizenRanger:
+    name:
+      en: "Ranger"
+      de: "Ranger"
+    spawn: { x: 896, y: 2290 }
+    dialogue:
+      - text:
+          en: "You can’t calculate the value of the forest. No algorithm understands that."
+          de: "Man kann den Wert eines Waldes nicht berechnen. Kein Algorithmus versteht das."
+  citizenWheelchair:
+    name:
+      en: "Composer"
+      de: "Komponistin"
+    spawn: { x: 6128, y: 2330 }
+    dialogue:
+      - type: sequence
+        items:
+          - text:
+              en: "Numbers are precise, but reality isn’t. "
+              de: "Zahlen sind präzise, aber die Realität ist es nicht."
+          - text:
+              en: "The equation ignores infinite things we must consider."
+              de: "Die Gleichung lässt unendlich viele Dinge außer Acht, die wir berücksichtigen müssen."
+  citizenChamp:
+    name:
+      en: "Citizen"
+      de: "Bürgerin"
+    spawn: { x: 1946, y: 2770 }
+    dialogue:
+      - text:
+          en: "More homes mean more people, more traffic, more noise. Is that what we really want?"
+          de: "Mehr Wohnungen bedeuten mehr Menschen, mehr Verkehr, mehr Lärm. Wollen wir das wirklich?"
+  lawyer:
+    name:
+      en: "Lawyer"
+      de: "Anwalt"
+    spawn: { x: 2803, y: 2915 }
+    dialogue:
+      - text:
+          en: "Can this algorithm be explained, down to the smallest detail, to citizens?"
+          de: "Kann dieser Algorithmus den Bürger*innen bis ins kleinste Detail erklärt werden?"
+quests:
+  favor:
+    npc: mayor
+    mood: interrogation
+    available:
+      dialogue:
+        - type: sequence
+          items:
+            - text:
+                en: "Building new homes means cutting down part of the forest."
+                de: "Um neue Häuser zu bauen, muss ein Teil des Waldes abgeholzt werden."
+            - text:
+                en: "I want to be sure citizens are comfortable leaving this decision up to a computer algorithm."
+                de: "Ich möchte sicherstellen, dass die Bürger*innen damit einverstanden sind, diese Entscheidung einem Computeralgorithmus zu überlassen."
+            - text:
+                en: "Can you find 3 people who are in favor?"
+                de: "Kannst du 3 Personen finden, die dafür sind?"
+              responses:
+                - text:
+                    en: "Accept the quest"
+                    de: "Nimm die Aufgabe an"
+                  thenText:
+                    en: "Thanks, I want to ensure the project has support."
+                    de: "Danke, ich möchte sicherstellen, dass das Projekt Unterstützung hat."
+                  set: [ 'quest.favor.active' ]
+                - text:
+                    en: "Decline for now"
+                    de: "Vorläufig ablehnen"
+                  thenText:
+                    en: "OK. I’ll be here if you change your mind."
+                    de: "Okay. Ich bin hier, falls du deine Meinung änderst."
+    stages:
+      - cond: 'COUNT("op.favor") >= 3'
+        prompt:
+          en: "Report back to the city mayor."
+          de: "Sprich mit der Bürgermeisterin."
+        target: mayor
+        dialogues:
+          mayor:
+            - text:
+                en: "It’s clear that many citizens trust algorithms with important decisions."
+                de: "Viele Bürger*innen vertrauen Algorithmen bei wichtigen Entscheidungen."
+              set: [ 'quest.favor.done', 'pnt.empathy.favor' ]
+      - prompt:
+          en: "Find 3 people who are in favor of using an algorithm to decide."
+          de: "Finde 3 Personen, die dafür sind, dass ein Algorithmus die Entscheidung fällt."
+        counter:
+          expression: 'COUNT("op.favor")'
+          max: 3
+          icon: happy
+        dialogues:
+          mayor:
+            - text:
+                en: "I want to be sure citizens are comfortable leaving this decision up to a computer algorithm."
+                de: "Ich möchte sicherstellen, dass die Bürger*innen diese Entscheidung einem Computeralgorithmus überlassen wollen."
+          tourist:
+            - text:
+                en: "In my country, citizens have access to the same data and algorithms the government uses and can help improve them."
+                de: "In meinem Land haben die Bürger*innen Zugang zu denselben Daten und Algorithmen wie die Regierung und sie können zu deren Verbesserung beitragen."
+              set: [ 'op.favor.tourist' ]
+          museumDirector:
+            - type: sequence
+              items:
+                - text:
+                    en: "It’s important that our city be allowed to grow, and that it does so responsibly."
+                    de: "Es ist wichtig, dass unsere Stadt wachsen kann, und zwar verantwortungsvoll."
+                - text:
+                    en: "The algorithm might not be perfect, but it represents our best effort."
+                    de: "Der Algorithmus mag nicht perfekt sein, aber er stellt unser bestes Bemühen dar."
+                  set: [ 'op.favor.museumDirector' ]
+          citizenBraid:
+            - text:
+                en: "We all said more homes are needed. Now even a computer agrees! Why wait?"
+                de: "Wir alle haben gesagt, dass wir mehr Wohnungen brauchen. Jetzt stimmt uns sogar ein Computer zu! Warum warten?"
+              set: [ 'op.favor.citizenBraid' ]
+          citizenHipster:
+            - text:
+                en: "Rent is very expensive and it’s very hard to find an apartment. We need new homes, no question."
+                de: "Die Mieten sind sehr teuer und es ist sehr schwer, eine Wohnung zu finden. Wir brauchen neue Wohnungen, keine Frage."
+              set: [ 'op.favor.citizenHipster' ]
+          citizenCage:
+            - text:
+                en: "Expanding the city is a big decision. I think using technology to help us is a good idea."
+                de: "Die Ausweitung der Stadt ist eine große Entscheidung. Ich denke, es ist eine gute Idee, Technologie dafür zu nutzen."
+              set: [ 'op.favor.citizenCage' ]
+          citizenPunk:
+            - text:
+                en: "Big data is the future of decision-making."
+                de: "Big Data ist die Zukunft der Entscheidungsfindung."
+              set: [ 'op.favor.citizenPunk' ]
+          citizenLila:
+            - text:
+                en: "I don’t trust politicians. I’m happy for the city to make decisions using data and logic."
+                de: "Ich vertraue Politiker*innen nicht. Ich bin froh, wenn die Stadt ihre Entscheidungen anhand von Daten und Logik trifft."
+              set: [ 'op.favor.citizenLila' ]
+          constructionWorker:
+            - text:
+                en: "I trust numbers more than people’s opinions."
+                de: "Ich vertraue Zahlen mehr als der Meinung von Leuten."
+              set: [ 'op.favor.constructionWorker' ]
+          citizenHoodie:
+            - text:
+                en: "We have a housing crisis. Using a computer is logic over emotions."
+                de: "Wir haben eine Wohnungskrise. Ein Computer stellt Logik über Emotionen."
+              set: [ 'op.favor.citizenHoodie' ]
+  against:
+    npc: parksDirector
+    mood: interrogation
+    available:
+      dialogue:
+        - type: sequence
+          items:
+            - text:
+                en: "Building more homes comes at the cost of cutting down the forest. Not everybody wants this…"
+                de: "Der Bau von mehr Häusern geht auf Kosten der Abholzung des Waldes. Nicht jeder will das…"
+            - text:
+                en: "… it doesn’t matter what an algorithm “recommends”."
+                de: "… es spielt keine Rolle, was ein Algorithmus „empfiehlt“."
+            - text:
+                en: "Can you find 3 people against following the algorithm’s recommendation?"
+                de: "Kannst du 3 Leute finden, die dagegen sind, der Empfehlung eines Algorithmus zu folgen?"
+              responses:
+                - text:
+                    en: "Accept the quest"
+                    de: "Nimm die Aufgabe an"
+                  thenText:
+                    en: "Thanks, I want to ensure the project is not controversial."
+                    de: "Danke, ich möchte sicherstellen, dass das Projekt nicht umstritten ist."
+                  set: [ 'quest.against.active' ]
+                - text:
+                    en: "Decline for now"
+                    de: "Vorläufig ablehnen"
+                  thenText:
+                    en: "OK. I’ll be here if you change your mind."
+                    de: "Okay. Ich bin hier, falls du deine Meinung änderst."
+    stages:
+      - cond: 'COUNT("op.neg") >= 3'
+        prompt:
+          en: "Report back to the director."
+          de: "Berichte der Leiterin des Umweltamtes."
+        target: parksDirector
+        dialogues:
+          parksDirector:
+            - text:
+                en: "It’s clear that expansion and preservation of the forest need to be balanced."
+                de: "Stadterweiterung und Erhaltung des Waldes müssen in einem ausgewogenen Verhältnis stehen."
+              set: [ 'quest.against.done', 'pnt.empathy.against' ]
+      - prompt:
+          en: "Find 3 people who are against following the algorithm’s recommendation."
+          de: "Finde 3 Personen, die dagegen sind, der Empfehlung des Algorithmus zu folgen."
+        counter:
+          expression: 'COUNT("op.neg")'
+          max: 3
+          icon: angry
+        dialogues:
+          parksDirector:
+            - text:
+                en: "The mayor is too eager to let a computer do her work."
+                de: "Die Bürgermeisterin ist zu sehr daran interessiert, ihre Arbeit von einem Computer erledigen zu lassen."
+          citizenCat:
+            - text:
+                en: "Construction companies wanted to cut down the forest for years. Did they create the algorithm?"
+                de: "Bauunternehmen wollten den Wald jahrelang abholzen. Haben sie den Algorithmus entworfen?"
+              set: [ 'op.neg.citizenCat' ]
+          citizenPuan:
+            - text:
+                en: "A computer is telling us to cut down our trees? Scary!"
+                de: "Ein Computer sagt uns, dass wir unsere Bäume fällen sollen? Unheimlich!"
+              set: [ 'op.neg.citizenPuan' ]
+          citizenQueen:
+            - text:
+                en: "If we build new homes it’ll only attract undesirables. I’d rather pay a high rent."
+                de: "Wenn wir neue Wohnungen bauen, wird das nur unliebsame Leute anziehen. Da zahle ich lieber eine hohe Miete."
+              set: [ 'op.neg.citizenQueen' ]
+          citizenBlue:
+            - type: sequence
+              items:
+                - text:
+                    en: "New homes are important, but nature is more important. "
+                    de: "Neue Häuser sind wichtig, aber die Natur ist noch wichtiger. "
+                - text:
+                    en: "They should use their computer to find an alternative solution."
+                    de: "Sie sollten den Computer nutzen, um eine alternative Lösung zu finden."
+                  set: [ 'op.neg.citizenBlue' ]
+          citizenRanger:
+            - text:
+                en: "You can’t calculate the value of the forest. No algorithm understands that."
+                de: "Man kann den Wert eines Waldes nicht berechnen. Kein Algorithmus versteht das."
+              set: [ 'op.neg.citizenRanger' ]
+          citizenWheelchair:
+            - type: sequence
+              items:
+                - text:
+                    en: "Numbers are precise, but reality isn’t. "
+                    de: "Zahlen sind präzise, aber die Realität ist es nicht. "
+                - text:
+                    en: "The equation ignores infinite things we must consider."
+                    de: "Die Gleichung lässt unendlich viele Dinge außer Acht, die wir berücksichtigen müssen."
+                  set: [ 'op.neg.citizenWheelchair' ]
+          citizenChamp:
+            - text:
+                en: "More homes mean more people, more traffic, more noise. Is that what we really want?"
+                de: "Mehr Wohnungen bedeuten mehr Menschen, mehr Verkehr, mehr Lärm. Wollen wir das wirklich?"
+              set: [ 'op.neg.citizenChamp' ]
+          lawyer:
+            - text:
+                en: "Can this algorithm be explained, down to the smallest detail, to citizens?"
+                de: "Kann dieser Algorithmus den Bürger*innen bis ins kleinste Detail erklärt werden?"
+              set: [ 'op.neg.lawyer' ]
+  video:
+    npc: museumDirector
+    mood: exclamation
+    available:
+      dialogue:
+        - type: sequence
+          items:
+            - text:
+                en: "If an algorithm will decide whether to expand the city, people must understand how it works!"
+                de: "Wenn ein Algorithmus darüber entscheidet, ob die Stadt erweitert werden soll, müssen die Menschen verstehen, wie das funktioniert!"
+            - text:
+                en: "If we can’t argue with its conclusions, we lose power."
+                de: "Wenn wir seine Ergebnisse nicht diskutieren können, verlieren wir Macht."
+            - text:
+                en: "Can you find someone to create a video that explains “big data”?"
+                de: "Kannst du jemanden finden, der ein Video erstellt, das „Big Data“ erklärt?"
+              responses:
+                - text:
+                    en: "Accept the quest"
+                    de: "Nimm die Aufgabe an"
+                  thenText:
+                    en: "Find someone who understands big data and someone who can produce the video."
+                    de: "Finde jemanden, der sich mit Big Data auskennt und jemanden, der das Video produzieren kann."
+                  set: [ 'quest.video.active' ]
+                - text:
+                    en: "Decline for now"
+                    de: "Vorläufig ablehnen"
+                  thenText:
+                    en: "I hope you reconsider."
+                    de: "Ich hoffe, du überlegst es dir nochmal."
+    stages:
+      - cond: '^found.video.expert & found.video.producer'
+        prompt:
+          en: "You found someone who can produce the video! Now find a big data expert."
+          de: "Du hast jemanden gefunden, der das Video produzieren kann! Finde jetzt eine Fachperson für Big Data."
+        dialogues:
+          museumDirector:
+            - text:
+                en: "Go find someone who understands big data and someone who can produce the video."
+                de: "Finde jemanden, der sich mit Big Data auskennt, und jemanden, der das Video produzieren kann."
+          biologist:
+            - text:
+                en: "We’ll be happy to help. The university has many experts in big data."
+                de: "Wir helfen dir gerne. Die Universität hat viele Fachleute für Big Data."
+              set: [ 'found.video.expert', 'quest.video.done', 'pnt.information.video' ]
+          citizenPunk:
+            - text:
+                en: "We’ll be happy to help. We are happy to explain the system we are developing."
+                de: "Wir helfen dir. Wir erklären dir gerne das System, das wir entwickeln."
+              set: [ 'found.video.expert', 'quest.video.done', 'pnt.information.video' ]
+          journalist:
+            - text:
+                en: "It seems you already have someone that can produce the video. Go find an expert."
+                de: "Offenbar hast du schon jemanden, der das Video produzieren kann. Finde jetzt eine Fachperson."
+          citizenCool:
+            - text:
+                en: "It seems you already have someone that can produce the video. Go find an expert."
+                de: "Offenbar hast du bereits jemanden, der das Video produzieren kann. Finde jetzt eine Fachperson."
+          robot:
+            - text:
+                en: "Explaining big data to muggles? Might as well teach quantum physics to cats."
+                de: "Du willst Muggels Big Data erklären? Genauso gut könnte man Katzen Quantenphysik beibringen."
+      - cond: 'found.video.expert & ^found.video.producer'
+        prompt:
+          en: "You found an expert! Now find someone that can produce and publish a video."
+          de: "Du hast eine Expertin gefunden! Finde jetzt jemanden, der ein Video produzieren und veröffentlichen kann."
+        dialogues:
+          museumDirector:
+            - text:
+                en: "Go find someone who understands big data and someone who can produce the video."
+                de: "Finde jemanden, der sich mit Big Data auskennt, und jemanden, der das Video produzieren kann."
+          biologist:
+            - text:
+                en: "It seems you already have an expert. You only need someone that can produce the video."
+                de: "Offenbar hast du bereits eine Fachperson. Du brauchst nur jemanden, der das Video produzieren kann."
+          citizenCool:
+            - text:
+                en: "Yes, I’ll make a video! My audience is super excited about big data."
+                de: "Ja, ich werde ein Video machen! Mein Publikum ist begeistert von Big Data."
+              set: [ 'found.video.producer', 'quest.video.done', 'pnt.information.video' ]
+          journalist:
+            - text:
+                en: "Let’s do it. Our media team can make a great video about big data."
+                de: "Los geht's. Unser Medienteam kann ein tolles Video über Big Data drehen."
+              set: [ 'found.video.producer', 'quest.video.done', 'pnt.information.video' ]
+          citizenPunk:
+            - text:
+                en: "It seems you already have an expert. You only need someone who can produce the video."
+                de: "Offenbar hast du bereits eine Fachperson. Du brauchst nur jemanden, der das Video produzieren kann."
+          robot:
+            - text:
+                en: "Explaining big data to muggles? Might as well teach quantum physics to cats."
+                de: "Du willst Muggels Big Data erklären? Genauso gut könnte man Katzen Quantenphysik beibringen."
+      - cond: '^found.video.expert & ^found.video.producer'
+        prompt:
+          en: "Find a big data expert and someone who can produce and publish a video."
+          de: "Finde eine Fachperson für Big Data und eine Person, die ein Video produzieren und veröffentlichen kann."
+        dialogues:
+          museumDirector:
+            - text:
+                en: "Go find someone who understands big data and someone who can produce the video."
+                de: "Finde jemanden, der sich mit Big Data auskennt, und jemanden, der das Video produzieren kann."
+          biologist:
+            - text:
+                en: "We’ll be happy to help. The university has many experts in big data."
+                de: "Wir helfen dir gerne. Die Universität hat viele Fachleute für Big Data."
+              set: [ 'found.video.expert' ]
+          citizenPunk:
+            - text:
+                en: "We’ll be happy to help. We are happy to explain the system we are developing."
+                de: "Wir helfen dir. Wir erklären dir gerne das System, das wir entwickeln. "
+              set: [ 'found.video.expert' ]
+          citizenCool:
+            - text:
+                en: "Yes, I’ll make a video! My audience is super excited about big data."
+                de: "Ja, ich werde ein Video machen! Mein Publikum ist begeistert von Big Data."
+              set: [ 'found.video.producer' ]
+          journalist:
+            - text:
+                en: "Let’s do it. Our media team can make a great video about big data."
+                de: "Los geht's. Unser Medienteam kann ein tolles Video über Big Data drehen."
+              set: [ 'found.video.producer' ]
+          robot:
+            - text:
+                en: "Explaining big data to muggles? Might as well teach quantum physics to cats."
+                de: "Du willst Muggels Big Data erklären? Genauso gut könnte man Katzen Quantenphysik beibringen."
+  issues:
+    npc: parksDirector
+    mood: exclamation
+    required: ['video', 'favor', 'against']
+    available:
+      dialogue:
+        - type: sequence
+          items:
+            - text:
+                en: "The mayor is too keen on using an algorithm to make decisions because she won’t need to justify them."
+                de: "Die Bürgermeisterin will, dass ein Algorithmus Entscheidungen trifft, damit sie sich nicht mehr rechtfertigen muss."
+            - text:
+                en: "But experts warn of many issues with automated decision-making."
+                de: "Fachleute warnen jedoch vor den zahlreichen Problemen automatisierter Entscheidungen."
+            - text:
+                en: "Can you ask the mayor to involve them?"
+                de: "Kannst du die Bürgermeisterin bitten, Fachmeinungen einzubeziehen?"
+              responses:
+                - text:
+                    en: "Accept the quest"
+                    de: "Nimm die Aufgabe an"
+                  thenText:
+                    en: "Ask the mayor to involve experts in the process, then come back."
+                    de: "Bitte die Bürgermeisterin, Fachleute in den Prozess einzubeziehen, und komm dann wieder."
+                  set: [ 'quest.issues.active' ]
+                - text:
+                    en: "Decline for now"
+                    de: "Vorläufig ablehnen"
+                  thenText:
+                    en: "I hope you reconsider."
+                    de: "Ich hoffe, du überlegst es dir nochmal."
+    stages:
+      - cond: 'quest.issues.talkedToMayor'
+        prompt:
+          en: "Report back to the director."
+          de: "Berichte der Leiterin des Umweltamtes"
+        target: parksDirector
+        dialogues:
+          parksDirector:
+            - type: sequence
+              items:
+                - text:
+                    en: "Convincing the mayor will take more work."
+                    de: "Die Bürgermeisterin zu überzeugen, wird viel Arbeit erfordern."
+                - text:
+                    en: "Talk to experts with a :speech_bubble: to find their concerns and take them to the mayor."
+                    de: "Sprich mit Fachleuten mit einer :speech_bubble:,um ihre Bedenken zu erfahren, und teile sie dann der Bürgermeisterin mit."
+                  set: [ 'quest.issues.done', 'pnt.information.issues' ]
+          citizenCool:
+            - type: sequence
+              items:
+                - text:
+                    en: "Big data is the future of decision-making…"
+                    de: "Big Data ist die Zukunft der Entscheidungsfindung…"
+                - text:
+                    en: "… Involving human experts will re-introduce the errors and vices of the past."
+                    de: "… Die Einbindung menschlicher Fachleute wird die Fehler und Unzulänglichkeiten der Vergangenheit wieder einführen."
+      - prompt:
+          en: "Ask the mayor if she would agree to involve experts in the decision-making process."
+          de: "Frage die Bürgermeisterin, ob sie damit einverstanden wäre, Fachleute in den Entscheidungsprozess einzubeziehen."
+        target: mayor
+        dialogues:
+          mayor:
+            - type: sequence
+              items:
+                - text:
+                    en: "I don’t want to involve experts in this process…"
+                    de: "Ich möchte keine Fachleute in diesen Prozess einbeziehen…"
+                - text:
+                    en: "… the opinions are very polarized already, and a computer can be completely objective…"
+                    de: "… die Meinungen sind bereits sehr polarisiert, und ein Computer kann völlig objektiv sein…"
+                - text:
+                    en: "… I want to base decisions on pure data."
+                    de: "… Ich möchte Entscheidungen auf der Grundlage reiner Daten treffen"
+                  set: [ 'quest.issues.talkedToMayor' ]
+          citizenCool:
+            - type: sequence
+              items:
+                - text:
+                    en: "Big data is the future of decision-making…"
+                    de: "Big Data ist die Zukunft der Entscheidungsfindung…"
+                - text:
+                    en: "… Involving human experts will re-introduce the errors and vices of the past."
+                    de: "… Die Einbindung menschlicher Fachleute wird die Fehler und Unzulänglichkeiten der Vergangenheit wieder einführen."
+  issueOpen:
+    npc: biologist
+    mood: exclamation
+    required: issues
+    available:
+      dialogue:
+        - type: sequence
+          items:
+            - text:
+                en: "OPEN data is better than BIG data."
+                de: "OFFENE Daten sind besser als BIG Data."
+            - text:
+                en: "If citizens have access to the data that the algorithm uses…"
+                de: "Wenn die Bürger*innen  Zugang zu den Daten haben, die der Algorithmus verwendet, …"
+            - text:
+                en: "… they can understand its decisions, find errors, learn from it, and even improve it."
+                de: "… können sie dessen Entscheidungen verstehen, Fehler finden, daraus lernen und ihn sogar verbessern."
+            - text:
+                en: "Can you share this idea with the mayor?"
+                de: "Kannst du diese Idee der Bürgermeisterin mitteilen?"
+              responses:
+                - text:
+                    en: "Accept the quest"
+                    de: "Nimm die Aufgabe an"
+                  thenText:
+                    en: "We need a transparent decision process."
+                    de: "Wir brauchen einen transparenten Entscheidungsprozess."
+                  set: [ 'quest.issueOpen.active' ]
+                - text:
+                    en: "Decline for now"
+                    de: "Vorläufig ablehnen"
+                  thenText:
+                    en: "I hope you reconsider."
+                    de: "Ich hoffe, du überlegst es dir nochmal."
+    stages:
+      - prompt:
+          en: "Share the open data idea with the mayor."
+          de: "Teile der Bürgermeisterin die Idee zu offenen Daten mit."
+        target: mayor
+        dialogues:
+          citizenCool:
+            - type: sequence
+              items:
+                - text:
+                    en: "We’re 100% in favor of open data, and we share your vision."
+                    de: "Wir sind zu 100 % für offene Daten und teilen deine Vision."
+                - text:
+                    en: "But we must also ensure to meet our high standards for security and confidentiality."
+                    de: "Aber wir müssen auch sicherstellen, dass unsere hohen Standards für Sicherheit und Vertraulichkeit eingehalten werden."
+                - text:
+                    en: "Right now, our hearts are open. With work, someday, our data will also be open. Keep your mind open."
+                    de: "Unsere Herzen sind offen. Mit etwas Arbeit werden auch unsere Daten eines Tages offen sein. Lasst uns aufgeschlossen bleiben!"
+          mayor:
+            - type: sequence
+              items:
+                - text:
+                    en: "You are right. That is something we’ll need to work on."
+                    de: "Du hast recht. Das ist etwas, woran wir arbeiten müssen."
+                  set: [ 'quest.issueOpen.done', 'shared.issues.open', 'pnt.equity.issueOpen' ]
+                - type: first
+                  items:
+                    - cond: 'COUNT("shared.issues") >= 3'
+                      text:
+                        en: "… You found enough critical issues. I think you convinced me."
+                        de: "… Du hast genug kritische Punkte gefunden. Ich glaube, du hast mich überzeugt."
+                    - cond: 'COUNT("shared.issues") = 2'
+                      text:
+                        en: "… So far, you found two issues. It's still not enough to justify an expert panel."
+                        de: "… Bis jetzt hast du zwei Probleme gefunden. Das ist noch nicht genug, um ein Expertengremium zu rechtfertigen."
+                    - text:
+                        en: "… But for now, not enough to justify an expert panel."
+                        de: "… Du hast genug kritische Aspekte gefunden. Ich glaube, du hast mich überzeugt."
+  issueAccountability:
+    npc: lawyer
+    mood: exclamation
+    required: issues
+    available:
+      dialogue:
+        - type: sequence
+          items:
+            - text:
+                en: "What happens if the algorithm is wrong and cutting down trees is an error?"
+                de: "Was passiert, wenn der Algorithmus falsch liegt und das Fällen von Bäumen ein Fehler ist?"
+            - text:
+                en: "Under the law, a computer can’t be responsible for decisions."
+                de: "Nach dem Gesetz kann ein Computer nicht für Entscheidungen verantwortlich gemacht werden."
+            - text:
+                en: "Someone must look at the algorithm's recommendations and decide whether to follow them."
+                de: "Jemand muss sich die Empfehlungen des Algorithmus ansehen und entscheiden, ob sie befolgt werden."
+            - text:
+                en: "Can you share this concern with the mayor?"
+                de: "Kannst du diese Bedenken mit der Bürgermeisterin teilen?"
+              responses:
+                - text:
+                    en: "Accept the quest"
+                    de: "Nimm die Aufgabe an"
+                  thenText:
+                    en: "We need to make sure someone is responsible for decisions made using computers."
+                    de: "Wir müssen sicherstellen, dass jemand für Entscheidungen verantwortlich ist, die von Computern getroffen werden."
+                  set: [ 'quest.issueAccountability.active' ]
+                - text:
+                    en: "Decline for now"
+                    de: "Vorläufig ablehnen"
+                  thenText:
+                    en: "I hope you reconsider."
+                    de: "Ich hoffe, du überlegst es dir nochmal."
+    stages:
+      - prompt:
+          en: "Share the concern about responsibility for decisions with the mayor."
+          de: "Teile der Bürgermeisterin die Bedenken über die Verantwortung für Entscheidungen mit."
+        target: mayor
+        dialogues:
+          citizenCool:
+            - type: sequence
+              items:
+                - text:
+                    en: "We believe in the power of AI to revolutionize decision-making."
+                    de: "Wir glauben an die Fähigkeit der KI, die Entscheidungsfindung zu revolutionieren."
+                - text:
+                    en: "Its recommendations are based on data and logic, so it’s very unlikely it would ever make a mistake."
+                    de: "Ihre Empfehlungen beruhen auf Daten und Logik, sodass es sehr unwahrscheinlich ist, dass sie jemals einen Fehler machen wird."
+                - text:
+                    en: "If you ever think an AI is wrong, you may be the one making an error."
+                    de: "Wenn du denkst, dass eine KI falsch liegt, bist du vielleicht derjenige, der einen Fehler macht."
+          mayor:
+            - type: sequence
+              items:
+                - text:
+                    en: "You are right. That is something we’ll need to work on."
+                    de: "Du hast recht. Das ist etwas, woran wir arbeiten müssen."
+                  set: [ 'quest.issueAccountability.done', 'shared.issues.accountability', 'pnt.equity.issueAccountability' ]
+                - type: first
+                  items:
+                    - cond: 'COUNT("shared.issues") >= 3'
+                      text:
+                        en: "… You found enough critical issues. I think you convinced me."
+                        de: "… Du hast genug kritische Punkte gefunden. Ich glaube, du hast mich überzeugt."
+                    - cond: 'COUNT("shared.issues") = 2'
+                      text:
+                        en: "… So far, you found two issues. It's still not enough to justify an expert panel."
+                        de: "… Bis jetzt hast du zwei Probleme gefunden. Das ist noch nicht genug, um ein Expertengremium zu rechtfertigen."
+                    - text:
+                        en: "… But for now, not enough to justify an expert panel."
+                        de: "… Aber im Moment noch nicht genug, um ein Expertengremium zu rechtfertigen."
+  issueBias:
+    npc: journalist
+    mood: exclamation
+    required: issues
+    available:
+      dialogue:
+        - type: sequence
+          items:
+            - text:
+                en: "Algorithms are not objective and impartial…"
+                de: "Algorithmen sind nicht objektiv und unparteiisch…"
+            - text:
+                en: "… they are created by humans, with interests and opinions. And data that may reflect past errors."
+                de: "… sie werden von Menschen geschaffen, mit Interessen und Meinungen. Und mit Daten, die Fehler der Vergangenheit widerspiegeln können."
+            - text:
+                en: "We need to constantly evaluate the algorithm to make sure it does not greatly favor some people or disadvantage others."
+                de: "Wir müssen den Algorithmus ständig überprüfen,damit er nicht einige Leute stark bevorzugt oder andere benachteiligt."
+            - text:
+                en: "Can you share this concern with the mayor?"
+                de: "Kannst du diese Bedenken mit der Bürgermeisterin teilen?"
+              responses:
+                - text:
+                    en: "Accept the quest"
+                    de: "Nimm die Aufgabe an"
+                  thenText:
+                    en: "We need to make sure the algorithm is not biased."
+                    de: "Der Algorithmus darf nicht voreingenommen sein."
+                  set: [ 'quest.issueBias.active' ]
+                - text:
+                    en: "Decline for now"
+                    de: "Vorläufig ablehnen"
+                  thenText:
+                    en: "I hope you reconsider."
+                    de: "Ich hoffe, du überlegst es dir nochmal."
+    stages:
+      - prompt:
+          en: "Share the concern about biases with the mayor."
+          de: "Erläutere der Bürgermeisterin das Problem mit Bias (Voreingenommenheit)."
+        target: mayor
+        dialogues:
+          citizenCool:
+            - type: sequence
+              items:
+                - text:
+                    en: "We objectively believe our AI will make unbiased and fair decisions."
+                    de: "Wir glauben objektiv, dass unsere KI unvoreingenommene und faire Entscheidungen treffen wird."
+                - text:
+                    en: "Computers have no personal preferences or hidden motives, unlike humans."
+                    de: "Im Gegensatz zu Menschen haben Computer keine persönlichen Vorlieben oder versteckten Motive."
+                - text:
+                    en: "If an AI ever seems biased, it’s because of our inability to see the big picture."
+                    de: "Wenn eine KI voreingenommen erscheint, liegt das an unserer Unfähigkeit, das große Ganze zu sehen."
+          mayor:
+            - type: sequence
+              items:
+                - text:
+                    en: "You are right. That is something we’ll need to work on."
+                    de: "Du hast recht. Das ist etwas, woran wir arbeiten müssen."
+                  set: [ 'quest.issueBias.done', 'shared.issues.bias', 'pnt.equity.issueBias' ]
+                - type: first
+                  items:
+                    - cond: 'COUNT("shared.issues") >= 3'
+                      text:
+                        en: "… You found enough critical issues. I think you convinced me."
+                        de: "… Du hast genug kritische Punkte gefunden. Ich glaube, du hast mich überzeugt."
+                    - cond: 'COUNT("shared.issues") = 2'
+                      text:
+                        en: "… So far, you found two issues. It's still not enough to justify an expert panel."
+                        de: "… Bis jetzt hast du zwei Probleme gefunden. Das ist noch nicht genug, um ein Expertengremium zu rechtfertigen."
+                    - text:
+                        en: "… But for now, not enough to justify an expert panel."
+                        de: "… Aber im Moment noch nicht genug, um ein Expertengremium zu rechtfertigen."
+  committee:
+    npc: mayor
+    mood: exclamation
+    required: ['issueOpen', 'issueBias', 'issueAccountability']
+    available:
+      dialogue:
+        - type: sequence
+          items:
+            - text:
+                en: "I now understand that we need to use decision-making algorithms carefully."
+                de: "Ich weiß jetzt, dass wir die Entscheidungsalgorithmen sorgfältig einsetzen müssen."
+            - text:
+                en: "We’ll create a committee of experts and citizens to analyze its recommendations."
+                de: "Wir werden einen Ausschuss aus Fachleuten und Bürger*innen einrichten, um die Empfehlungen zu überprüfen."
+            - text:
+                en: "Can you help us find some citizens that could join the committee?"
+                de: "Kannst du uns helfen, einige Bürger*innen zu finden, die dem Ausschuss beitreten könnten?"
+              responses:
+                - text:
+                    en: "Accept the quest"
+                    de: "Nimm die Aufgabe an"
+                  thenText:
+                    en: "Find 3 specialists with different points of view who are willing to join."
+                    de: "Finde 3 Fachleute mit unterschiedlichen Standpunkten, die bereit sind, beizutreten."
+                  set: [ 'quest.committee.active' ]
+                - text:
+                    en: "Decline for now"
+                    de: "Vorläufig ablehnen"
+                  thenText:
+                    en: "I hope you reconsider."
+                    de: "Ich hoffe, du überlegst es dir nochmal."
+    stages:
+      - cond: 'COUNT("joined.committee") >= 3'
+        prompt:
+          en: "Report back to the mayor."
+          de: "Berichte der Bürgermeisterin."
+        target: mayor
+        dialogues:
+          mayor:
+            - text:
+                en: "Thank you! That seems like a good variety of backgrounds and specialties."
+                de: "Danke! Das scheint eine gute Vielfalt an Hintergründen und Spezialgebieten zu sein."
+              set: [ 'quest.committee.done', 'pnt.emporwerment.committee' ]
+      - prompt:
+          en: "Find 3 citizens with different specialties who are willing to review recommendations made by the algorithm."
+          de: "Finde 3 Bürger*innen aus unterschiedlichen Fachgebieten, die die Empfehlungen des Algorithmus überprüfen können."
+        counter:
+          expression: 'COUNT("joined.committee")'
+          max: 3
+          icon: person
+        dialogues:
+          journalist:
+            - text:
+                en: "As a journalist, I prefer to stay outside the committee to report on it neutrally."
+                de: "Als Journalist möchte ich mich aus dem Ausschuss heraushalten, um neutral berichten zu können."
+          citizenPunk:
+            - type: sequence
+              items:
+                - text:
+                    en: "I’d love to join the committee, but I already asked the Mayor…"
+                    de: "Ich würde gerne dem Ausschuss beitreten, aber ich habe die Bürgermeisterin schon gefragt…"
+                - text:
+                    en: "… she said: “Absolutely not”. Apparently, I’m “too biased”."
+                    de: "… sie sagte: „Auf keinen Fall“. Offenbar bin ich zu befangen."
+          biologist:
+            - text:
+                en: "Yes, I’d love to join the committee and bring a scientific point of view."
+                de: "Ja, ich würde gerne im Ausschuss mitarbeiten und meine wissenschaftliche Sichtweise einbringen."
+              set: [ 'joined.committee.biologist' ]
+          tourist:
+            - text:
+                en: "I don’t live in the city, so I can’t join the committee."
+                de: "Ich lebe nicht in der Stadt, also kann ich dem Ausschuss nicht beitreten."
+          museumDirector:
+            - text:
+                en: "Yes, I’d love to join the committee. I want to make algorithmic decision-making understandable to citizens."
+                de: "Ja, ich würde gerne dem Ausschuss beitreten. Ich möchte den Bürger*innen algorithmische Entscheidungsfindung verständlich machen."
+              set: [ 'joined.committee.museumDirector' ]
+          citizenCool:
+            - text:
+                en: "Yes, I’d love to join the committee. I can share our discussions with my audience."
+                de: "Ja, ich würde gerne dem Ausschuss beitreten. Ich kann unsere Diskussionen mit meinem Publikum teilen."
+              set: [ 'joined.committee.citizenCool' ]
+          constructionWorker:
+            - text:
+                en: "Yes, I’d love to join the committee. I can bring technical expertise, particularly in hardware."
+                de: "Ja, ich würde gerne dem Ausschuss beitreten. Ich kann technische Expertise einbringen, insbesondere in der Hardware."
+              set: [ 'joined.committee.constructionWorker' ]
+          citizenRanger:
+            - text:
+                en: "I’m thankful that a committee will be formed, but I can help more in other areas."
+                de: "Ich bin dankbar, dass ein Ausschuss gebildet wird, aber ich kann in anderen Bereichen mehr helfen."
+          robot:
+            - type: sequence
+              items:
+                - text:
+                    en: "I’d love to join your committee…"
+                    de: "Ich würde gerne deinem Ausschuss beitreten…"
+                - text:
+                    en: "… but I’m already on a committee where I and other robots laugh about human decision-making."
+                    de: "… aber ich bin bereits in einem Ausschuss, in dem ich und andere Roboter über menschliche Entscheidungen lachen."
+          citizenWheelchair:
+            - text:
+                en: "Yes, I’d love to join the committee. A sensitive point of view is always necessary."
+                de: "Ja, ich würde gerne im Ausschuss mitarbeiten. Ein einfühlsamer Blickwinkel ist immer notwendig."
+              set: [ 'joined.committee.citizenWheelchair' ]
+          lawyer:
+            - text:
+                en: "Yes, I’d love to join the committee. We have to make sure algorithmic decision-making follows the law."
+                de: "Ja, ich würde gerne dem Ausschuss beitreten. Wir müssen sicherstellen, dass die algorithmische Entscheidungsfindung dem Gesetz folgt."
+              set: [ 'joined.committee.lawyer' ]
+          citizenBraid:
+            - text:
+                en: "Yes, I’d love to join the committee."
+                de: "Ja, ich würde gerne dem Ausschuss beitreten."
+              set: [ 'joined.committee.citizenBraid' ]
+          citizenCat:
+            - text:
+                en: "No, thanks. I’m not interested in condoning the use of computers for critical life-affecting decisions."
+                de: "Nein, danke. Ich bin nicht daran interessiert, die Verwendung von Computern für lebenswichtige Entscheidungen zu unterstützen."
+          citizenHipster:
+            - text:
+                en: "Yes, I’d love to join the committee."
+                de: "Ja, ich würde gerne dem Ausschuss beitreten."
+              set: [ 'joined.committee.citizenHipster' ]
+          citizenPuan:
+            - text:
+                en: "No, thanks. I don’t want to be part of a group that justifies crimes against nature."
+                de: "Nein, danke. Ich möchte nicht zu einer Gruppe gehören, die Verbrechen gegen die Natur rechtfertigt."
+          citizenCage:
+            - text:
+                en: "Yes, I’d love to join the committee."
+                de: "Ja, ich würde gerne dem Ausschuss beitreten."
+              set: [ 'joined.committee.citizenCage' ]
+          citizenLila:
+            - text:
+                en: "No, thanks. I still don’t understand enough what an algorithm is."
+                de: "Nein, danke. Ich verstehe immer noch nicht, was ein Algorithmus ist."
+          citizenQueen:
+            - text:
+                en: "No, thanks. I don’t have time to join your committee."
+                de: "Nein danke. Ich habe keine Zeit, Ihrem Ausschuss beizutreten."
+          citizenChamp:
+            - text:
+                en: "No, thanks. I still don’t understand enough about AI to join your committee."
+                de: "Nein danke. Ich verstehe immer noch nicht genug über KI, um Ihrem Ausschuss beizutreten."
+          citizenBlue:
+            - text:
+                en: "No, thanks. I don’t have time to join your committee."
+                de: "Nein danke. Ich habe keine Zeit, Ihrem Ausschuss beizutreten."
+          citizenHoodie:
+            - text:
+                en: "Yes, I’d love to join the committee."
+                de: "Ja, ich würde gerne dem Ausschuss beitreten."
+              set: [ 'joined.committee.citizenHoodie' ]
+ending:
+  dialogue:
+    - type: sequence
+      items:
+        - type: first
+          items:
+            - cond: 'quest.committee.done'
+              class: 'citizensEmpowered'
+              type: sequence
+              items:
+                - text:
+                    en: 'A committee of citizens and experts was formed to support algorithmic decision-making.'
+                    de: 'Zur Unterstützung der algorithmischen Entscheidungsfindung wurde ein Ausschuss aus Bürger*innen und Fachleuten gebildet.'
+                - text:
+                    en: "They tested and improved the algorithm, and explained its results before starting construction."
+                    de: "Sie testeten und verbesserten den Algorithmus und erläuterten seine Ergebnisse vor Baubeginn."
+                - text:
+                    en: "The new homes are almost ready."
+                    de: "Die neuen Häuser sind fast fertig."
+            - cond: 'quest.issues.done'
+              class: 'citizensNeutral'
+              type: sequence
+              items:
+                - text:
+                    en: "Due to public opposition, the government decided not to use the algorithm."
+                    de: "Aufgrund des öffentlichen Widerstands beschloss die Regierung, den Algorithmus nicht zu verwenden."
+                - text:
+                    en: "The mayor promised not to cut down any trees and find a different solution if she’s reelected."
+                    de: "Die Bürgermeisterin versprach, keine Bäume zu fällen und eine andere Lösung zu finden, falls sie wiedergewählt wird."
+            - cond: 'quest.against.done & quest.favor.done'
+              class: 'citizensSad'
+              type: sequence
+              items:
+                - text:
+                    en: 'The government followed the algorithm’s advice and started work to expand the city.'
+                    de: 'Die Regierung folgte dem Rat des Algorithmus und begann mit der Erweiterung der Stadt.'
+                - text:
+                    en: 'People that moved into the new homes complain that there is no train station and they’re too far away from shops and workplaces.'
+                    de: 'Die Bewohner*innen der neuen Häuser beschweren sich, dass es keinen Bahnhof gibt und sie zu weit von Geschäften und Arbeitsplätzen entfernt sind.'
+            - type: sequence
+              class: 'citizensAngry'
+              items:
+                - text:
+                    en: "The government followed the algorithm’s advice and started work to expand the city."
+                    de: "Die Regierung folgte dem Rat des Algorithmus und begann mit der Erweiterung der Stadt."
+                - type: first
+                  items:
+                    - cond: 'quest.video.done'
+                      class: 'citizensSad'
+                      text:
+                        en: "After part of the forest was cut down (“too much!”, say some), environmentalists sabotaged construction and demanded reforestation."
+                        de: "Nachdem ein Teil des Waldes abgeholzt wurde („zu viel!“, sagen einige), sabotierten Umweltschützer*innen den Bau und forderten die Wiederaufforstung."
+                    - text:
+                        en: "Protestors camped in the forest for weeks and stopped the logging. Work is paused indefinitely."
+                        de: "Demonstrierende kampierten wochenlang im Wald und stoppten die Abholzung. Die Arbeiten sind auf unbestimmte Zeit pausiert."

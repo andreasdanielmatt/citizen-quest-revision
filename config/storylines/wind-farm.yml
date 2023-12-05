@@ -368,7 +368,7 @@ quests:
                 - text:
                     en: "We will have a referendum. Citizens will vote for or against the project and the majority will decide."
                     de: "Wir werden ein Referendum durchführen. Die Bevölkerung stimmt ab und die Mehrheit entscheidet."
-              set: [ 'quest.favor.done', 'pnt.empathy.favor' ]
+                  set: [ 'quest.favor.done', 'pnt.empathy.favor' ]
       - prompt:
           en: "Find 2 people who are in favor of the wind park."
           de: "Finde 2 Personen, die für den Windpark sind."
