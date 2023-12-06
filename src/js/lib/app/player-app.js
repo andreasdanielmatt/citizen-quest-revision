@@ -54,11 +54,20 @@ class PlayerApp {
         return;
       }
       this.seenFlags[flagId] = true;
+
       if (flagId.startsWith('pnt.') && setter !== 'remote') {
         const flagParts = flagId.split('.');
-        const category = flagParts[1];
-        if (category) {
-          this.playerOverlayMgr.scoringOverlay.showAchievement(category);
+        const type = flagParts[1];
+        if (type) {
+          this.playerOverlayMgr.scoringOverlay.showAchievement(type);
+        }
+      }
+
+      if (flagId.startsWith('inc.') && setter !== 'remote' && setter !== 'init') {
+        const flagParts = flagId.split('.');
+        const type = flagParts[1];
+        if (type) {
+          this.playerOverlayMgr.scoringOverlay.showInclusion(type);
         }
       }
     });

@@ -74,6 +74,7 @@ class ServerSocketConnector {
     this.ws.send(JSON.stringify(message));
   }
 
+  // eslint-disable-next-line class-methods-use-this
   isSyncable(flag) {
     return (flag.startsWith('quest.') && flag.endsWith('.done'))
       || flag.startsWith('pnt.')

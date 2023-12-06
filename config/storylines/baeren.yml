@@ -4,6 +4,9 @@ decision:
 prompt:
   en: "Bears have been recently sighted in the woods, and people are scared. The city government has promised to do something about it."
   de: "Vor kurzem wurden Bären in den Wäldern gesichtet, die Menschen haben Angst. Die Stadtverwaltung hat versprochen, sich um die Sache zu kümmern."
+initFlags:
+  - inc.mayor
+  - inc.parksDirector
 npcs:
   mayor:
     name:
@@ -427,12 +430,12 @@ quests:
             - text:
                 en: "We’ll be happy to help. We’ve done many studies about bear behavior."
                 de: "Wir helfen dir gerne. Wir haben viele Studien über das Verhalten von Bären durchgeführt."
-              set: [ 'found.video.expert', 'quest.video.done', 'pnt.information.video' ]
+              set: [ 'found.video.expert', 'quest.video.done', 'pnt.information.video', 'inc.groupProBear' ]
           citizenRanger:
             - text:
                 en: "I’ll be happy to help. I have a lot of direct experience with bears I’ll be happy to share. "
                 de: "Ich helfe gerne. Ich habe viele direkte Erfahrungen mit Bären, die ich gerne weitergeben würde."
-              set: [ 'found.video.expert', 'quest.video.done', 'pnt.information.video'  ]
+              set: [ 'found.video.expert', 'quest.video.done', 'pnt.information.video', 'inc.groupProBear'  ]
           museumDirector:
             - text:
                 en: "We can’t help you due to budgetary reasons. You’ll find an expert at the university, and the newspaper can produce it."
@@ -474,12 +477,12 @@ quests:
             - text:
                 en: "I’m in! We’ll have to add some effects and jokes, but we’ll make the #1 bear video."
                 de: "Ich bin dabei! Wir müssen ein paar Effekte und Witze einbauen, aber wir werden das beste Bärenvideo machen."
-              set: [ 'found.video.producer', 'quest.video.done', 'pnt.information.video' ]
+              set: [ 'found.video.producer', 'quest.video.done', 'pnt.information.video', 'inc.groupProBear' ]
           journalist:
             - text:
                 en: "Let’s do it. Our team of documentarists can have a special about bears online in no time."
                 de: "Los geht's. Unser Team von Dokumentarfilmer*innen kann in kürzester Zeit ein Special über Bären online stellen."
-              set: [ 'found.video.producer', 'quest.video.done', 'pnt.information.video' ]
+              set: [ 'found.video.producer', 'quest.video.done', 'pnt.information.video', 'inc.groupProBear' ]
           citizenPunk:
             - text:
                 en: "Sorry. Our company doesn’t produce original content. You should talk to the journalist at the newspaper."
@@ -577,7 +580,7 @@ quests:
                   thenText:
                     en: "Good idea. We could do that to make citizens feel safer."
                     de: "Das ist eine gute Idee. Wir könnten das tun, damit sich die Bürger sicherer fühlen."
-                  set: [ 'quest.suggestions.done', 'pnt.empathy.suggestions' ]
+                  set: [ 'quest.suggestions.done', 'pnt.empathy.suggestions', 'inc.groupAntiBear' ]
                 - cond: 'suggestion.track'
                   text:
                     en: "Track the bear’s locations."
@@ -585,7 +588,7 @@ quests:
                   thenText:
                     en: "Good. That could help people avoid them."
                     de: "Das ist gut. Das könnte den Menschen helfen, sie zu vermeiden."
-                  set: [ 'quest.suggestions.done', 'pnt.information.suggestions' ]
+                  set: [ 'quest.suggestions.done', 'pnt.information.suggestions', 'inc.groupAntiBear' ]
                 - cond: 'suggestion.damages'
                   text:
                     en: "Cover the cost of damages."
@@ -593,7 +596,7 @@ quests:
                   thenText:
                     en: "Good. We could give everyone bear insurance."
                     de: "Das ist gut. Wir könnten jedem eine Bärenversicherung geben."
-                  set: [ 'quest.suggestions.done', 'pnt.equity.suggestions' ]
+                  set: [ 'quest.suggestions.done', 'pnt.equity.suggestions', 'inc.groupAntiBear' ]
                 - cond: 'suggestion.hunt'
                   text:
                     en: "Hunt the bears."
@@ -759,7 +762,7 @@ quests:
                   thenText:
                     en: "A great choice. He is knowledgeable, experienced, and cares about bears."
                     de: "Eine gute Wahl. Er ist sachkundig, erfahren und kümmert sich um Bären."
-                  set: [ 'quest.advocate.done', 'pnt.empowerment.advocate' ]
+                  set: [ 'quest.advocate.done', 'pnt.empowerment.advocate', 'inc.parkRanger' ]
                 - cond: 'advocate.ai'
                   text:
                     en: "An AI."
@@ -897,7 +900,7 @@ quests:
             - text:
                 en: "Thanks! We’ll use these insights to improve our system."
                 de: "Danke! Wir werden diese Erkenntnisse nutzen, um unser System zu verbessern."
-              set: [ 'quest.tracking.done', 'pnt.information.tracking' ]
+              set: [ 'quest.tracking.done', 'pnt.information.tracking', 'inc.citizenPunk' ]
       - prompt:
           en: "Get 3 opinions about the Bear Tracking System by talking to people that are most active in the bear issue."
           de: "Hole 3 Meinungen über das Bären-Tracking-System ein. Spreche mit Menschen, die sich am meisten mit dem Thema Bären beschäftigen."
@@ -1025,7 +1028,7 @@ quests:
             - text:
                 en: "This makes a lot of sense. I will make a motion right away demanding that the government builds safe paths for the bears."
                 de: "Das macht sehr viel Sinn. Ich werde sofort einen Antrag stellen und die Stadt auffordern, sichere Wege für die Bären zu bauen."
-              set: [ 'quest.territories.done', 'pnt.equity.territories' ]
+              set: [ 'quest.territories.done', 'pnt.equity.territories', 'inc.biologist', 'inc.groupBears' ]
           biologist:
             - text:
                 en: "If bears had paths that go under the roads, they would be safer and stay away from farms."

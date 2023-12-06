@@ -92,6 +92,23 @@ class MapApp {
     this.keyboardInputMgr.addToggle('KeyF', () => {
       console.log(this.flags.dump());
     });
+
+    this.seenFlags = {};
+    this.flags.events.on('flag', (flagId, value, oldValue, setter) => {
+      if (this.seenFlags[flagId]) {
+        return;
+      }
+      this.seenFlags[flagId] = true;
+
+      if (flagId.startsWith('inc.')) {
+        const flagParts = flagId.split('.');
+        const type = flagParts[1];
+        if (type) {
+          this.inclusionBar.add(type);
+        }
+      }
+    });
+
     // Game loop
     this.pixiApp.ticker.add((time) => {
       this.stats.frameBegin();
