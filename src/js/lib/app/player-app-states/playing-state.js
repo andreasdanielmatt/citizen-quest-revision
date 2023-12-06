@@ -15,7 +15,8 @@ class PlayerAppPlayingState extends PlayerAppState {
     this.playerApp.playerOverlayMgr.countdown.show();
     this.playerApp.playerOverlayMgr.showDefaultPrompt();
     const introText = this.playerApp.questTracker.activeStoryline.prompt;
-    this.playerApp.playerOverlayMgr.showIntroScreen(introText);
+    const inclusions = this.playerApp.questTracker.getActiveFlags('inc.');
+    this.playerApp.playerOverlayMgr.showIntroScreen(introText, inclusions);
   }
 
   onAction() {

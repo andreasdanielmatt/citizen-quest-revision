@@ -2,6 +2,8 @@ const EventEmitter = require('events');
 const SpeechText = require('./speech-text');
 const { I18nTextAdapter } = require('../helpers/i18n');
 const { textWithEmojisToSpeechLines } = require('../helpers/emoji-utils');
+const InclusionBar = require('./inclusion-bar');
+const { fitParentWidth } = require('../helpers-web/fit-parent');
 
 class IntroScreen {
   constructor(config, lang) {
@@ -51,15 +53,23 @@ class IntroScreen {
       this.lang,
       this.config.i18n.ui.pressToContinue
     );
+
+    this.inclusionBar = new InclusionBar(this.config);
+    this.$screen.append($('<div></div>')
+      .addClass('inclusion-bar-wrapper')
+      .append(this.inclusionBar.$element));
   }
 
-  showIntro(introText, classes) {
+  showIntro(introText, classes = [], inclusionTypes = []) {
     this.$styleWrapper.removeClass();
     this.$styleWrapper.addClass(classes);
+    this.inclusionBar.clear();
     this.$element.addClass('visible');
     setTimeout(() => {
       this.revealStarted = true;
       this.speechI18n.setText(introText, true);
+      inclusionTypes.forEach((type) => this.inclusionBar.add(type));
+      fitParentWidth(this.inclusionBar.$element);
     }, 0);
   }
 

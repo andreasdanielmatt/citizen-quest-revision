@@ -74,13 +74,33 @@ class QuestTracker {
     this.initFlags();
   }
 
+  /**
+   * Clear all flags.
+   */
   clearFlags() {
     this.flags.clear();
   }
 
+  /**
+   * Initialize the flags for the active storyline.
+   *
+   * All the flags specified in the initFlags of the storyline are set
+   */
   initFlags() {
     const flags = [this.activeStoryline?.initFlags ?? []].flat();
     flags.forEach((flag) => this.flags.set(flag, 1, 'init'));
+  }
+
+  /**
+   * Get the list of active flags with the specified prefix.
+   *
+   * Active flags are flags with a value greater than 0. The prefix is stripped from the flag names.
+   * @returns {string[]}
+   */
+  getActiveFlags(prefix = '') {
+    return Object.entries(this.flags.all())
+      .filter(([key, value]) => key.startsWith(prefix) && value > 0)
+      .map(([key]) => key.replace(new RegExp(`^${prefix}`), ''));
   }
 
   /**

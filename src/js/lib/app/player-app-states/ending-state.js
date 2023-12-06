@@ -24,7 +24,8 @@ class PlayerAppEndingState extends PlayerAppState {
     if (fromState !== IDLE) {
       this.playerApp.inputRouter.routeToMenus(this.playerApp);
       const [endingText, classes] = this.playerApp.getCurrentEnding();
-      this.playerApp.playerOverlayMgr.showEndingScreen(endingText, classes);
+      const inclusions = this.playerApp.questTracker.getActiveFlags('inc.');
+      this.playerApp.playerOverlayMgr.showEndingScreen(endingText, classes, inclusions);
     } else {
       this.playerApp.inputRouter.unroute();
       this.showWaitingToBeginScreen();

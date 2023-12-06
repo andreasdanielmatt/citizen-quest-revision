@@ -479,8 +479,8 @@ h1, h2, h3, h4, h5, h6 {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #000;
-  color: #fff;
+  background-color: #e0ff5f;
+  color: #000;
   text-align: center;
   padding: 10em 5em 2.5em;
 }
@@ -508,13 +508,24 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 1.5em;
   font-weight: bold;
   padding: 0.25em 0.9em;
+  background-color: #000;
+  display: inline-block;
 }
 .intro-screen .waiting-text .text {
   display: inline-block;
-  color: #000;
-  background-color: #e0ff5f;
+  color: #e0ff5f;
   padding: 0 1.5em;
   animation: halfpulse 1.5s infinite ease-in-out;
+}
+.intro-screen .inclusion-bar-wrapper {
+  position: absolute;
+  left: 5em;
+  right: 5em;
+  bottom: 3em;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
 }
 
 @keyframes fallIn {
@@ -567,15 +578,15 @@ h1, h2, h3, h4, h5, h6 {
   padding: 2.5em 5em;
 }
 .decision-screen .decision-screen-title {
-  font-size: 2em;
+  font-size: 1.4em;
   color: black;
 }
 .decision-screen .decision-screen-text {
-  font-size: 1.6em;
+  font-size: 1.4em;
 }
 .decision-screen .decision-screen-icon {
   width: 100%;
-  height: 12em;
+  height: 10em;
   margin: auto;
   background-size: contain;
   background-repeat: no-repeat;
@@ -604,6 +615,16 @@ h1, h2, h3, h4, h5, h6 {
 }
 .decision-screen .waiting-text .text {
   animation: pulse 1.5s infinite ease-in-out;
+}
+.decision-screen .inclusion-bar-wrapper {
+  position: absolute;
+  left: 5em;
+  right: 5em;
+  bottom: 3em;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
 }
 
 .decision-screen-wrapper .citizensEmpowered .decision-screen-icon {
@@ -877,7 +898,7 @@ h1, h2, h3, h4, h5, h6 {
     transform: scale(1);
   }
 }
-.inclusion-bar {
+.map-app .inclusion-bar {
   background-color: #71ffb4;
   position: absolute;
   width: 8em;
@@ -887,7 +908,7 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center;
   overflow: hidden;
 }
-.inclusion-bar .title {
+.map-app .inclusion-bar .title {
   background-color: #f251e7;
   color: white;
   padding: 0.8em 0.5em 0.5em;
@@ -895,25 +916,47 @@ h1, h2, h3, h4, h5, h6 {
   text-transform: uppercase;
   line-height: 1.2;
 }
-.inclusion-bar .title .text {
+.map-app .inclusion-bar .title .text {
   font-family: "Roboto", sans-serif;
   font-weight: 400;
   white-space: nowrap;
 }
-.inclusion-bar .title .text:first-child {
+.map-app .inclusion-bar .title .text:first-child {
   font-family: "Roboto", sans-serif;
   font-weight: 700;
 }
-.inclusion-bar .inclusion {
+.map-app .inclusion-bar .inclusion {
   margin: 0.3em;
   display: inline-block;
 }
-.inclusion-bar .inclusion .inclusion-image {
+.map-app .inclusion-bar .inclusion .inclusion-image {
   height: 3em;
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
   animation: inclusionBarPush 1s ease-in-out;
+}
+
+.intro-screen .inclusion-bar, .decision-screen .inclusion-bar {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+.intro-screen .inclusion-bar .title, .decision-screen .inclusion-bar .title {
+  display: none;
+}
+.intro-screen .inclusion-bar .inclusion, .decision-screen .inclusion-bar .inclusion {
+  margin: 0 0.3em;
+  display: inline-block;
+}
+.intro-screen .inclusion-bar .inclusion .inclusion-image, .decision-screen .inclusion-bar .inclusion .inclusion-image {
+  height: 10em;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 
 .fatal-error {
@@ -996,4 +1039,4 @@ html.with-fatal-error body {
   margin-bottom: 1.2em;
 }
 
-/*# sourceMappingURL=player.1973f40c24c7ad3e02f7.css.map*/
+/*# sourceMappingURL=player.33eb2ef76e63af8df32c.css.map*/

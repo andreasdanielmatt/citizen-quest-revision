@@ -102,11 +102,11 @@ class PlayerOverlayManager {
     this.titleOverlay.hide();
   }
 
-  showIntroScreen(introText) {
+  showIntroScreen(introText, inclusions) {
     this.hideIntroScreen();
     this.introScreen = new IntroScreen(this.config, this.lang);
     this.$element.append(this.introScreen.$element);
-    this.introScreen.showIntro(introText);
+    this.introScreen.showIntro(introText, [], inclusions);
   }
 
   hideIntroScreen() {
@@ -120,10 +120,10 @@ class PlayerOverlayManager {
     this.questOverlay.showDefaultPrompt();
   }
 
-  showEndingScreen(endingText, classes) {
+  showEndingScreen(endingText, classes, inclusionTypes) {
     this.endingScreen = new DecisionScreen(this.config, this.lang);
     this.$element.append(this.endingScreen.$element);
-    this.endingScreen.showDecision(endingText, classes);
+    this.endingScreen.showDecision(endingText, classes, inclusionTypes);
   }
 
   hideEndingScreen() {

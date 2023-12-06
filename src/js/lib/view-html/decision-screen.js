@@ -2,6 +2,8 @@ const EventEmitter = require('events');
 const SpeechText = require('./speech-text');
 const { I18nTextAdapter } = require('../helpers/i18n');
 const { textWithEmojisToSpeechLines } = require('../helpers/emoji-utils');
+const InclusionBar = require('./inclusion-bar');
+const { fitParentWidth } = require('../helpers-web/fit-parent');
 
 class DecisionScreen {
   constructor(config, lang) {
@@ -66,9 +68,14 @@ class DecisionScreen {
       this.lang,
       this.config.i18n.ui.pressToContinue
     );
+
+    this.inclusionBar = new InclusionBar(this.config);
+    this.$screen.append($('<div></div>')
+      .addClass('inclusion-bar-wrapper')
+      .append(this.inclusionBar.$element));
   }
 
-  showDecision(endingText, classes) {
+  showDecision(endingText, classes = [], inclusionTypes = []) {
     this.$styleWrapper.removeClass();
     this.$styleWrapper.addClass(classes);
     this.$element.addClass('visible');
@@ -76,6 +83,8 @@ class DecisionScreen {
       this.revealStarted = true;
       this.speechI18n.setText(endingText, true);
     }, 2000);
+    inclusionTypes.forEach((type) => this.inclusionBar.add(type));
+    fitParentWidth(this.inclusionBar.$element);
   }
 
   setLang(lang) {

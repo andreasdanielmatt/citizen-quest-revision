@@ -4,8 +4,8 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: $c-black;
-  color: $c-white;
+  background-color: $c-lime-green;
+  color: $c-black;
   text-align: center;
   padding: 10em 5em 2.5em;
 
@@ -34,12 +34,24 @@
     font-size: 1.5em;
     font-weight: bold;
     padding: 0.25em 0.9em;
+    background-color: $c-black;
+    display: inline-block;
     .text {
       display: inline-block;
-      color: $c-black;
-      background-color: $c-lime-green;
+      color: $c-lime-green;
       padding: 0 1.5em;
       animation: halfpulse 1.5s infinite ease-in-out;
     }
+  }
+
+  .inclusion-bar-wrapper {
+    position: absolute;
+    left: 5em;
+    right: 5em;
+    bottom: 3em;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
   }
 }
