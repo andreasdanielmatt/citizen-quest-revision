@@ -39775,6 +39775,8 @@ class MapApp {
   }
 
   resetGameState() {
+    this.seenFlags = {};
+    this.inclusionBar.clear();
     this.questTracker.setActiveStoryline(this.storylineId);
   }
 
@@ -43241,4 +43243,4 @@ const MapApp = __webpack_require__(/*! ./lib/app/map-app */ "./src/js/lib/app/ma
 
 /******/ })()
 ;
-//# sourceMappingURL=map.1129c2090f043c4bdaef.js.map
+//# sourceMappingURL=map.aae977fd91d1eab48346.js.map

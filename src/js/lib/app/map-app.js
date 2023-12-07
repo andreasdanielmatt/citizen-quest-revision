@@ -130,6 +130,8 @@ class MapApp {
   }
 
   resetGameState() {
+    this.seenFlags = {};
+    this.inclusionBar.clear();
     this.questTracker.setActiveStoryline(this.storylineId);
   }
 

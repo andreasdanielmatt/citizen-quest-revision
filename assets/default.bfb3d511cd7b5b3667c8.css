@@ -926,7 +926,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
 }
 .map-app .inclusion-bar .inclusion {
-  margin: 0.3em;
+  margin: 0.2em;
   display: inline-block;
 }
 .map-app .inclusion-bar .inclusion .inclusion-image {
@@ -1039,4 +1039,4 @@ html.with-fatal-error body {
   margin-bottom: 1.2em;
 }
 
-/*# sourceMappingURL=map.33eb2ef76e63af8df32c.css.map*/
+/*# sourceMappingURL=default.bfb3d511cd7b5b3667c8.css.map*/
