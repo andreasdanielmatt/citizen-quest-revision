@@ -6,6 +6,7 @@ prompt:
   de: "Der Fahrraddiebstahl hat einen Höchststand erreicht! Das Softwareunternehmen bietet AI-gestützte Kameras zur Verbrechensbekämpfung an. Soll die Stadt das Angebot annehmen?"
 initFlags:
   - inc.mayor
+  - inc.policeChief
   - inc.citizenCool
 npcs:
   mayor:
@@ -465,12 +466,12 @@ quests:
             - text:
                 en: "We’ll be happy to help. The university has many experts in AI."
                 de: "Wir helfen dir gerne. Die Universität hat viele Expert*innen für KI."
-              set: [ 'found.video.expert', 'quest.video.done', 'pnt.information.video' ]
+              set: [ 'found.video.expert', 'quest.video.done', 'pnt.information.video', 'inc.groupPeople' ]
           citizenPunk:
             - text:
                 en: "We’ll be happy to help. We are happy to explain the AI system we developed."
                 de: "Wir helfen dir gerne. Wir erklären gerne das von uns entwickelte KI-System."
-              set: [ 'found.video.expert', 'quest.video.done', 'pnt.information.video' ]
+              set: [ 'found.video.expert', 'quest.video.done', 'pnt.information.video', 'inc.groupPeople' ]
           journalist:
             - text:
                 en: "It seems you already have someone that can produce the video. Go find an expert."
@@ -500,12 +501,12 @@ quests:
             - text:
                 en: "Yes, I’ll make a video! My audience is super excited about AI."
                 de: "Ja, ich werde ein Video machen! Mein Publikum ist super begeistert von KI."
-              set: [ 'found.video.producer', 'quest.video.done', 'pnt.information.video' ]
+              set: [ 'found.video.producer', 'quest.video.done', 'pnt.information.video', 'inc.groupPeople' ]
           journalist:
             - text:
                 en: "Let’s do it. Our media team can make a great video about AI."
                 de: "Los geht's. Unser Medienteam kann ein großartiges Video über KI machen."
-              set: [ 'found.video.producer', 'quest.video.done', 'pnt.information.video' ]
+              set: [ 'found.video.producer', 'quest.video.done', 'pnt.information.video', 'inc.groupPeople' ]
           citizenPunk:
             - text:
                 en: "It seems you already have an expert. You only need someone who can produce the video."
@@ -926,7 +927,7 @@ quests:
             - text:
                 en: "Thank you! That seems like a good variety of backgrounds and specialities."
                 de: "Danke! Das scheint eine gute Vielfalt an Hintergründen und Spezialgebieten zu sein."
-              set: [ 'quest.committee.done', 'pnt.emporwerment.committee' ]
+              set: [ 'quest.committee.done', 'pnt.emporwerment.committee', 'inc.groupPeopleLarge' ]
       - prompt:
           en: "Find 3 citizens with different specialties who are willing to work to make sure AI is used correctly in the city."
           de: "Finde 3 Bürger*innen mit unterschiedlichen Spezialgebieten, die bereit sind, dafür zu sorgen, dass KI in der Stadt richtig eingesetzt wird."
@@ -952,7 +953,7 @@ quests:
             - text:
                 en: "Yes, I’d love to join the committee and help bring a scientific point of view."
                 de: "Ja, ich würde gerne dem Ausschuss beitreten und helfen, einen wissenschaftlichen Standpunkt einzubringen."
-              set: [ 'joined.committee.biologist' ]
+              set: [ 'joined.committee.biologist', 'inc.biologist' ]
           tourist:
             - text:
                 en: "I don’t live in the city, so I can’t join the committee."
@@ -961,17 +962,17 @@ quests:
             - text:
                 en: "Yes, I’d love to join the committee. I’m personally invested in making AI understandable to citizens."
                 de: "Ja, ich würde gerne dem Ausschuss beitreten. Ich persönlich setze mich dafür ein, KI für die Bürger*innen verständlich zu machen."
-              set: [ 'joined.committee.museumDirector' ]
+              set: [ 'joined.committee.museumDirector', 'inc.museumDirector' ]
           citizenCool:
             - text:
                 en: "Yes, I’d love to join the committee. I can share our work with my audience."
                 de: "Ja, ich würde gerne dem Ausschuss beitreten. Ich kann unsere Arbeit mit meinem Publikum teilen."
-              set: [ 'joined.committee.citizenCool' ]
+              set: [ 'joined.committee.citizenCool', 'inc.citizenCool'  ]
           constructionWorker:
             - text:
                 en: "Yes, I’d love to join the committee. I can bring technical expertise, particularly in hardware."
                 de: "Ja, ich würde gerne dem Ausschuss beitreten. Ich kann technische Expertise einbringen, insbesondere in der Hardware."
-              set: [ 'joined.committee.constructionWorker' ]
+              set: [ 'joined.committee.constructionWorker', 'inc.constructionWorker' ]
           citizenRanger:
             - text:
                 en: "I’m thankful that a committee will be formed, but I can help more in other areas."
@@ -989,7 +990,7 @@ quests:
             - text:
                 en: "Yes, I’d love to join the committee. The artistic point of view is always necessary."
                 de: "Ja, ich würde gerne dem Ausschuss beitreten. Der künstlerische Standpunkt ist immer notwendig."
-              set: [ 'joined.committee.citizenWheelchair' ]
+              set: [ 'joined.committee.citizenWheelchair', 'inc.citizenWheelchair' ]
           police:
             - text:
                 en: "We’ll be working alongside the committee, so we can’t be part of it."
@@ -998,12 +999,12 @@ quests:
             - text:
                 en: "Yes, I’d love to join the committee."
                 de: "Ja, ich würde gerne dem Ausschuss beitreten."
-              set: [ 'joined.committee.citizenBlue' ]
+              set: [ 'joined.committee.citizenBlue', 'inc.citizenBlue' ]
           lawyer:
             - text:
                 en: "Yes, I’d love to join the committee. We have to make sure AI follows every law."
                 de: "Ja, ich würde gerne dem Ausschuss beitreten. Wir müssen sicherstellen, dass KI jedes Gesetz befolgt."
-              set: [ 'joined.committee.lawyer' ]
+              set: [ 'joined.committee.lawyer', 'inc.lawyer'  ]
           citizenCat:
             - text:
                 en: "No, thanks. I’m not interested in condoning the use of AI in any way."

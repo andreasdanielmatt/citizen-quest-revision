@@ -4,6 +4,9 @@ decision:
 prompt:
   en: "A wind farm that can generate clean energy will be built in the mountains. Many people oppose this project and this is causing heated arguments."
   de: "In den Bergen soll ein Windpark gebaut werden, um saubere Energie zu erzeugen. Viele Menschen sind gegen dieses Projekt, was zu heftigen Auseinandersetzungen führt."
+initFlags:
+  - inc.mayor
+  - inc.parksDirector
 npcs:
   mayor:
     name:
@@ -444,7 +447,7 @@ quests:
                 - text:
                     en: "… but there’s an area up in the mountain where the drought killed the trees. That would have the least impact."
                     de: "… aber es gibt ein Gebiet oben in den Bergen, wo es wegen der Dürre keine Bäume mehr gibt. Dort gäbe es die geringsten Auswirkungen."
-                  set: [ 'quest.impact.done', 'pnt.information.impact' ]
+                  set: [ 'quest.impact.done', 'pnt.information.impact', 'inc.parkRanger' ]
       - prompt:
           en: "Talk to the biologist."
           de: "Sprich mit der Biologin."
@@ -462,7 +465,7 @@ quests:
                 - text:
                     en: "Talk to the park ranger for advice about the best place to install the wind farm."
                     de: "Sprich mit dem Ranger, um dich über den besten Standort für den Windpark zu informieren."
-                  set: [ 'impact.talked.biologist' ]
+                  set: [ 'impact.talked.biologist', 'inc.biologist' ]
   turbines:
     npc: parksDirector
     mood: interrogation
@@ -534,12 +537,12 @@ quests:
                 - text:
                     en: "This would also create jobs. Win win!"
                     de: "Das würde auch Arbeitsplätze schaffen. Win-Win!"
-                  set: [ 'quest.turbines.done', 'pnt.equity.turbines' ]
+                  set: [ 'quest.turbines.done', 'pnt.equity.turbines', 'inc.constructionWorker' ]
           citizenPunk:
             - text:
                 en: "No problem! Using computer vision we can detect birds and make the turbines stop."
                 de: "Kein Problem! Mit Hilfe von Software können wir Vögel erkennen und die Windräder abschalten."
-              set: [ 'quest.turbines.done', 'pnt.information.turbines' ]
+              set: [ 'quest.turbines.done', 'pnt.information.turbines', 'inc.citizenPunk'  ]
           journalist:
             - type: sequence
               items:
@@ -607,7 +610,7 @@ quests:
                       thenText:
                         en: "That’s a great idea. I hope it will turn more citizens in favor of the wind farm."
                         de: "Das ist eine tolle Idee. Ich hoffe, dass sich dadurch mehr Bürger*innen für den Windpark entscheiden."
-                      set: [ 'quest.cooperative.done', 'pnt.equity.cooperative' ]
+                      set: [ 'quest.cooperative.done', 'pnt.equity.cooperative', 'inc.groupPeopleLarge' ]
                     - cond: 'idea.cooperative.subsidies'
                       text:
                         en: "Energy subsidies"
@@ -615,7 +618,7 @@ quests:
                       thenText:
                         en: "That’s a great idea. I hope it will turn more citizens in favor of the wind farm."
                         de: "Das ist eine tolle Idee. Ich hoffe, dass sich dadurch mehr Bürger*innen für den Windpark entscheiden."
-                      set: [ 'quest.cooperative.done', 'pnt.equity.cooperative' ]
+                      set: [ 'quest.cooperative.done', 'pnt.equity.cooperative', 'inc.groupPeopleLarge' ]
                     - cond: 'idea.cooperative.kindergartens'
                       text:
                         en: "New kindergartens"
@@ -623,7 +626,7 @@ quests:
                       thenText:
                         en: "That’s a great idea. I hope it will turn more citizens in favor of the wind farm."
                         de: "Das ist eine tolle Idee. Ich hoffe, dass sich dadurch mehr Bürger*innen für den Windpark entscheiden."
-                      set: [ 'quest.cooperative.done', 'pnt.equity.cooperative' ]
+                      set: [ 'quest.cooperative.done', 'pnt.equity.cooperative', 'inc.groupPeopleLarge' ]
                     - cond: 'idea.cooperative.tourism'
                       text:
                         en: "Tourism."
@@ -631,7 +634,7 @@ quests:
                       thenText:
                         en: "That’s a great idea. I hope it will turn more citizens in favor of the wind farm."
                         de: "Das ist eine tolle Idee. Ich hoffe, dass sich dadurch mehr Bürger*innen für den Windpark entscheiden."
-                      set: [ 'quest.cooperative.done', 'pnt.equity.cooperative' ]
+                      set: [ 'quest.cooperative.done', 'pnt.equity.cooperative', 'inc.groupPeopleLarge' ]
           biologist:
             - text:
                 en: "The profits should go to conservation of our mountains’ biodiversity."
@@ -736,7 +739,7 @@ quests:
                       thenText:
                         en: "That’s a great idea. Parents can represent their interests."
                         de: "Das ist eine großartige Idee. Die Eltern können ihre Interessen vertreten."
-                      set: ['quest.youthParticipation.done', 'pnt.empowerment.youthParticipation']
+                      set: ['quest.youthParticipation.done', 'pnt.empowerment.youthParticipation', 'inc.groupYouth']
                     - cond: 'idea.youthParticipation.teenVote'
                       text:
                         en: "Allow teenagers to vote."
@@ -744,7 +747,7 @@ quests:
                       thenText:
                         en: "That’s a good idea. At least some of them will be included."
                         de: "Das ist eine gute Idee. Wenigstens werden so einige einbezogen."
-                      set: ['quest.youthParticipation.done', 'pnt.empowerment.youthParticipation']
+                      set: ['quest.youthParticipation.done', 'pnt.empowerment.youthParticipation', 'inc.groupTeens']
                     - cond: 'idea.youthParticipation.schools'
                       text:
                         en: "Vote in schools first and inform their decision."

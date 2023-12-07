@@ -409,7 +409,7 @@ quests:
                 - text:
                     en: "Here’s an article, and a video of the Ferris wheel from last week."
                     de: "Hier ist ein Artikel und ein Video des Riesenrads von letzter Woche."
-                  set: [ 'quest.fakeNews1.done', 'pnt.information.fakeNews1' ]
+                  set: [ 'quest.fakeNews1.done', 'pnt.information.fakeNews1', 'inc.journalist' ]
           ferrisSalesman:
             - text:
                 en: "A Ferris wheel accident? There haven’t been any accidents associated with our products in 50 years."
@@ -474,12 +474,12 @@ quests:
                 - text:
                     en: "Remember to like and subscribe!"
                     de: "Vergesst nicht, zu liken und zu abonnieren!"
-                  set: [ 'quest.fakeNews2.done', 'pnt.information.fakeNews2' ]
+                  set: [ 'quest.fakeNews2.done', 'pnt.information.fakeNews2', 'inc.citizenCool' ]
           citizenPunk:
             - text:
                 en: "I knew it had to be fake news! I will share the article with everyone who sent me the rumor."
                 de: "Ich wusste, dass es gefälschte Nachrichten sind! Ich werde den Artikel mit allen teilen, die mir das Gerücht geschickt haben."
-              set: [ 'quest.fakeNews2.done', 'pnt.information.fakeNews2' ]
+              set: [ 'quest.fakeNews2.done', 'pnt.information.fakeNews2', 'inc.citizenPunk' ]
           mayor:
             - text:
                 en: "Mmm… our media office will take a look at this, but we’d prefer not to even mention “accidents”."
@@ -537,7 +537,7 @@ quests:
                 - text:
                     en: "We'll be happy to investigate more and advise the city."
                     de: "Wir werden gerne weitere Untersuchungen durchführen und die Stadt beraten."
-                  set: [ 'quest.environmentalImpact.done', 'pnt.empowerment.environmentalImpact' ]
+                  set: [ 'quest.environmentalImpact.done', 'pnt.empowerment.environmentalImpact', 'inc.biologist' ]
           museumDirector:
             - type: sequence
               items:
@@ -599,7 +599,7 @@ quests:
                 - text:
                     en: '… with an apology.'
                     de: '... mit einer Entschuldigung.'
-                  set: [ 'quest.citizenAssembly.done', 'pnt.empowerment.citizenAssembly' ]
+                  set: [ 'quest.citizenAssembly.done', 'pnt.empowerment.citizenAssembly', 'inc.groupPeopleLarge' ]
       - prompt:
           en: 'Investigate why people in the north of the city have not signed up to participate in the citizen assembly.'
           de: 'Untersuche, warum sich die Menschen im Norden der Stadt nicht für die Bürger*innenversammlung angemeldet haben.'
@@ -677,7 +677,7 @@ quests:
             - text:
                 en: "Yes, we can build it! We’ll build a system where the citizens can review the contracts between the government and companies."
                 de: "Ja, wir können es erstellen! Wir richten ein System ein, mit dem Bürger*innen die Verträge zwischen der Regierung und den Unternehmen überprüfen können."
-              set: [ 'quest.openData.done', 'pnt.empowerment.openData' ]
+              set: [ 'quest.openData.done', 'pnt.empowerment.openData', 'inc.citizenPunk' ]
           journalist:
             - type: sequence
               items:
@@ -687,7 +687,7 @@ quests:
                 - text:
                     en: "We will publish the contracts in our website, so citizens can review them."
                     de: "Wir werden die Verträge auf unserer Website veröffentlichen, damit die Bürger*innen sie überprüfen können."
-                  set: [ 'quest.openData.done', 'pnt.empowerment.openData' ]
+                  set: [ 'quest.openData.done', 'pnt.empowerment.openData', 'inc.journalist' ]
           constructionWorker:
             - text:
                 en: "Access to digital documents? That sounds like a software problem. You should find some tech people."
@@ -759,7 +759,7 @@ quests:
                   thenText:
                     en: "That’s sounds like a good idea."
                     de: "Das klingt nach einer guten Idee."
-                  set: [ 'profits.decision.north', 'pnt.equity.profits', 'quest.profits.done' ]
+                  set: [ 'profits.decision.north', 'pnt.equity.profits', 'quest.profits.done', 'inc.citizenBlue' ]
                 - cond: 'profits.idea.animals'
                   text:
                     en: "Use it to protect animals affected by the ferris wheel."
@@ -767,7 +767,7 @@ quests:
                   thenText:
                     en: "That’s sounds like a good idea."
                     de: "Das klingt nach einer guten Idee."
-                  set: [ 'profits.decision.animals', 'pnt.equity.profits', 'quest.profits.done' ]
+                  set: [ 'profits.decision.animals', 'pnt.equity.profits', 'quest.profits.done', 'inc.biologist' ]
                 - cond: 'profits.idea.museum'
                   text:
                     en: "Use it to improve the museum."
@@ -775,7 +775,7 @@ quests:
                   thenText:
                     en: "That’s sounds like a good idea."
                     de: "Das klingt nach einer guten Idee."
-                  set: [ 'profits.decision.museum', 'pnt.equity.profits', 'quest.profits.done' ]
+                  set: [ 'profits.decision.museum', 'pnt.equity.profits', 'quest.profits.done', 'inc.museumDirector' ]
                 - text:
                     en: "Not right now."
                     de: "Im Moment nicht."
@@ -852,7 +852,7 @@ quests:
                 - text:
                     en: "… yes! We can adapt the Ferris wheel cabins for wheelchairs here in the city."
                     de: "... ja! Wir können die Kabinen des Riesenrads für Rollstühle hier in der Stadt anpassen."
-                  set: [ 'quest.accessibility.done', 'pnt.equity.accessibility' ]
+                  set: [ 'quest.accessibility.done', 'pnt.equity.accessibility', 'inc.citizenWheelchair', 'inc.constructionWorker' ]
           citizenPunk:
             - text:
                 en: "Making the Ferris wheel wheelchair accessible? That seems like a hardware problem."
