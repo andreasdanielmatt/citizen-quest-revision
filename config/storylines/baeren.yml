@@ -857,7 +857,7 @@ quests:
           citizenWheelchair:
             - text:
                 en: "I don’t know anything about bears, sorry."
-              de: "Ich weiß nichts über Bären, tut mir leid."
+                de: "Ich weiß nichts über Bären, tut mir leid."
   tracking:
     npc: citizenPunk
     mood: information
