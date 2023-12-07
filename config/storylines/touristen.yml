@@ -4,6 +4,9 @@ decision:
 prompt:
   en: "The mayor and the Spin City™ company want to build a Ferris wheel to promote tourism. Talk to citizens and help them take part in the decision."
   de: "Die Bürgermeisterin und das Unternehmen Drehmoment™ wollen ein Riesenrad bauen, um den Tourismus zu fördern. Sprich mit den Bürger*innen und hilf ihnen, am Entscheidungsprozess teilzunehmen."
+initFlags:
+  - inc.mayor
+  - inc.ferrisSalesman
 npcs:
   mayor:
     name:
