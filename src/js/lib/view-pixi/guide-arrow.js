@@ -21,8 +21,10 @@ class GuideArrow {
   }
 
   destroy() {
+    this.tween.destroy();
     this.display.removeFromParent();
     this.display.destroy();
+    this.display = null;
   }
 
   show() {

@@ -39,10 +39,9 @@ class TargetArrow {
     this.fader.fadeOut(200, () => {
       this.fader.destroy();
       this.tween.destroy();
-      if (this.display.parent && !this.display.parent.destroyed) {
-        this.display.parent.removeChild(this.display);
-      }
+      this.display.removeFromParent();
       this.display.destroy();
+      this.display = null;
     });
   }
 

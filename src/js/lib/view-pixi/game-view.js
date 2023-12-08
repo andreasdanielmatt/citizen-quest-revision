@@ -109,7 +109,8 @@ class GameView {
 
   updateGuideArrow() {
     if (this.guideArrow) {
-      if (this.targetArrow && this.targetArrow.visible
+      if (this.targetArrow && this.targetArrow.display && this.targetArrow.display.parent
+        && this.targetArrow.visible
         && !this.isOnScreen(this.targetArrow.display)) {
         const targetArrow = {
           x: this.targetArrow.display.x + this.targetArrow.display.parent.x,
