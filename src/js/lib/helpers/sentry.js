@@ -5,6 +5,9 @@ const CaptureConsoleIntegration = require('@sentry/integrations').CaptureConsole
 function initSentry(sentryDSN) {
   Sentry.init({
     dsn: sentryDSN,
+    transport: Sentry.makeBrowserOfflineTransport(Sentry.makeFetchTransport),
+    transportOptions: {
+    },
     release: process.env.GIT_COMMIT_HASH,
     tracesSampleRate: 0,
     replaysSessionSampleRate: 0,
