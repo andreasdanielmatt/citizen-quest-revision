@@ -11,8 +11,8 @@ initFlags:
 npcs:
   mayor:
     name:
-      en: "City Mayor"
-      de: "Bürgermeisterin"
+      en: "Felicia Homestedt"
+      de: "Felicia Homestedt"
     spawn: { x: 3240, y: 2974 }
     dialogue:
       - text:
