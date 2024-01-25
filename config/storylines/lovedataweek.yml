@@ -248,6 +248,16 @@ quests:
                   thenText:
                     en: "Definitely! I only publish some papers and draw example images."
                     de: "..."
+                    responses:
+                    - text:
+                        en: "Ok, I see. Goodbye"
+                        de: "..."
+                         thenText:
+                        en: "Thank you. Let me know about your findings later. Bye, bye."
+                        de: "..."
+                    - text:
+                        en: "“I am not sure, if this is considered data. I will find out at the MaRDI help desk."
+                        de: "..."
     stages:
       - cond: 'COUNT("op.favor") >= 3'
         prompt:
