@@ -64,13 +64,13 @@ npcs:
               de: "Ich weiß, wie man Verbrechen mit KI löst: Gib mir einen Polizeimarke und eine Waffe."
   museumDirector:
     name:
-      en: "Museum Director"
-      de: "Museumsdirektorin"
+      en: "MaRDI Helpdesk"
+      de: "MaRDI Helpdesk"
     spawn: { x: 5213, y: 2290 }
     dialogue:
       - text:
-          en: "Can our city even afford such an investment?"
-          de: "Kann sich unsere Stadt so eine Investition überhaupt leisten?"
+          en: "I am here to help you-"
+          de: "Ich bin hier, um zu helfen."
   citizenCool:
     name:
       en: "Video blogger"
@@ -427,28 +427,25 @@ quests:
         - type: sequence
           items:
             - text:
-                en: "If AI will be used for policing, people must understand how it works!"
-                de: "Wenn KI für die Polizeiarbeit eingesetzt wird, müssen die Menschen verstehen, wie sie funktioniert!"
+                en: "Hi, I am Christiane from the MaRDI team. We would like to support you."
+                de: "Hallo, ich bin Christiane vom MaRDI-Team. Wir möchten Dich unterstützen."
             - text:
-                en: "If we can’t argue with its conclusions, we lose power."
-                de: "Wenn wir nicht mit ihren Schlussfolgerungen argumentieren können, verlieren wir an Macht."
-            - text:
-                en: "Can you find someone to create a video that explains how AI works?"
-                de: "Kannst du jemanden finden, der ein Video erstellt, das erklärt, wie KI funktioniert?"
+                en: "What can I help you with?"
+                de: "Wie kann ich Dir helfen?"
               responses:
                 - text:
-                    en: "Accept the quest"
-                    de: "Nimm die Aufgabe an"
+                    en: "I would like to find out if documents are data."
+                    de: "..."
                   thenText:
-                    en: "Find someone who understands AI and someone who can produce the video."
-                    de: "Finde jemanden, der KI versteht, und jemanden, der das Video produzieren kann."
+                    en: "Documents (articles, books) and their constituent parts (theorems, proofs, formulas…) are data. Treating mathematical texts as data (and not only as mere containers where one deposits ideas in written form) recognizes that mathematical texts deserve the same treatment as other forms of structured data. In particular, FAIR principles and data management plans also apply to texts."
+                    de: "..."
                   set: [ 'quest.video.active' ]
                 - text:
-                    en: "Decline for now"
-                    de: "Vorläufig ablehnen"
+                    en: "I forgot, what I wanted to ask, sorry. I will come back later."
+                    de: "..."
                   thenText:
-                    en: "I hope you reconsider."
-                    de: "Ich hoffe, du überlegst es dir nochmal."
+                    en: "Sure, come back anytime. Byw, bye."
+                    de: "..."
     stages:
       - cond: '^found.video.expert & found.video.producer'
         prompt:
