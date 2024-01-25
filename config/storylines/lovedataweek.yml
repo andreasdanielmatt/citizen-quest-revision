@@ -196,8 +196,7 @@ npcs:
       - text:
           en: "We need to ensure that these AI cameras respect our citizens' privacy and civil liberties."
           de: "Wir müssen sicherstellen, dass diese KI-Kameras die Privatsphäre und die Rechte von uns Bürger*innen respektieren."
-
-citizenChamp:
+  citizenChamp:
     name:
       en: "Citizen"
       de: "Bürgerin"
