@@ -241,12 +241,15 @@ quests:
                   thenText:
                     en: "Bye, bye. Feel free to chat again anytime."
                     de: "..."
-                  set: [ 'quest.favor.active' ]
                 - text:
                     en: "Are you sure?"
                     de: "..."
                   thenText:
                     en: "Definitely! I only publish some papers and draw example images."
+                    de: "..."
+                    responses:
+                - text:
+                    en: "Ok, I see. Goodbye."
                     de: "..."
                    
     stages:
