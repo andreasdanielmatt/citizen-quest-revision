@@ -196,7 +196,8 @@ npcs:
       - text:
           en: "We need to ensure that these AI cameras respect our citizens' privacy and civil liberties."
           de: "Wir müssen sicherstellen, dass diese KI-Kameras die Privatsphäre und die Rechte von uns Bürger*innen respektieren."
-  citizenChamp:
+
+citizenChamp:
     name:
       en: "Citizen"
       de: "Bürgerin"
@@ -241,18 +242,13 @@ quests:
                   thenText:
                     en: "Bye, bye. Feel free to chat again anytime."
                     de: "..."
-                    set: [ 'quest.favor.active' ]
+                  set: [ 'quest.favor.active' ]
                 - text:
                     en: "Are you sure?"
                     de: "..."
                   thenText:
                     en: "Definitely! I only publish some papers and draw example images."
                     de: "..."
-                    responses:
-                - text:
-                    en: "Ok, I see. Goodbye."
-                    de: "..."
-                   
     stages:
       - cond: 'COUNT("op.favor") >= 3'
         prompt:
