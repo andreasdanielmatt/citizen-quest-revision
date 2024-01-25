@@ -256,7 +256,7 @@ quests:
                         en: "Thank you. Let me know about your findings later. Bye, bye."
                         de: "..."
                     - text:
-                        en: "“I am not sure, if this is considered data. I will find out at the MaRDI help desk."
+                        en: "I am not sure, if this is considered data. I will find out at the MaRDI help desk."
                         de: "..."
     stages:
       - cond: 'COUNT("op.favor") >= 3'
