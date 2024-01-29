@@ -18,7 +18,7 @@ npcs:
     - type: sequence
       items:
         - text:
-            en: "I am a topologist. My research does not deal with any data."
+            en: "I am a topologist."
             de: "..."
   tourist:
     name:
@@ -48,84 +48,13 @@ npcs:
               de: "Ich weiß, wie man Verbrechen mit KI löst: Gib mir einen Polizeimarke und eine Waffe."
   citizenBraid:
     name:
-      en: "MaRDI help desk"
-      de: "MaRDI Help-Desk"
+      en: "MaRDIan"
+      de: "MaRDIaner*in"
     spawn: { x: 2673, y: 3130 }
     dialogue:
-        - type: sequence
-          items:
-            - text:
-                en: "Hi, I am Tabiane from the MaRDI team. What can I help you with?"
-                de: "Hallo, ich bin Tabiane vom MaRDI-Team. Wie kann ich Dir helfen?"
-              responses:
-                - text:
-                    en: "I would like to find out if documents are data."
-                    de: "..."
-                  thenText:
-                    en: "Documents (articles, books) and their constituent parts (theorems, proofs, formulas…) are data. Treating mathematical texts as data (and not only as mere containers where one deposits ideas in written form) recognizes that mathematical texts deserve the same treatment as other forms of structured data. In particular, FAIR principles and data management plans also apply to texts."
-                    de: "..."
-                  then: help_bye
-                - text:
-                    en: "I would like to find out if literature references are data."
-                    de: "..."
-                  thenText:
-                    en: "Literature references are data. Although bibliographic references are part of mathematical documents, we mention them separately because references are structured data. There is a defined set of fields, (such as author, title, publisher…), there are standard formats (e.g. bibTeX), and there are databases of mathematical references (e.g. zbMATH, MathSciNet,...). This makes bibliographic references one of the most curated type of research data (especially in Mathematics)."
-                    de: "..."
-                - text:
-                    en: "I would like to find out if formalized mathematics is data."
-                    de: "..."
-                  thenText:
-                    en: "Formalized mathematics is data. Languages that implement formal logic like Coq, HOL, Isabelle, Lean, Mizar, etc, are a structured version of the (unstructured) mathematical texts that we just mentioned. They contain proofs verifiable by software and are playing an increasingly vital role in mathematics. Data curation is essential to keep those formalizations useful and bound to their human-readable counterparts."
-                    de: "..."
-                - text:
-                    en: "I would like to find out if software is data."
-                    de: "..."
-                  thenText:
-                    en: "Software is data. From small scripts that help in a particular problem to wide libraries that integrate into larger frameworks (Sage, Mathematica, MATLAB…). Notebooks (Jupyter,...) are a form of research data that mix text explanations and interactive prompts, so they need to be handled as both documents and software."
-                    de: "..."
-                - text:
-                    en: "I would like to find out if collections of objects are data."
-                    de: "..."
-                  thenText:
-                    en: "Collections of objects are data. Classifications play a major role in mathematics. Either gathered by hand or produced algorithmically, the result can be a pivotal point on which many other works will derive from. Although this output result of a classification can have more applications than the process to arrive at it, it is essential that both input algorithm (or manual process) and the output classification are clearly documented, so that the classification can be verified and reproduced independently, apart from being reused in further projects."
-                    de: "..."
-                - text:
-                    en: "I would like to find out if visualizations and examples are data."
-                    de: "..."
-                  thenText:
-                    en: "Visualizations and examples are data. Examples and visual realizations of mathematical objects (including images, animations, and other types of graphics) can be very intricate and have an enormous value for understanding and developing a theory. Although examples and visualizations can be omitted in more spartan literature, if provided, they deserve a full research data curation as other research data essential to logical proofs."
-                    de: "..."
-                - text:
-                    en: "I would like to find out if empirical records are data."
-                    de: "..."
-                  thenText:
-                    en: "Empirical records are data. Of course, raw collection of natural information, intended to be processed to extract knowledge of the data itself, or from the statistical method, are data that need special tools to handle. This applies to statistical databases, but also to machine learning models that require vast amounts of training data."
-                    de: "..."
-                - text:
-                    en: "I would like to find out if simulations are data."
-                    de: "..."
-                  thenText:
-                    en: "Simulations are data. Simulations are lists of records not measured from the outside world, but generated from a program. This is usually a representation of a state of a system, including possibly some discretizations and simplifications of reality in the modeling process. As with collections, this output simulation data is as necessary as the input source code that generates it. Simulation data is what allows us to extract conclusions, whereas the reproducibility verification requires that the processing input-to-output be performed by a third party, allowing the recognition of flaws or errors in either the input or the output, or allowing for the rerun of the simulation with different parameters."
-                    de: "..."
-                - text:
-                    en: "I would like to find out if workflow documentations are data."
-                    de: "..."
-                  thenText:
-                    en: "Workflow documentations are data. More general than simulations, workflows involve several steps of data acquisition, data processing, data analysis, and extraction of conclusions in many scientific researches. An overview of the process is in itself a valuable piece of data, as it gives insights into the interplay of the different parts. A numerical algorithm can be individually robust and performant, but it may not be the best fit for the task at hand. We can only spot such issues when we have a good overview of the entire process."
-                    de: "..."
-                - text:
-                    en: "I forgot, what I wanted to ask, sorry. I will come back later."
-                    de: "..."
-                  thenText:
-                    en: "Sure, come back anytime. Bye, bye."
-                    de: "..." 
-            - text:
-                en: "I hope this helps?"
-                de: "..."
-              responses:
-                  - text:
-                      en: "Thank you very much. Goodbye."
-                      de: "..."
+      - text:
+          en: "I work at the MaRDI help desk. I will help you with questions about data."
+          de: "..."   
   citizenPunk:
     name:
       en: "Statistician"
@@ -137,13 +66,13 @@ npcs:
           de: "Ich bin Statistikerin"
   citizenBlue:
     name:
-      en: "Citizen"
-      de: "Bürgerin"
-    spawn: { x: 1946, y: 2051 }
+      en: "MaRDIan"
+      de: "Mardianer*in"
+    spawn: { x: 2553, y: 3130 }
     dialogue:
       - text:
-          en: "They’ll use these cameras to control us and sell things to us."
-          de: "Sie werden diese Kameras nutzen, um uns zu kontrollieren und uns Dinge zu verkaufen."
+          en: "I work at the MaRDI help desk. I will help you with questions about data."
+          de: "..."
   constructionWorker:
     name:
       en: "Engineer"
@@ -207,92 +136,69 @@ quests:
         - type: sequence
           items:
             - text:
-                en: "I am a topologist. My research does not deal with any data."
+                en: "I am a topologist."
                 de: "..."
+            - text:
+                en: "I publish articles and draw example images."
+                de: "..."
+            - text:
+                en: "Would you help me find out, if this is considered data?"
               responses:
                 - text:
-                    en: "Ok, I see. Goodbye."
+                    en: "No, sorry. I am busy writing an important proposal. Goodbye."
                     de: "..."
                   thenText:
                     en: "Bye, bye. Feel free to chat again anytime."
                     de: "..."
-                  set: [ 'quest.favor.active' ]
                 - text:
-                    en: "Are you sure?"
+                    en: "Sure, I will help you."
                     de: "..."
                   thenText:
-                    en: "Definitely! I only publish some papers and draw example images."
+                    en: "Thank you!"
                     de: "..."
-            - text:
-                en: "test test test"
-                de: "..."
-              responses:
-                - text:
-                    en: "Ok, I see. Goodbye."
-                    de: "..."
+                  set: [ 'quest.favor.active' ]
     stages:
-      - cond: 'COUNT("op.favor") >= 3'
+      - cond: 'COUNT("op.favor") >= 2'
         prompt:
-          en: "Report back to the city mayor."
-          de: "Sprich mit der Bürgermeisterin."
+          en: "Du kannst Felicia Homestedt Bescheid geben."
+          de: "..."
         target: mayor
         dialogues:
           mayor:
             - text:
-                en: "I’m happy to learn there’s a good amount of support."
-                de: "Ich freue mich zu hören, dass es viel Unterstützung gibt."
+                en: "Good to know: articles and drawings are data."
+                de: "..."
               set: [ 'quest.favor.done', 'pnt.empathy.favor' ]
       - prompt:
-          en: "Find 3 people who favor installing AI-assisted cameras in the city."
-          de: "Finde 3 Personen, die der Installation von KI-unterstützten Kameras in der Stadt zustimmen."
+          en: "Find out if articles and drawings are data."
+          de: "..."
         counter:
           expression: 'COUNT("op.favor")'
-          max: 3
+          max: 2
           icon: happy
         dialogues:
           mayor:
             - text:
-                en: "I want to make sure there’s support to install the cameras."
-                de: "Ich möchte sicherstellen, dass es Unterstützung für die Installation der Kameras gibt."
-          tourist:
+                en: "I am not sure, if articles and drawings are considered data."
+                de: "..."
+          lawyer:
             - text:
-                en: "I’m in favor. Surveillance cameras in my country reduced crime enormously."
-                de: "Ich bin dafür. Überwachungskameras in meinem Land haben die Kriminalität enorm reduziert."
-              set: [ 'op.favor.tourist' ]
+                en: "I’m pretty sure, articles are data. To be 100% sure, ask the MaRDI help desk."
+                de: "..."
           citizenBraid:
             - text:
-                en: "I'm in favor. I had three bikes stolen in a month."
-                de: "Ich bin dafür. Mir wurden in einem Monat drei Fahrräder gestohlen."
+                en: "Documents (articles, books) and their constituent parts (theorems, proofs, formulas…) are data. Treating mathematical texts as data (and not only as mere containers where one deposits ideas in written form) recognizes that mathematical texts deserve the same treatment as other forms of structured data. In particular, FAIR principles and data management plans also apply to texts."
+                de: "..."
               set: [ 'op.favor.citizenBraid' ]
-          citizenHipster:
+          citizenBlue:
             - text:
-                en: "I'm in favor. If the police are powerless, they'll move from bikes to robbing homes."
-                de: "Ich bin dafür. Wenn die Polizei machtlos ist, werden sie vom Fahrraddiebstahl zum Einbruch übergehen."
+                en: "Visualizations and examples are data. Examples and visual realizations of mathematical objects (including images, animations, and other types of graphics) can be very intricate and have an enormous value for understanding and developing a theory. Although examples and visualizations can be omitted in more spartan literature, if provided, they deserve a full research data curation as other research data essential to logical proofs."
+                de: "..."
               set: [ 'op.favor.citizenHipster' ]
-          citizenCage:
-            - text:
-                en: "I want my kids to be safe. So I’m in favor of AI cameras."
-                de: "Ich möchte, dass meine Kinder sicher sind. Deshalb bin ich für KI-Kameras."
-              set: [ 'op.favor.citizenCage' ]
           citizenPunk:
             - text:
-                en: "I'm in favor. AI will revolutionize security."
-                de: "Ich bin dafür. KI wird die Sicherheit revolutionieren."
-              set: [ 'op.favor.citizenPunk' ]
-          citizenLila:
-            - text:
-                en: "I'm in favor. I wonder if AI can analyze bike theft patterns."
-                de: "Ich bin dafür. Kann eine KI auch Fahrraddiebstahlmuster analysieren?"
-              set: [ 'op.favor.citizenLila' ]
-          citizenQueen:
-            - text:
-                en: "I'm in favor. Bike theft is impacting on our community's sense of trust."
-                de: "Ich bin dafür. Fahrraddiebstähle beeinträchtigen das Vertrauen in unsere Gemeinschaft."
-              set: [ 'op.favor.citizenQueen' ]
-          police:
-            - text:
-                en: "Is following the orders of AI the future of police work?"
-                de: "Ist das Befolgen der Befehle einer KI die Zukunft der Polizeiarbeit?"
+                en: "I don't think drawings are data. But I'm not sure. You should ask the MaRDI help desk."
+                de: "..."
 ending:
   dialogue:
     - type: sequence
