@@ -5,9 +5,9 @@ prompt:
   en: "You are at a math conference and meet different mathematicians. Do they produce research data? Try to find out!"
   de: "Du bist auf einer Mathe-Konferenz und triffst verschiedene Mathematiker*innen. Produzieren sie Forschungsdaten? Versuche, das herauszufinden!"
 initFlags:
-  - inc.mayor
-  - inc.policeChief
-  - inc.citizenCool
+  - inc.citizenBraid
+  - inc.citizenPunk
+  - inc.lawyer
 npcs:
   mayor:
     name:
@@ -20,15 +20,6 @@ npcs:
         - text:
             en: "I am a topologist."
             de: "..."
-  tourist:
-    name:
-      en: "Tourist"
-      de: "Tourist"
-    spawn: { x: 2901, y: 2050 }
-    dialogue:
-      - text:
-          en: "Surveillance cameras in my country reduced crime enormously."
-          de: "In meinem Land haben Überwachungskameras die Kriminalität enorm reduziert."
   robot:
     name:
       en: "Robot"
@@ -90,8 +81,8 @@ npcs:
           de: "Ich bin Statistikerin"
   citizenPuan:
     name:
-      en: "Citizen"
-      de: "Bürgerin"
+      en: "Librarian"
+      de: "Bibliothekar*in"
     spawn: { x: 4000, y: 3150 }
     dialogue:
       - text:
