@@ -33,19 +33,43 @@ npcs:
     name:
       en: "Robot"
       de: "Roboter"
-    spawn: { x: 5748, y: 2340 }
+    spawn: { x: 3540, y: 2974 }
     dialogue:
       - type: random
         items:
           - text:
-              en: "Technology has already invented bikes that can’t be stolen: cars!"
-              de: "Die Technologie hat bereits Fahrräder erfunden, die nicht gestohlen werden können: Autos!"
+              en: "“Mathematics is the queen and servant of sciences”, according to a quote by Carl F. Gauss."
+              de: "..."
           - text:
-              en: "Perhaps you would notice crime if you weren’t so busy composting."
-              de: "Vielleicht würde dir die Kriminalität auffallen, wenn du nicht so faul herumhängen würdest."
+              en: "Is Mathematics even a science?"
+              de: "..."
           - text:
-              en: "I know how to solve crime with AI: get me a badge and a gun."
-              de: "Ich weiß, wie man Verbrechen mit KI löst: Gib mir einen Polizeimarke und eine Waffe."
+              en: "Research data are not only empirical records."
+              de: "..."
+          - text:
+              en: "In modern mathematical research, we can find many types of data."
+              de: "..."
+          - text:
+              en: "One key difference between mathematics and other sciences is the existence of proofs."
+              de: "..."
+          - text:
+              en: "Have you subscribed to the MaRDI newsletter, yet?"
+              de: "..."
+          - text:
+              en: "Mathematics is not especially well placed in terms of managing research data and software in comparison to other fields."
+              de: "..."
+          - text:
+              en: "Data must be accompanied by rich metadata that describes it."
+              de: "..."
+          - text:
+              en: "Storing and archiving research data is not a trivial matter and should be planned carefully."
+              de: "..."
+          - text:
+              en: "Information is data tagged with meaning."
+              de: "..."
+          - text:
+              en: "Reusing knowledge is ingrained in the practice of scientific research as the basis of verifiability."
+              de: "..."
   citizenBraid:
     name:
       en: "MaRDIan"
@@ -64,6 +88,15 @@ npcs:
       - text:
           en: "I am a statistician."
           de: "Ich bin Statistikerin"
+  citizenPuan:
+    name:
+      en: "Citizen"
+      de: "Bürgerin"
+    spawn: { x: 4000, y: 3150 }
+    dialogue:
+      - text:
+          en: "I am a librarian."
+          de: "Ich bin Bibliothekar*in"
   citizenBlue:
     name:
       en: "MaRDIan"
@@ -73,33 +106,6 @@ npcs:
       - text:
           en: "I work at the MaRDI help desk. I will help you with questions about data."
           de: "..."
-  constructionWorker:
-    name:
-      en: "Engineer"
-      de: "Ingenieurin"
-    spawn: { x: 5846, y: 3130 }
-    dialogue:
-      - text:
-          en: "Our personal data is at stake with AI cameras."
-          de: "Unsere persönlichen Daten stehen bei KI-Kameras auf dem Spiel."
-  citizenQueen:
-    name:
-      en: "Citizen"
-      de: "Bürgerin"
-    spawn: { x: 5660, y: 970 }
-    dialogue:
-      - text:
-          en: "Bike theft is impacting on our community's sense of trust."
-          de: "Die Fahrraddiebstähle beeinträchtigen das Vertrauen in unsere Gemeinschaft."
-  citizenRanger:
-    name:
-      en: "Ranger"
-      de: "Ranger"
-    spawn: { x: 896, y: 2290 }
-    dialogue:
-      - text:
-          en: "Instead of spending money on cameras the city should fund the police department properly."
-          de: "Anstatt Geld für Kameras auszugeben, sollte die Stadt die Polizeiabteilung ordentlich finanzieren."
   citizenWheelchair:
     name:
       en: "Composer"
@@ -109,15 +115,6 @@ npcs:
       - text:
           en: "We need to ensure that these AI cameras respect our citizens' privacy and civil liberties."
           de: "Wir müssen sicherstellen, dass diese KI-Kameras die Privatsphäre und die Rechte von uns Bürger*innen respektieren."
-  citizenChamp:
-    name:
-      en: "Citizen"
-      de: "Bürgerin"
-    spawn: { x: 1946, y: 2770 }
-    dialogue:
-      - text:
-          en: "AI will only provide data. Can the police act on it?"
-          de: "KI wird nur Daten liefern. Kann die Polizei diese nutzen?"
   lawyer:
     name:
       en: "Algebraist"
@@ -160,8 +157,8 @@ quests:
     stages:
       - cond: 'COUNT("op.favor") >= 2'
         prompt:
-          en: "Du kannst Felicia Homestedt Bescheid geben."
-          de: "..."
+          en: "You can let Felicia Homestedt know."
+          de: "Du kannst Felicia Homestedt Bescheid geben."
         target: mayor
         dialogues:
           mayor:
@@ -199,48 +196,32 @@ quests:
             - text:
                 en: "I don't think drawings are data. But I'm not sure. You should ask the MaRDI help desk."
                 de: "..."
+          citizenPuan:
+            - text:
+                en: "Articles are data. For details and also for drawings, please consult with the the MaRDI help desk."
+                de: "..."
 ending:
   dialogue:
     - type: sequence
       items:
         - type: first
           items:
-            - cond: 'quest.committee.done'
+            - cond: 'COUNT("op.favor") >= 2'
               class: 'citizensEmpowered'
               type: sequence
               items:
                 - text:
-                    en: 'The government went ahead with the installation of AI-assisted cameras in key parts of the city.'
-                    de: 'Die Regierung hat mit der Installation von KI-unterstützten Kameras in wichtigen Teilen der Stadt begonnen.'
+                    en: 'You found out about the data types of documents as well as visuaizations and examples.'
+                    de: '...'
                 - text:
-                    en: "A civil commitee oversees their correct use. It also proposed improvements to the system, which are being shared with other cities."
-                    de: "Ein öffentlicher Ausschuss überwacht ihren korrekten Einsatz. Er schlug auch Verbesserungen des Systems vor, die mit anderen Städten geteilt werden."
-            - cond: 'quest.issues.done'
-              class: 'citizensNeutral'
-              type: sequence
-              items:
-                - text:
-                    en: "The government decided not to install AI-assisted cameras."
-                    de: "Die Regierung hat beschlossen, keine KI-unterstützten Kameras zu installieren."
-                - text:
-                    en: "The mayor realized that more work is needed to make them fair for everyone."
-                    de: "Die Bürgermeisterin erkannte, dass mehr Arbeit nötig wäre, um sie gerecht für alle zu machen."
-            - cond: 'quest.against.done'
-              class: 'citizensSad'
-              type: sequence
-              items:
-                - text:
-                    en: 'The government went ahead with the installation of AI-assisted cameras in key parts of the city.'
-                    de: 'Die Regierung hat mit der Installation von KI-unterstützten Kameras in wichtigen Teilen der Stadt begonnen.'
-                - text:
-                    en: 'Bike robberies were reduced, but there are many complaints from innocent people who were wrongly accused.'
-                    de: 'Es gab weniger Fahrraddiebstähle, aber viele Beschwerden von Menschen, die zu Unrecht beschuldigt wurden.'
+                    en: "Good to know, that articles are data, and example drawings as well."
+                    de: "..."
             - type: sequence
               class: 'citizensAngry'
               items:
                 - text:
-                    en: "The government went ahead with the installation of hundreds of AI-assisted cameras all over the city."
-                    de: "Die Regierung hat mit der Installation von Hunderten von KI-unterstützten Kameras in der ganzen Stadt begonnen."
+                    en: "You did not find out if articles or exampe drawings are data."
+                    de: "..."
                 - type: first
                   items:
                     - cond: 'quest.video.done'
@@ -248,6 +229,3 @@ ending:
                       text:
                         en: "After a series of social media posts exposed their many issues, a judge stopped their use. The government still has to pay for them while the problems are fixed."
                         de: "Nachdem eine Reihe von Social Media-Posts ihre vielen Probleme aufgedeckt hatten, hat ein Richter ihren Einsatz gestoppt. Die Stadt muss immer noch für sie bezahlen, während die Probleme behoben werden."
-                    - text:
-                        en: "Bike robberies are now very rare, but the legal system is overwhelmed with complaints from innocent people who were wrongly accused."
-                        de: "Fahrraddiebstähle sind jetzt sehr selten, aber das Rechtssystem ist mit Beschwerden von Menschen überlastet, die zu Unrecht beschuldigt wurden."
