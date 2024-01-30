@@ -61,6 +61,9 @@ npcs:
           - text:
               en: "Reusing knowledge is ingrained in the practice of scientific research as the basis of verifiability."
               de: "..."
+          - text:
+              en: "Access to research information is the most fundamental principle for spreading science across the scientific community and society."
+              de: "..."
   citizenBraid:
     name:
       en: "MaRDIan"
@@ -191,6 +194,112 @@ quests:
             - text:
                 en: "Articles are data. For details and also for drawings, please consult with the the MaRDI help desk."
                 de: "..."
+  publish:
+    npc: lawyer
+    mood: exclamation
+    available:
+      dialogue:
+        - type: sequence
+          items:
+            - text:
+                en: "Hi, I am an algebraist. I just published a paper and some software code."
+                de: "..."
+            - text:
+                en: "I used my ORCID iD and my Zenodo account."
+                de: "..."
+            - text:
+                en: "Would you like to have your own ORCID iD and Zenodo account?"
+                de: "..."
+              responses:
+                - text:
+                    en: "Sure, I will will try to set it up right now."
+                    de: "..."
+                  thenText:
+                    en: "Great! If you need more information about ORCID or Zenodo, ask at the MaRDI help desk."
+                    de: "..."
+                  set: [ 'quest.publish.active' ]
+                - text:
+                    en: "No, sorry, I have no idea. I am too old for this fancy internet stuff."
+                    de: "..."
+                  thenText:
+                    en: "You might want to check out the first issue of the MarDI newsletter to get an introduction to the topic."
+                    de: "..."
+                - text:
+                    en: "Actually, I already have both. But I'll play along."
+                    de: "..."
+                  thenText:
+                    en: "What fun!"
+                    de: "..."
+                  set: [ 'quest.publish.active' ]
+    stages:
+      - cond: 'found.publish.orcid & ^found.publish.zenodo'
+        prompt:
+          en: "You got an ORCID iD. Now you can create a Zenodo account to publish your paper."
+          de: "..."
+        dialogues:
+          lawyer:
+            - text:
+                en: "Congratulations to your ORCID iD. You need to create a Zenodo account now."
+                de: "..."
+          citizenPunk:
+            - text:
+                en: "Of course, I have a Zenodo account. But I am too busy to help you. Ask the robot."
+                de: "..."
+          robot:
+            - text:
+                en: "I am happy to create a Zenodo account for you. All done, congratulations."
+                de: "..."
+              set: [ 'found.publish.zenodo', 'quest.publish.done', 'pnt.information.publish' ]
+          citizenBlue:
+            - text:
+                en: "Zenodo is a general-purpose open repository. It allows researchers to deposit research papers, data sets, research software, reports, and any other research related digital artefacts. The robot can create an account for you."
+                de: "..."
+          citizenBraid:
+            - text:
+                en: "You already got your ORCID iD. However, if you are still wondering what it is: ORCID, wich stands for Open Researcher and Contributor ID, is a global, not-for-profit organization. It provides a persistent digital identifier (an ORCID iD) that you own and control, and that distinguishes you from every other researcher."
+                de: "..."
+          mayor:
+            - text:
+                en: "Congratulations to your ORCID iD."
+                de: "..."
+          citizenPuan:
+            - text:
+                en: "I cannot help you at the moment. I need to prepare, classify and maintain our media collection."
+                de: "..."
+      - cond: '^found.publish.orcid & ^found.publish.zenodo'
+        prompt:
+          en: "Create an ORCID iD."
+          de: "..."
+        dialogues:
+          lawyer:
+            - text:
+                en: "You need to create an ORCID iD first."
+                de: "..."
+          robot:
+            - text:
+                en: "Come back when you have your ORCID iD. Then we can create your Zenodo account."
+                de: "..."
+          citizenBlue:
+            - text:
+                en: "Zenodo is a general-purpose open repository. It allows researchers to deposit research papers, data sets, research software, reports, and any other research related digital artefacts."
+                de: "..."
+          citizenPuan:
+            - text:
+                en: "I am happy to create an ORCID iD with you. We can use one of the library tablets with free WiFi."
+                de: "..."
+              set: [ 'found.publish.orcid' ]
+          citizenBraid:
+            - text:
+                en: "ORCID, wich stands for Open Researcher and Contributor ID, is a global, not-for-profit organization. It provides a persistent digital identifier (an ORCID iD) that you own and control, and that distinguishes you from every other researcher. You can go to the library to get an iD."
+                de: "..."
+          mayor:
+            - text:
+                en: "I got my own ORCID iD at the library."
+                de: "..."
+          citizenPunk:
+            - text:
+                en: "Please, don't disturb me. I am coding..."
+                de: "..."
 ending:
   dialogue:
     - type: sequence
@@ -211,12 +320,21 @@ ending:
               class: 'citizensAngry'
               items:
                 - text:
-                    en: "You did not find out if articles or exampe drawings are data."
+                    en: "You did not find out if articles or example drawings are data."
                     de: "..."
-                - type: first
-                  items:
-                    - cond: 'quest.video.done'
-                      class: 'citizensSad'
-                      text:
-                        en: "After a series of social media posts exposed their many issues, a judge stopped their use. The government still has to pay for them while the problems are fixed."
-                        de: "Nachdem eine Reihe von Social Media-Posts ihre vielen Probleme aufgedeckt hatten, hat ein Richter ihren Einsatz gestoppt. Die Stadt muss immer noch für sie bezahlen, während die Probleme behoben werden."
+            - cond: 'found.publish.orcid & found.publish.zenodo'
+              class: 'citizensEmpowered'
+              type: sequence
+              items:
+                - text:
+                    en: 'You created an ORCID iD and a Zenodo account.'
+                    de: '...'
+                - text:
+                    en: "Good to know, that articles are data, and example drawings as well."
+                    de: "..."
+            - type: sequence
+              class: 'citizensAngry'
+              items:
+                - text:
+                    en: "You did not create a Zenodo account."
+                    de: "..."
