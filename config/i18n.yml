@@ -4,8 +4,8 @@ i18n:
       en: "Press to start"
       de: "Start mit Knopfdruck"
     decisionMade:
-      en: 'A decision has been made…'
-      de: 'Eine Entscheidung wurde getroffen…'
+      en: 'Thank you for playing! Here are your quest achievements:'
+      de: 'Danke für´s mitspielen. Hier sind deine Quest-Ergebnisse:'
     waitingToBegin:
       en: 'Get ready! A new game will begin soon.'
       de: 'Mach dich bereit! Ein neues Spiel beginnt bald.'
@@ -13,11 +13,11 @@ i18n:
       en: 'Waiting for the other players…'
       de: 'Warte auf die anderen Spieler*innen…'
     pressToContinue:
-      en: 'Press to continue'
-      de: 'Weiter mit Knopfdruck'
+      en: 'Play again!'
+      de: 'Spiele noch einmal!'
     defaultPrompt:
-     en: "You are at a math conference and meet different mathematicians. Do they produce research data? Try to find out!"
-     de: "Du bist auf einer Mathe-Konferenz und triffst verschiedene Mathematiker*innen. Produzieren sie Forschungsdaten? Versuche, das herauszufinden!"
+     en: "You are at a math conference and meet different mathematicians. Talk to the people with a :speech_bubble: to get quests about math data."
+     de: "Du bist auf einer Mathe-Konferenz und triffst verschiedene Mathematiker*innen. Sprich mit den Leuten mit einer :speech_bubble:, um Quests zu erhalten."
 
     
     includedInDecision:
