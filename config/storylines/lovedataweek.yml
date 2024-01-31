@@ -1,9 +1,9 @@
 decision:
-  en: "You are at a math conference and meet different mathematicians. Do they produce research data?"
-  de: "Du bist auf einer Mathe-Konferenz und triffst verschiedene Mathematiker*innen. Produzieren sie Forschungsdaten?"
+  en: "You are at a math conference and meet different mathematicians. Interact with them and complete their quests."
+  de: "..."
 prompt:
-  en: "You are at a math conference and meet different mathematicians. Do they produce research data? Try to find out!"
-  de: "Du bist auf einer Mathe-Konferenz und triffst verschiedene Mathematiker*innen. Produzieren sie Forschungsdaten? Versuche, das herauszufinden!"
+  en: "You are at a math conference and meet different mathematicians. Interact with them and complete their quests."
+  de: "..."
 initFlags:
   - inc.citizenBraid
   - inc.citizenPunk
@@ -66,8 +66,8 @@ npcs:
               de: "..."
   citizenBraid:
     name:
-      en: "MaRDIan"
-      de: "MaRDIaner*in"
+      en: "Tabea"
+      de: "Tabea"
     spawn: { x: 2673, y: 3130 }
     dialogue:
       - text:
@@ -75,8 +75,8 @@ npcs:
           de: "..."   
   citizenPunk:
     name:
-      en: "Statistician"
-      de: "Statistiker*in"
+      en: "Carla Gaudi"
+      de: "Carla Gaudi"
     spawn: { x: 3671, y: 2930 }
     dialogue:
       - text:
@@ -84,8 +84,8 @@ npcs:
           de: "Ich bin Statistikerin"
   citizenPuan:
     name:
-      en: "Librarian"
-      de: "Bibliothekar*in"
+      en: "Jenny Lupus"
+      de: "Jenny Lupus"
     spawn: { x: 4000, y: 3150 }
     dialogue:
       - text:
@@ -93,26 +93,17 @@ npcs:
           de: "Ich bin Bibliothekar*in"
   citizenBlue:
     name:
-      en: "MaRDIan"
-      de: "Mardianer*in"
+      en: "Christiane"
+      de: "Christiane"
     spawn: { x: 2553, y: 3130 }
     dialogue:
       - text:
           en: "I work at the MaRDI help desk. I will help you with questions about data."
           de: "..."
-  citizenWheelchair:
-    name:
-      en: "Composer"
-      de: "Komponistin"
-    spawn: { x: 6128, y: 2330 }
-    dialogue:
-      - text:
-          en: "We need to ensure that these AI cameras respect our citizens' privacy and civil liberties."
-          de: "Wir müssen sicherstellen, dass diese KI-Kameras die Privatsphäre und die Rechte von uns Bürger*innen respektieren."
   lawyer:
     name:
-      en: "Algebraist"
-      de: "Algebraiker*in"
+      en: "Muhammad Quartz"
+      de: "Muhammad Quartz"
     spawn: { x: 2803, y: 2915 }
     dialogue:
       - text:
@@ -174,21 +165,21 @@ quests:
                 de: "..."
           lawyer:
             - text:
-                en: "I’m pretty sure, articles are data. To be 100% sure, ask the MaRDI help desk."
+                en: "I am an algebraist and I’m pretty sure, articles are data. To be 100% sure, ask the MaRDI help desk."
                 de: "..."
           citizenBraid:
             - text:
-                en: "Documents (articles, books) and their constituent parts (theorems, proofs, formulas…) are data. Treating mathematical texts as data (and not only as mere containers where one deposits ideas in written form) recognizes that mathematical texts deserve the same treatment as other forms of structured data. In particular, FAIR principles and data management plans also apply to texts."
+                en: "Documents (articles, books) are data. Mathematical texts deserve the same treatment as other forms of structured data. In particular, FAIR principles and data management plans also apply to texts."
                 de: "..."
               set: [ 'op.favor.citizenBraid' ]
           citizenBlue:
             - text:
-                en: "Visualizations and examples are data. Examples and visual realizations of mathematical objects (including images, animations, and other types of graphics) can be very intricate and have an enormous value for understanding and developing a theory. Although examples and visualizations can be omitted in more spartan literature, if provided, they deserve a full research data curation as other research data essential to logical proofs."
+                en: "Visualizations and examples (including images, animations, and other types of graphics) are data. They have an enormous value for understanding and developing a theory and deserve a full research data curation as other research data essential to logical proofs."
                 de: "..."
               set: [ 'op.favor.citizenHipster' ]
           citizenPunk:
             - text:
-                en: "I don't think drawings are data. But I'm not sure. You should ask the MaRDI help desk."
+                en: "I am a statistician. I don't think drawings are data. But I'm not sure. You should ask the MaRDI help desk."
                 de: "..."
           citizenPuan:
             - text:
@@ -222,7 +213,7 @@ quests:
                     en: "No, sorry, I have no idea. I am too old for this fancy internet stuff."
                     de: "..."
                   thenText:
-                    en: "You might want to check out the first issue of the MarDI newsletter to get an introduction to the topic."
+                    en: "You might want to check out the first issue of the MaRDI newsletter to get an introduction to the topic."
                     de: "..."
                 - text:
                     en: "Actually, I already have both. But I'll play along."
@@ -243,7 +234,7 @@ quests:
                 de: "..."
           citizenPunk:
             - text:
-                en: "Of course, I have a Zenodo account. But I am too busy to help you. Ask the robot."
+                en: "I am a statistician. Of course, I have a Zenodo account. But I am too busy to help you. Ask the robot."
                 de: "..."
           robot:
             - text:
@@ -294,7 +285,7 @@ quests:
                 de: "..."
           mayor:
             - text:
-                en: "I got my own ORCID iD at the library."
+                en: "I am a topologist. I got my own ORCID iD at the library."
                 de: "..."
           citizenPunk:
             - text:
@@ -322,7 +313,7 @@ ending:
                 - text:
                     en: "You did not find out if articles or example drawings are data."
                     de: "..."
-            - cond: 'found.publish.orcid & found.publish.zenodo'
+            - cond: 'quest.publish.done'
               class: 'citizensEmpowered'
               type: sequence
               items:
