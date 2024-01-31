@@ -121,7 +121,7 @@ quests:
                 en: "I am a topologist."
                 de: "..."
             - text:
-                en: "I publish articles and draw example images. I have also prgrammed a tool to create visualizations." 
+                en: "I publish articles and draw example images. I have also programmed a tool to create visualizations." 
                 de: "..."
             - text:
                 en: "Would you help me find out, if this is considered data?"
@@ -150,7 +150,7 @@ quests:
             - text:
                 en: "Good to know: articles, drawings, and software tools are data."
                 de: "..."
-              set: [ 'quest.favor.done', 'pnt.empathy.favor' ]
+              set: [ 'quest.favor.done', 'pnt.empathy.favor' , 'op.quest.favor']
       - prompt:
           en: "Find out if articles, drawings, and software tools are data."
           de: "..."
@@ -241,7 +241,7 @@ quests:
             - text:
                 en: "I am happy to create a Zenodo account for you. All done, congratulations."
                 de: "..."
-              set: [ 'found.publish.zenodo', 'quest.publish.done', 'pnt.information.publish' ]
+              set: [ 'found.publish.zenodo', 'quest.publish.done', 'pnt.information.publish' , 'op.quest.publish']
           citizenBlue:
             - text:
                 en: "Zenodo is a general-purpose open repository. It allows researchers to deposit research papers, data sets, research software, reports, and any other research related digital artefacts. The robot can create an account for you."
@@ -345,7 +345,7 @@ quests:
                       thenText:
                         en: "Great, thank you!"
                         de: "..."
-                  set: [ 'quest.exchange.done' , 'pnt.information.publish'  ]
+                  set: [ 'quest.exchange.done' , 'pnt.information.publish' , 'op.quest.exchange' ]
       - cond: 'found.exchange.person & found.exchange.jenny1 & found.exchange.quartz & ^found.exchange.help'
         prompt:
           en: "Ask the MaRDI help desk for the best way to share *code/data*."
@@ -406,7 +406,7 @@ quests:
                   set: [ 'found.exchange.quartz' ]
       - cond: 'found.exchange.person & ^found.exchange.jenny1 & ^found.exchange.quartz & ^found.exchange.help'
         prompt:
-          en: "Let Jenny Lupus know."
+          en: "Let Carla Gaudi know."
           de: "..."
         target: citizenPunk
         dialogues:
@@ -462,9 +462,6 @@ ending:
             - text:
                 en: 'You found out about some data types.'
                 de: '...'
-            - text:
-                en: "Good to know, that articles, example drawings, and software tools are data."
-                de: "..."
         - cond: 'COUNT("op.favor") < 3'
           type: sequence
           items:
@@ -478,14 +475,11 @@ ending:
             - text:
                 en: 'You created an ORCID iD and a Zenodo account.'
                 de: '...'
-            - text:
-                en: "Congratulations."
-                de: "..."
         - cond: '^found.publish.orcid & ^found.publish.zenodo'
           type: sequence
           items:
             - text:
-                en: "You did not get an ORCID iD and did not create a Zenodo account."
+                en: "You did not complete Muhammad's quest."
                 de: "..."
         - cond: 'found.publish.orcid & ^found.publish.zenodo'
           class: 'citizensEmpowered'
@@ -505,5 +499,29 @@ ending:
           type: sequence
           items:
             - text:
-                en: "You did not succed in helping Carla to get the *code/data* from Muhammad."
+                en: "You did not complete Carla's quest."
+                de: "..."
+        - cond: 'COUNT("op.favor") = 0'
+          type: sequence
+          items:
+            - text:
+                en: "You did not complete any of the three quests. Try again!"
+                de: "..."
+        - cond: 'COUNT("op.favor") = 1'
+          type: sequence
+          items:
+            - text:
+                en: "You completed one of the three quests. Play again to discover more quests!"
+                de: "..."
+        - cond: 'COUNT("op.favor") = 2'
+          type: sequence
+          items:
+            - text:
+                en: "You completed two of the three quests. Play again and try to complete all three in one round!"
+                de: "..."
+        - cond: 'COUNT("op.favor") = 3'
+          type: sequence
+          items:
+            - text:
+                en: "Congratulations, you completed all of the three quests! Play again to discover some details. For example, have you talked to the robot?"
                 de: "..."
