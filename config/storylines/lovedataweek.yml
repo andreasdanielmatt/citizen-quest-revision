@@ -121,7 +121,7 @@ quests:
                 en: "I am a topologist."
                 de: "..."
             - text:
-                en: "I publish articles and draw example images."
+                en: "I publish articles and draw example images. I have also prgrammed a tool to create visualizations." 
                 de: "..."
             - text:
                 en: "Would you help me find out, if this is considered data?"
@@ -140,7 +140,7 @@ quests:
                     de: "..."
                   set: [ 'quest.favor.active' ]
     stages:
-      - cond: 'COUNT("op.favor") >= 2'
+      - cond: 'COUNT("op.favor") >= 3'
         prompt:
           en: "You can let Felicia Homestedt know."
           de: "Du kannst Felicia Homestedt Bescheid geben."
@@ -148,33 +148,33 @@ quests:
         dialogues:
           mayor:
             - text:
-                en: "Good to know: articles and drawings are data."
+                en: "Good to know: articles, drawings, and software tools are data."
                 de: "..."
               set: [ 'quest.favor.done', 'pnt.empathy.favor' ]
       - prompt:
-          en: "Find out if articles and drawings are data."
+          en: "Find out if articles, drawings, and software tools are data."
           de: "..."
         counter:
           expression: 'COUNT("op.favor")'
-          max: 2
+          max: 3
           icon: happy
         dialogues:
           mayor:
             - text:
-                en: "I am not sure, if articles and drawings are considered data."
+                en: "I am not sure, if articles, drawings and softwre are considered data."
                 de: "..."
           lawyer:
             - text:
-                en: "I am an algebraist and I’m pretty sure, articles are data. To be 100% sure, ask the MaRDI help desk."
+                en: "I am an algebraist and I’m pretty sure, articles are data. To be 100% sure, ask at the library."
                 de: "..."
           citizenBraid:
             - text:
-                en: "Documents (articles, books) are data. Mathematical texts deserve the same treatment as other forms of structured data. In particular, FAIR principles and data management plans also apply to texts."
+                en: "Software is data. From small scripts that help in a particular problem to wide libraries that integrate into larger frameworks."
                 de: "..."
               set: [ 'op.favor.citizenBraid' ]
           citizenBlue:
             - text:
-                en: "Visualizations and examples (including images, animations, and other types of graphics) are data. They have an enormous value for understanding and developing a theory and deserve a full research data curation as other research data essential to logical proofs."
+                en: "Visualizations and examples (including images, animations, and other types of graphics) are data. They have an enormous value for understanding and developing a theory and deserve a full research data curation."
                 de: "..."
               set: [ 'op.favor.citizenHipster' ]
           citizenPunk:
@@ -183,8 +183,9 @@ quests:
                 de: "..."
           citizenPuan:
             - text:
-                en: "Articles are data. For details and also for drawings, please consult with the the MaRDI help desk."
+                en: "Documents (articles, books) are data. Mathematical texts deserve the same treatment as other forms of structured data."
                 de: "..."
+              set: [ 'op.favor.citizenPuan' ]
   publish:
     npc: lawyer
     mood: exclamation
@@ -295,37 +296,44 @@ ending:
   dialogue:
     - type: sequence
       items:
-        - type: first
+        - cond: 'COUNT("op.favor") >= 3'
+          class: 'citizensEmpowered'
+          type: sequence
           items:
-            - cond: 'COUNT("op.favor") >= 2'
-              class: 'citizensEmpowered'
-              type: sequence
-              items:
-                - text:
-                    en: 'You found out about the data types of documents as well as visuaizations and examples.'
-                    de: '...'
-                - text:
-                    en: "Good to know, that articles are data, and example drawings as well."
-                    de: "..."
-            - type: sequence
-              class: 'citizensAngry'
-              items:
-                - text:
-                    en: "You did not find out if articles or example drawings are data."
-                    de: "..."
-            - cond: 'quest.publish.done'
-              class: 'citizensEmpowered'
-              type: sequence
-              items:
-                - text:
-                    en: 'You created an ORCID iD and a Zenodo account.'
-                    de: '...'
-                - text:
-                    en: "Good to know, that articles are data, and example drawings as well."
-                    de: "..."
-            - type: sequence
-              class: 'citizensAngry'
-              items:
-                - text:
-                    en: "You did not create a Zenodo account."
-                    de: "..."
+            - text:
+                en: 'You found out about some data types.'
+                de: '...'
+            - text:
+                en: "Good to know, that articles, example drawings, and software tools are data."
+                de: "..."
+        - cond: 'COUNT("op.favor") < 3'
+          class: 'citizensAngry'
+          type: sequence
+          items:
+            - text:
+                en: "You did not answer Filicia's questions."
+                de: "..."
+        - cond: 'quest.publish.done'
+          class: 'citizensEmpowered'
+          type: sequence
+          items:
+            - text:
+                en: 'You created an ORCID iD and a Zenodo account.'
+                de: '...'
+            - text:
+                en: "Congratulations."
+                de: "..."
+        - cond: '^found.publish.orcid & ^found.publish.zenodo'
+          class: 'citizensAngry'
+          type: sequence
+          items:
+            - text:
+                en: "You did not get an ORCID iD and did not create a Zenodo account."
+                de: "..."
+        - cond: 'found.publish.orcid & ^found.publish.zenodo'
+          class: 'citizensEmpowered'
+          type: sequence
+          items:
+            - text:
+                en: "You ceated an ORCID iD but not a Zenodo account."
+                de: "..."
