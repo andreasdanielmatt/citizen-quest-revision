@@ -1,8 +1,8 @@
 decision:
-  en: "You are at a math conference and meet different mathematicians. Interact with them and complete their quests."
+  en: "It is Love Data Week. You are at a math conference and meet different mathematicians. Interact with them and complete their quests."
   de: "..."
 prompt:
-  en: "You are at a math conference and meet different mathematicians. Interact with them and complete their quests."
+  en: "It is Love Data Week :love:. You are at a math conference and meet different mathematicians. Interact with them and complete their quests."
   de: "..."
 initFlags:
   - inc.citizenBraid
@@ -136,7 +136,7 @@ quests:
                     en: "Sure, I will help you."
                     de: "..."
                   thenText:
-                    en: "Thank you!"
+                    en: "Thank you!  :love:"
                     de: "..."
                   set: [ 'quest.favor.active' ]
     stages:
@@ -207,7 +207,7 @@ quests:
                     en: "Sure, I will will try to set it up right now."
                     de: "..."
                   thenText:
-                    en: "Great! If you need more information about ORCID or Zenodo, ask at the MaRDI help desk."
+                    en: "Great :love:! If you need more information about ORCID or Zenodo, ask at the MaRDI help desk."
                     de: "..."
                   set: [ 'quest.publish.active' ]
                 - text:
@@ -220,7 +220,7 @@ quests:
                     en: "I have both. Just for the game, I can still try to complete this quest."
                     de: "..."
                   thenText:
-                    en: "What fun!"
+                    en: "What fun! :love:"
                     de: "..."
                   set: [ 'quest.publish.active' ]
     stages:
@@ -231,7 +231,7 @@ quests:
         dialogues:
           lawyer:
             - text:
-                en: "Congratulations to your ORCID iD. You need to create a Zenodo account now."
+                en: "Congratulations to your ORCID iD :love:. You need to create a Zenodo account now."
                 de: "..."
           citizenPunk:
             - text:
@@ -239,9 +239,9 @@ quests:
                 de: "..."
           robot:
             - text:
-                en: "I am happy to create a Zenodo account for you. All done, congratulations."
+                en: "I am happy to create a Zenodo account for you. All done, congratulations. :love:"
                 de: "..."
-              set: [ 'found.publish.zenodo', 'quest.publish.done', 'pnt.information.publish' , 'op.quest.publish']
+              set: [ 'found.publish.zenodo', 'quest.publish.done', 'pnt.empathy.publish' , 'op.quest.publish']
           citizenBlue:
             - text:
                 en: "Zenodo is a general-purpose open repository. It allows researchers to deposit research papers, data sets, research software, reports, and any other research related digital artefacts. The robot can create an account for you."
@@ -252,7 +252,7 @@ quests:
                 de: "..."
           mayor:
             - text:
-                en: "Congratulations to your ORCID iD."
+                en: "Congratulations to your ORCID iD. :love:"
                 de: "..."
           citizenPuan:
             - text:
@@ -313,7 +313,7 @@ quests:
                     en: "Sure, I will  try to find it for you."
                     de: "..."
                   thenText:
-                    en: "Thank you! If you have no idea where to start, go to the MaRDI help desk."
+                    en: "Thank you :love:! If you have no idea where to start, go to the MaRDI help desk."
                     de: "..."
                   set: [ 'quest.exchange.active' ]
                 - text:
@@ -333,7 +333,7 @@ quests:
             - type: sequence
               items:
                 - text:
-                    en: "Thank you for letting me know about the different repository options."
+                    en: "Thank you for letting me know about the different repository options. :love:"
                     de: "..."
                 - text:
                     en: "I will upload my *code/data* during lunch break. Then I will try to find Dr. Gaudi. Maybe we can collaborate in the future."
@@ -345,7 +345,7 @@ quests:
                       thenText:
                         en: "Great, thank you!"
                         de: "..."
-                  set: [ 'quest.exchange.done' , 'pnt.information.publish' , 'op.quest.exchange' ]
+                  set: [ 'quest.exchange.done' , 'pnt.empathy.exchange' , 'op.quest.exchange' ]
           mayor:
             - text:
                 en: "Ah, I know Muhammad, just talked to him during the coffee break."
@@ -368,13 +368,13 @@ quests:
                     de: "..."
                   responses:
                     - text:
-                        en: "Ok, thank you."
+                        en: "Ok, thank you. :love:"
                         de: "..."
                     - text:
                         en: "Which of those is the best choice?"
                         de: "..."
                       thenText:
-                        en: "If you are able to find a discipline-specific repository for your research data, this will be the best option for you."
+                        en: "If you are able to find a discipline-specific repository for your research data, this will be the best option for you. :love:"
                         de: "..."
                   set: [ 'found.exchange.help' ]
           mayor:
@@ -415,7 +415,7 @@ quests:
                         en: "I am not sure. I will ask at the MaRDI help desk."
                         de: "..."
                       thenText:
-                        en: "That's a good idea. I know, they offer a course on managing research data."
+                        en: "That's a good idea. I know, they offer a course on managing research data. :love:"
                         de: "..."
                     - text:
                         en: "Upload your research data to a trusted repository."
@@ -496,7 +496,7 @@ ending:
           type: sequence
           items:
             - text:
-                en: 'You found out about some data types.'
+                en: 'You found out about some data types. :love:'
                 de: '...'
         - cond: 'COUNT("op.favor") < 3'
           type: sequence
@@ -509,7 +509,7 @@ ending:
           type: sequence
           items:
             - text:
-                en: 'You created an ORCID iD and a Zenodo account.'
+                en: 'You created an ORCID iD and a Zenodo account. :love:'
                 de: '...'
         - cond: '^found.publish.orcid & ^found.publish.zenodo'
           type: sequence
@@ -529,7 +529,7 @@ ending:
           type: sequence
           items:
             - text:
-                en: "You helped Carla to get the *code/data* from Muhammad."
+                en: "You helped Carla to get the *code/data* from Muhammad. :love:"
                 de: "..."
         - cond: '^quest.exchange.done'
           type: sequence
@@ -547,17 +547,17 @@ ending:
           type: sequence
           items:
             - text:
-                en: "You completed one of the three quests. Play again to discover more quests!"
+                en: "You completed one of the three quests :love:. Play again to discover more quests!"
                 de: "..."
         - cond: 'COUNT("op.favor") = 2'
           type: sequence
           items:
             - text:
-                en: "You completed two of the three quests. Play again and try to complete all three in one round!"
+                en: "You completed two of the three quests :love::love:. Play again and try to complete all three in one round!"
                 de: "..."
         - cond: 'COUNT("op.favor") = 3'
           type: sequence
           items:
             - text:
-                en: "Congratulations, you completed all of the three quests! Play again to discover some details. For example, have you talked to the robot?"
+                en: "Congratulations, you completed all of the three quests :love::love::love:! Play again to discover some details. For example, have you talked to the robot?"
                 de: "..."
