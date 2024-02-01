@@ -4,10 +4,10 @@ decision:
 prompt:
   en: "It is Love Data Week :love:. You are at a math conference and meet different mathematicians. Interact with them and complete their quests."
   de: "..."
-initFlags:
-  - inc.citizenBraid
-  - inc.citizenPunk
-  - inc.lawyer
+# initFlags:
+  # - inc.mayor
+  # - inc.citizenPunk
+  # - inc.lawyer
 npcs:
   mayor:
     name:
@@ -64,6 +64,13 @@ npcs:
           - text:
               en: "Access to research information is the most fundamental principle for spreading science across the scientific community and society."
               de: "..."
+          - text:
+              en: "I :love: math!"
+              de: "..."
+            set: [ 'op.love.1' ]
+          - text:
+              en: "Your math is data!"
+              de: "..."
   citizenBraid:
     name:
       en: "Tabea"
@@ -80,8 +87,9 @@ npcs:
     spawn: { x: 3671, y: 2930 }
     dialogue:
       - text:
-          en: "I am a statistician."
+          en: "I am a statistician and I love data :love:!"
           de: "Ich bin Statistikerin"
+        set: [ 'op.love.2' ]
   citizenPuan:
     name:
       en: "Jenny Ober-Lupus"
@@ -98,7 +106,7 @@ npcs:
     spawn: { x: 2553, y: 3130 }
     dialogue:
       - text:
-          en: "I work at the MaRDI help desk. I will help you with questions about data."
+          en: "Do you know, there is a real MaRDI help desk at the MaRDI website? Check it out after the game."
           de: "..."
   lawyer:
     name:
@@ -136,7 +144,7 @@ quests:
                     en: "Sure, I will help you."
                     de: "..."
                   thenText:
-                    en: "Thank you!  :love:"
+                    en: "Thank you!"
                     de: "..."
                   set: [ 'quest.favor.active' ]
     stages:
@@ -159,6 +167,19 @@ quests:
             - text:
                 en: "I am Carla, not Felicia! You are so confused!"
                 de: "..."
+          citizenBraid:
+            - text:
+                en: "If you want to know more about the types of research data in mathematics, check out the sixth issue of the MaRDI Newsletter. You will :love: it!"
+                de: "..."
+              set: [ 'op.love.4' ]
+          citizenBlue:
+            - text:
+                en: "You can download a cool postcard at the MaRDI website with an illustration for each of the research data types in mathematics."
+                de: "..."
+          citizenPuan:
+            - text:
+                en: "Have you been to the library at the MFO in Oberwolfach?"
+                de: "..."
       - prompt:
           en: "Find out if articles, drawings, and software tools are data."
           de: "..."
@@ -169,7 +190,7 @@ quests:
         dialogues:
           mayor:
             - text:
-                en: "I am not sure, if articles, drawings and softwre are considered data."
+                en: "I am not sure, if articles, drawings and software are considered data."
                 de: "..."
           lawyer:
             - text:
@@ -187,8 +208,9 @@ quests:
               set: [ 'op.favor.citizenHipster' ]
           citizenPunk:
             - text:
-                en: "I am a statistician. I don't think drawings are data. But I'm not sure. You should ask the MaRDI help desk."
+                en: "I am a statistician. I don't think drawings are data. But I'm not sure. You should ask the MaRDI help desk. I usually don't like to be around too many people, but the MaRDIans are very nice! :love:"
                 de: "..."
+              set: [ 'op.love.6' ]
           citizenPuan:
             - text:
                 en: "Documents (articles, books) are data. Mathematical texts deserve the same treatment as other forms of structured data."
@@ -228,7 +250,7 @@ quests:
                     en: "Actually, I already have both."
                     de: "..."
                   thenText:
-                    en: "Congratulations! :love:"
+                    en: "Congratulations!"
                     de: "..."
                   set: [ 'quest.publish.active', 'found.publish.zenodo', 'found.publish.orcid', 'quest.publish.done', 'pnt.empathy.publish' , 'op.quest.publish' ]
     stages:
@@ -239,7 +261,7 @@ quests:
         dialogues:
           lawyer:
             - text:
-                en: "Congratulations to your ORCID iD :love:. You need to create a Zenodo account now."
+                en: "Congratulations to your ORCID iD. You need to create a Zenodo account now."
                 de: "..."
           citizenPunk:
             - text:
@@ -262,6 +284,7 @@ quests:
             - text:
                 en: "Congratulations to your ORCID iD. :love:"
                 de: "..."
+              set: ['op.love.5']
           citizenPuan:
             - text:
                 en: "I cannot help you at the moment. I need to prepare, classify and maintain our media collection."
@@ -294,8 +317,9 @@ quests:
                 de: "..."
           mayor:
             - text:
-                en: "I am a topologist. I got my own ORCID iD at the library."
+                en: "I am a topologist. I got my own ORCID iD at the library. They also have great coffee. :love:"
                 de: "..."
+              set: ['op.love.8']
           citizenPunk:
             - text:
                 en: "Please, don't disturb me. I am coding..."
@@ -311,7 +335,7 @@ quests:
                 en: "Hi, I am a statistician."
                 de: "..."
             - text:
-                en: "I have a discrete statistical model and I would like to understand its geometry. I know Dr. Quartz from the Al-Jabr Intitute was working on this but I cannot find any of his code online."
+                en: "I have a discrete statistical model and I would like to understand its geometry. I know Dr. Quartz from the Al-Jabr Institute was working on this but I cannot find any of his code online."
                 de: "..."
             - text:
                 en: "Can you help me get his research data?"
@@ -325,13 +349,13 @@ quests:
                     de: "..."
                   set: [ 'quest.exchange.active' ]
                 - text:
-                    en: "Why don't you ask him yoursef? He is over there, close to the MaRDI help desk."
+                    en: "Why don't you ask him yourself? He is over there, close to the MaRDI help desk."
                     de: "..."
                   thenText:
-                    en: "I am afraid of crowds. There are alsways so many colleagues around him. Come back if you change your mind and want to help me."
+                    en: "I am afraid of crowds. There are always so many colleagues around him. Come back if you change your mind and want to help me."
                     de: "..."
     stages:
-      - cond: 'found.exchange.person & found.exchange.jenny1 & found.exchange.quartz & found.exchange.help'
+      - cond: 'found.exchange.person & found.exchange.carla & found.exchange.quartz & found.exchange.help'
         prompt:
           en: "Tell Muhammad Quartz how to share his code."
           de: "..."
@@ -362,7 +386,19 @@ quests:
             - text:
                 en: "I really need Dr. Quartz's Julia code. Did you ask him yet to give it to me?"
                 de: "..."
-      - cond: 'found.exchange.person & found.exchange.jenny1 & found.exchange.quartz & ^found.exchange.help'
+          citizenBlue:
+            - text:
+                en: "*some cool fact about a MaRDI service*"
+                de: "..."
+          citizenPuan:
+            - text:
+                en: "*some cool data fact*"
+                de: "..."
+          citizenBraid:
+            - text:
+                en: "*some cool fact about a MaRDI service*"
+                de: "..."
+      - cond: 'found.exchange.person & found.exchange.carla & found.exchange.quartz & ^found.exchange.help'
         prompt:
           en: "Ask the MaRDI help desk for the best way to share code."
           de: "..."
@@ -384,6 +420,7 @@ quests:
                       thenText:
                         en: "If you are able to find a discipline-specific repository for your research data, this will be the best option for you. :love:"
                         de: "..."
+                      set: [ 'op.love.3' ]
                   set: [ 'found.exchange.help' ]
           mayor:
             - text:
@@ -397,7 +434,15 @@ quests:
             - text:
                 en: "I really need Dr. Quartz's Julia code. Did you ask him yet to give it to me?"
                 de: "..."
-      - cond: 'found.exchange.person & found.exchange.jenny1 & ^found.exchange.quartz & ^found.exchange.help'
+          citizenBlue:
+            - text:
+                en: "*some cool fact about a MaRDI service*"
+                de: "..."
+          citizenPuan:
+            - text:
+                en: "*some cool data fact*"
+                de: "..."
+      - cond: 'found.exchange.person & found.exchange.carla & ^found.exchange.quartz & ^found.exchange.help'
         prompt:
           en: "Ask Muhammad Quartz to make the code available."
           de: "..."
@@ -440,7 +485,19 @@ quests:
             - text:
                 en: "I really need Dr. Quartz's code. Did you ask him yet to give it to me?"
                 de: "..."
-      - cond: 'found.exchange.person & ^found.exchange.jenny1 & ^found.exchange.quartz & ^found.exchange.help'
+          citizenBlue:
+            - text:
+                en: "*some cool fact about a MaRDI service*"
+                de: "..."
+          citizenPuan:
+            - text:
+                en: "*some cool data fact*"
+                de: "..."
+          citizenBraid:
+            - text:
+                en: "*some cool fact about a MaRDI service*"
+                de: "..."
+      - cond: 'found.exchange.person & ^found.exchange.carla & ^found.exchange.quartz & ^found.exchange.help'
         prompt:
           en: "Let Carla Gaudi know."
           de: "..."
@@ -450,7 +507,7 @@ quests:
             - text:
                 en: "Thank you for letting me know. I would like to use Dr. Quartz's code to transform a parametrization into an algebraic variety to understand its geometry. Please ask him to give it to me!"
                 de: "..."
-              set: [ 'found.exchange.jenny1']
+              set: [ 'found.exchange.carla']
           lawyer:
             - text:
                 en: "Tell Dr. Gaudi about my paper. It is available online. Maybe she doesn't need the code?"
@@ -459,7 +516,20 @@ quests:
             - text:
                 en: "Ah, I know Muhammad, just talked to him during the coffee break."
                 de: "..."
-      - cond: '^found.exchange.person & ^found.exchange.jenny1 & ^found.exchange.quartz & ^found.exchange.help'
+          citizenBlue:
+            - text:
+                en: "*some cool fact about a MaRDI service*"
+                de: "..."
+          citizenPuan:
+            - text:
+                en: "I :love: the Black Forest, especially in carnival season!"
+                de: "..."
+              set: [ 'op.love.7' ]
+          citizenBraid:
+            - text:
+                en: "*some cool fact about a MaRDI service*"
+                de: "..."
+      - cond: '^found.exchange.person & ^found.exchange.carla & ^found.exchange.quartz & ^found.exchange.help'
         prompt:
           en: "Find the work by Dr. Quartz from the Al-Jabr Intitute."
           de: "..."
@@ -574,3 +644,39 @@ ending:
             - text:
                 en: "Congratulations, you completed all of the three quests :love::love::love:!"
                 de: "..."
+        - cond: 'COUNT("op.love") = 0'
+          text:
+            en: "You didn't find any of the eight :love: hidden in the dialogues."
+            de: "..."
+        - cond: 'COUNT("op.love") = 1'
+          text:
+            en: "You found one of the eight :love: hidden in the dialogues."
+            de: "..."
+        - cond: 'COUNT("op.love") = 2'
+          text:
+            en: "You found two of the eight :love: hidden in the dialogues."
+            de: "..."
+        - cond: 'COUNT("op.love") = 3'
+          text:
+            en: "You found three of the eight :love: hidden in the dialogues."
+            de: "..."
+        - cond: 'COUNT("op.love") = 4'
+          text:
+            en: "You found four of the eight :love: hidden in the dialogues."
+            de: "..."
+        - cond: 'COUNT("op.love") = 5'
+          text:
+            en: "You found five of the eight :love: hidden in the dialogues."
+            de: "..."
+        - cond: 'COUNT("op.love") = 6'
+          text:
+            en: "You found six of the eight :love: hidden in the dialogues."
+            de: "..."
+        - cond: 'COUNT("op.love") = 7'
+          text:
+            en: "You found seven of the eight :love: hidden in the dialogues."
+            de: "..."
+        - cond: 'COUNT("op.love") = 8'
+          text:
+            en: "You found all of the eight :love: hidden in the dialogues."
+            de: "..."
