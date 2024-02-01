@@ -151,6 +151,14 @@ quests:
                 en: "Good to know: articles, drawings, and software tools are data."
                 de: "..."
               set: [ 'quest.favor.done', 'pnt.empathy.favor' , 'op.quest.favor']
+          lawyer:
+            - text:
+                en: "You are looking for Felicia? I had a coffee with her a few minutes ago. She is over there."
+                de: "..."
+          citizenPunk:
+            - text:
+                en: "I am Carla, not Felicia! You are so confused!"
+                de: "..."
       - prompt:
           en: "Find out if articles, drawings, and software tools are data."
           de: "..."
@@ -537,25 +545,25 @@ ending:
             - text:
                 en: "You did not complete Carla's quest."
                 de: "..."
-        - cond: 'COUNT("op.favor") = 0'
+        - cond: 'COUNT("op.quest") = 0'
           type: sequence
           items:
             - text:
                 en: "You did not complete any of the three quests. Try again!"
                 de: "..."
-        - cond: 'COUNT("op.favor") = 1'
+        - cond: 'COUNT("op.quest") = 1'
           type: sequence
           items:
             - text:
                 en: "You completed one of the three quests :love:. Play again to discover more quests!"
                 de: "..."
-        - cond: 'COUNT("op.favor") = 2'
+        - cond: 'COUNT("op.quest") = 2'
           type: sequence
           items:
             - text:
                 en: "You completed two of the three quests :love::love:. Play again and try to complete all three in one round!"
                 de: "..."
-        - cond: 'COUNT("op.favor") = 3'
+        - cond: 'COUNT("op.quest") = 3'
           type: sequence
           items:
             - text:
