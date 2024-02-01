@@ -202,7 +202,7 @@ quests:
         - type: sequence
           items:
             - text:
-                en: "Hi, I am an algebraist. I just published my most recent paper and some software code."
+                en: "Hi, I am an algebraist. I just published some of my software code."
                 de: "..."
             - text:
                 en: "I used my ORCID iD and my Zenodo account."
@@ -215,7 +215,7 @@ quests:
                     en: "Sure, I will will try to set it up right now."
                     de: "..."
                   thenText:
-                    en: "Great :love:! If you need more information about ORCID or Zenodo, ask at the MaRDI help desk."
+                    en: "Great! If you need more information about ORCID or Zenodo, ask at the MaRDI help desk."
                     de: "..."
                   set: [ 'quest.publish.active' ]
                 - text:
@@ -225,12 +225,12 @@ quests:
                     en: "You might want to check out the first issue of the MaRDI newsletter to get an introduction to the topic."
                     de: "..."
                 - text:
-                    en: "I have both. Just for the game, I can still try to complete this quest."
+                    en: "Actually, I already have both."
                     de: "..."
                   thenText:
-                    en: "What fun! :love:"
+                    en: "Congratulations! :love:"
                     de: "..."
-                  set: [ 'quest.publish.active' ]
+                  set: [ 'quest.publish.active', 'found.publish.zenodo', 'found.publish.orcid', 'quest.publish.done', 'pnt.empathy.publish' , 'op.quest.publish' ]
     stages:
       - cond: 'found.publish.orcid & ^found.publish.zenodo'
         prompt:
@@ -311,17 +311,17 @@ quests:
                 en: "Hi, I am a statistician."
                 de: "..."
             - text:
-                en: "I would like to use *some algebraic methods* in my research. I know Dr. Quartz from the Al-Jabr Intitute was working on this but I cannot find any of it online."
+                en: "I have a discrete statistical model and I would like to understand its geometry. I know Dr. Quartz from the Al-Jabr Intitute was working on this but I cannot find any of his code online."
                 de: "..."
             - text:
-                en: "Can you help me get the research data?"
+                en: "Can you help me get his research data?"
                 de: "..."
               responses:
                 - text:
                     en: "Sure, I will  try to find it for you."
                     de: "..."
                   thenText:
-                    en: "Thank you :love:! If you have no idea where to start, go to the MaRDI help desk."
+                    en: "Thank you! If you have no idea where to start, go to the MaRDI help desk."
                     de: "..."
                   set: [ 'quest.exchange.active' ]
                 - text:
@@ -333,7 +333,7 @@ quests:
     stages:
       - cond: 'found.exchange.person & found.exchange.jenny1 & found.exchange.quartz & found.exchange.help'
         prompt:
-          en: "Tell Muhammad Quartz how to share his *code/data*."
+          en: "Tell Muhammad Quartz how to share his code."
           de: "..."
         target: lawyer
         dialogues:
@@ -341,10 +341,10 @@ quests:
             - type: sequence
               items:
                 - text:
-                    en: "Thank you for letting me know about the different repository options. :love:"
+                    en: "Thank you for letting me know about the different repository options."
                     de: "..."
                 - text:
-                    en: "I will upload my *code/data* during lunch break. Then I will try to find Dr. Gaudi. Maybe we can collaborate in the future."
+                    en: "I will upload my Julia code during lunch break. Then I will try to find Dr. Gaudi. Maybe we can collaborate in the future."
                     de: "..."
                   responses:
                     - text:
@@ -360,11 +360,11 @@ quests:
                 de: "..."
           citizenPunk:
             - text:
-                en: "I really need Dr. Quartz's *code/data*. Did you ask him yet to give it to me?"
+                en: "I really need Dr. Quartz's Julia code. Did you ask him yet to give it to me?"
                 de: "..."
       - cond: 'found.exchange.person & found.exchange.jenny1 & found.exchange.quartz & ^found.exchange.help'
         prompt:
-          en: "Ask the MaRDI help desk for the best way to share *code/data*."
+          en: "Ask the MaRDI help desk for the best way to share code."
           de: "..."
         target: citizenBraid
         dialogues:
@@ -376,7 +376,7 @@ quests:
                     de: "..."
                   responses:
                     - text:
-                        en: "Ok, thank you. :love:"
+                        en: "Ok, thank you."
                         de: "..."
                     - text:
                         en: "Which of those is the best choice?"
@@ -391,15 +391,15 @@ quests:
                 de: "..."
           lawyer:
             - text:
-                en: "Please ask at the MaRDI help desk, which kind of repository I should choose. I know, they offer a course on managing research data."
+                en: "Please ask at the MaRDI help desk, what is the best way to share my code. I know, they offer a course on managing research data."
                 de: "..."
           citizenPunk:
             - text:
-                en: "I really need Dr. Quartz's *code/data*. Did you ask him yet to give it to me?"
+                en: "I really need Dr. Quartz's Julia code. Did you ask him yet to give it to me?"
                 de: "..."
       - cond: 'found.exchange.person & found.exchange.jenny1 & ^found.exchange.quartz & ^found.exchange.help'
         prompt:
-          en: "Ask Muhammad Quartz to make the *code/data* available."
+          en: "Ask Muhammad Quartz to make the code available."
           de: "..."
         target: lawyer
         dialogues:
@@ -407,14 +407,14 @@ quests:
             - type: sequence
               items:
                 - text:
-                    en: "I never uploaded the *code/data* anywhere. If Dr. Gaudi is interested, I can make it available for her."
+                    en: "I work in Julia using OSCAR and Singular. The code is stored on my private laptop. If Dr. Gaudi is interested, I can make it available for her."
                     de: "..."
                 - text:
                     en: "How should I share the data?"
                     de: "..."
                   responses:
                     - text:
-                        en: "Just print out the *code/data*. I will carry the stack of paper over to her."
+                        en: "Just print out the code. I will carry the stack of paper over to her."
                         de: "..."
                       thenText:
                         en: "I don't like that idea. Please ask at the MaRDI help desk for a better solution. I know, they offer a course on managing research data."
@@ -423,10 +423,10 @@ quests:
                         en: "I am not sure. I will ask at the MaRDI help desk."
                         de: "..."
                       thenText:
-                        en: "That's a good idea. I know, they offer a course on managing research data. :love:"
+                        en: "That's a good idea. I know, they offer a course on managing research data."
                         de: "..."
                     - text:
-                        en: "Upload your research data to a trusted repository."
+                        en: "Upload your code to a trusted repository."
                         de: "..."
                       thenText:
                         en: "Please ask at the MaRDI help desk, which kind of repository I should choose. I know, they offer a course on managing research data."
@@ -438,7 +438,7 @@ quests:
                 de: "..."
           citizenPunk:
             - text:
-                en: "I really need Dr. Quartz's *code/data*. Did you ask him yet to give it to me?"
+                en: "I really need Dr. Quartz's code. Did you ask him yet to give it to me?"
                 de: "..."
       - cond: 'found.exchange.person & ^found.exchange.jenny1 & ^found.exchange.quartz & ^found.exchange.help'
         prompt:
@@ -448,12 +448,12 @@ quests:
         dialogues:
           citizenPunk:
             - text:
-                en: "Thank you for letting me know. I really need the *code/data* he used in his paper. Please ask him to give it to me!"
+                en: "Thank you for letting me know. I would like to use Dr. Quartz's code to transform a parametrization into an algebraic variety to understand its geometry. Please ask him to give it to me!"
                 de: "..."
               set: [ 'found.exchange.jenny1']
           lawyer:
             - text:
-                en: "Tell Dr. Gaudi about my paper. It is available online. Maybe she doesn't need the *code/data*?"
+                en: "Tell Dr. Gaudi about my paper. It is available online. Maybe she doesn't need the code?"
                 de: "..."
           mayor:
             - text:
@@ -470,7 +470,7 @@ quests:
                 de: "..."
           robot:
             - text:
-                en: "I did a quick online search for you. He published a paper on the topic you are interested in, but the *code/data* you are looking for is not included."
+                en: "I did a quick online search for you. He published a paper on implicitization and elimination techniques. However, the corresponding code is not included."
                 de: "..."
               set: [ 'found.exchange.person' ]
           citizenBlue:
@@ -479,22 +479,27 @@ quests:
                 de: "..."
           citizenPuan:
             - text:
-                en: "Dr. Quartz published a paper on *some algebraic methods*, but there is no code/data included, unfortunately."
+                en: "Dr. Quartz published a paper on implicitization and elimination techniques. However, the corresponding code is not included, unfortunately."
                 de: "..."
               set: [ 'found.exchange.person' ]
           citizenBraid:
             - text:
-                en: "You could ask at the library, if they have any papers or books on the topic by that author."
+                en: "You could ask at the library, if they have any papers or books on implicitization and elimination techniques by that author."
                 de: "..."
           mayor:
             - text:
                 en: "Ah, I know Muhammad, just talked to him during the coffee break."
                 de: "..."
           lawyer:
-            - text:
-                en: "Yes, I published a paper on *some algebraic methods*. I also have some code, but never published it."
-                de: "..."
-              set: [ 'found.exchange.person' ]
+            - type: sequence
+              items:
+                - text:
+                    en: "Yes, I work on implicitization and elimination techniques and can transform a parametrization into an algebraic variety to understand its geometry. The code is stored on my private laptop, though."
+                    de: "..."
+                - text:
+                    en: "I published a paper on the topic without including the code. Maybe this will help Dr. Gaudi?"
+                    de: "..."
+                  set: [ 'found.exchange.person' ]
 ending:
   dialogue:
     - type: sequence
@@ -504,7 +509,7 @@ ending:
           type: sequence
           items:
             - text:
-                en: 'You found out about some data types. :love:'
+                en: 'You found out about three types of mathematical research data. :love:'
                 de: '...'
         - cond: 'COUNT("op.favor") < 3'
           type: sequence
@@ -537,7 +542,7 @@ ending:
           type: sequence
           items:
             - text:
-                en: "You helped Carla to get the *code/data* from Muhammad. :love:"
+                en: "You helped Carla to get the code from Muhammad. :love:"
                 de: "..."
         - cond: '^quest.exchange.done'
           type: sequence
@@ -555,17 +560,17 @@ ending:
           type: sequence
           items:
             - text:
-                en: "You completed one of the three quests :love:. Play again to discover more quests!"
+                en: "You completed one of the three quests :love:."
                 de: "..."
         - cond: 'COUNT("op.quest") = 2'
           type: sequence
           items:
             - text:
-                en: "You completed two of the three quests :love::love:. Play again and try to complete all three in one round!"
+                en: "You completed two of the three quests :love::love:."
                 de: "..."
         - cond: 'COUNT("op.quest") = 3'
           type: sequence
           items:
             - text:
-                en: "Congratulations, you completed all of the three quests :love::love::love:! Play again to discover some details. For example, have you talked to the robot?"
+                en: "Congratulations, you completed all of the three quests :love::love::love:!"
                 de: "..."
