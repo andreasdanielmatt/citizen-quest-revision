@@ -13,7 +13,7 @@ i18n:
       en: 'Waiting for the other players…'
       de: 'Warte auf die anderen Spieler*innen…'
     pressToContinue:
-      en: 'Play (again)!'
+      en: 'Press space to play (again)!'
       de: 'Spiele (noch einmal)!'
     defaultPrompt:
      en: "You are at a math conference and meet different mathematicians. Talk to the people with a :speech_bubble: to get quests about math data."
