@@ -269,7 +269,7 @@ quests:
                 de: "..."
           robot:
             - text:
-                en: "I am happy to create a Zenodo account for you. All done, congratulations. :love:"
+                en: "I am happy to create a Zenodo account for you. All done, congratulations."
                 de: "..."
               set: [ 'found.publish.zenodo', 'quest.publish.done', 'pnt.empathy.publish' , 'op.quest.publish']
           citizenBlue:
@@ -642,7 +642,7 @@ ending:
           type: sequence
           items:
             - text:
-                en: "Congratulations, you completed all of the three quests :love::love::love:!"
+                en: "Congratulations, you completed all of the three quests! :love::love::love:"
                 de: "..."
         - cond: 'COUNT("op.love") = 0'
           text:
