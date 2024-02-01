@@ -1,8 +1,8 @@
 i18n:
   ui:
     pressStart:
-      en: "Press to start"
-      de: "Start mit Knopfdruck"
+      en: "Press space to start"
+      de: "Starte mit der Leertaste"
     decisionMade:
       en: 'Thank you for playing! Here are your quest achievements:'
       de: 'Danke für´s mitspielen. Hier sind deine Quest-Ergebnisse:'
