@@ -84,8 +84,8 @@ npcs:
           de: "Ich bin Statistikerin"
   citizenPuan:
     name:
-      en: "Jenny Lupus"
-      de: "Jenny Lupus"
+      en: "Jenny Ober-Lupus"
+      de: "Jenny Ober-Lupus"
     spawn: { x: 4000, y: 3150 }
     dialogue:
       - text:
@@ -216,12 +216,12 @@ quests:
                   thenText:
                     en: "You might want to check out the first issue of the MaRDI newsletter to get an introduction to the topic."
                     de: "..."
-                - text:
-                    en: "Actually, I already have both. But I'll play along."
-                    de: "..."
-                  thenText:
-                    en: "What fun!"
-                    de: "..."
+                # - text:
+                    # en: "Actually, I already have both. But just for the game, I can play along and try to complete this quest. No worries."
+                    # de: "..."
+                  # thenText:
+                    # en: "What fun!"
+                    # de: "..."
                   set: [ 'quest.publish.active' ]
     stages:
       - cond: 'found.publish.orcid & ^found.publish.zenodo'
