@@ -21,5 +21,6 @@
     "ws": "^7.5.0",
     "yargs": "^17.0.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+  }
 }

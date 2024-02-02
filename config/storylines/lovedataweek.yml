@@ -11,8 +11,8 @@ prompt:
 npcs:
   mayor:
     name:
-      en: "Felicia Hausvillage"
-      de: "Felicia Hausvillage"
+      en: "Felicia Hausvilllage"
+      de: "Felicia Hausvilllage"
     spawn: { x: 3240, y: 2974 }
     dialogue:
     - type: sequence
@@ -150,8 +150,8 @@ quests:
     stages:
       - cond: 'COUNT("op.favor") >= 3'
         prompt:
-          en: "You can let Felicia Hausvillage know."
-          de: "Du kannst Felicia Hausvillage Bescheid geben."
+          en: "You can let Felicia Hausvilllage know."
+          de: "Du kannst Felicia Hausvilllage Bescheid geben."
         target: mayor
         dialogues:
           mayor:
