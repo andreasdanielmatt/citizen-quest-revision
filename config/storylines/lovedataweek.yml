@@ -92,8 +92,8 @@ npcs:
         set: [ 'op.love.2' ]
   citizenPuan:
     name:
-      en: "Jenny Ober-Lupus"
-      de: "Jenny Ober-Lupus"
+      en: "Jenny Ober-Lobo"
+      de: "Jenny Ober-Lobo"
     spawn: { x: 4000, y: 3150 }
     dialogue:
       - text:
@@ -234,7 +234,7 @@ quests:
                 de: "..."
               responses:
                 - text:
-                    en: "Sure, I will will try to set it up right now."
+                    en: "Sure, I will try to set it up right now."
                     de: "..."
                   thenText:
                     en: "Great! If you need more information about ORCID or Zenodo, ask at the MaRDI help desk."
@@ -261,7 +261,7 @@ quests:
         dialogues:
           lawyer:
             - text:
-                en: "Congratulations to your ORCID iD. You need to create a Zenodo account now."
+                en: "Congratulations on your ORCID iD. You need to create a Zenodo account now."
                 de: "..."
           citizenPunk:
             - text:
@@ -274,7 +274,7 @@ quests:
               set: [ 'found.publish.zenodo', 'quest.publish.done', 'pnt.empathy.publish' , 'op.quest.publish']
           citizenBlue:
             - text:
-                en: "Zenodo is a general-purpose open repository. It allows researchers to deposit research papers, data sets, research software, reports, and any other research related digital artefacts. The robot can create an account for you."
+                en: "Zenodo is a general-purpose open repository. It allows researchers to deposit research papers, data sets, research software, reports, and any other research-related digital artefacts. The robot can create an account for you."
                 de: "..."
           citizenBraid:
             - text:
@@ -531,7 +531,7 @@ quests:
                 de: "..."
       - cond: '^found.exchange.person & ^found.exchange.carla & ^found.exchange.quartz & ^found.exchange.help'
         prompt:
-          en: "Find the work by Dr. Quartz from the Al-Jabr Intitute."
+          en: "Find the work by Dr. Quartz from the Al-Jabr Institute."
           de: "..."
         dialogues:
           citizenPunk:
@@ -605,7 +605,7 @@ ending:
           type: sequence
           items:
             - text:
-                en: "You ceated an ORCID iD but not a Zenodo account."
+                en: "You created an ORCID iD but not a Zenodo account."
                 de: "..."
         - cond: 'quest.exchange.done'
           class: 'citizensEmpowered'
