@@ -11,8 +11,8 @@ prompt:
 npcs:
   mayor:
     name:
-      en: "Felicia Hausvilllage"
-      de: "Felicia Hausvilllage"
+      en: "Felicia Hausvillage"
+      de: "Felicia Hausvillage"
     spawn: { x: 3240, y: 2974 }
     dialogue:
     - type: sequence
@@ -150,8 +150,8 @@ quests:
     stages:
       - cond: 'COUNT("op.favor") >= 3'
         prompt:
-          en: "You can let Felicia Hausvilllage know."
-          de: "Du kannst Felicia Hausvilllage Bescheid geben."
+          en: "You can let Felicia Hausvillage know."
+          de: "Du kannst Felicia Hausvillage Bescheid geben."
         target: mayor
         dialogues:
           mayor:
@@ -388,15 +388,15 @@ quests:
                 de: "..."
           citizenBlue:
             - text:
-                en: "*some cool fact about a MaRDI service*"
+                en: "The Mathematical Research Data Initiative (MaRDI) is the consortium for mathematics in the German National Research Data Infrastructure (NFDI) program."
                 de: "..."
           citizenPuan:
             - text:
-                en: "*some cool data fact*"
+                en: "Good quality research data is FAIR (Findable, Accessible, Interoperable, and Reusable)."
                 de: "..."
           citizenBraid:
             - text:
-                en: "*some cool fact about a MaRDI service*"
+                en: "MaRDI’s vision is building a community that embraces a FAIR data culture and research workflow."
                 de: "..."
       - cond: 'found.exchange.person & found.exchange.carla & found.exchange.quartz & ^found.exchange.help'
         prompt:
@@ -436,11 +436,11 @@ quests:
                 de: "..."
           citizenBlue:
             - text:
-                en: "*some cool fact about a MaRDI service*"
+                en: "MaRDI is creating a huge Knowledge Graph to collect research data in mathematics and make it available through a single web portal."
                 de: "..."
           citizenPuan:
             - text:
-                en: "*some cool data fact*"
+                en: "Research data in mathematics would include literature, databases, simulations, taxonomies, workflows, code, visualizations, etc. Even a single formula could be considered research data."
                 de: "..."
       - cond: 'found.exchange.person & found.exchange.carla & ^found.exchange.quartz & ^found.exchange.help'
         prompt:
@@ -487,15 +487,15 @@ quests:
                 de: "..."
           citizenBlue:
             - text:
-                en: "*some cool fact about a MaRDI service*"
+                en: "MaRDI is creating a huge Knowledge Graph to collect research data in mathematics and make it available through a single web portal."
                 de: "..."
           citizenPuan:
             - text:
-                en: "*some cool data fact*"
+                en: "Access to research data is the basis for verifiability and reproducibility."
                 de: "..."
           citizenBraid:
             - text:
-                en: "*some cool fact about a MaRDI service*"
+                en: "MaRDI includes several task areas, such as Computer Algebra, Scientific Computing, Statistics and Machine Learning, and Cooperation with other disciplines."
                 de: "..."
       - cond: 'found.exchange.person & ^found.exchange.carla & ^found.exchange.quartz & ^found.exchange.help'
         prompt:
@@ -518,7 +518,7 @@ quests:
                 de: "..."
           citizenBlue:
             - text:
-                en: "*some cool fact about a MaRDI service*"
+                en: "Many German universities and research institutes participate in the different task areas of MaRDI."
                 de: "..."
           citizenPuan:
             - text:
@@ -527,7 +527,7 @@ quests:
               set: [ 'op.love.7' ]
           citizenBraid:
             - text:
-                en: "*some cool fact about a MaRDI service*"
+                en: "MaRDI is creating a huge Knowledge Graph to collect research data in mathematics and make it available through a single web portal."
                 de: "..."
       - cond: '^found.exchange.person & ^found.exchange.carla & ^found.exchange.quartz & ^found.exchange.help'
         prompt:
